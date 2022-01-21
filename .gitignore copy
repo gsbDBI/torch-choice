@@ -1,0 +1,8 @@
+.vscode/settings.json
+*.pyc
+*.pt
+/data
+deepchoice.egg-info
+/src
+/draft
+*lightning_logs/
