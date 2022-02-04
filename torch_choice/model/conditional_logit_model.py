@@ -18,12 +18,12 @@ from deepchoice.model.coefficient import Coefficient
 
 class ConditionalLogitModel(nn.Module):
     """The more generalized version of conditional logit model, the model allows for research specific
-    variable types(groups) and different levels of variations for coefficeints.
+    variable types(groups) and different levels of variations for coefficient.
 
     The model allows for the following levels for variable variations:
     NOTE: unless the `-full` flag is specified (which means we want to explicitly model coefficients
         for all items), for all variation levels related to item (item specific and user-item specific),
-        the model force coefficients for the first item to be zero. This design follows stadnard
+        the model force coefficients for the first item to be zero. This design follows standard
         econometric practice.
 
     - constant: constant over all users and items,
@@ -34,7 +34,7 @@ class ConditionalLogitModel(nn.Module):
         forced to be zero.
     - item-full: item-specific parameters but constant across all users, explicitly model for all items.
 
-    - user-item: parameters that are specific to both user and item, parameterts for the first item
+    - user-item: parameters that are specific to both user and item, parameter for the first item
         for all users are forced to be zero.
     - user-item-full: parameters that are specific to both user and item, explicitly model for all items.
     """
@@ -49,11 +49,32 @@ class ConditionalLogitModel(nn.Module):
         Args:
             num_items (int): number of items in the dataset.
             num_users (int): number of users in the dataset.
-            coef_variation_dict (Dict[str, str]): variable type to variation level dictionary.
-                Put None or 'zero' if there is no this kind of variable in the model.
-            num_param_dict (Dict[str, int]): variable type to number of parameters dictionary,
-                records number of features in each kind of variable.
-                Put None if there is no this kind of variable in the model.
+            coef_variation_dict (Dict[str, str]): variable type to variation level dictionary. Keys of this dictionary
+                should be variable names in the dataset (i.e., these starting with `price_`, `user_`, etc), or `intercept`
+                if the researcher requires an intercept term.
+                For each variable name X_var (e.g., `user_income`) or `intercept`, the corresponding dictionary key should
+                be one of the following values, this value specifies the "level of variation" of the coefficient.
+
+                - `constant`: the coefficient constant over all users and items: $X \beta$.
+
+                - `user`: user-specific parameters but constant across all items: $X \beta_{u}$.
+
+                - `item`: item-specific parameters but constant across all users, $X \beta_{i}$.
+                    Note that the coefficients for the first item are forced to be zero following the standard practice
+                    in econometrics.
+
+                - `item-full`: the same configuration as `item`, but does not force the coefficients of the first item to
+                    be zeros.
+
+                The following configurations are supported by the package, but we don't recommend using them due to the
+                    large number of parameters.
+                - `user-item`: parameters that are specific to both user and item, parameter for the first item
+                    for all users are forced to be zero.
+
+                - `user-item-full`: parameters that are specific to both user and item, explicitly model for all items.
+
+            num_param_dict (Dict[str, int]): variable type to number of parameters dictionary with keys exactly the same
+                as the `coef_variation_dict`. Values of `num_param_dict` records numbers of features in each kind of variable.
         """
         super(ConditionalLogitModel, self).__init__()
 
@@ -83,7 +104,7 @@ class ConditionalLogitModel(nn.Module):
                                               num_items=self.num_items,
                                               num_users=self.num_users,
                                               num_params=self.num_param_dict[var_type])
-        # A ModuleDict is required to properly register all trainiabel parameters.
+        # A ModuleDict is required to properly register all trainable parameters.
         # self.parameter() will fail if a python dictionary is used instead.
         self.coef_dict = nn.ModuleDict(coef_dict)
 
@@ -95,9 +116,11 @@ class ConditionalLogitModel(nn.Module):
 
     @property
     def num_params(self) -> int:
+        """Get the total number of parameters."""
         return sum(w.numel() for w in self.parameters())
 
     def summary(self):
+        """Print out the current model parameter."""
         for var_type, coefficient in self.coef_dict.items():
             if coefficient is not None:
                 print('Variable Type: ', var_type)
@@ -108,16 +131,16 @@ class ConditionalLogitModel(nn.Module):
                 manual_coef_value_dict: Optional[Dict[str, torch.Tensor]] = None
                 ) -> torch.Tensor:
         """
-        The forward function with explicit arguments, this forward function is for internal usages
-        only, reserachers should use the forward() function insetad.
+        Forward pass of the model.
 
         Args:
-            batch:
+            batch: a `ChoiceDataset` object.
+
             manual_coef_value_dict (Optional[Dict[str, torch.Tensor]], optional): a dictionary with
                 keys in {'u', 'i'} etc and tensors as values. If provided, the model will force
                 coefficient to be the provided values and compute utility conditioned on the provided
                 coefficient values. This feature is useful when the research wishes to plug in particular
-                values of coefficients and exmaine the utility values. If not provided, the model will
+                values of coefficients and examine the utility values. If not provided, the model will
                 use the learned coefficient values in self.coef_dict.
                 Defaults to None.
 
@@ -144,7 +167,7 @@ class ConditionalLogitModel(nn.Module):
 
         if batch.item_availability is not None:
             # mask out unavilable items.
-            total_utility[~batch.item_availability[batch.session_index, :]] = -1.0e20
+            total_utility[~batch.item_availability[batch.session_index, :]] = torch.finfo(total_utility.dtype).min / 2
         return total_utility
 
     @staticmethod
@@ -176,7 +199,7 @@ class ConditionalLogitModel(nn.Module):
         return coef_dict
 
     def compute_hessian(self, x_dict, availability, user_index, y) -> torch.Tensor:
-        """Computes the hessian of negaitve log-likelihood (total cross-entropy loss) with respect
+        """Computes the hessian of negative log-likelihood (total cross-entropy loss) with respect
         to all parameters in this model.
 
         Args:
@@ -209,7 +232,7 @@ class ConditionalLogitModel(nn.Module):
             See definitions in self.compute_hessian.
 
         Returns:
-            Dict[str, torch.Tensor]: a dictoinary whose keys are the same as self.coef_dict.keys()
+            Dict[str, torch.Tensor]: a dictionary whose keys are the same as self.coef_dict.keys()
             the values are standard errors of coefficients in each coefficient group.
         """
         _, type2idx = self.flatten_coef_dict(self.coef_dict)
