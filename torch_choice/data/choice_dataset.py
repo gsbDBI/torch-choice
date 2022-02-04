@@ -60,8 +60,7 @@ class ChoiceDataset(torch.utils.data.Dataset):
 
         self.item_availability = item_availability
 
-        self.observable_prefix = [
-            'user_', 'item_', 'session_', 'taste_', 'price_']
+        self.observable_prefix = ['user_', 'item_', 'session_', 'taste_', 'price_']
         for key, item in kwargs.items():
             if any(key.startswith(prefix) for prefix in self.observable_prefix):
                 setattr(self, key, item)
@@ -86,6 +85,7 @@ class ChoiceDataset(torch.utils.data.Dataset):
 
         new_dict['label'] = self.label[indices]
 
+        # copy indices.
         if self.user_index is None:
             new_dict['user_index'] = None
         else:
@@ -96,8 +96,7 @@ class ChoiceDataset(torch.utils.data.Dataset):
         else:
             new_dict['session_index'] = self.session_index[indices]
 
-        # item_availability has shape (num_sessions, num_items), no need
-        # to index it.
+        # item_availability has shape (num_sessions, num_items), no need to re-index it.
         new_dict['item_availability'] = self.item_availability
         # copy other keys.
         for key, val in self.__dict__.items():
@@ -151,13 +150,14 @@ class ChoiceDataset(torch.utils.data.Dataset):
 
     @property
     def x_dict(self) -> Dict[object, torch.Tensor]:
-        """Get the x_dict object for used in model's forward function."""
-        # reshape raw tensors into (num_sessions, num_items/num_category, num_params).
+        """
+        Formats attributes of this dataset into shape (num_sessions, num_items/num_category, num_params) and returns
+        the formatted tensors in a dictionary for the model's forward() function.
+        """
         out = dict()
         for key, val in self.__dict__.items():
             if self._is_attribute(key):
                 out[key] = self._expand_tensor(key, val)
-        # ENHANCEMENT(Tianyu): cache results, check performance.
         return out
 
     @classmethod
@@ -261,6 +261,7 @@ class ChoiceDataset(torch.utils.data.Dataset):
         if any(self._is_user_attribute(x) for x in self.__dict__.keys()):
             assert self.user_index is not None
 
+        # session attribute and price attribute require session_index to locate.
         if any(self._is_session_attribute(x) or self._is_price_attribute(x) for x in self.__dict__.keys()):
             assert self.session_index is not None
 
