@@ -30,7 +30,7 @@ class NestedLogitModel(nn.Module):
             category_coef_variation_dict (Dict[str, str]): a dictionary maps a variable type
                 (i.e., variable group) to the level of variation for the coefficient of this type
                 of variables.
-            category_num_param_dict (Dict[str, int]): a dictoinary maps a variable type name to
+            category_num_param_dict (Dict[str, int]): a dictionary maps a variable type name to
                 the number of parameters in this variable group.
 
             item_coef_variation_dict (Dict[str, str]): the same as category_coef_variation_dict but
@@ -102,20 +102,20 @@ class NestedLogitModel(nn.Module):
                                               num_params=num_params)
         return nn.ModuleDict(coef_dict)
 
-    def _check_input_shapes(self, category_x_dict, item_x_dict, user_index, item_availability) -> None:
-        T = list(category_x_dict.values())[0].shape[0]  # batch size.
-        for var_type, x_category in category_x_dict.items():
-            x_item = item_x_dict[var_type]
-            assert len(x_item.shape) == len(x_item.shape) == 3
-            assert x_category.shape[0] == x_item.shape[0]
-            assert x_category.shape == (T, self.num_categories, self.category_num_param_dict[var_type])
-            assert x_item.shape == (T, self.num_items, self.item_num_param_dict[var_type])
+    # def _check_input_shapes(self, category_x_dict, item_x_dict, user_index, item_availability) -> None:
+    #     T = list(category_x_dict.values())[0].shape[0]  # batch size.
+    #     for var_type, x_category in category_x_dict.items():
+    #         x_item = item_x_dict[var_type]
+    #         assert len(x_item.shape) == len(x_item.shape) == 3
+    #         assert x_category.shape[0] == x_item.shape[0]
+    #         assert x_category.shape == (T, self.num_categories, self.category_num_param_dict[var_type])
+    #         assert x_item.shape == (T, self.num_items, self.item_num_param_dict[var_type])
 
-        if (user_index is not None) and (self.num_users is not None):
-            assert user_index.shape == (T,)
+    #     if (user_index is not None) and (self.num_users is not None):
+    #         assert user_index.shape == (T,)
 
-        if item_availability is not None:
-            assert item_availability.shape == (T, self.num_items)
+    #     if item_availability is not None:
+    #         assert item_availability.shape == (T, self.num_items)
 
     def forward(self, batch):
         return self._forward(batch['category'].x_dict,
@@ -148,7 +148,7 @@ class NestedLogitModel(nn.Module):
                 by setting Y[t, i] = -inf for unavilable items.
 
         Returns:
-            torch.Tensor: a tensor of shape (num_trips, num_items) including the log probabilty
+            torch.Tensor: a tensor of shape (num_trips, num_items) including the log probability
             of choosing item i in trip t.
         """
         if self.shared_lambda:
@@ -177,7 +177,7 @@ class NestedLogitModel(nn.Module):
             Y += coef(item_x_dict[var_type], user_index)
 
         if item_availability is not None:
-            Y[~item_availability] = -1.0e20
+            Y[~item_availability] =torch.finfo(Y.dtype).min / 2
 
         # =============================================================================
         # compute the inclusive value of each category.
@@ -198,7 +198,7 @@ class NestedLogitModel(nn.Module):
         logP_item = Y - I  # (T, num_items)
 
         # =============================================================================
-        # logP_categroy[t, i] = log P(Bk), for item i in trip t, the probability of choosing the nest/bucket
+        # logP_category[t, i] = log P(Bk), for item i in trip t, the probability of choosing the nest/bucket
         # item i belongs to. logP_category has shape (T, num_items)
         # logit[t, i] = W[n, k] + lambda[k] I[n, k], where n is the user involved in trip t, k is
         # the category item i belongs to.
@@ -232,16 +232,16 @@ class NestedLogitModel(nn.Module):
         nll = - logP[torch.arange(len(y)), y].sum()
         return nll
 
-    def clamp_lambdas(self):
-        """
-        Restrict values of lambdas to 0 < lambda <= 1 to guarantee the utility maximization property
-        of the model.
-        This method should be called everytime after optimizer.step().
-        We add a self_clamp_called_flag to remind researchers if this method is not called.
-        """
-        for k in range(len(self.lambdas)):
-            self.lambdas[k] = torch.clamp(self.lambdas[k], 1e-5, 1)
-        self._clam_called_flag = True
+    # def clamp_lambdas(self):
+    #     """
+    #     Restrict values of lambdas to 0 < lambda <= 1 to guarantee the utility maximization property
+    #     of the model.
+    #     This method should be called everytime after optimizer.step().
+    #     We add a self_clamp_called_flag to remind researchers if this method is not called.
+    #     """
+    #     for k in range(len(self.lambdas)):
+    #         self.lambdas[k] = torch.clamp(self.lambdas[k], 1e-5, 1)
+    #     self._clam_called_flag = True
 
     @staticmethod
     def add_constant(x: torch.Tensor, where: str='prepend') -> torch.Tensor:
