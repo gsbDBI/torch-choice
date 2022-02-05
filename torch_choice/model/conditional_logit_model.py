@@ -13,6 +13,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from torch_choice.data.choice_dataset import ChoiceDataset
 from deepchoice.model.coefficient import Coefficient
 
 
@@ -127,7 +128,7 @@ class ConditionalLogitModel(nn.Module):
                 print(coefficient.coef)
 
     def forward(self,
-                batch,
+                batch: ChoiceDataset,
                 manual_coef_value_dict: Optional[Dict[str, torch.Tensor]] = None
                 ) -> torch.Tensor:
         """
@@ -169,6 +170,22 @@ class ConditionalLogitModel(nn.Module):
             # mask out unavilable items.
             total_utility[~batch.item_availability[batch.session_index, :]] = torch.finfo(total_utility.dtype).min / 2
         return total_utility
+
+
+    def negative_log_likelihood(self, batch: ChoiceDataset, y: torch.Tensor, is_train: bool=True) -> torch.Tensor:
+        """
+        Compute the log-likelihood for the batch and label.
+        """
+        if is_train:
+            self.train()
+        else:
+            self.eval()
+        # (num_trips, num_items)
+        total_utility = self.forward(batch)
+        logP = torch.log_softmax(total_utility, dim=1)
+        nll = - logP[torch.arange(len(y)), y].sum()
+        return nll
+
 
     @staticmethod
     def flatten_coef_dict(coef_dict: Dict[str, Union[torch.Tensor, torch.nn.Parameter]]) -> Tuple[torch.Tensor, dict]:
