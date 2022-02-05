@@ -14,7 +14,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from torch_choice.data.choice_dataset import ChoiceDataset
-from deepchoice.model.coefficient import Coefficient
+from torch_choice.model.coefficient import Coefficient
 
 
 class ConditionalLogitModel(nn.Module):
