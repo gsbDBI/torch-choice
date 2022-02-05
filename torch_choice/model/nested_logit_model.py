@@ -7,7 +7,7 @@ from typing import Dict, List, Optional
 
 import torch
 import torch.nn as nn
-from deepchoice.model.coefficient import Coefficient
+from torch_choice.model.coefficient import Coefficient
 
 
 class NestedLogitModel(nn.Module):
