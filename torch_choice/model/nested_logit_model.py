@@ -2,7 +2,6 @@
 Implementation of the nested logit model, see page 86 of the book
 "discrete choice methods with simulation" by Train. for more details.
 """
-import warnings
 from typing import Dict, List, Optional
 
 import torch
