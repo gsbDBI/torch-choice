@@ -5,6 +5,7 @@ hyper-parameters including batch size and learning rate. The researcher should e
 of hyper-parameter if the default setting doesn't converge well.
 """
 import pandas as pd
+from copy import deepcopy
 import torch
 import torch.nn.functional as F
 from torch_choice.data import utils as data_utils
@@ -18,7 +19,7 @@ def run(model, dataset, batch_size=-1, learning_rate=0.01, num_epochs=5000):
     assert isinstance(model, ConditionalLogitModel) or isinstance(model, NestedLogitModel), \
         f'A model of type {type(model)} is not supported by this runner.'
     # construct pytorch dataloader object.
-    model = model.clone()
+    model = deepcopy(model)
     data_loader = data_utils.create_data_loader(dataset, batch_size=batch_size, shuffle=True)
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
     print('=' * 20, 'received model', '=' * 20)
@@ -44,7 +45,7 @@ def run(model, dataset, batch_size=-1, learning_rate=0.01, num_epochs=5000):
         if e % (num_epochs // 10) == 0:
             print(f'Epoch {e}: Mean Log-likelihood={ll}')
 
-    trained_model = model.clone()
+    trained_model = deepcopy(model)
     # get mean of estimation.
     mean_dict = dict()
     for k, v in model.named_parameters():
