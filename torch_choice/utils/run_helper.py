@@ -18,6 +18,7 @@ def run(model, dataset, batch_size=-1, learning_rate=0.01, num_epochs=5000):
     assert isinstance(model, ConditionalLogitModel) or isinstance(model, NestedLogitModel), \
         f'A model of type {type(model)} is not supported by this runner.'
     # construct pytorch dataloader object.
+    model = model.clone()
     data_loader = data_utils.create_data_loader(dataset, batch_size=batch_size, shuffle=True)
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
     print('=' * 20, 'received model', '=' * 20)
