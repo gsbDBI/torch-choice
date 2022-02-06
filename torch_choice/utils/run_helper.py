@@ -18,8 +18,8 @@ def run(model, dataset, batch_size=-1, learning_rate=0.01, num_epochs=5000):
     """All in one script for the model training and result presentation."""
     assert isinstance(model, ConditionalLogitModel) or isinstance(model, NestedLogitModel), \
         f'A model of type {type(model)} is not supported by this runner.'
-    # construct pytorch dataloader object.
-    model = deepcopy(model)
+    model = deepcopy(model)  # do not modify the model outside.
+    trained_model = deepcopy(model)  # create another copy for returning.
     data_loader = data_utils.create_data_loader(dataset, batch_size=batch_size, shuffle=True)
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
     print('=' * 20, 'received model', '=' * 20)
@@ -44,6 +44,10 @@ def run(model, dataset, batch_size=-1, learning_rate=0.01, num_epochs=5000):
         ll /= count
         if e % (num_epochs // 10) == 0:
             print(f'Epoch {e}: Mean Log-likelihood={ll}')
+
+    # current methods of computing standard deviation will corrupt the model, load weights into another model for returning.
+    state_dict = deepcopy(model.state_dict())
+    trained_model.load_state_dict(state_dict)
 
     # get mean of estimation.
     mean_dict = dict()
@@ -79,3 +83,4 @@ def run(model, dataset, batch_size=-1, learning_rate=0.01, num_epochs=5000):
     print(f'Final Log-likelihood: {ll}\n')
     print('Coefficients:\n')
     print(report.to_markdown())
+    return trained_model
