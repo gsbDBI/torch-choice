@@ -45,7 +45,6 @@ def run(model, dataset, batch_size=-1, learning_rate=0.01, num_epochs=5000):
         if e % (num_epochs // 10) == 0:
             print(f'Epoch {e}: Mean Log-likelihood={ll}')
 
-    trained_model = deepcopy(model)
     # get mean of estimation.
     mean_dict = dict()
     for k, v in model.named_parameters():
@@ -80,4 +79,3 @@ def run(model, dataset, batch_size=-1, learning_rate=0.01, num_epochs=5000):
     print(f'Final Log-likelihood: {ll}\n')
     print('Coefficients:\n')
     print(report.to_markdown())
-    return trained_model
