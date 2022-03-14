@@ -80,6 +80,9 @@ class ChoiceDataset(torch.utils.data.Dataset):
     #     return subset
 
     def __getitem__(self, indices: Union[int, torch.LongTensor]):
+        if isinstance(indices, int):
+            indices = torch.LongTensor([indices])
+
         # TODO: Do we really need to initialize a new ChoiceDataset object?
         new_dict = dict()
 
