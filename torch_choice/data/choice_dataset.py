@@ -9,15 +9,17 @@ import torch
 
 class ChoiceDataset(torch.utils.data.Dataset):
     def __init__(self,
-                 label: torch.LongTensor,
+                 item_index: torch.LongTensor,
+                 label: Optional[torch.LongTensor] = None,
                  user_index: Optional[torch.LongTensor] = None,
                  session_index: Optional[torch.LongTensor] = None,
                  item_availability: Optional[torch.BoolTensor] = None,
                  **kwargs) -> None:
         """
-
         Args:
-            label (torch.LongTensor): a tensor of shape num_purchases (batch_size) indicating the ID
+            item_index (torch.LongTensor): a tensor of shape (batch_size) indicating the relevant item in each row
+                of the dataset.
+            label (Optional[torch.LongTensor]): a tensor of shape num_purchases (batch_size) indicating the ID
                 of the item bought.
             user_index (Optional[torch.LongTensor], optional): used only if there are multiple users
                 in the dataset, a tensor of shape num_purchases (batch_size) indicating the ID of the
@@ -49,78 +51,56 @@ class ChoiceDataset(torch.utils.data.Dataset):
         # ENHANCEMENT(Tianyu): add item_names for summary.
         super(ChoiceDataset, self).__init__()
         self.label = label
+        self.item_index = item_index
         self.user_index = user_index
         self.session_index = session_index
 
         if self.session_index is None:
-            if any([x.startswith('session_') or x.startswith('price_') for x in kwargs.keys()]):
+            # if any([x.startswith('session_') or x.startswith('price_') for x in kwargs.keys()]):
                 # if any session sensitive observable is provided, but session index is not,
                 # infer each row in the dataset to be a session.
-                self.session_index = torch.arange(len(self.label)).long()
+            self.session_index = torch.arange(len(self.item_index)).long()
 
         self.item_availability = item_availability
 
-        self.observable_prefix = ['user_', 'item_', 'session_', 'taste_', 'price_']
+        # self.observable_prefix = ['user_', 'item_', 'session_', 'taste_', 'price_']
         for key, item in kwargs.items():
-            if any(key.startswith(prefix) for prefix in self.observable_prefix):
-                setattr(self, key, item)
+            # if any(key.startswith(prefix) for prefix in self.observable_prefix):
+            setattr(self, key, item)
 
-        self._is_valid()
-
-    # @staticmethod
-    # def _dict_index(d, indices) -> dict:
-    #     # subset values of dictionary using the provided index, this method only subsets tensors and
-    #     # keeps other values unchanged.
-    #     subset = dict()
-    #     for key, val in d.items():
-    #         if torch.is_tensor(val):
-    #             subset[key] = val[indices, ...]
-    #         else:
-    #             subset[key] = val
-    #     return subset
+        # self._is_valid()
 
     def __getitem__(self, indices: Union[int, torch.LongTensor]):
         if isinstance(indices, int):
+            # convert single integer index to a list.
             indices = torch.LongTensor([indices])
-
-        # TODO: Do we really need to initialize a new ChoiceDataset object?
         new_dict = dict()
-
-        new_dict['label'] = self.label[indices]
-
-        # copy indices.
-        if self.user_index is None:
-            new_dict['user_index'] = None
-        else:
-            new_dict['user_index'] = self.user_index[indices]
-
-        if self.session_index is None:
-            new_dict['session_index'] = None
-        else:
-            new_dict['session_index'] = self.session_index[indices]
-
+        new_dict['label'] = self.label[indices].clone() if self.label is not None else None
+        new_dict['user_index'] = self.user_index[indices].clone() if self.user_index is not None else None
+        new_dict['item_index'] = self.item_index[indices].clone() if self.item_index is not None else None
+        new_dict['session_index'] = self.session_index[indices].clone() if self.session_index is not None else None
         # item_availability has shape (num_sessions, num_items), no need to re-index it.
         new_dict['item_availability'] = self.item_availability
         # copy other keys.
         for key, val in self.__dict__.items():
-            if key in new_dict.keys():
-                # ignore 'label', 'user_index', 'session_index' and 'item_availability' keys, already added.
-                continue
-            if torch.is_tensor(val):
-                new_dict[key] = val.clone()
-            else:
-                new_dict[key] = val
+            if key not in new_dict.keys():
+                if torch.is_tensor(val):
+                    new_dict[key] = val.clone()
+                else:
+                    new_dict[key] = val
         return self._from_dict(new_dict)
 
     def __len__(self) -> int:
-        return len(self.label)
+        return len(self.item_index)
 
     def __contains__(self, key: str) -> bool:
         return key in self.keys
 
     @property
     def device(self) -> str:
-        return self.label.device
+        for attr in self.__dict__.values():
+            if torch.is_tensor(attr):
+                return attr.device
 
     @property
     def num_users(self) -> int:
