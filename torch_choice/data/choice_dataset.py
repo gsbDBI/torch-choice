@@ -199,7 +199,7 @@ class ChoiceDataset(torch.utils.data.Dataset):
 
     @staticmethod
     def _is_item_attribute(key: str) -> bool:
-        return key.startswith('item_') and key != 'item_availability'
+        return key.startswith('item_') and key != 'item_availability' and key != 'item_index'
 
     @staticmethod
     def _is_user_attribute(key: str) -> bool:
@@ -225,7 +225,7 @@ class ChoiceDataset(torch.utils.data.Dataset):
             or self._is_price_attribute(key)
 
     def _is_valid(self):
-        batch_size = len(self.label)
+        batch_size = len(self.__len__())
         if self.user_index is not None:
             assert self.user_index.shape == (batch_size,)
 
