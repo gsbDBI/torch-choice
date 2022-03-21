@@ -32,18 +32,18 @@ def run(model, dataset, batch_size=-1, learning_rate=0.01, num_epochs=5000):
         # track the log-likelihood to minimize.
         ll, count = 0.0, 0.0
         for batch in data_loader:
-            label = batch['item'].label if isinstance(model, NestedLogitModel) else batch.label
-            loss = model.negative_log_likelihood(batch, label)
+            item_index = batch['item'].item_index if isinstance(model, NestedLogitModel) else batch.item_index
+            loss = model.negative_log_likelihood(batch, item_index)
 
-            ll -= loss.detach().item() * len(batch)
+            ll -= loss.detach().item()# * len(batch)
             count += len(batch)
 
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
-        ll /= count
+        # ll /= count
         if e % (num_epochs // 10) == 0:
-            print(f'Epoch {e}: Mean Log-likelihood={ll}')
+            print(f'Epoch {e}: Log-likelihood={ll}')
 
     # current methods of computing standard deviation will corrupt the model, load weights into another model for returning.
     state_dict = deepcopy(model.state_dict())
@@ -58,11 +58,11 @@ def run(model, dataset, batch_size=-1, learning_rate=0.01, num_epochs=5000):
     if isinstance(model, ConditionalLogitModel):
         def nll_loss(model):
             y_pred = model(dataset)
-            return F.cross_entropy(y_pred, dataset.label, reduction='sum')
+            return F.cross_entropy(y_pred, dataset.item_index, reduction='sum')
     elif isinstance(model, NestedLogitModel):
         def nll_loss(model):
             d = dataset[torch.arange(len(dataset))]
-            return model.negative_log_likelihood(d, d['item'].label)
+            return model.negative_log_likelihood(d, d['item'].item_index)
 
     std_dict = parameter_std(model, nll_loss)
 
