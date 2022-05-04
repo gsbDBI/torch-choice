@@ -1,16 +1,19 @@
 """
 Implementation of the nested logit model, see page 86 of the book
 "discrete choice methods with simulation" by Train. for more details.
+
+Author: Tianyu Du
+Update; Apr. 28, 2022
 """
 from typing import Dict, List, Optional
 
 import torch
 import torch.nn as nn
 from torch_choice.model.coefficient import Coefficient
+from torch_choice.data.choice_dataset import ChoiceDataset
 
 
 class NestedLogitModel(nn.Module):
-    # The nested logit model.
     def __init__(self,
                  category_to_item: Dict[object, List[int]],
                  category_coef_variation_dict: Dict[str, str],
@@ -84,14 +87,36 @@ class NestedLogitModel(nn.Module):
 
     @property
     def num_params(self) -> int:
+        """Get the total number of parameters. For example, if there is only an user-specific coefficient to be multiplied
+        with the K-dimensional observable, then the total number of parameters would be K x number of users, assuming no
+        intercept is involved.
+
+        Returns:
+            int: the total number of learnable parameters.
+        """
         return sum(w.numel() for w in self.parameters())
 
     def _build_coef_dict(self,
                          coef_variation_dict: Dict[str, str],
                          num_param_dict: Dict[str, int],
-                         num_items: int):
-        # build coefficient dictionary, mapping variable groups to the corresponding Coefficient
-        # Module. num_items could be the actual number of items or the number of categories.
+                         num_items: int) -> nn.ModuleDict:
+        """Builds a coefficient dictionary containing all trainable components of the model, mapping coefficient names
+            to the corresponding Coefficient Module.
+            num_items could be the actual number of items or the number of categories depends on the use case.
+            NOTE: torch-choice users don't directly interact with this method.
+
+        Args:
+            coef_variation_dict (Dict[str, str]): a dictionary mapping coefficient names (e.g., theta_user) to the level
+                of variation (e.g., 'user').
+            num_param_dict (Dict[str, int]): a dictionary mapping coefficient names to the number of parameters in this
+                coefficient. Be aware that, for example, if there is one K-dimensional coefficient for every user, then
+                the `num_param` should be K instead of K x number of users.
+            num_items (int): the total number of items in the prediction problem. `num_items` should be the number of
+                categories if _build_coef_dict() is used for category-level prediction.
+
+        Returns:
+            nn.ModuleDict: a PyTorch ModuleDict object mapping from coefficient names to training Coefficient.
+        """
         coef_dict = dict()
         for var_type, variation in coef_variation_dict.items():
             num_params = num_param_dict[var_type]
@@ -116,7 +141,21 @@ class NestedLogitModel(nn.Module):
     #     if item_availability is not None:
     #         assert item_availability.shape == (T, self.num_items)
 
-    def forward(self, batch):
+    def forward(self, batch: ChoiceDataset) -> torch.Tensor:
+        """An standard forward method for the model, the user feeds a ChoiceDataset batch and the model returns the
+            predicted log-likelihood tensor. The main forward passing happens in the _forward() method, but we provide
+            this wrapper forward() method for a cleaner API, as forward() only requires a single batch argument.
+            For more details about the forward passing, please refer to the _forward() method.
+
+        # TODO: the ConditionaLogitModel returns predicted utility, the NestedLogitModel behaves the same?
+
+        Args:
+            batch (ChoiceDataset): a ChoiceDataset object containing the data batch.
+
+        Returns:
+            torch.Tensor: a tensor of shape (num_trips, num_items) including the log probability
+            of choosing item i in trip t.
+        """
         return self._forward(batch['category'].x_dict,
                              batch['item'].x_dict,
                              batch['item'].user_index,
@@ -215,12 +254,31 @@ class NestedLogitModel(nn.Module):
         return logP
 
     def log_likelihood(self, *args):
+        """Computes the log likelihood of the model, please refer to the negative_log_likelihood() method.
+
+        Returns:
+            _type_: the log likelihood of the model.
+        """
         return - self.negative_log_likelihood(*args)
 
     def negative_log_likelihood(self,
-                                batch,
+                                batch: ChoiceDataset,
                                 y: torch.LongTensor,
-                                is_train: bool=True) -> torch.Tensor:
+                                is_train: bool=True) -> torch.scalar_tensor:
+        """Computes the negative log likelihood of the model. Please note the log-likelihood is summed over all samples
+            in batch instead of the average.
+
+        Args:
+            batch (ChoiceDataset): the ChoiceDataset object containing the data.
+            y (torch.LongTensor): the label.
+            is_train (bool, optional): which mode of the model to be used for the forward passing, if we need Hessian
+                of the NLL through auto-grad, `is_train` should be set to True. If we merely need a performance metric,
+                then `is_train` can be set to False for better performance.
+                Defaults to True.
+
+        Returns:
+            torch.scalar_tensor: the negative log likelihood of the model.
+        """
         # compute the negative log-likelihood loss directly.
         if is_train:
             self.train()
@@ -242,18 +300,18 @@ class NestedLogitModel(nn.Module):
     #         self.lambdas[k] = torch.clamp(self.lambdas[k], 1e-5, 1)
     #     self._clam_called_flag = True
 
-    @staticmethod
-    def add_constant(x: torch.Tensor, where: str='prepend') -> torch.Tensor:
-        """A helper function used to add constant to feature tensor,
-        x has shape (batch_size, num_classes, num_parameters),
-        returns a tensor of shape (*, num_parameters+1).
-        """
-        batch_size, num_classes, num_parameters = x.shape
-        ones = torch.ones((batch_size, num_classes, 1))
-        if where == 'prepend':
-            new = torch.cat((ones, x), dim=-1)
-        elif where == 'append':
-            new = torch.cat((x, ones), dim=-1)
-        else:
-            raise Exception
-        return new
+    # @staticmethod
+    # def add_constant(x: torch.Tensor, where: str='prepend') -> torch.Tensor:
+    #     """A helper function used to add constant to feature tensor,
+    #     x has shape (batch_size, num_classes, num_parameters),
+    #     returns a tensor of shape (*, num_parameters+1).
+    #     """
+    #     batch_size, num_classes, num_parameters = x.shape
+    #     ones = torch.ones((batch_size, num_classes, 1))
+    #     if where == 'prepend':
+    #         new = torch.cat((ones, x), dim=-1)
+    #     elif where == 'append':
+    #         new = torch.cat((x, ones), dim=-1)
+    #     else:
+    #         raise Exception
+    #     return new

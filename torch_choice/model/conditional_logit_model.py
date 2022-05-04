@@ -1,18 +1,17 @@
 """
-Conditional Logit Model, the generalized version of the `cmclogit' command in Stata.
-This is the most general implementation of the logit model class.
+Conditional Logit Model.
 
 Author: Tianyu Du
 Date: Aug. 8, 2021
+Update: Apr. 28, 2022
 """
+import warnings
 from copy import deepcopy
 from typing import Dict, Optional, Tuple, Union
-import warnings
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
 from torch_choice.data.choice_dataset import ChoiceDataset
 from torch_choice.model.coefficient import Coefficient
 
@@ -110,6 +109,11 @@ class ConditionalLogitModel(nn.Module):
         self.coef_dict = nn.ModuleDict(coef_dict)
 
     def __repr__(self) -> str:
+        """Return a string representation of the model.
+
+        Returns:
+            str: the string representation of the model.
+        """
         out_str_lst = ['Conditional logistic discrete choice model, expects input features:\n']
         for var_type, num_params in self.num_param_dict.items():
             out_str_lst.append(f'X[{var_type}] with {num_params} parameters, with {self.coef_variation_dict[var_type]} level variation.')
@@ -117,7 +121,13 @@ class ConditionalLogitModel(nn.Module):
 
     @property
     def num_params(self) -> int:
-        """Get the total number of parameters."""
+        """Get the total number of parameters. For example, if there is only an user-specific coefficient to be multiplied
+        with the K-dimensional observable, then the total number of parameters would be K x number of users, assuming no
+        intercept is involved.
+
+        Returns:
+            int: the total number of learnable parameters.
+        """
         return sum(w.numel() for w in self.parameters())
 
     def summary(self):
@@ -173,8 +183,17 @@ class ConditionalLogitModel(nn.Module):
 
 
     def negative_log_likelihood(self, batch: ChoiceDataset, y: torch.Tensor, is_train: bool=True) -> torch.Tensor:
-        """
-        Compute the log-likelihood for the batch and label.
+        """Computes the log-likelihood for the batch and label.
+        TODO: consider remove y, change to label.
+        TODO: consider move this method outside the model, the role of the model is to compute the utility.
+
+        Args:
+            batch (ChoiceDataset): a ChoiceDataset object containing the data.
+            y (torch.Tensor): the label.
+            is_train (bool, optional): whether to trace the gradient. Defaults to True.
+
+        Returns:
+            torch.Tensor: the negative log-likelihood.
         """
         if is_train:
             self.train()
@@ -187,77 +206,95 @@ class ConditionalLogitModel(nn.Module):
         return nll
 
 
-    @staticmethod
-    def flatten_coef_dict(coef_dict: Dict[str, Union[torch.Tensor, torch.nn.Parameter]]) -> Tuple[torch.Tensor, dict]:
-        """Flattens the coef_dict into a 1-dimension tensor, used for hessian computation."""
-        type2idx = dict()
-        param_list = list()
-        start = 0
+    # NOTE: the method for computing Hessian and standard deviation has been moved to std.py.
+    # @staticmethod
+    # def flatten_coef_dict(coef_dict: Dict[str, Union[torch.Tensor, torch.nn.Parameter]]) -> Tuple[torch.Tensor, dict]:
+    #     """Flattens the coef_dict into a 1-dimension tensor, used for hessian computation.
 
-        for var_type in coef_dict.keys():
-            num_params = coef_dict[var_type].coef.numel()
-            # track which portion of all_param tensor belongs to this variable type.
-            type2idx[var_type] = (start, start + num_params)
-            start += num_params
-            # use reshape instead of view to make a copy.
-            param_list.append(coef_dict[var_type].coef.clone().reshape(-1,))
+    #     Args:
+    #         coef_dict (Dict[str, Union[torch.Tensor, torch.nn.Parameter]]): a dictionary holding learnable parameters.
 
-        all_param = torch.cat(param_list)  # (self.num_params(), )
-        return all_param, type2idx
+    #     Returns:
+    #         Tuple[torch.Tensor, dict]: 1. the flattened tensors with shape (num_params,), 2. an indexing dictionary
+    #             used for reconstructing the original coef_dict from the flatten tensor.
+    #     """
+    #     type2idx = dict()
+    #     param_list = list()
+    #     start = 0
 
-    @staticmethod
-    def unwrap_coef_dict(param: torch.Tensor, type2idx: Dict[str, Tuple[int, int]]) -> Dict[str, torch.Tensor]:
-        """Rebuild coef_dict from output of self.flatten_coef_dict method."""
-        coef_dict = dict()
-        for var_type in type2idx.keys():
-            start, end = type2idx[var_type]
-            # no need to reshape here, Coefficient handles it.
-            coef_dict[var_type] = param[start:end]
-        return coef_dict
+    #     for var_type in coef_dict.keys():
+    #         num_params = coef_dict[var_type].coef.numel()
+    #         # track which portion of all_param tensor belongs to this variable type.
+    #         type2idx[var_type] = (start, start + num_params)
+    #         start += num_params
+    #         # use reshape instead of view to make a copy.
+    #         param_list.append(coef_dict[var_type].coef.clone().reshape(-1,))
 
-    def compute_hessian(self, x_dict, availability, user_index, y) -> torch.Tensor:
-        """Computes the hessian of negative log-likelihood (total cross-entropy loss) with respect
-        to all parameters in this model.
+    #     all_param = torch.cat(param_list)  # (self.num_params(), )
+    #     return all_param, type2idx
 
-        Args:
-            x_dict ,availability, user_index: see definitions in self._forward.
-            y (torch.LongTensor): a tensor with shape (num_trips,) of IDs of items actually purchased.
+    # @staticmethod
+    # def unwrap_coef_dict(param: torch.Tensor, type2idx: Dict[str, Tuple[int, int]]) -> Dict[str, torch.Tensor]:
+    #     """Rebuilds coef_dict from output of self.flatten_coef_dict method.
 
-        Returns:
-            torch.Tensor: a (self.num_params, self.num_params) tensor of the Hessian matrix.
-        """
-        all_coefs, type2idx = self.flatten_coef_dict(self.coef_dict)
+    #     Args:
+    #         param (torch.Tensor): the flattened coef_dict from self.flatten_coef_dict.
+    #         type2idx (Dict[str, Tuple[int, int]]): the indexing dictionary from self.flatten_coef_dict.
 
-        def compute_nll(P: torch.Tensor) -> float:
-            coef_dict = self.unwrap_coef_dict(P, type2idx)
-            y_pred = self._forward(x_dict=x_dict,
-                                   availability=availability,
-                                   user_index=user_index,
-                                   manual_coef_value_dict=coef_dict)
-            # the reduction needs to be 'sum' to obtain NLL.
-            loss = F.cross_entropy(y_pred, y, reduction='sum')
-            return loss
+    #     Returns:
+    #         Dict[str, torch.Tensor]: the re-constructed coefficient dictionary.
+    #     """
+    #     coef_dict = dict()
+    #     for var_type in type2idx.keys():
+    #         start, end = type2idx[var_type]
+    #         # no need to reshape here, Coefficient handles it.
+    #         coef_dict[var_type] = param[start:end]
+    #     return coef_dict
 
-        H = torch.autograd.functional.hessian(compute_nll, all_coefs)
-        assert H.shape == (self.num_params, self.num_params)
-        return H
+    # def compute_hessian(self, x_dict, availability, user_index, y) -> torch.Tensor:
+    #     """Computes the Hessian of negative log-likelihood (total cross-entropy loss) with respect
+    #     to all parameters in this model. The Hessian can be later used for constructing the standard deviation of
+    #     parameters.
 
-    def compute_std(self, x_dict, availability, user_index, y) -> Dict[str, torch.Tensor]:
-        """Computes
+    #     Args:
+    #         x_dict ,availability, user_index: see definitions in self.forward method.
+    #         y (torch.LongTensor): a tensor with shape (num_trips,) of IDs of items actually purchased.
 
-        Args:f
-            See definitions in self.compute_hessian.
+    #     Returns:
+    #         torch.Tensor: a (self.num_params, self.num_params) tensor of the Hessian matrix.
+    #     """
+    #     all_coefs, type2idx = self.flatten_coef_dict(self.coef_dict)
 
-        Returns:
-            Dict[str, torch.Tensor]: a dictionary whose keys are the same as self.coef_dict.keys()
-            the values are standard errors of coefficients in each coefficient group.
-        """
-        _, type2idx = self.flatten_coef_dict(self.coef_dict)
-        H = self.compute_hessian(x_dict, availability, user_index, y)
-        std_all = torch.sqrt(torch.diag(torch.inverse(H)))
-        std_dict = dict()
-        for var_type in type2idx.keys():
-            # get std of variables belonging to each type.
-            start, end = type2idx[var_type]
-            std_dict[var_type] = std_all[start:end]
-        return std_dict
+    #     def compute_nll(P: torch.Tensor) -> float:
+    #         coef_dict = self.unwrap_coef_dict(P, type2idx)
+    #         y_pred = self._forward(x_dict=x_dict,
+    #                                availability=availability,
+    #                                user_index=user_index,
+    #                                manual_coef_value_dict=coef_dict)
+    #         # the reduction needs to be 'sum' to obtain NLL.
+    #         loss = F.cross_entropy(y_pred, y, reduction='sum')
+    #         return loss
+
+    #     H = torch.autograd.functional.hessian(compute_nll, all_coefs)
+    #     assert H.shape == (self.num_params, self.num_params)
+    #     return H
+
+    # def compute_std(self, x_dict, availability, user_index, y) -> Dict[str, torch.Tensor]:
+    #     """Computes
+
+    #     Args:f
+    #         See definitions in self.compute_hessian.
+
+    #     Returns:
+    #         Dict[str, torch.Tensor]: a dictionary whose keys are the same as self.coef_dict.keys()
+    #         the values are standard errors of coefficients in each coefficient group.
+    #     """
+    #     _, type2idx = self.flatten_coef_dict(self.coef_dict)
+    #     H = self.compute_hessian(x_dict, availability, user_index, y)
+    #     std_all = torch.sqrt(torch.diag(torch.inverse(H)))
+    #     std_dict = dict()
+    #     for var_type in type2idx.keys():
+    #         # get std of variables belonging to each type.
+    #         start, end = type2idx[var_type]
+    #         std_dict[var_type] = std_all[start:end]
+    #     return std_dict
