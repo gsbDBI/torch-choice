@@ -8,9 +8,7 @@
 
 name: publish-torch-choice-to-pip
 
-on:
-  release:
-    types: [published]
+on: push
 
 permissions:
   contents: read
