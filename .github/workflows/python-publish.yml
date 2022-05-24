@@ -6,7 +6,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: torch-choice
+name: publish-torch-choice-to-pip
 
 on:
   release:
@@ -16,7 +16,7 @@ permissions:
   contents: read
 
 jobs:
-  deploy:
+  build-n-publish:
 
     runs-on: ubuntu-latest
 
@@ -33,7 +33,7 @@ jobs:
     - name: Build package
       run: python -m build
     - name: Publish package
-      uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
+      uses: pypa/gh-action-pypi-publish@master
       with:
         user: __token__
         password: ${{ secrets.PYPI_API_TOKEN }}
