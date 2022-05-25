@@ -1,3 +1,7 @@
+"""
+This is a helper class for creating ChoiceDataset class, we only assume very basic python knowledge to use this utility.
+"""
+
 import numpy as np
 import pandas as pd
 import torch
@@ -5,17 +9,15 @@ from typing import Optional, Dict
 from sklearn.preprocessing import LabelEncoder
 from torch_choice.data import ChoiceDataset
 
+__author__ = 'Tianyu Du'
+
 
 class EasyDatasetWrapper():
     """An easy-to-use interface for creating ChoiceDataset object, please refer to the doc-string of the `__init__` method
-    for more details.
+    for more details. You feed it with a couple of pandas data-frames and necessary information, this EasyDatasetWrapper
+    would create the ChoiceDataset object for you.
 
-    Raises:
-        ValueError: _description_
-        ValueError: _description_
-
-    Returns:
-        _type_: _description_
+    Currently we support the long-format in Stata.
     """
     SUPPORTED_FORMATS = ['stata']
 
@@ -50,18 +52,21 @@ class EasyDatasetWrapper():
             The keys of all of *_observable_data are the name of the observable data.
 
             user_observable_data (Optional[Dict[str, pd.DataFrame]], optional): a dictionary with keys as the name of each
-                observable. The values should be a pandas data-frame indexed by values in main_data[user_index_column], the
-                name of the index column should be the same as user_index_column. Defaults to dict().
+                observable. The values should be a pandas data-frame contains a column named by the value of `user_index_column`
+                and consisting of values from `main_data[user_index_column]`. Defaults to dict().
+
             item_observable_data (Optional[Dict[str, pd.DataFrame]], optional): a dictionary with keys as the name of each
-                observable. The values should be a pandas data-frame indexed by values in main_data[item_name_column], the
-                name of the index column should be the same as item_name_column. Defaults to dict().
+                observable. The values should be a pandas data-frame contains a column named by the value of `item_name_column`
+                and consisting of values from `main_data[item_name_column]`. Defaults to dict().
+
             session_observable_data (Optional[Dict[str, pd.DataFrame]], optional): a dictionary with keys as the name of each
-                observable. The values should be a pandas data-frame indexed by values in main_data[session_index_column],
-                name of the index column should be the same as session_index_column. Defaults to dict().
+                observable. The values should be a pandas data-frame contains a column named by the value of `session_index_column`
+                and consisting of values from `main_data[session_index_column]`. Defaults to dict().
+
             price_observable_data (Optional[Dict[str, pd.DataFrame]], optional): a dictionary with keys as the name of each
-                observable. The values should be a pandas data-frame multi-indexed by values in main_data[session_index_column]
-                and main_data[item_name_column], the first level name should be the same as session_index_column, the second
-                level name should be the same as item_name_column. Defaults to dict().
+                observable. The values should be a pandas data-frame contains (1) a column named by the value of `session_index_column`
+                and consists of values from `main_data[session_index_column]` and (2) a column named by the value of `item_name_column`
+                and consisting of values from `main_data[item_name_column]`. Defaults to dict().
 
             format (str, optional): the input format of the dataset. Defaults to 'stata'.
 
@@ -102,17 +107,17 @@ class EasyDatasetWrapper():
     def align_observable_data(self, item_observable_data, user_observable_data, session_observable_data, price_observable_data) -> None:
         self.item_observable_data = dict()
         for key, val in item_observable_data.items():
-            self.item_observable_data['item_' + key] = val.loc[self.item_name_encoder.classes_]
+            self.item_observable_data['item_' + key] = val.set_index(self.item_name_column).loc[self.item_name_encoder.classes_]
 
         self.user_observable_data = dict()
         for key, val in user_observable_data.items():
             assert self.user_index_column is not None, 'user observable data is provided but user index column is not provided.'
-            self.user_observable_data['user_' + key] = val.loc[self.user_name_encoder.classes_]
+            self.user_observable_data['user_' + key] = val.set_index(self.user_index_column).loc[self.user_name_encoder.classes_]
 
         self.session_observable_data = dict()
         for key, val in session_observable_data.items():
             assert self.session_index_column is not None, 'session observable data is provided but session index column is not provided.'
-            self.session_observable_data['session_' + key] = val.loc[self.session_name_encoder.classes_]
+            self.session_observable_data['session_' + key] = val.set_index(self.session_index_column).loc[self.session_name_encoder.classes_]
 
         self.price_observable_data = dict()
         for key, val in price_observable_data.items():
@@ -121,7 +126,7 @@ class EasyDatasetWrapper():
             # we have len(price_obs) == num_sessions * num_items and allows for easier pivoting later.
             complete_index = pd.MultiIndex.from_product([self.session_name_encoder.classes_, self.item_name_encoder.classes_],
                                                         names=[self.session_index_column, self.item_name_column])
-            self.price_observable_data['price_' + key] = val.reindex(complete_index)
+            self.price_observable_data['price_' + key] = val.set_index([self.session_index_column, self.item_name_column]).reindex(complete_index)
 
     def observable_data_to_observable_tensors(self):
         """Convert all self.*_observable_data to self.*_observable_tensors for PyTorch."""
