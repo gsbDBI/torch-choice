@@ -5,7 +5,7 @@ This is a helper class for creating ChoiceDataset class, we only assume very bas
 import numpy as np
 import pandas as pd
 import torch
-from typing import Optional, Dict
+from typing import Optional, Dict, List
 from sklearn.preprocessing import LabelEncoder
 from torch_choice.data import ChoiceDataset
 
@@ -227,11 +227,18 @@ class EasyDatasetWrapperV2():
                  choice_column: str,
                  user_index_column: Optional[str] = None,
                  session_index_column: Optional[str] = None,
-                 user_observable_data: Optional[Dict[str, pd.DataFrame]] = dict(),
-                 item_observable_data: Optional[Dict[str, pd.DataFrame]] = dict(),
-                 session_observable_data: Optional[Dict[str, pd.DataFrame]] = dict(),
-                 price_observable_data: Optional[Dict[str, pd.DataFrame]] = dict(),
-                 format: str = 'stata'):
+                 # Option 1: feed in data-frames of observables.
+                 user_observable_data: Optional[Dict[str, pd.DataFrame]] = None,
+                 item_observable_data: Optional[Dict[str, pd.DataFrame]] = None,
+                 session_observable_data: Optional[Dict[str, pd.DataFrame]] = None,
+                 price_observable_data: Optional[Dict[str, pd.DataFrame]] = None,
+                 # Option 2: derive observables from columns of main_data.
+                 user_observable_columns: Optional[List[str]] = None,
+                 item_observable_columns: Optional[List[str]] = None,
+                 session_observable_columns: Optional[List[str]] = None,
+                 price_observable_columns: Optional[List[str]] = None,
+                 format: str = 'stata',
+                 device: str = 'cpu'):
         """The initialization method of EasyDatasetWrapper.
 
         Args:
@@ -267,6 +274,8 @@ class EasyDatasetWrapperV2():
                 and consists of values from `main_data[session_index_column]` and (2) a column named by the value of `item_name_column`
                 and consisting of values from `main_data[item_name_column]`. Defaults to dict().
 
+            # TODO: add documentations
+
             format (str, optional): the input format of the dataset. Defaults to 'stata'.
 
         Raises:
@@ -276,18 +285,30 @@ class EasyDatasetWrapperV2():
         if format not in self.SUPPORTED_FORMATS:
             raise ValueError(f'Format {format} is not supported, only {self.SUPPORTED_FORMATS} are supported.')
 
+        # read in data.
         self.main_data = main_data
-
         self.purchase_record_column = purchase_record_column
         self.purchase_record_index = main_data[purchase_record_column].unique()
         self.item_name_column = item_name_column
         self.choice_column = choice_column
         self.user_index_column = user_index_column
         self.session_index_column = session_index_column
+        self.device = device
 
+        # encode item name, user index, session index.
         self.encode()
 
-        self.align_observable_data(item_observable_data, user_observable_data, session_observable_data, price_observable_data)
+        # re-format observable data-frames and set correct index.
+        self.align_observable_data(item_observable_data,
+                                   user_observable_data,
+                                   session_observable_data,
+                                   price_observable_data)
+
+        # derive observables from columns of the main data-frame.
+        self.derive_observable_from_main_data(item_observable_columns,
+                                              user_observable_columns,
+                                              session_observable_columns,
+                                              price_observable_columns)
 
         self.observable_data_to_observable_tensors()
 
@@ -305,29 +326,57 @@ class EasyDatasetWrapperV2():
 
     def align_observable_data(self, item_observable_data, user_observable_data, session_observable_data, price_observable_data) -> None:
         self.item_observable_data = dict()
-        for key, val in item_observable_data.items():
-            self.item_observable_data['item_' + key] = val.set_index(self.item_name_column).loc[self.item_name_encoder.classes_]
+        if item_observable_data is not None:
+            for key, val in item_observable_data.items():
+                self.item_observable_data['item_' + key] = val.set_index(self.item_name_column).loc[self.item_name_encoder.classes_]
 
         self.user_observable_data = dict()
-        for key, val in user_observable_data.items():
-            assert self.user_index_column is not None, 'user observable data is provided but user index column is not provided.'
-            self.user_observable_data['user_' + key] = val.set_index(self.user_index_column).loc[self.user_name_encoder.classes_]
+        if item_observable_data is not None:
+            for key, val in user_observable_data.items():
+                assert self.user_index_column is not None, 'user observable data is provided but user index column is not provided.'
+                self.user_observable_data['user_' + key] = val.set_index(self.user_index_column).loc[self.user_name_encoder.classes_]
 
         self.session_observable_data = dict()
-        for key, val in session_observable_data.items():
-            assert self.session_index_column is not None, 'session observable data is provided but session index column is not provided.'
-            self.session_observable_data['session_' + key] = val.set_index(self.session_index_column).loc[self.session_name_encoder.classes_]
+        if session_observable_data is not None:
+            for key, val in session_observable_data.items():
+                assert self.session_index_column is not None, 'session observable data is provided but session index column is not provided.'
+                self.session_observable_data['session_' + key] = val.set_index(self.session_index_column).loc[self.session_name_encoder.classes_]
 
         self.price_observable_data = dict()
-        for key, val in price_observable_data.items():
-            assert self.session_index_column is not None, 'price observable data is provided but session index column is not provided.'
-            # need to re-index since some alternatives might be unavailable in some session, re-indexing ensure that
-            # we have len(price_obs) == num_sessions * num_items and allows for easier pivoting later.
-            complete_index = pd.MultiIndex.from_product([self.session_name_encoder.classes_, self.item_name_encoder.classes_],
-                                                        names=[self.session_index_column, self.item_name_column])
-            self.price_observable_data['price_' + key] = val.set_index([self.session_index_column, self.item_name_column]).reindex(complete_index)
+        if price_observable_data is not None:
+            for key, val in price_observable_data.items():
+                assert self.session_index_column is not None, 'price observable data is provided but session index column is not provided.'
+                # need to re-index since some alternatives might be unavailable in some session, re-indexing ensure that
+                # we have len(price_obs) == num_sessions * num_items and allows for easier pivoting later.
+                complete_index = pd.MultiIndex.from_product([self.session_name_encoder.classes_, self.item_name_encoder.classes_],
+                                                            names=[self.session_index_column, self.item_name_column])
+                self.price_observable_data['price_' + key] = val.set_index([self.session_index_column, self.item_name_column]).reindex(complete_index)
 
-    def observable_data_to_observable_tensors(self):
+    def derive_observable_from_main_data(self, item_observable_columns, user_observable_columns, session_observable_columns, price_observable_columns) -> None:
+        if item_observable_columns is not None:
+            for obs_col in item_observable_columns:
+                # get the value of `obs_col` for each item.
+                # note: values in self.main_data[self.item_name_column] are NOT encoded, they are raw values.
+                self.item_observable_data['item_' + obs_col] = self.main_data.groupby(self.item_name_column).first()[[obs_col]].loc[self.item_name_encoder.classes_]
+
+        if user_observable_columns is not None:
+            for obs_col in user_observable_columns:
+                # TODO: move to sanity check part.
+                assert self.user_index_column is not None
+                self.user_observable_data['user_' + obs_col] = self.main_data.groupby(self.user_index_column).first()[[obs_col]].loc[self.user_name_encoder.classes_]
+
+        if session_observable_columns is not None:
+            for obs_col in session_observable_columns:
+                self.session_observable_data['session_' + obs_col] = self.main_data.groupby(self.session_index_column).first()[[obs_col]].loc[self.session_name_encoder.classes_]
+
+        if price_observable_columns is not None:
+            for obs_col in price_observable_columns:
+                val = self.main_data.groupby([self.session_index_column, self.item_name_column]).first()[obs_col].reset_index()
+                complete_index = pd.MultiIndex.from_product([self.session_name_encoder.classes_, self.item_name_encoder.classes_],
+                                                            names=[self.session_index_column, self.item_name_column])
+                self.price_observable_data['price_' + obs_col] = val.set_index([self.session_index_column, self.item_name_column]).reindex(complete_index)
+
+    def observable_data_to_observable_tensors(self) -> None:
         """Convert all self.*_observable_data to self.*_observable_tensors for PyTorch."""
         self.item_observable_tensors = dict()
         for key, val in self.item_observable_data.items():
@@ -361,6 +410,8 @@ class EasyDatasetWrapperV2():
         if len(np.unique(choice_set_size)) > 1:
             print(f'Note: choice sets of different sizes found in different purchase records: {rep}')
             self.item_availability = self.get_item_availability_tensor()
+        else:
+            self.item_availability = None
 
         item_bought = self.main_data[self.main_data[self.choice_column] == 1].set_index(self.purchase_record_column).loc[self.purchase_record_index, self.item_name_column].values
         self.item_index = self.item_name_encoder.transform(item_bought)
@@ -389,6 +440,8 @@ class EasyDatasetWrapperV2():
                                             **self.user_observable_tensors,
                                             **self.session_observable_tensors,
                                             **self.price_observable_tensors)
+
+        self.choice_dataset.to(self.device)
 
     def get_item_availability_tensor(self) -> torch.BoolTensor:
         if self.session_index_column is None:
