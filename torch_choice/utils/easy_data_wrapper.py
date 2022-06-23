@@ -274,7 +274,10 @@ class EasyDatasetWrapperV2():
                 and consists of values from `main_data[session_index_column]` and (2) a column named by the value of `item_name_column`
                 and consisting of values from `main_data[item_name_column]`. Defaults to dict().
 
-            # TODO: add documentations
+            Another method to include observables is via *_observable_columns keywords, which takes column name(s) of the main_data
+                data-frame. The data wrapper will derive observable data from the main_data data-frame.
+                For example, with `user_observable_columns = ['feature_A', 'feature_B']`, this wrapper will create two user-specific
+                observable tensors derived from main_data['feature_A'] and main_data['feature_B'].
 
             format (str, optional): the input format of the dataset. Defaults to 'stata'.
 
