@@ -162,6 +162,8 @@ class EasyDatasetWrapper():
         if len(np.unique(choice_set_size)) > 1:
             print(f'Note: choice sets of different sizes found in different purchase records: {rep}')
             self.item_availability = self.get_item_availability_tensor()
+        else:
+            self.item_availability = None
 
         item_bought = self.main_data[self.main_data[self.choice_column] == 1].set_index(self.purchase_record_column).loc[self.purchase_record_index, self.item_name_column].values
         self.item_index = self.item_name_encoder.transform(item_bought)
