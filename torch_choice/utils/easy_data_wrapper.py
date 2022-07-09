@@ -163,7 +163,7 @@ class EasyDatasetWrapper():
                 assert self.user_index_column is not None, "user observable data is provided but user index column is not provided."
                 assert self.user_index_column in val.columns, f"{self.user_index_column} is not a column of provided user observable data-frame."
                 for user in self.user_name_encoder.classes_:
-                    assert user in val[self.user_index_column], f"user {user} is not in the {self.user_index_column} column of the user observable data-frame."
+                    assert user in val[self.user_index_column].values, f"user {user} is not in the {self.user_index_column} column of the user observable data-frame."
 
                 self.user_observable_data['user_' + key] = val.set_index(self.user_index_column).loc[self.user_name_encoder.classes_]
 
@@ -175,7 +175,7 @@ class EasyDatasetWrapper():
                 assert self.session_index_column is not None, "session observable data is provided but session index column is not provided."
                 assert self.session_index_column in val.columns, f"{self.session_index_column} is not a column of provided session observable data-frame."
                 for session in self.session_name_encoder.classes_:
-                    assert session in val[self.session_index_column], f"session {session} is not in the {self.session_index_column} column of the session observable data-frame."
+                    assert session in val[self.session_index_column].values, f"session {session} is not in the {self.session_index_column} column of the session observable data-frame."
 
                 self.session_observable_data['session_' + key] = val.set_index(self.session_index_column).loc[self.session_name_encoder.classes_]
 
@@ -189,10 +189,10 @@ class EasyDatasetWrapper():
                 assert self.item_name_column in val.columns, f"{self.item_name_column} is not a column of provided price observable data-frame."
 
                 for session in self.session_name_encoder.classes_:
-                    assert session in val[self.session_index_column], f"session {session} is not in the {self.session_index_column} column of the price observable data-frame."
+                    assert session in val[self.session_index_column].values, f"session {session} is not in the {self.session_index_column} column of the price observable data-frame."
 
                 for item in self.item_name_encoder.classes_:
-                    assert item in val[self.item_name_column], f"item {item} is not in the {self.item_name_column} column of the price observable data-frame."
+                    assert item in val[self.item_name_column].values, f"item {item} is not in the {self.item_name_column} column of the price observable data-frame."
 
                 # need to re-index since some (session, item) pairs are allowed to be unavailable.
                 # complete index = Cartesian product of all sessions and all items.
@@ -324,7 +324,7 @@ class EasyDatasetWrapper():
         return len(self.purchase_record_index)
 
     def summary(self):
-        print(f'* purchase record index range:', self.purchase_record_index)
+        print(f'* purchase record index range:', self.purchase_record_index[:3], '...', self.purchase_record_index[-3:])
         print(f'* Space of {len(self.item_name_encoder.classes_)} items:\n', pd.DataFrame(data={'item name': self.item_name_encoder.classes_}, index=np.arange(len(self.item_name_encoder.classes_))).T)
         print(f'* Number of purchase records/cases: {len(self)}.')
         print('* Preview of main data frame:')
