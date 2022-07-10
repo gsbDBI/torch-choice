@@ -156,7 +156,7 @@ class EasyDatasetWrapper():
                 self.item_observable_data['item_' + key] = val.set_index(self.item_name_column).loc[self.item_name_encoder.classes_]
 
         self.user_observable_data = dict()
-        if item_observable_data is not None:
+        if user_observable_data is not None:
             for key, val in user_observable_data.items():
                 # key: observable name.
                 # val: data-frame of observable data.
