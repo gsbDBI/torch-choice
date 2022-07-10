@@ -145,6 +145,20 @@ class ChoiceDataset(torch.utils.data.Dataset):
     def __contains__(self, key: str) -> bool:
         return key in self.keys
 
+    def __eq__(self, other: "ChoiceDataset") -> bool:
+        """Returns whether all tensor attributes of both ChoiceDatasets are equal."""
+        if not isinstance(other, ChoiceDataset):
+            raise TypeError('You can only compare with ChoiceDataset objects.')
+        else:
+            flag = True
+            for key, val in self.__dict__.items():
+                if torch.is_tensor(val):
+                    # ignore NaNs while comparing.
+                    if not torch.equal(torch.nan_to_num(val), torch.nan_to_num(other.__dict__[key])):
+                        print('Attribute {} is not equal.'.format(key))
+                        flag = False
+            return flag
+
     @property
     def device(self) -> str:
         """Returns the device of the dataset.

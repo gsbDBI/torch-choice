@@ -41,7 +41,7 @@ class ConditionalLogitModel(nn.Module):
 
     def __init__(self,
                  coef_variation_dict: Dict[str, str],
-                 num_param_dict: Dict[str, int],
+                 num_param_dict: Optional[Dict[str, int]]=None,
                  num_items: Optional[int]=None,
                  num_users: Optional[int]=None
                  ) -> None:
@@ -73,10 +73,15 @@ class ConditionalLogitModel(nn.Module):
 
                 - `user-item-full`: parameters that are specific to both user and item, explicitly model for all items.
 
-            num_param_dict (Dict[str, int]): variable type to number of parameters dictionary with keys exactly the same
+            num_param_dict (Optional[Dict[str, int]]): variable type to number of parameters dictionary with keys exactly the same
                 as the `coef_variation_dict`. Values of `num_param_dict` records numbers of features in each kind of variable.
+                If None is supplied, num_param_dict will be a dictionary with the same keys as the `coef_variation_dict` dictionary
+                and values of all ones. Default to be None.
         """
         super(ConditionalLogitModel, self).__init__()
+
+        if num_param_dict is None:
+            num_param_dict = {key:1 for key in coef_variation_dict.keys()}
 
         assert coef_variation_dict.keys() == num_param_dict.keys()
 
