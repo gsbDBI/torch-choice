@@ -3,9 +3,9 @@ install.packages("tictoc")
 library("mlogit")
 library("tictoc")
 
-data("ModeCanada", package = "mlogit")
+# data("ModeCanada", package = "mlogit")
 
-ModeCanada = read.csv('./tutorials/public_datasets/MC_100.csv')
+ModeCanada = read.csv('./public_datasets/ModeCanada.csv')
 MC <- dfidx(ModeCanada, subset = noalt == 4)
 
 tic()
