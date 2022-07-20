@@ -34,23 +34,25 @@ import torch_choice
 df = pd.read_csv('https://raw.githubusercontent.com/gsbDBI/torch-choice/main/tutorials/public_datasets/ModeCanada.csv?token=GHSAT0AAAAAABRGHCCSNNQARRMU63W7P7F4YWYP5HA').query('noalt == 4').reset_index(drop=True)
 
 # format data.
-data = torch_choice.utils.easy_data_wrapper.EasyDatasetWrapper(main_data=df,
-                                                               purchase_record_column='case',
-                                                               choice_column='choice',
-                                                               item_name_column='alt',
-                                                               user_index_column='case',
-                                                               session_index_column='case',
-                                                               session_observable_columns=['income'],
-                                                               price_observable_columns=['cost', 'freq', 'ovt', 'ivt'])
+data = torch_choice.utils.easy_data_wrapper.EasyDatasetWrapper(
+    main_data=df,
+    purchase_record_column='case',
+    choice_column='choice',
+    item_name_column='alt',
+    user_index_column='case',
+    session_index_column='case',
+    session_observable_columns=['income'],
+    price_observable_columns=['cost', 'freq', 'ovt', 'ivt'])
 
 # define the conditional logit model.
-model = torch_choice.model.ConditionalLogitModel(coef_variation_dict={'price_cost': 'constant',
-                                                                      'price_freq': 'constant',
-                                                                      'price_ovt': 'constant',
-                                                                      'session_income': 'item',
-                                                                      'price_ivt': 'item-full',
-                                                                      'intercept': 'item'},
-                                                 num_items=4)
+model = torch_choice.model.ConditionalLogitModel(
+    coef_variation_dict={'price_cost': 'constant',
+                         'price_freq': 'constant',
+                         'price_ovt': 'constant',
+                         'session_income': 'item',
+                         'price_ivt': 'item-full',
+                         'intercept': 'item'},
+    num_items=4)
 # fit the conditional logit model.
 torch_choice.utils.run_helper.run(model, data.choice_dataset, num_epochs=5000, learning_rate=0.01, batch_size=-1)
 ```
