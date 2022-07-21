@@ -2,7 +2,7 @@
 
 > Authors: Tianyu Du and Ayush Kanodia; PI: Susan Athey; Contact: tianyudu@stanford.edu
 
-`torch-choice` is a flexible, fast choice modeling with PyTorch: logit and nested logit models, designed for both estimation and prediction. See the [complete documentation](https://deepchoice-vcghm.ondigitalocean.app) for more details.
+`torch-choice` is a flexible, fast choice modeling with PyTorch: logit and nested logit models, designed for both estimation and prediction. See the [complete documentation](https://gsbdbi.github.io/torch-choice/) for more details.
 Unique features:
 1. GPU support via torch for speed
 2. Specify customized models
@@ -80,7 +80,7 @@ summary(ml.MC1)
 # What's in the package?
 1. The package includes a data management tool based on `PyTorch`'s dataset called `ChoiceDataset`. Our dataset implementation allows users to easily move data between CPU and GPU. Unlike traditional long or wide formats, the `ChoiceDataset` offers a memory-efficient way to manage observables.
 
-2. The package provides a (1) conditional logit model for consumer choice modeling, (2) a nested logit model for consumer choice modeling. 
+2. The package provides a (1) conditional logit model for consumer choice modeling, (2) a nested logit model for consumer choice modeling.
 
 3. The package leverage GPU acceleration using PyTorch and easily scale to large dataset of millions of choice records. All models are trained using state-of-the-art optimizers by in PyTorch. These optimization algorithms are tested to be scalable by modern machine learning practitioners. However, you can rest assure that the package runs flawlessly when no GPU is used as well.
 
