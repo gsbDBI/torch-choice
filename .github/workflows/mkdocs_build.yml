@@ -1,0 +1,64 @@
+# This is a basic workflow to help you get started with Actions
+
+name: build-makrdown-website
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push to the documentation source.
+  push:
+    paths: 'docs_src/**'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+    
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.x'
+
+      # Runs a single command using the runners shell
+      - name: install mkdocs and plugins
+        run: |
+          pip3 install mkdocs
+          pip3 install mkdocstrings
+          pip3 install mkdocstrings-python-legacy
+          pip3 install mkdocs-material
+      
+      # this Action should follow steps to set up Python build environment
+#       - name: Install Python dependencies
+#         uses: py-actions/py-dependency-install@v3
+#         with:
+#           path: "requirements.txt"
+
+#       - name: install dependencies
+#         run: pip3 install -r requirements.txt
+      - name: install dependencies
+        run: cat requirements.txt | xargs -n 1 -L 1 pip install
+
+      - name: install the package
+        run: |
+          pip3 install torch_choice
+          pip3 install bemb
+          # python3 setup.py develop --user
+
+      - name: run mkdocs build to generate html files.
+        run: mkdocs build
+  
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: build website by github action
