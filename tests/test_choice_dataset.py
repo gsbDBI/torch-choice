@@ -157,42 +157,42 @@ class TestChoiceDataset(unittest.TestCase):
         for index_type in ['item_index', 'user_index', 'session_index']:
             self.assertTrue(torch.all(getattr(dataset, index_type)[indices] == getattr(subset, index_type)))
 
-    def test_x_dict_method(self):
-        raise NotImplementedError()
-        dataset = self.create_random_choice_dataset()
-        # __getitem__ to get batch.
-        # pick 5 random sessions as the mini-batch.
-        indices = torch.Tensor(np.random.choice(len(dataset), size=5, replace=False)).long()
-        subset = dataset[indices]
+    # def test_x_dict_method(self):
+    #     raise NotImplementedError()
+    #     dataset = self.create_random_choice_dataset()
+    #     # __getitem__ to get batch.
+    #     # pick 5 random sessions as the mini-batch.
+    #     indices = torch.Tensor(np.random.choice(len(dataset), size=5, replace=False)).long()
+    #     subset = dataset[indices]
 
-        self.assertTrue(torch.all(dataset.x_dict['price_obs'][indices, :, :] == subset.x_dict['price_obs']))
+    #     self.assertTrue(torch.all(dataset.x_dict['price_obs'][indices, :, :] == subset.x_dict['price_obs']))
 
-    def test_dataloader_compatibility(self):
-        dataset = self.create_random_choice_dataset()
-        shuffle = False  # for demonstration purpose.
-        batch_size = 32
+    # def test_dataloader_compatibility(self):
+    #     dataset = self.create_random_choice_dataset()
+    #     shuffle = False  # for demonstration purpose.
+    #     batch_size = 32
 
-        # Create sampler.
-        sampler = BatchSampler(
-            RandomSampler(dataset) if shuffle else SequentialSampler(dataset),
-            batch_size=batch_size,
-            drop_last=False)
+    #     # Create sampler.
+    #     sampler = BatchSampler(
+    #         RandomSampler(dataset) if shuffle else SequentialSampler(dataset),
+    #         batch_size=batch_size,
+    #         drop_last=False)
 
-        dataloader = torch.utils.data.DataLoader(dataset,
-                                                sampler=sampler,
-                                                num_workers=1,
-                                                collate_fn=lambda x: x[0],
-                                                pin_memory=(dataset.device == 'cpu'))
+    #     dataloader = torch.utils.data.DataLoader(dataset,
+    #                                             sampler=sampler,
+    #                                             num_workers=1,
+    #                                             collate_fn=lambda x: x[0],
+    #                                             pin_memory=(dataset.device == 'cpu'))
 
-        item_obs_all = self.item_obs.view(1, self.num_items, -1).expand(len(dataset), -1, -1)
-        item_obs_all = item_obs_all.to(dataset.device)
-        item_index_all = self.item_index.to(dataset.device)
+    #     item_obs_all = self.item_obs.view(1, self.num_items, -1).expand(len(dataset), -1, -1)
+    #     item_obs_all = item_obs_all.to(dataset.device)
+    #     item_index_all = self.item_index.to(dataset.device)
 
-        for i, batch in enumerate(dataloader):
-            first, last = i * batch_size, min(len(dataset), (i + 1) * batch_size)
-            idx = torch.arange(first, last)
-            self.assertTrue(torch.all(item_obs_all[idx, :, :] == batch.x_dict['item_obs']))
-            self.assertTrue(torch.all(item_index_all[idx] == batch.item_index))
+    #     for i, batch in enumerate(dataloader):
+    #         first, last = i * batch_size, min(len(dataset), (i + 1) * batch_size)
+    #         idx = torch.arange(first, last)
+    #         self.assertTrue(torch.all(item_obs_all[idx, :, :] == batch.x_dict['item_obs']))
+    #         self.assertTrue(torch.all(item_index_all[idx] == batch.item_index))
 
 
 
