@@ -25,6 +25,8 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
+        with:
+          ref: main
     
       - name: Set up Python
         uses: actions/setup-python@v3
@@ -53,8 +55,6 @@ jobs:
       - name: install the package
         run: |
           pip3 install torch_choice
-          pip3 install bemb
-          # python3 setup.py develop --user
 
       - name: run mkdocs build to generate html files.
         run: mkdocs build
