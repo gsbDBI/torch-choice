@@ -207,52 +207,27 @@ class TestChoiceDataset(unittest.TestCase):
             for index_type in ['item_index', 'user_index', 'session_index']:
                 self.assertTrue(torch.all(getattr(dataset, index_type)[idx] == getattr(batch, index_type)))
 
-
-class TestJointDataset(unittest.TestCase):
-    def create_random_data(self):
-        self.num_users = 10
-        self.num_items = 4
-        self.num_sessions = 500
-
-        self.length_of_dataset = 10000
-
-        # create observables/features, the number of parameters are arbitrarily chosen.
-        # generate 128 features for each user, e.g., race, gender.
-        self.user_obs = torch.randn(self.num_users, 128)
-        # generate 64 features for each user, e.g., quality.
-        self.item_obs = torch.randn(self.num_items, 64)
-        # generate 10 features for each session, e.g., weekday indicator.
-        self.session_obs = torch.randn(self.num_sessions, 10)
-        # generate 12 features for each session user pair, e.g., the budget of that user at the shopping day.
-        self.price_obs = torch.randn(self.num_sessions, self.num_items, 12)
-
-        self.item_index = torch.LongTensor(np.random.choice(self.num_items, size=self.length_of_dataset))
-        self.user_index = torch.LongTensor(np.random.choice(self.num_users, size=self.length_of_dataset))
-        self.session_index = torch.LongTensor(np.random.choice(self.num_sessions, size=self.length_of_dataset))
-
-        # assume all items are available in all sessions.
-        self.item_availability = torch.ones(self.num_sessions, self.num_items).bool()
-
-    def create_random_choice_dataset(self):
-        self.create_random_data()
-        return ChoiceDataset(
-            # pre-specified keywords of __init__
-            item_index=self.item_index,  # required.
-            # optional:
-            user_index=self.user_index,
-            session_index=self.session_index,
-            item_availability=self.item_availability,
-            # additional keywords of __init__
-            user_obs=self.user_obs,
-            item_obs=self.item_obs,
-            session_obs=self.session_obs,
-            price_obs=self.price_obs)
-
-    def test_joint_dataset_initialization(self):
+    def create_random_joint_dataset(self):
         dataset = self.create_random_choice_dataset()
         dataset1 = dataset.clone()
         dataset2 = dataset.clone()
+        self.assertEqual(dataset1, dataset2)
         joint_dataset = JointDataset(the_dataset=dataset1, another_dataset=dataset2)
+        return dataset1, dataset2, joint_dataset
+
+    def test_joint_dataset_initialization(self):
+        dataset1, dataset2, joint_dataset = self.create_random_joint_dataset()
+        self.assertTrue(len(joint_dataset) == len(dataset1) == len(dataset2) == self.length_of_dataset)
+
+    def test_joint_dataset_getitem_method(self):
+        dataset1, dataset2, joint_dataset = self.create_random_joint_dataset()
+        indices = torch.Tensor(np.random.choice(len(dataset1), size=len(dataset1) // 10, replace=False)).long()
+
+        self.assertIn('the_dataset', joint_dataset[indices].keys())
+        self.assertIn('another_dataset', joint_dataset[indices].keys())
+
+        self.assertEqual(joint_dataset[indices]['the_dataset'], dataset1[indices])
+        self.assertEqual(joint_dataset[indices]['another_dataset'], dataset2[indices])
 
 
 if __name__ == '__main__':
