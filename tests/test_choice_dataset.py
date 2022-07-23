@@ -157,15 +157,29 @@ class TestChoiceDataset(unittest.TestCase):
         for index_type in ['item_index', 'user_index', 'session_index']:
             self.assertTrue(torch.all(getattr(dataset, index_type)[indices] == getattr(subset, index_type)))
 
-    # def test_x_dict_method(self):
-    #     raise NotImplementedError()
-    #     dataset = self.create_random_choice_dataset()
-    #     # __getitem__ to get batch.
-    #     # pick 5 random sessions as the mini-batch.
-    #     indices = torch.Tensor(np.random.choice(len(dataset), size=5, replace=False)).long()
-    #     subset = dataset[indices]
+    def test_x_dict_method(self):
+        dataset = self.create_random_choice_dataset()
+        expanded_ground_truth_of_x_dict = {
+            # item_obs @ (num_items, *) -> (1, num_items, *) -> (len(dataset), num_items, *)
+            'item_obs': self.item_obs.view(1, self.num_items, -1).expand(len(dataset), -1, -1).clone(),
+            # user_obs @ (num_users, *) -> (len(dataset), 1, *) -> (len(dataset), num_items, *)
+            'user_obs': self.user_obs[dataset.user_index].view(len(dataset), 1, -1).expand(-1, self.num_items, -1).clone(),
+            # session_obs @ (num_sessions, *) -> (len(dataset), 1, *) -> (len(dataset), num_items, *)
+            'session_obs': self.session_obs[dataset.session_index].view(len(dataset), 1, -1).expand(-1, self.num_items, -1).clone(),
+            # price_obs @ (num_sessions, num_items, *) -> (len(dataset), num_items, *)
+            'price_obs': self.price_obs[dataset.session_index, :, :].clone()
+            }
 
-    #     self.assertTrue(torch.all(dataset.x_dict['price_obs'][indices, :, :] == subset.x_dict['price_obs']))
+        # test on the entire dataset.
+        for name, ground_truth in expanded_ground_truth_of_x_dict.items():
+            assert ground_truth.shape[:2] == (len(dataset), self.num_items)
+            self.assertTrue(torch.all(ground_truth == dataset.x_dict[name]))
+
+        # test on the subset slice of dataset __getitem__ to get batch.
+        indices = torch.Tensor(np.random.choice(len(dataset), size=len(dataset) // 10, replace=False)).long()
+
+        for name, ground_truth in expanded_ground_truth_of_x_dict.items():
+            self.assertTrue(torch.all(ground_truth[indices, :, :] == dataset[indices].x_dict[name]))
 
     def test_dataloader_compatibility(self):
         dataset = self.create_random_choice_dataset()
