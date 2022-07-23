@@ -42,43 +42,6 @@ class TestChoiceDataset(unittest.TestCase):
         # assume all items are available in all sessions.
         self.item_availability = torch.ones(self.num_sessions, self.num_items).bool()
 
-        # Feel free to modify it as you want.
-        # num_users = 10
-        # num_items = 4
-        # num_sessions = 500
-
-        # length_of_dataset = 10000
-
-        # # create observables/features, the number of parameters are arbitrarily chosen.
-        # # generate 128 features for each user, e.g., race, gender.
-        # user_obs = torch.randn(num_users, 128)
-        # # generate 64 features for each user, e.g., quality.
-        # item_obs = torch.randn(num_items, 64)
-        # # generate 10 features for each session, e.g., weekday indicator.
-        # session_obs = torch.randn(num_sessions, 10)
-        # # generate 12 features for each session user pair, e.g., the budget of that user at the shopping day.
-        # price_obs = torch.randn(num_sessions, num_items, 12)
-
-        # item_index = torch.LongTensor(np.random.choice(num_items, size=length_of_dataset))
-        # user_index = torch.LongTensor(np.random.choice(num_users, size=length_of_dataset))
-        # session_index = torch.LongTensor(np.random.choice(num_sessions, size=length_of_dataset))
-
-        # # assume all items are available in all sessions.
-        # item_availability = torch.ones(num_sessions, num_items).bool()
-
-        # dataset = ChoiceDataset(
-        #     # pre-specified keywords of __init__
-        #     item_index=item_index,  # required.
-        #     # optional:
-        #     user_index=user_index,
-        #     session_index=session_index,
-        #     item_availability=item_availability,
-        #     # additional keywords of __init__
-        #     user_obs=user_obs,
-        #     item_obs=item_obs,
-        #     session_obs=session_obs,
-        #     price_obs=price_obs)
-
     def create_random_choice_dataset(self):
         self.create_random_data()
         return ChoiceDataset(
