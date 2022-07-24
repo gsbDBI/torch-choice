@@ -16,7 +16,7 @@ from torch_choice.utils.run_helper import run
 class TestConditionalLogitModel(unittest.TestCase):
     """Unit tests for the conditional logit model."""
     def load_mode_canada_data(self):
-        self.df = pd.read_csv('../tutorials/public_datasets/ModeCanada.csv')
+        self.df = pd.read_csv('./tutorials/public_datasets/ModeCanada.csv')
         self.df = self.df.query('noalt == 4').reset_index(drop=True)
         self.df.sort_values(by='case', inplace=True)
 
