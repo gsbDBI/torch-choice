@@ -7,9 +7,10 @@ Date: Jul. 23, 2022
 import unittest
 
 import pandas as pd
+from copy import deepcopy
 import torch
 from torch_choice.data import ChoiceDataset, utils
-from torch_choice.model import ConditionalLogitModel
+from torch_choice.model import ConditionalLogitModel, NestedLogitModel
 from torch_choice.utils.run_helper import run
 
 
@@ -64,9 +65,35 @@ class TestConditionalLogitModel(unittest.TestCase):
     def test_model_fitting_correctness(self):
         dataset = self.load_mode_canada_data()
         model = self.test_initialization()
-        # run for only 100 epochs.
-        run(model, dataset, num_epochs=100, learning_rate=0.01, batch_size=-1)
+        learning_rate=0.01
+        # run until the full convergence.
+        num_epochs=50000
+        model = deepcopy(model)  # do not modify the model outside.
+        data_loader = utils.create_data_loader(dataset, batch_size=len(dataset), shuffle=True)
+        optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+        # fit the model.
+        for e in range(1, num_epochs + 1):
+            # track the log-likelihood to minimize.
+            ll, count = 0.0, 0.0
+            for batch in data_loader:
+                item_index = batch['item'].item_index if isinstance(model, NestedLogitModel) else batch.item_index
+                loss = model.negative_log_likelihood(batch, item_index)
 
+                ll -= loss.detach().item()# * len(batch)
+                count += len(batch)
+
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
+            # ll /= count
+            if e % (num_epochs // 10) == 0:
+                print(f'Epoch {e}: Log-likelihood={ll}')
+
+        final_ll = ll
+        # based on R output.
+        expected_ll = -1874.3
+
+        self.assertAlmostEqual(final_ll, expected_ll, delta=20)
 
 
 if __name__ == '__main__':
