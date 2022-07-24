@@ -17,7 +17,7 @@ joblib==1.1.0
 Markdown==3.4.1
 multidict==6.0.2
 numpy>=1.22
-numpy==1.21.4
+numpy==1.22.0
 oauthlib==3.2.0
 packaging==21.3
 pandas==1.4.3
