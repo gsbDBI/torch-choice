@@ -264,11 +264,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#components-of-the-consumer-choice-modelling-problem" class="md-nav__link">
-    Components of the Consumer Choice Modelling Problem
+  <a href="#components-of-the-consumer-choice-modeling-problem" class="md-nav__link">
+    Components of the Consumer Choice Modeling Problem
   </a>
   
-    <nav class="md-nav" aria-label="Components of the Consumer Choice Modelling Problem">
+    <nav class="md-nav" aria-label="Components of the Consumer Choice Modeling Problem">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -279,22 +279,29 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#items-and-categories" class="md-nav__link">
-    Items and Categories
+  <a href="#what-items-and-categories" class="md-nav__link">
+    What: Items and Categories
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#users" class="md-nav__link">
-    Users
+  <a href="#who-users" class="md-nav__link">
+    Who: Users
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#sessions" class="md-nav__link">
-    Sessions
+  <a href="#when-and-where-sessions" class="md-nav__link">
+    When and Where: Sessions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#putting-everything-together" class="md-nav__link">
+    Putting Everything Together
   </a>
   
 </li>
@@ -306,14 +313,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#observables" class="md-nav__link">
+    Observables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-toy-example" class="md-nav__link">
+    A Toy Example
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#available-models" class="md-nav__link">
-    Available Models
+  <a href="#models" class="md-nav__link">
+    Models
   </a>
   
 </li>
@@ -473,11 +494,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#components-of-the-consumer-choice-modelling-problem" class="md-nav__link">
-    Components of the Consumer Choice Modelling Problem
+  <a href="#components-of-the-consumer-choice-modeling-problem" class="md-nav__link">
+    Components of the Consumer Choice Modeling Problem
   </a>
   
-    <nav class="md-nav" aria-label="Components of the Consumer Choice Modelling Problem">
+    <nav class="md-nav" aria-label="Components of the Consumer Choice Modeling Problem">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -488,22 +509,29 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#items-and-categories" class="md-nav__link">
-    Items and Categories
+  <a href="#what-items-and-categories" class="md-nav__link">
+    What: Items and Categories
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#users" class="md-nav__link">
-    Users
+  <a href="#who-users" class="md-nav__link">
+    Who: Users
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#sessions" class="md-nav__link">
-    Sessions
+  <a href="#when-and-where-sessions" class="md-nav__link">
+    When and Where: Sessions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#putting-everything-together" class="md-nav__link">
+    Putting Everything Together
   </a>
   
 </li>
@@ -515,14 +543,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#observables" class="md-nav__link">
+    Observables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-toy-example" class="md-nav__link">
+    A Toy Example
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#available-models" class="md-nav__link">
-    Available Models
+  <a href="#models" class="md-nav__link">
+    Models
   </a>
   
 </li>
@@ -542,39 +584,101 @@
 
 
 <h1 id="introduction">Introduction</h1>
-<p>This document provides a short introduction to the consumer choice model we aim to solve.</p>
-<p>In short, all models in the package aim to predict which item an user will purchase while facing the shelves in a supermarket.
-More specifically, for each user <span class="arithmatex">\(u\)</span> and item <span class="arithmatex">\(i\)</span>, models compute a value <span class="arithmatex">\(U_{ui}\)</span> predicting the utility user <span class="arithmatex">\(u\)</span> will get from purchasing item <span class="arithmatex">\(i\)</span>, then user <span class="arithmatex">\(u\)</span> is predicted to purchase the item <span class="arithmatex">\(i\)</span> generating the maximum utility.</p>
-<p>However, the usage of our models is not limited to this supermarket context, researchers can adjust the definition of <strong>user</strong> and <strong>item</strong> to fit any choice modelling context. The <a href="../projects/">related project</a> page overviews some extensions of our models to other context.</p>
-<h2 id="components-of-the-consumer-choice-modelling-problem">Components of the Consumer Choice Modelling Problem</h2>
-<p>We begin with essential component of the consumer choice modelling problem. Walking through these components should help you understand what kind of data our models are working on.</p>
+<p>This document briefly introduces the consumer choice model we aim to solve.</p>
+<p>In short, all models (the conditional logit model, the nested logit model, and the Bayesian embedding model) in the package aim to predict which item a user will purchase while facing the shelves in a supermarket.</p>
+<p>Specifically, for each user <span class="arithmatex">\(u\)</span> and item <span class="arithmatex">\(i\)</span>, models compute a value <span class="arithmatex">\(U_{ui}\)</span> predicting the utility user <span class="arithmatex">\(u\)</span> will get from purchasing item <span class="arithmatex">\(i\)</span>. User <span class="arithmatex">\(u\)</span> is predicted to purchase the item <span class="arithmatex">\(i\)</span>, generating the maximum utility.</p>
+<p>However, the usage of our models is not limited to this supermarket context; researchers can adjust the definition of <strong>user</strong> and <strong>item</strong> to fit any choice modeling context. The <a href="../projects/">related project</a> page overviews some extensions of our models to other contexts.</p>
+<h2 id="components-of-the-consumer-choice-modeling-problem">Components of the Consumer Choice Modeling Problem</h2>
+<p>We begin with essential components of the consumer choice modeling problem. Walking through these components should help you understand what kind of data our models are working on.</p>
 <h3 id="purchasing-record">Purchasing Record</h3>
-<p>Each row (record) of the dataset is called a <strong>purchasing record</strong>, which includes <em>who</em> bought <em>what</em> at <em>when</em> and <em>where</em>.
-Let <span class="arithmatex">\(B\)</span> denote the number of <strong>purchasing records</strong> in the dataset (i.e., number of rows of the dataset). Each row <span class="arithmatex">\(b \in \{1,2,\dots, B\}\)</span> corresponds to a purchase record (i.e., <em>who</em> bought <em>what</em> at <em>where and when</em>).</p>
-<h3 id="items-and-categories">Items and Categories</h3>
-<p>To begin with, there are <span class="arithmatex">\(I\)</span> <strong>items</strong> indexed by <span class="arithmatex">\(i \in \{1,2,\dots,I\}\)</span> under our consideration.</p>
-<p>Further, the researcher can optionally partition the set items into <span class="arithmatex">\(C\)</span> <strong>categories</strong> indexed by <span class="arithmatex">\(c \in \{1,2,\dots,C\}\)</span>. Let <span class="arithmatex">\(I_c\)</span> denote the collection of items in category <span class="arithmatex">\(c\)</span>, it is easy to verify that
-$
-\bigcup_{c \in {1, 2, \dots, C}} I_c = {1, 2, \dots I}
-$
-If the researcher does not wish to model different categories differently, the researcher can simply put all items in one single category: <span class="arithmatex">\(I_1 = \{1, 2, \dots I\}\)</span>, so that all items belong to the same category.</p>
-<p><strong>Note</strong>: since we will be using PyTorch to train our model, we represent their identities with integer values instead of the raw human-readable names of items (e.g., Dell 24 inch LCD monitor).
-Raw item names can be encoded easily with <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OrdinalEncoder.html">sklearn.preprocessing.OrdinalEncoder</a></p>
-<h3 id="users">Users</h3>
-<p>Each purchaing reocrd is naturally associated with an <strong>user</strong> indexed by <span class="arithmatex">\(u \in \{1,2,\dots,U\}\)</span> (<em>who</em>) as well.</p>
-<h3 id="sessions">Sessions</h3>
-<p>Our data structure encompasses <em>where and when</em> using a notion called <strong>session</strong> indexed by <span class="arithmatex">\(s \in \{1,2,\dots, S\}\)</span>.
-For example, when the data came from a single store over the period of a year. In this case, the notion of <em>where</em> does not matter that much, and session <span class="arithmatex">\(s\)</span> is simply the date of purchase.</p>
-<p>Another example is that we have the purchase record from different stores, the session <span class="arithmatex">\(s\)</span> can be defined as a pair of <em>(date, store)</em> instead.</p>
-<p>If the researcher does not wish to handle records from different sessions differently, the researcher can assign the same session ID to all rows of the dataset.</p>
-<p>To summarize, each purchasing record <span class="arithmatex">\(b\)</span> in the dataset is characterized by a user-session-item tuple <span class="arithmatex">\((u, s, i)\)</span>.</p>
-<p>When there are multiple items bought by the same user in the same session, there will be multiple rows in the dataset with the same <span class="arithmatex">\((u, s)\)</span> corresponding to the same receipt.</p>
+<p>A <strong>purchasing record</strong> is a record describing <em>who</em> bought <em>what</em> at <em>when</em> and <em>where</em>.
+Let <span class="arithmatex">\(B\)</span> denote the number of <strong>purchasing records</strong> in the dataset (i.e., number of rows/observation of the dataset). Each row <span class="arithmatex">\(b \in \{1,2,\dots, B\}\)</span> corresponds to a purchase record.</p>
+<h3 id="what-items-and-categories"><em>What</em>: Items and Categories</h3>
+<p>To begin with, suppose there are <span class="arithmatex">\(I\)</span> <strong>items</strong> indexed by <span class="arithmatex">\(i \in \{1,2,\dots,I\}\)</span>.</p>
+<p>The researcher can optionally partition the set items into <span class="arithmatex">\(C\)</span> <strong>categories</strong> indexed by <span class="arithmatex">\(c \in \{1,2,\dots,C\}\)</span>. Let <span class="arithmatex">\(I_c\)</span> denote the collection of items in category <span class="arithmatex">\(c\)</span>. It's easy to see that the union of all <span class="arithmatex">\(I_c\)</span> is the entire set of items <span class="arithmatex">\(\{1, 2, \dots I\}\)</span>.
+Suppose the researcher does not wish to model different categories differently. In that case, the researcher can put all items in one category: <span class="arithmatex">\(I_1 = \{1, 2, \dots I\}\)</span>, so all items belong to the same category.</p>
+<p>For each purchasing record <span class="arithmatex">\(b \in \{1,2,\dots, B\}\)</span>, there is a corresponding <span class="arithmatex">\(i_b \in \{1,2,\dots,I\}\)</span> saying which item was chosen in this record.</p>
+<p><strong>Note</strong>: since we will be using PyTorch to train our model, we represent their identities with integer values instead of the raw human-readable names of items (e.g., Dell 24-inch LCD monitor).
+Raw item names can be encoded easily with <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OrdinalEncoder.html">sklearn.preprocessing.OrdinalEncoder</a>.</p>
+<h3 id="who-users"><em>Who</em>: Users</h3>
+<p>The counter-part of items in our setting are <strong>user</strong> indexed by <span class="arithmatex">\(u \in \{1,2,\dots,U\}\)</span> as well.</p>
+<p>For each purchasing record <span class="arithmatex">\(b \in \{1,2,\dots, B\}\)</span>, there is a corresponding <span class="arithmatex">\(u_b \in \{1,2,\dots,I\}\)</span> describing which user was making the decision.</p>
+<h3 id="when-and-where-sessions"><em>When and Where</em>: Sessions</h3>
+<p>Our data structure encompasses <em>where and when</em> using a notion called <strong>session</strong> indexed by <span class="arithmatex">\(s \in \{1,2,\dots, S\}\)</span>.</p>
+<p>For example, we had the purchase record from five different stores for every day in 2021, then a session <span class="arithmatex">\(s\)</span> is defined as a pair of <em>(date, storeID)</em>, and there are <span class="arithmatex">\(5 \times 365\)</span> sessions in total.</p>
+<p>In another example, suppose the data came from a single store for over a year. In this case, the notion of <em>where</em> is immaterial, and session <span class="arithmatex">\(s\)</span> is simply the date of purchase.</p>
+<p>The notion of sessions can be more flexible than just date and location. For example, if we want to distinguish between online ordering and in-store purchasing, we can define the session as (date, storeID, IsOnlineOrdering).
+The session variable serves as a tool for the researcher to split the dataset; the usefulness of the session will be more evident after introducing observables (features) later.</p>
+<p>If the researcher does not wish to handle records from different sessions differently, the researcher can assign the same session ID to all dataset rows.</p>
+<h3 id="putting-everything-together">Putting Everything Together</h3>
+<p>To summarize, each purchasing record <span class="arithmatex">\(b \in \{1, 2, \dots, B\}\)</span> in the dataset is characterized by a user-session-item tuple <span class="arithmatex">\((u_b, s_b, i_b)\)</span>. The totality of <span class="arithmatex">\(B\)</span> purchasing records consists of the dataset we are modeling.</p>
+<p>When the same user buys multiple items in the same session, the dataset will have multiple purchasing records with the same <span class="arithmatex">\((u, s)\)</span> corresponding to the same receipt.</p>
 <h3 id="item-availability">Item Availability</h3>
-<p>It is not necessarily that all items are available in every session, items can get out-of-stock in particular sessions.</p>
-<p>To handle these cases, the researcher can <em>optionally</em> provide a boolean tensor <span class="arithmatex">\(\in \{\texttt{True}, \texttt{False}\}^{S\times I}\)</span> to indicate which items are available for purchasing in each session.
-While predicting the purchase probabilities, the model sets the probability for these unavailable items to zero and normalizes probabilities among available items.
+<p>It is not necessarily that all items are available in every session; items can get out of stock in particular sessions.</p>
+<p>To handle these cases, the researcher can <em>optionally</em> provide a boolean tensor <span class="arithmatex">\(A \in \{\texttt{True}, \texttt{False}\}^{S\times I}\)</span> to indicate which items are available for purchasing in each session. <span class="arithmatex">\(A_{s, i} = \texttt{True}\)</span> if and only if item <span class="arithmatex">\(i\)</span> was available in session <span class="arithmatex">\(s\)</span>.</p>
+<p>While predicting the purchase probabilities, the model sets the probability for these unavailable items to zero and normalizes probabilities among available items.
 If the item availability is not provided, the model assumes all items are available in all sessions.</p>
-<h2 id="available-models">Available Models</h2>
+<h3 id="observables">Observables</h3>
+<p>Next, let's talk about observables (yes, it's the same as <em>feature</em> in machine learning literature, it's the <span class="arithmatex">\(X\)</span> variable).
+The researcher can incorporate observables of, for example, users and items into the model.</p>
+<p>Currently, the package support the following types of observables, where <span class="arithmatex">\(K_{...}\)</span> denote the number of observables.</p>
+<ol>
+<li><code>user_obs</code> <span class="arithmatex">\(\in \mathbb{R}^{U\times K_{user}}\)</span>: user observables such as user age.</li>
+<li><code>item_obs</code> <span class="arithmatex">\(\in \mathbb{R}^{I\times K_{item}}\)</span>: item observables such as item quality.</li>
+<li><code>session_obs</code> <span class="arithmatex">\(\in \mathbb{R}^{S \times K_{session}}\)</span>: session observable such as whether the purchase was made on weekdays.</li>
+<li><code>price_obs</code> <span class="arithmatex">\(\in \mathbb{R}^{S \times I \times K_{price}}\)</span>, price observables are values depending on <strong>both</strong> session and item such as the price of item.</li>
+</ol>
+<p>Please note that we consider these four types as <strong>definitions</strong> of observable types, the type of an observable is defined by its variation instead of the actual meaning of the observable.</p>
+<p>If an observable depends on both session and item, it is called a <em>price observable</em> no matter if it is related to the actual price or not. Additionally, the actual price of an item might not change across sessions; in this case the <em>price</em> is called an <em>item observable</em>.</p>
+<h3 id="a-toy-example">A Toy Example</h3>
+<p>Suppose we have a dataset of purchase history from two stores (Store A and B) on two dates (Sep 16 and 17), both stores sell {apple, banana, orange} (<code>num_items=3</code>) and there are three people came to those stores between Sep 16 and 17.</p>
+<table>
+<thead>
+<tr>
+<th>user_index</th>
+<th>session_index</th>
+<th>item_index</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Amy</td>
+<td>Sep-17-2021-Store-A</td>
+<td>banana</td>
+</tr>
+<tr>
+<td>Ben</td>
+<td>Sep-17-2021-Store-B</td>
+<td>apple</td>
+</tr>
+<tr>
+<td>Ben</td>
+<td>Sep-16-2021-Store-A</td>
+<td>orange</td>
+</tr>
+<tr>
+<td>Charlie</td>
+<td>Sep-16-2021-Store-B</td>
+<td>apple</td>
+</tr>
+<tr>
+<td>Charlie</td>
+<td>Sep-16-2021-Store-B</td>
+<td>orange</td>
+</tr>
+</tbody>
+</table>
+<p><strong>NOTE</strong>: For demonstration purposes, the example dataset has <code>user_index</code>, <code>session_index</code> and <code>item_index</code> as strings, they should be consecutive integers in actual production. One can easily convert them to integers using <code>sklearn.preprocessing.LabelEncoder</code>.</p>
+<p>In the example above,
+- <code>user_index=[0,1,1,2,2]</code> (with encoding <code>0=Amy, 1=Ben, 2=Charlie</code>),
+- <code>session_index=[0,1,2,3,3]</code> (with encoding <code>0=Sep-17-2021-Store-A, 1=Sep-17-2021-Store-B, 2=Sep-16-2021-Store-A, 3=Sep-16-2021-Store-B</code>),
+- <code>item_index=[0,1,2,1,2]</code> (with encoding <code>0=banana, 1=apple, 2=orange</code>).</p>
+<p>Suppose we believe people's purchasing decision depends on the nutrition levels of these fruits; suppose apple has the highest nutrition level and banana has the lowest one, we can add</p>
+<p><code>item_obs=[[1.5], [12.0], [3.3]]</code> <span class="arithmatex">\(\in \mathbb{R}^{3\times 1}\)</span>. The shape of this tensor is number-of-items by number-of-observable.</p>
+<p><strong>NOTE</strong>: If someone went to one store and bought multiple items (e.g., Charlie bought both apple and orange at Store B on Sep-16), we include them as separate rows in the dataset and model them independently.</p>
+<h2 id="models">Models</h2>
+<p>The <code>torch-choice</code> library provides two models, the conditional logit model and the nested logit model, for modeling the dataset. Each model takes in <span class="arithmatex">\((u_b, s_b)\)</span> altogether with observables and outputs a probability of purchasing each <span class="arithmatex">\(\tilde{i} \in \{1, 2, \dots, I\}\)</span>, denoted as <span class="arithmatex">\(\hat{p}_{u_b, s_b, \tilde{i}}\)</span>. In cases when not all items are available, the model sets the probability of unavailable items to zero and normalizes probabilities among available items. <span class="arithmatex">\(\hat{p}_{u_b, s_b, \tilde{i}}\)</span> is the predicted probability of purchasing item <span class="arithmatex">\(\tilde{i}\)</span> in session <span class="arithmatex">\(s_b\)</span> by user <span class="arithmatex">\(u_b\)</span> given all information we know. Model parameters are trained using gradient descent algorithm and the loss function is the negative log-likelihood of the model <span class="arithmatex">\(-\sum_{b=1}^B \log(\hat{p}_{u_b, s_b, i_b})\)</span>.</p>
+<p>The major difference among models lies in the way they compute predicted probabilities.</p>
 
               
             </article>
