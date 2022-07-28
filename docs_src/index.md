@@ -2,7 +2,7 @@
 
 > Authors: Tianyu Du and Ayush Kanodia; PI: Susan Athey; Contact: tianyudu@stanford.edu
 
-`torch-choice` is a flexible, fast choice modeling with PyTorch: logit and nested logit models, designed for both estimation and prediction. See the [complete documentation](https://gsbdbi.github.io/torch-choice/) for more details.
+`torch-choice` is a flexible, fast choice modeling with PyTorch: logit and nested logit models, designed for both estimation and prediction. See the [complete documentation](https://deepchoice-vcghm.ondigitalocean.app) for more details.
 Unique features:
 1. GPU support via torch for speed
 2. Specify customized models
@@ -14,6 +14,8 @@ Unique features:
 2. Install required dependencies using: `pip3 install -r requirements.txt`.
 3. Run `pip3 install torch-choice`.
 4. Check installation by running `python3 -c 'import torch_choice; print(torch_choice.__version__)'`.
+
+[The installation page](https://gsbdbi.github.io/torch-choice/install/) provides more details on installation.
 
 In this demonstration, we will guide you through a minimal example of fitting a conditional logit model using our package. We will be referencing to R code and Stata code as well to deliver a smooth knowledge transfer.
 
@@ -78,11 +80,15 @@ summary(ml.MC1)
 ```
 
 # What's in the package?
-1. The package includes a data management tool based on `PyTorch`'s dataset called `ChoiceDataset`. Our dataset implementation allows users to easily move data between CPU and GPU. Unlike traditional long or wide formats, the `ChoiceDataset` offers a memory-efficient way to manage observables.
+Overall, the `torch-choice` package offers the following features:
 
-2. The package provides a (1) conditional logit model for consumer choice modeling, (2) a nested logit model for consumer choice modeling.
+1. The package includes a data management module called `ChoiceDataset`, which is built upon PyTorch's dataset module. Our dataset implementation allows users to easily move data between CPU and GPU. Unlike traditional long or wide formats, the `ChoiceDataset` offers a memory-efficient way to manage observables.
+
+2. The package provides a (1) conditional logit model and (2) a nested logit model for consumer choice modeling.
 
 3. The package leverage GPU acceleration using PyTorch and easily scale to large dataset of millions of choice records. All models are trained using state-of-the-art optimizers by in PyTorch. These optimization algorithms are tested to be scalable by modern machine learning practitioners. However, you can rest assure that the package runs flawlessly when no GPU is used as well.
 
-4. For those without much experience in model PyTorch development, setting up optimizers and training loops can be frustrating. We provide easy-to-use [PyTorch lightning](https://www.pytorchlightning.ai) wrapper of models to free researchers from the hassle from setting up PyTorch optimizers and training loops.
+4. Setting up the PyTorch training pipelines can be frustrating. We provide easy-to-use [PyTorch lightning](https://www.pytorchlightning.ai) wrapper of models to free researchers from the hassle from setting up PyTorch optimizers and training loops.
+
+
 
