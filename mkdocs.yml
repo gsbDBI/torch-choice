@@ -4,8 +4,8 @@ docs_dir: docs_src
 site_dir: docs
 nav:
     - Home: index.md
-    - About: intro.md
-    - Get Started: install.md
+    - Installation: install.md
+    - Introduction: intro.md
     - Tutorial for Data Management: data_management.md
     - Tutorial for Easy Data Management and Stata Users: easy_data_management.md
     - Tutorial for Conditional Logit Model: conditional_logit_model_mode_canada.md
