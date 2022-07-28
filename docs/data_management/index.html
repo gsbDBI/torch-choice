@@ -230,8 +230,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../intro/" class="md-nav__link">
-        About
+      <a href="../install/" class="md-nav__link">
+        Installation
       </a>
     </li>
   
@@ -245,8 +245,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../install/" class="md-nav__link">
-        Get Started
+      <a href="../intro/" class="md-nav__link">
+        Introduction
       </a>
     </li>
   
@@ -294,49 +294,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#components-of-the-consumer-choice-modelling-problem" class="md-nav__link">
-    Components of the Consumer Choice Modelling Problem
-  </a>
-  
-    <nav class="md-nav" aria-label="Components of the Consumer Choice Modelling Problem">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#purchasing-record" class="md-nav__link">
-    Purchasing Record
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#items-and-categories" class="md-nav__link">
-    Items and Categories
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#users" class="md-nav__link">
-    Users
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sessions" class="md-nav__link">
-    Sessions
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#item-availability" class="md-nav__link">
-    Item Availability
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#observables" class="md-nav__link">
     Observables
   </a>
@@ -360,18 +317,6 @@
         
       </ul>
     </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#a-toy-example" class="md-nav__link">
-    A Toy Example
-  </a>
   
 </li>
       
@@ -589,49 +534,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#components-of-the-consumer-choice-modelling-problem" class="md-nav__link">
-    Components of the Consumer Choice Modelling Problem
-  </a>
-  
-    <nav class="md-nav" aria-label="Components of the Consumer Choice Modelling Problem">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#purchasing-record" class="md-nav__link">
-    Purchasing Record
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#items-and-categories" class="md-nav__link">
-    Items and Categories
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#users" class="md-nav__link">
-    Users
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sessions" class="md-nav__link">
-    Sessions
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#item-availability" class="md-nav__link">
-    Item Availability
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#observables" class="md-nav__link">
     Observables
   </a>
@@ -655,18 +557,6 @@
         
       </ul>
     </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#a-toy-example" class="md-nav__link">
-    A Toy Example
-  </a>
   
 </li>
       
@@ -775,47 +665,20 @@
 
 <h1 id="tutorial-data-management">Tutorial: Data Management</h1>
 <p><strong>Author: Tianyu Du (tianyudu@stanford.edu)</strong></p>
+<p><strong>Note</strong>: please go through the introduction tutorial <a href="https://gsbdbi.github.io/torch-choice/intro/">here</a> before proceeding.</p>
 <p>This notebook aims to help users understand the functionality of <code>ChoiceDataset</code> object.
-The <code>ChoiceDataset</code> is an instance of the more general PyTorch dataset object holding information of consumer choices. The <code>ChoiceDataset</code> offers easy, clean and efficient data management.</p>
+The <code>ChoiceDataset</code> is an instance of the more general PyTorch dataset object holding information of consumer choices. The <code>ChoiceDataset</code> offers easy, clean and efficient data management. The Jupyter-notebook version of this tutorial can be found <a href="https://github.com/gsbDBI/torch-choice/blob/main/tutorials/data_management.ipynb">here</a>.</p>
+<p>This tutorial provides in-depth explanations on how the <code>torch-choice</code> library manages data. We are also providing an easy-to-use data wrapper converting long-format dataset to <code>ChoiceDataset</code> <a href="https://gsbdbi.github.io/torch-choice/easy_data_management/">here</a>, you can harness the <code>torch-choice</code> library without going through this tutorial. </p>
 <p><strong>Note</strong>: since this package was initially proposed for modelling consumer choices, attribute names of <code>ChoiceDataset</code> are borrowed from the consumer choice literature.</p>
-<p>The BEMB model was initially designed for predicting consumers’ purchasing choices from the supermarket purchase dataset, we use the same setup in this tutorial as a running example. However, one can easily adopt the <code>ChoiceDataset</code> data structure to other use cases.</p>
-<p><strong>Note</strong>: the Jupyter-notebook version of this tutorial can be found <a href="https://github.com/gsbDBI/torch-choice/blob/main/tutorials/data_management.ipynb">here</a>.</p>
-<h2 id="components-of-the-consumer-choice-modelling-problem">Components of the Consumer Choice Modelling Problem</h2>
-<p>We begin with essential component of the consumer choice modelling problem. Walking through these components should help you understand what kind of data our models are working on.</p>
-<h3 id="purchasing-record">Purchasing Record</h3>
-<p>Each row (record) of the dataset is called a <strong>purchasing record</strong>, which includes <em>who</em> bought <em>what</em> at <em>when</em> and <em>where</em>.
-Let <span class="arithmatex">\(B\)</span> denote the number of <strong>purchasing records</strong> in the dataset (i.e., number of rows of the dataset). Each row <span class="arithmatex">\(b \in \{1,2,\dots, B\}\)</span> corresponds to a purchase record (i.e., <em>who</em> bought <em>what</em> at <em>where and when</em>).</p>
-<h3 id="items-and-categories">Items and Categories</h3>
-<p>To begin with, there are <span class="arithmatex">\(I\)</span> <strong>items</strong> indexed by <span class="arithmatex">\(i \in \{1,2,\dots,I\}\)</span> under our consideration.</p>
-<p>Further, the researcher can optionally partition the set items into <span class="arithmatex">\(C\)</span> <strong>categories</strong> indexed by <span class="arithmatex">\(c \in \{1,2,\dots,C\}\)</span>. Let <span class="arithmatex">\(I_c\)</span> denote the collection of items in category <span class="arithmatex">\(c\)</span>, it is easy to verify that</p>
-<div class="arithmatex">\[
-\bigcup_{c \in \{1, 2, \dots, C\}} I_c = \{1, 2, \dots I\}
-\]</div>
-<p>If the researcher does not wish to model different categories differently, the researcher can simply put all items in one single category: <span class="arithmatex">\(I_1 = \{1, 2, \dots I\}\)</span>, so that all items belong to the same category.</p>
-<p><strong>Note</strong>: since we will be using PyTorch to train our model, we represent their identities with integer values instead of the raw human-readable names of items (e.g., Dell 24 inch LCD monitor).
-Raw item names can be encoded easily with <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OrdinalEncoder.html">sklearn.preprocessing.OrdinalEncoder</a>.</p>
-<h3 id="users">Users</h3>
-<p>Each purchaing reocrd is naturally associated with an <strong>user</strong> indexed by <span class="arithmatex">\(u \in \{1,2,\dots,U\}\)</span> (<em>who</em>) as well.</p>
-<h3 id="sessions">Sessions</h3>
-<p>Our data structure encompasses <em>where and when</em> using a notion called <strong>session</strong> indexed by <span class="arithmatex">\(s \in \{1,2,\dots, S\}\)</span>.
-For example, when the data came from a single store over the period of a year. In this case, the notion of <em>where</em> does not matter that much, and session <span class="arithmatex">\(s\)</span> is simply the date of purchase.</p>
-<p>Another example is that we have the purchase record from different stores, the session <span class="arithmatex">\(s\)</span> can be defined as a pair of <em>(date, store)</em> instead.</p>
-<p>If the researcher does not wish to handle records from different sessions differently, the researcher can assign the same session ID to all rows of the dataset.</p>
-<p>To summarize, each purchasing record <span class="arithmatex">\(b\)</span> in the dataset is characterized by a user-session-item tuple <span class="arithmatex">\((u, s, i)\)</span>.</p>
-<p>When there are multiple items bought by the same user in the same session, there will be multiple rows in the dataset with the same <span class="arithmatex">\((u, s)\)</span> corresponding to the same receipt.</p>
-<h3 id="item-availability">Item Availability</h3>
-<p>It is not necessarily that all items are available in every session, items can get out-of-stock in particular sessions.</p>
-<p>To handle these cases, the researcher can <em>optionally</em> provide a boolean tensor <span class="arithmatex">\(\in \{\texttt{True}, \texttt{False}\}^{S\times I}\)</span> to indicate which items are available for purchasing in each session.
-While predicting the purchase probabilities, the model sets the probability for these unavailable items to zero and normalizes probabilities among available items.
-If the item availability is not provided, the model assumes all items are available in all sessions.</p>
 <h3 id="observables">Observables</h3>
+<p>Observables are tensors with specific shapes, we classify observables into four categories based on their variations.</p>
 <h4 id="basic-usage">Basic Usage</h4>
 <p>Optionally, the researcher can incorporate observables of, for example, users and items. Currently, the package support the following types of observables, where <span class="arithmatex">\(K_{...}\)</span> denote the number of observables.</p>
 <ol>
-<li><code>user_obs</code> <span class="arithmatex">\(\in \mathbb{R}^{U\times K_{user}}\)</span></li>
-<li><code>item_obs</code> <span class="arithmatex">\(\in \mathbb{R}^{I\times K_{item}}\)</span></li>
-<li><code>session_obs</code> <span class="arithmatex">\(\in \mathbb{R}^{S \times K_{session}}\)</span></li>
-<li><code>price_obs</code> <span class="arithmatex">\(\in \mathbb{R}^{S \times I \times K_{price}}\)</span>, price observables are values depending on <strong>both</strong> session and item.</li>
+<li><code>user_obs</code> <span class="arithmatex">\(\in \mathbb{R}^{U\times K_{user}}\)</span>: user observables such as user age.</li>
+<li><code>item_obs</code> <span class="arithmatex">\(\in \mathbb{R}^{I\times K_{item}}\)</span>: item observables such as item quality.</li>
+<li><code>session_obs</code> <span class="arithmatex">\(\in \mathbb{R}^{S \times K_{session}}\)</span>: session observable such as whether the purchase was made on weekdays.</li>
+<li><code>price_obs</code> <span class="arithmatex">\(\in \mathbb{R}^{S \times I \times K_{price}}\)</span>, price observables are values depending on <strong>both</strong> session and item such as the price of item.</li>
 </ol>
 <p>The researcher should supply them with as appropriate keyword arguments while constructing the <code>ChoiceDataset</code> object.</p>
 <h4 id="advanced-usage-additional-observables">Advanced Usage: Additional Observables</h4>
@@ -827,52 +690,6 @@ U_{usi} = \beta_{i} X^{(u)}_{user\ income} + \gamma X^{(u)}_{user\ market\ membe
 <p>The coefficient for user income is item-specific so that it captures the nature of the product (i.e., a luxury or an essential good). Additionally, the utility representation admits an user market membership becomes shoppers with active memberships tend to purchase more, and the coefficient of this term is constant across all items.
 As we will cover later in the modelling section, we need to supply two user observable tensors in this case for the model to build coefficient with different levels of variations (i.e., item-specific coefficients versus constant coefficients). In this case, the researcher needs to supply two tensors <code>user_income</code> and <code>user_market_membership</code> as keyword arguments to the <code>ChoiceDataset</code> constructor.
 The <code>ChoiceDataset</code> handles multiple user/item/session/price observables internally, for example, every keyword arguments passed into <code>ChoiceDataset</code> with name starting with <code>item_</code> (except for the reserved <code>item_availability</code>) will be treated as item observable tensors. All keywords with names starting <code>user_</code>, <code>session_</code> and <code>price_</code> (except for reserved names like <code>user_index</code> and <code>session_index</code> mentioned above) will be interpreted as user/session/price observable tensors.</p>
-<h2 id="a-toy-example">A Toy Example</h2>
-<p>Suppose we have a dataset of purchase history from two stores (Store A and B) on two dates (Sep 16 and 17), both stores sell {apple, banana, orange} (<code>num_items=3</code>) and there are three people came to those stores between Sep 16 and 17.</p>
-<table>
-<thead>
-<tr>
-<th>user_index</th>
-<th>session_index</th>
-<th>item_index</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Amy</td>
-<td>Sep-17-2021-Store-A</td>
-<td>banana</td>
-</tr>
-<tr>
-<td>Ben</td>
-<td>Sep-17-2021-Store-B</td>
-<td>apple</td>
-</tr>
-<tr>
-<td>Ben</td>
-<td>Sep-16-2021-Store-A</td>
-<td>orange</td>
-</tr>
-<tr>
-<td>Charlie</td>
-<td>Sep-16-2021-Store-B</td>
-<td>apple</td>
-</tr>
-<tr>
-<td>Charlie</td>
-<td>Sep-16-2021-Store-B</td>
-<td>orange</td>
-</tr>
-</tbody>
-</table>
-<p><strong>NOTE</strong>: For demonstration purpose, the example dataset has <code>user_index</code>, <code>session_index</code> and <code>item_index</code> as strings, they should be consecutive integers in actual production. One can easily convert them to integers using <code>sklearn.preprocessing.LabelEncoder</code>.</p>
-<p>In the example above, 
-- <code>user_index=[0,1,1,2,2]</code> (with encoding <code>0=Amy, 1=Ben, 2=Charlie</code>),
-- <code>session_index=[0,1,2,3,3]</code> (with encoding <code>0=Sep-17-2021-Store-A, 1=Sep-17-2021-Store-B, 2=Sep-16-2021-Store-A, 3=Sep-16-2021-Store-B</code>),
-- <code>item_index=[0,1,2,1,2]</code> (with encoding <code>0=banana, 1=apple, 2=orange</code>).</p>
-<p>Suppose we believe people's purchasing decision depends on nutrition levels of these fruits, suppose apple has the highest nutrition level and banana has the lowest one, we can add</p>
-<p><code>item_obs=[[1.5], [12.0], [3.3]]</code> <span class="arithmatex">\(\in \mathbb{R}^{3\times 1}\)</span>. The shape of this tensor is number-of-items by number-of-observable.</p>
-<p><strong>NOTE</strong>: If someone went to one store and bought multiple items (e.g., Charlie bought both apple and orange at Store B on Sep-16), we include them as separate rows in the dataset and model them independently.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># import required dependencies.</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">import</span> <span class="nn">torch</span>
@@ -1152,7 +969,7 @@ dict.price_obs.shape=torch.Size([10000, 4, 12])
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
         
-        <a href="../install/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Get Started" rel="prev">
+        <a href="../intro/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Introduction" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -1161,7 +978,7 @@ dict.price_obs.shape=torch.Size([10000, 4, 12])
               <span class="md-footer__direction">
                 Previous
               </span>
-              Get Started
+              Introduction
             </div>
           </div>
         </a>
