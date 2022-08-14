@@ -163,7 +163,7 @@ class TestConditionalLogitModel(unittest.TestCase):
 
         final_ll = ll
 
-        self.assertAlmostEqual(final_ll, expected_ll, delta=5)
+        self.assertAlmostEqual(final_ll, expected_ll, delta=10)
 
 
 if __name__ == '__main__':
