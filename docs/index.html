@@ -298,8 +298,8 @@
   
   
     <li class="md-nav__item">
-      <a href="intro/" class="md-nav__link">
-        About
+      <a href="install/" class="md-nav__link">
+        Installation
       </a>
     </li>
   
@@ -313,8 +313,8 @@
   
   
     <li class="md-nav__item">
-      <a href="install/" class="md-nav__link">
-        Get Started
+      <a href="intro/" class="md-nav__link">
+        Introduction
       </a>
     </li>
   
@@ -503,7 +503,7 @@
 <blockquote>
 <p>Authors: Tianyu Du and Ayush Kanodia; PI: Susan Athey; Contact: tianyudu@stanford.edu</p>
 </blockquote>
-<p><code>torch-choice</code> is a flexible, fast choice modeling with PyTorch: logit and nested logit models, designed for both estimation and prediction. See the <a href="https://gsbdbi.github.io/torch-choice/">complete documentation</a> for more details.
+<p><code>torch-choice</code> is a flexible, fast choice modeling with PyTorch: logit and nested logit models, designed for both estimation and prediction. See the <a href="https://deepchoice-vcghm.ondigitalocean.app">complete documentation</a> for more details.
 Unique features:
 1. GPU support via torch for speed
 2. Specify customized models
@@ -516,6 +516,7 @@ Unique features:
 <li>Run <code>pip3 install torch-choice</code>.</li>
 <li>Check installation by running <code>python3 -c 'import torch_choice; print(torch_choice.__version__)'</code>.</li>
 </ol>
+<p><a href="https://gsbdbi.github.io/torch-choice/install/">The installation page</a> provides more details on installation.</p>
 <p>In this demonstration, we will guide you through a minimal example of fitting a conditional logit model using our package. We will be referencing to R code and Stata code as well to deliver a smooth knowledge transfer.</p>
 <h2 id="mode-canada-example">Mode Canada Example</h2>
 <p>In this demonstration, we will guide you through a minimal example of fitting a conditional logit model using our package. We will be referencing R code as well to deliver a smooth knowledge transfer.</p>
@@ -569,18 +570,19 @@ Unique features:
 <a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>summary(ml.MC1)
 </code></pre></div></p>
 <h1 id="whats-in-the-package">What's in the package?</h1>
+<p>Overall, the <code>torch-choice</code> package offers the following features:</p>
 <ol>
 <li>
-<p>The package includes a data management tool based on <code>PyTorch</code>'s dataset called <code>ChoiceDataset</code>. Our dataset implementation allows users to easily move data between CPU and GPU. Unlike traditional long or wide formats, the <code>ChoiceDataset</code> offers a memory-efficient way to manage observables.</p>
+<p>The package includes a data management module called <code>ChoiceDataset</code>, which is built upon PyTorch's dataset module. Our dataset implementation allows users to easily move data between CPU and GPU. Unlike traditional long or wide formats, the <code>ChoiceDataset</code> offers a memory-efficient way to manage observables.</p>
 </li>
 <li>
-<p>The package provides a (1) conditional logit model for consumer choice modeling, (2) a nested logit model for consumer choice modeling.</p>
+<p>The package provides a (1) conditional logit model and (2) a nested logit model for consumer choice modeling.</p>
 </li>
 <li>
 <p>The package leverage GPU acceleration using PyTorch and easily scale to large dataset of millions of choice records. All models are trained using state-of-the-art optimizers by in PyTorch. These optimization algorithms are tested to be scalable by modern machine learning practitioners. However, you can rest assure that the package runs flawlessly when no GPU is used as well.</p>
 </li>
 <li>
-<p>For those without much experience in model PyTorch development, setting up optimizers and training loops can be frustrating. We provide easy-to-use <a href="https://www.pytorchlightning.ai">PyTorch lightning</a> wrapper of models to free researchers from the hassle from setting up PyTorch optimizers and training loops.</p>
+<p>Setting up the PyTorch training pipelines can be frustrating. We provide easy-to-use <a href="https://www.pytorchlightning.ai">PyTorch lightning</a> wrapper of models to free researchers from the hassle from setting up PyTorch optimizers and training loops.</p>
 </li>
 </ol>
 
@@ -599,13 +601,13 @@ Unique features:
       
       
         
-        <a href="intro/" class="md-footer__link md-footer__link--next" aria-label="Next: About" rel="next">
+        <a href="install/" class="md-footer__link md-footer__link--next" aria-label="Next: Installation" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              About
+              Installation
             </div>
           </div>
           <div class="md-footer__button md-icon">

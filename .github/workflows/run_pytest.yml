@@ -24,7 +24,7 @@ jobs:
           pip install pytest
       
       - name: Install the package
-        run: pip install torch_choice
+        run: python setup.py install --user
       
       - name: Test with pytest
         run: pytest
