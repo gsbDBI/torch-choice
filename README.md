@@ -24,6 +24,11 @@ In this demonstration, we will guide you through a minimal example of fitting a 
 
 More information about the [ModeCanada: Mode Choice for the Montreal-Toronto Corridor](https://www.rdocumentation.org/packages/mlogit/versions/1.1-1/topics/ModeCanada).
 
+In this example, we are estimating the utility for user $u$ to choose transport method $i$ in session $s$ as
+$$
+U_{uis} = \alpha_i + \beta_i \text{income}_s + \gamma \text{cost} + \delta \text{freq} + \eta \text{ovt} + \iota_i \text{ivt} + \varepsilon
+$$
+
 ###  Mode Canada with Torch-Choice
 
 
@@ -91,4 +96,20 @@ Overall, the `torch-choice` package offers the following features:
 4. Setting up the PyTorch training pipelines can be frustrating. We provide easy-to-use [PyTorch lightning](https://www.pytorchlightning.ai) wrapper of models to free researchers from the hassle from setting up PyTorch optimizers and training loops.
 
 
+# More Details on Models
 
+Models in the package fit individual choices by capturing the utility $U$ of user $u$ from choosing item $i$ in each occasion (called sessions) $s$.
+
+The utility admits functional form consisting of product of coefficients (often called learnable parameters in computer science literature) and observables (also called features in CS literature).
+
+$$
+U_{ui} = \alpha + \beta^\top X + \gamma^\top Y + \dots
+$$
+
+We allow coefficients ($\alpha$, $\beta$ and $\gamma$) to be constant, user-specific (i.e., $\alpha=\alpha_u$), item-specific (i.e., $\alpha=\alpha_i$), session-specific (i.e., $\alpha=\alpha_t$), or (session, item)-specific (i.e., $\alpha=\alpha_{ti}$). For example, specifying $\alpha$ to be item-specific is equivalent to adding an item-level fixed effect.
+
+Observables ($X$ and $Y$) can be constant, user-specific, item-specific, session-specific, or (session, item)-specific as well.
+
+The flexibility in coefficients and features allows for more than 20 types of additive term to $U_{ui}$, which enables modelling rich structures.
+
+We highly recommend users to go through tutorials we prepared to get a better understanding of what the package is offering.
