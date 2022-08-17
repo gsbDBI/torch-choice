@@ -14,16 +14,13 @@ Unique features:
 
 # Choice Models Supported
 
-Models in the package fit individual choices by capturing the utility $U$ of user $u$ from choosing item $i$ in each occasion (called sessions) $s$.
-
-The utility admits functional form consisting of product of coefficients (often called learnable parameters in computer science literature) and observables (also called features in CS literature).
-
 This package allows learning of flexible choice models for multinomial choice.  Denote item observables by $X$ and user observables by $Y$. Define utility $U_{uis}$ for user $u$ from choosing item $i$ in session $s$ as,
+
 $$
 U_{uis} = \alpha + \beta^\top X + \gamma^\top Y + \dots + \epsilon_{uis}
 $$
 
-The probability that user $u$ chooses item $i$ in session $s$ is given by the logistic function (if we assume iid extreme value type 1 errors for $\epsilon_{uis}$, as shown by McFadden), is
+The probability that user $u$ chooses item $i$ in session $s$ is given by the logistic function (if we assume iid extreme value type 1 errors for $\epsilon_{uis}$, as shown by [McFadden](https://en.wikipedia.org/wiki/Choice_modelling), and as in [Logistic Regression](https://en.wikipedia.org/wiki/Logistic_regression)), is
 
 $$
 P_{uis} = \frac{e^{U_{uis}}}{\Sigma_{j \in A_{us}}e^{U_{ujs}}}
@@ -39,10 +36,10 @@ We implement a fully flexible setup, where we allow
 This flexibility in coefficients and features allows for more than 20 types of additive terms to $U_{uis}$, which enables modelling rich structures.
 
 Utility Form Examples
-1. Mode Canada
+1. Mode Canada:
 2. MNIST classification:
 
-We highly recommend users to go through tutorials we prepared to get a better understanding of what the package is offering.
+We highly recommend users to go through tutorials we prepared to get a better understanding of what the package is offering. We present multiple examples, and for each case we specify the utility form.
 
 ## Installation
 1. Clone the repository to your local machine or server.
