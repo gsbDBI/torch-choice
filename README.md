@@ -1,13 +1,48 @@
 # torch-choice
 
-> Authors: Tianyu Du and Ayush Kanodia; PI: Susan Athey; Contact: tianyudu@stanford.edu
+> Authors: Tianyu Du, Ayush Kanodia and Susan Athey; Contact: tianyudu@stanford.edu
 
-`torch-choice` is a flexible, fast choice modeling with PyTorch: logit and nested logit models, designed for both estimation and prediction. See the [complete documentation](https://gsbdbi.github.io/torch-choice/) for more details.
+> Acknowledgements: We would like to thank Erik Sverdrup, Charles Pebereau and Keshav Agrawal for their feedback.
+
+`torch-choice` is a library for flexible, fast choice modeling with PyTorch: it has logit and nested logit models, designed for both estimation and prediction. See the [complete documentation](https://gsbdbi.github.io/torch-choice/) for more details.
 Unique features:
 1. GPU support via torch for speed
 2. Specify customized models
 3. Specify availability sets
-4. Report standard errors
+4. Maximum Likelihood Estimation (MLE) (optionally, reporting standard errors or MAP inference with Bayesian Priors on coefficients)
+5. Estimation via minimization of Cross Entropy Loss (optionally with L1/L2 regularization)
+
+# Choice Models Supported
+
+Models in the package fit individual choices by capturing the utility $U$ of user $u$ from choosing item $i$ in each occasion (called sessions) $s$.
+
+The utility admits functional form consisting of product of coefficients (often called learnable parameters in computer science literature) and observables (also called features in CS literature).
+
+This package allows learning of flexible choice models for multinomial choice.  Denote item observables by $X$ and user observables by $Y$. Define utility $U_{uis}$ for user $u$ from choosing item $i$ in session $s$ as,
+$$
+U_{uis} = \alpha + \beta^\top X + \gamma^\top Y + \dots + \epsilon_{uis}
+$$
+
+The probability that user $u$ chooses item $i$ in session $s$ is given by the logistic function (if we assume iid extreme value type 1 errors for $\epsilon_{uis}$, as shown by McFadden), is
+
+$$
+P_{uis} = \frac{e^{U_{uis}}}{\Sigma_{j \in A_{us}}e^{U_{ujs}}}
+$$
+
+where $A_{us}$ is the set of items available for user $u$ in session $s$.
+
+We implement a fully flexible setup, where we allow 
+1. coefficients ($\alpha$, $\beta$ and $\gamma$) to be constant, user-specific (i.e., $\alpha=\alpha_u$), item-specific (i.e., $\alpha=\alpha_i$), session-specific (i.e., $\alpha=\alpha_t$), or (session, item)-specific (i.e., $\alpha=\alpha_{ti}$). For example, specifying $\alpha$ to be item-specific is equivalent to adding an item-level fixed effect.
+2. Observables ($X$ and $Y$) to be constant, user-specific, item-specific, session-specific, or (session, item)-specific as well.
+3. Specifying availability sets A_{us}
+
+This flexibility in coefficients and features allows for more than 20 types of additive terms to $U_{uis}$, which enables modelling rich structures.
+
+Utility Form Examples
+1. Mode Canada
+2. MNIST classification:
+
+We highly recommend users to go through tutorials we prepared to get a better understanding of what the package is offering.
 
 ## Installation
 1. Clone the repository to your local machine or server.
@@ -25,7 +60,6 @@ In this demonstration, we will guide you through a minimal example of fitting a 
 More information about the [ModeCanada: Mode Choice for the Montreal-Toronto Corridor](https://www.rdocumentation.org/packages/mlogit/versions/1.1-1/topics/ModeCanada).
 
 In this example, we are estimating the utility for user $u$ to choose transport method $i$ in session $s$ as
-
 $$
 U_{uis} = \alpha_i + \beta_i \text{income}_s + \gamma \text{cost} + \delta \text{freq} + \eta \text{ovt} + \iota_i \text{ivt} + \varepsilon
 $$
@@ -97,20 +131,7 @@ Overall, the `torch-choice` package offers the following features:
 4. Setting up the PyTorch training pipelines can be frustrating. We provide easy-to-use [PyTorch lightning](https://www.pytorchlightning.ai) wrapper of models to free researchers from the hassle from setting up PyTorch optimizers and training loops.
 
 
-# More Details on Models
 
-Models in the package fit individual choices by capturing the utility $U$ of user $u$ from choosing item $i$ in each occasion (called sessions) $s$.
+```python
 
-The utility admits functional form consisting of product of coefficients (often called learnable parameters in computer science literature) and observables (also called features in CS literature).
-
-$$
-U_{ui} = \alpha + \beta^\top X + \gamma^\top Y + \dots
-$$
-
-We allow coefficients ($\alpha$, $\beta$ and $\gamma$) to be constant, user-specific (i.e., $\alpha=\alpha_u$), item-specific (i.e., $\alpha=\alpha_i$), session-specific (i.e., $\alpha=\alpha_t$), or (session, item)-specific (i.e., $\alpha=\alpha_{ti}$). For example, specifying $\alpha$ to be item-specific is equivalent to adding an item-level fixed effect.
-
-Observables ($X$ and $Y$) can be constant, user-specific, item-specific, session-specific, or (session, item)-specific as well.
-
-The flexibility in coefficients and features allows for more than 20 types of additive term to $U_{ui}$, which enables modelling rich structures.
-
-We highly recommend users to go through tutorials we prepared to get a better understanding of what the package is offering.
+```
