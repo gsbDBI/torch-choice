@@ -29,17 +29,31 @@ $$
 where $A_{us}$ is the set of items available for user $u$ in session $s$.
 
 We implement a fully flexible setup, where we allow 
-1. coefficients ($\alpha$, $\beta$ and $\gamma$) to be constant, user-specific (i.e., $\alpha=\alpha_u$), item-specific (i.e., $\alpha=\alpha_i$), session-specific (i.e., $\alpha=\alpha_t$), or (session, item)-specific (i.e., $\alpha=\alpha_{ti}$). For example, specifying $\alpha$ to be item-specific is equivalent to adding an item-level fixed effect.
-2. Observables ($X$ and $Y$) to be constant, user-specific, item-specific, session-specific, or (session, item)-specific as well.
-3. Specifying availability sets A_{us}
+1. coefficients ($\alpha$, $\beta$, $\gamma$, $\dots$) to be constant, user-specific (i.e., $\alpha=\alpha_u$), item-specific (i.e., $\alpha=\alpha_i$), session-specific (i.e., $\alpha=\alpha_t$), or (session, item)-specific (i.e., $\alpha=\alpha_{ti}$). For example, specifying $\alpha$ to be item-specific is equivalent to adding an item-level fixed effect.
+2. Observables ($X$, $Y$, $\dots$) to be constant, user-specific, item-specific, session-specific, or (session, item)-specific as well.
+3. Specifying availability sets $A_{us}$
 
 This flexibility in coefficients and features allows for more than 20 types of additive terms to $U_{uis}$, which enables modelling rich structures.
 
 Utility Form Examples
-1. Mode Canada:
-2. MNIST classification:
+1. Mode Canada [(Detailed Tutorial)](https://github.com/gsbDBI/torch-choice/blob/main/tutorials/conditional_logit_model_mode_canada.ipynb)
 
-We highly recommend users to go through tutorials we prepared to get a better understanding of what the package is offering. We present multiple examples, and for each case we specify the utility form.
+$$
+U_{uit} = \beta^0_i + \beta^{1\top} X^{price: (cost, freq, ovt)}_{it} + \beta^2_i X^{session:income}_t + \beta^3_i X_{it}^{price:ivt} + \epsilon_{uit}
+$$
+
+This is also described as a conditional logit model in Econometrics.
+
+
+2. MNIST classification [(Upcoming Detailed Tutorial)]()
+
+$$
+U_{it} = \beta_i X^{session:pixelvalues} + \epsilon_{it}
+$$
+
+This is a classic problem used for exposition in Computer Science to motivate various Machine Learning models. There is no concept of a user in this setup. Our package allows for models of this nature and is fully usable for Machine Learning problems with added flexibility over [scikit-learn logistic regression](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html)
+
+We highly recommend users to go through [tutorials](https://github.com/gsbDBI/torch-choice/blob/main/tutorials) we prepared to get a better understanding of what the package is offering. We present multiple examples, and for each case we specify the utility form.
 
 ## Installation
 1. Clone the repository to your local machine or server.
@@ -57,7 +71,6 @@ In this demonstration, we will guide you through a minimal example of fitting a 
 More information about the [ModeCanada: Mode Choice for the Montreal-Toronto Corridor](https://www.rdocumentation.org/packages/mlogit/versions/1.1-1/topics/ModeCanada).
 
 In this example, we are estimating the utility for user $u$ to choose transport method $i$ in session $s$ as
-
 $$
 U_{uis} = \alpha_i + \beta_i \text{income}_s + \gamma \text{cost} + \delta \text{freq} + \eta \text{ovt} + \iota_i \text{ivt} + \varepsilon
 $$
