@@ -2,7 +2,7 @@
 
 > Authors: Tianyu Du and Ayush Kanodia; PI: Susan Athey; Contact: tianyudu@stanford.edu
 
-`torch-choice` is a flexible, fast choice modeling with PyTorch: logit and nested logit models, designed for both estimation and prediction. See the [complete documentation](https://deepchoice-vcghm.ondigitalocean.app) for more details.
+`torch-choice` is a flexible, fast choice modeling with PyTorch: logit and nested logit models, designed for both estimation and prediction. See the [complete documentation](https://gsbdbi.github.io/torch-choice/) for more details.
 Unique features:
 1. GPU support via torch for speed
 2. Specify customized models
