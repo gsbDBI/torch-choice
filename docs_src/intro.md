@@ -22,8 +22,27 @@ Suppose the researcher does not wish to model different categories differently. 
 
 For each purchasing record $b \in \{1,2,\dots, B\}$, there is a corresponding $i_b \in \{1,2,\dots,I\}$ saying which item was chosen in this record.
 
-**Note**: since we will be using PyTorch to train our model, we represent their identities with integer values instead of the raw human-readable names of items (e.g., Dell 24-inch LCD monitor).
-Raw item names can be encoded easily with [sklearn.preprocessing.OrdinalEncoder](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OrdinalEncoder.html).
+#### Important Note on Item Encoding
+Since we will be using PyTorch to train our model, we represent their identities with integer values instead of the raw human-readable names of items (e.g., Dell 24-inch LCD monitor).
+Raw item names can be encoded easily with [sklearn.preprocessing.LabelEncoder](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html) (The [sklearn.preprocessing.OrdinalEncoder](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OrdinalEncoder.html) works as well).
+
+Here is an example of encoding generic item names to integers using `sklearn.preprocessing.LabelEncoder`:
+
+```python
+from sklearn.preprocessing import LabelEncoder
+enc = LabelEncoder()
+raw_items = ['Macbook Laptop', 'Dell 24-inch Monitor', 'Orange', 'Apple (Fruit)']
+
+encoded_items = enc.fit_transform(raw_items)
+print(encoded_items)
+# output: [2 1 3 0]
+
+# for each 0 <= i <= 3, enc.classes_[i] reveals the raw name of item encoded to i.
+print(enc.classes_)
+# output: ['Apple (Fruit)' 'Dell 24-inch Monitor' 'Macbook Laptop' 'Orange']
+# For example, the first entry of enc.classes_ is 'Apple (Fruit)', this means 'Apple (Fruit)' was encoded to 0 in this process.
+# The last item in the `raw_item` list was 'Apple (Fruit)', and the last item in the `encoded_item` list was 0 as we expected.
+```
 
 ### *Who*: Users
 The counter-part of items in our setting are **user** indexed by $u \in \{1,2,\dots,U\}$ as well.
