@@ -19,6 +19,7 @@ Models in the package fit individual choices by capturing the utility $U$ of use
 The utility admits functional form consisting of product of coefficients (often called learnable parameters in computer science literature) and observables (also called features in CS literature).
 
 This package allows learning of flexible choice models for multinomial choice.  Denote item observables by $X$ and user observables by $Y$. Define utility $U_{uis}$ for user $u$ from choosing item $i$ in session $s$ as,
+
 $$
 U_{uis} = \alpha + \beta^\top X + \gamma^\top Y + \dots + \epsilon_{uis}
 $$
