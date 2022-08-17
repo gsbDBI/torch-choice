@@ -289,6 +289,11 @@ class NestedLogitModel(nn.Module):
         nll = - logP[torch.arange(len(y)), y].sum()
         return nll
 
+    @property
+    def device(self) -> torch.device:
+        for coef in self.item_coef_dict.values():
+            return coef.device
+
     # def clamp_lambdas(self):
     #     """
     #     Restrict values of lambdas to 0 < lambda <= 1 to guarantee the utility maximization property
