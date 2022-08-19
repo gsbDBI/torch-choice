@@ -65,9 +65,10 @@ We highly recommend users to go through [tutorials](https://github.com/gsbDBI/to
 
 In this demonstration, we will guide you through a minimal example of fitting a conditional logit model using our package. We will be referencing to R code and Stata code as well to deliver a smooth knowledge transfer.
 
-## Mode Canada Example
+## An Example on Transportation Choice Dataset
 In this demonstration, we will guide you through a minimal example of fitting a conditional logit model using our package. We will be referencing R code as well to deliver a smooth knowledge transfer.
 
+We are modelling people's choices on transportation modes using the publicly available `ModeCanada` dataset.
 More information about the [ModeCanada: Mode Choice for the Montreal-Toronto Corridor](https://www.rdocumentation.org/packages/mlogit/versions/1.1-1/topics/ModeCanada).
 
 In this example, we are estimating the utility for user $u$ to choose transport method $i$ in session $s$ as
