@@ -72,11 +72,12 @@ We are modelling people's choices on transportation modes using the publicly ava
 More information about the [ModeCanada: Mode Choice for the Montreal-Toronto Corridor](https://www.rdocumentation.org/packages/mlogit/versions/1.1-1/topics/ModeCanada).
 
 In this example, we are estimating the utility for user $u$ to choose transport method $i$ in session $s$ as
+
 $$
 U_{uis} = \alpha_i + \beta_i \text{income}_s + \gamma \text{cost} + \delta \text{freq} + \eta \text{ovt} + \iota_i \text{ivt} + \varepsilon
 $$
 
-###  Mode Canada with Torch-Choice
+### Modelling Transportation Choice with Torch-Choice
 
 
 ```python
@@ -111,7 +112,7 @@ model = torch_choice.model.ConditionalLogitModel(
 torch_choice.utils.run_helper.run(model, data.choice_dataset, num_epochs=5000, learning_rate=0.01, batch_size=-1)
 ```
 
-## Mode Canada with R
+### Modelling Transportation Choice with R
 
 We include the R code for the ModeCanada example as well.
 ```{r}
