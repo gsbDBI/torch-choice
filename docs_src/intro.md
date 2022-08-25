@@ -1,5 +1,5 @@
 # Introduction
-This document briefly introduces the consumer choice model we aim to solve.
+This document briefly introduces the choice model we aim to solve.
 
 In short, all models (the conditional logit model, the nested logit model, and the Bayesian embedding model) in the package aim to predict which item a user will purchase while facing the shelves in a supermarket.
 
@@ -7,8 +7,10 @@ Specifically, for each user $u$ and item $i$, models compute a value $U_{ui}$ pr
 
 However, the usage of our models is not limited to this supermarket context; researchers can adjust the definition of **user** and **item** to fit any choice modeling context. The [related project](./projects.md) page overviews some extensions of our models to other contexts.
 
-## Components of the Consumer Choice Modeling Problem
-We begin with essential components of the consumer choice modeling problem. Walking through these components should help you understand what kind of data our models are working on.
+## Components of the Choice Modeling Problem
+We aim to predict users' choices while facing multiple items available, e.g., which brand of milk the user will purchase in the supermarket.
+
+We begin with essential components of the choice modeling problem. Walking through these components should help you understand what kind of data our models are working on.
 
 ### Purchasing Record
 A **purchasing record** is a record describing *who* bought *what* at *when* and *where*.
@@ -85,9 +87,16 @@ Currently, the package support the following types of observables, where $K_{...
 3. `session_obs` $\in \mathbb{R}^{S \times K_{session}}$: session observable such as whether the purchase was made on weekdays.
 4. `price_obs` $\in \mathbb{R}^{S \times I \times K_{price}}$, price observables are values depending on **both** session and item such as the price of item.
 
-Please note that we consider these four types as **definitions** of observable types, the type of an observable is defined by its variation instead of the actual meaning of the observable.
+Please note that we consider these four types as **definitions** of observable types. For example, whenever a variable is user-specific, then we call it an `user_obs`.
+This package defines observables in the above way so that the package can easily track the variation of variables and handle these observable tensors correctly.
 
-If an observable depends on both session and item, it is called a *price observable* no matter if it is related to the actual price or not. Additionally, the actual price of an item might not change across sessions; in this case the *price* is called an *item observable*.
+#### Note on the `Price` Observable
+The `price_obs` term might look confusing at the first glance.
+As mentioned above, price-observables are defined to be these observables depending on both session and item. If an observable depends on both session and item, it is called a *price observable* no matter if it is related to the actual price or not.
+
+For example, in the context of online shopping, the shipping cost depends on both the item (i.e., the item purchased) and the session (i.e., when and where you purchase). In this case, the shipping cost observable is a price-observable but it's not an actual price.
+
+Conversely, the actual price of an item might not change across sessions. For example, a 10-dollar Amazon gift card costs 10 dollars regardless of the session; in this case the *price* variable is in fact an *item observable* as it *only* depends on the item.
 
 ### A Toy Example
 Suppose we have a dataset of purchase history from two stores (Store A and B) on two dates (Sep 16 and 17), both stores sell {apple, banana, orange} (`num_items=3`) and there are three people came to those stores between Sep 16 and 17.
