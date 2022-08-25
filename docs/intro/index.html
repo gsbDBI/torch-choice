@@ -11,7 +11,7 @@
         <link rel="canonical" href="https://example.com/intro/">
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.4.0">
+      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.4.1">
     
     
       
@@ -279,11 +279,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#components-of-the-consumer-choice-modeling-problem" class="md-nav__link">
-    Components of the Consumer Choice Modeling Problem
+  <a href="#components-of-the-choice-modeling-problem" class="md-nav__link">
+    Components of the Choice Modeling Problem
   </a>
   
-    <nav class="md-nav" aria-label="Components of the Consumer Choice Modeling Problem">
+    <nav class="md-nav" aria-label="Components of the Choice Modeling Problem">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -345,6 +345,19 @@
   <a href="#observables" class="md-nav__link">
     Observables
   </a>
+  
+    <nav class="md-nav" aria-label="Observables">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#note-on-the-price-observable" class="md-nav__link">
+    Note on the Price Observable
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -507,11 +520,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#components-of-the-consumer-choice-modeling-problem" class="md-nav__link">
-    Components of the Consumer Choice Modeling Problem
+  <a href="#components-of-the-choice-modeling-problem" class="md-nav__link">
+    Components of the Choice Modeling Problem
   </a>
   
-    <nav class="md-nav" aria-label="Components of the Consumer Choice Modeling Problem">
+    <nav class="md-nav" aria-label="Components of the Choice Modeling Problem">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -574,6 +587,19 @@
     Observables
   </a>
   
+    <nav class="md-nav" aria-label="Observables">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#note-on-the-price-observable" class="md-nav__link">
+    Note on the Price Observable
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -610,12 +636,13 @@
 
 
 <h1 id="introduction">Introduction</h1>
-<p>This document briefly introduces the consumer choice model we aim to solve.</p>
+<p>This document briefly introduces the choice model we aim to solve.</p>
 <p>In short, all models (the conditional logit model, the nested logit model, and the Bayesian embedding model) in the package aim to predict which item a user will purchase while facing the shelves in a supermarket.</p>
 <p>Specifically, for each user <span class="arithmatex">\(u\)</span> and item <span class="arithmatex">\(i\)</span>, models compute a value <span class="arithmatex">\(U_{ui}\)</span> predicting the utility user <span class="arithmatex">\(u\)</span> will get from purchasing item <span class="arithmatex">\(i\)</span>. User <span class="arithmatex">\(u\)</span> is predicted to purchase the item <span class="arithmatex">\(i\)</span>, generating the maximum utility.</p>
 <p>However, the usage of our models is not limited to this supermarket context; researchers can adjust the definition of <strong>user</strong> and <strong>item</strong> to fit any choice modeling context. The <a href="../projects/">related project</a> page overviews some extensions of our models to other contexts.</p>
-<h2 id="components-of-the-consumer-choice-modeling-problem">Components of the Consumer Choice Modeling Problem</h2>
-<p>We begin with essential components of the consumer choice modeling problem. Walking through these components should help you understand what kind of data our models are working on.</p>
+<h2 id="components-of-the-choice-modeling-problem">Components of the Choice Modeling Problem</h2>
+<p>We aim to predict users' choices while facing multiple items available, e.g., which brand of milk the user will purchase in the supermarket.</p>
+<p>We begin with essential components of the choice modeling problem. Walking through these components should help you understand what kind of data our models are working on.</p>
 <h3 id="purchasing-record">Purchasing Record</h3>
 <p>A <strong>purchasing record</strong> is a record describing <em>who</em> bought <em>what</em> at <em>when</em> and <em>where</em>.
 Let <span class="arithmatex">\(B\)</span> denote the number of <strong>purchasing records</strong> in the dataset (i.e., number of rows/observation of the dataset). Each row <span class="arithmatex">\(b \in \{1,2,\dots, B\}\)</span> corresponds to a purchase record.</p>
@@ -670,8 +697,13 @@ The researcher can incorporate observables of, for example, users and items into
 <li><code>session_obs</code> <span class="arithmatex">\(\in \mathbb{R}^{S \times K_{session}}\)</span>: session observable such as whether the purchase was made on weekdays.</li>
 <li><code>price_obs</code> <span class="arithmatex">\(\in \mathbb{R}^{S \times I \times K_{price}}\)</span>, price observables are values depending on <strong>both</strong> session and item such as the price of item.</li>
 </ol>
-<p>Please note that we consider these four types as <strong>definitions</strong> of observable types, the type of an observable is defined by its variation instead of the actual meaning of the observable.</p>
-<p>If an observable depends on both session and item, it is called a <em>price observable</em> no matter if it is related to the actual price or not. Additionally, the actual price of an item might not change across sessions; in this case the <em>price</em> is called an <em>item observable</em>.</p>
+<p>Please note that we consider these four types as <strong>definitions</strong> of observable types. For example, whenever a variable is user-specific, then we call it an <code>user_obs</code>.
+This package defines observables in the above way so that the package can easily track the variation of variables and handle these observable tensors correctly.</p>
+<h4 id="note-on-the-price-observable">Note on the <code>Price</code> Observable</h4>
+<p>The <code>price_obs</code> term might look confusing at the first glance.
+As mentioned above, price-observables are defined to be these observables depending on both session and item. If an observable depends on both session and item, it is called a <em>price observable</em> no matter if it is related to the actual price or not.</p>
+<p>For example, in the context of online shopping, the shipping cost depends on both the item (i.e., the item purchased) and the session (i.e., when and where you purchase). In this case, the shipping cost observable is a price-observable but it's not an actual price.</p>
+<p>Conversely, the actual price of an item might not change across sessions. For example, a 10-dollar Amazon gift card costs 10 dollars regardless of the session; in this case the <em>price</em> variable is in fact an <em>item observable</em> as it <em>only</em> depends on the item.</p>
 <h3 id="a-toy-example">A Toy Example</h3>
 <p>Suppose we have a dataset of purchase history from two stores (Store A and B) on two dates (Sep 16 and 17), both stores sell {apple, banana, orange} (<code>num_items=3</code>) and there are three people came to those stores between Sep 16 and 17.</p>
 <table>
