@@ -302,8 +302,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#important-note-on-item-encoding" class="md-nav__link">
-    Important Note on Item Encoding
+  <a href="#important-note-on-encoding" class="md-nav__link">
+    Important Note on Encoding
   </a>
   
 </li>
@@ -543,8 +543,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#important-note-on-item-encoding" class="md-nav__link">
-    Important Note on Item Encoding
+  <a href="#important-note-on-encoding" class="md-nav__link">
+    Important Note on Encoding
   </a>
   
 </li>
@@ -651,9 +651,10 @@ Let <span class="arithmatex">\(B\)</span> denote the number of <strong>purchasin
 <p>The researcher can optionally partition the set items into <span class="arithmatex">\(C\)</span> <strong>categories</strong> indexed by <span class="arithmatex">\(c \in \{1,2,\dots,C\}\)</span>. Let <span class="arithmatex">\(I_c\)</span> denote the collection of items in category <span class="arithmatex">\(c\)</span>. It's easy to see that the union of all <span class="arithmatex">\(I_c\)</span> is the entire set of items <span class="arithmatex">\(\{1, 2, \dots I\}\)</span>.
 Suppose the researcher does not wish to model different categories differently. In that case, the researcher can put all items in one category: <span class="arithmatex">\(I_1 = \{1, 2, \dots I\}\)</span>, so all items belong to the same category.</p>
 <p>For each purchasing record <span class="arithmatex">\(b \in \{1,2,\dots, B\}\)</span>, there is a corresponding <span class="arithmatex">\(i_b \in \{1,2,\dots,I\}\)</span> saying which item was chosen in this record.</p>
-<h4 id="important-note-on-item-encoding">Important Note on Item Encoding</h4>
+<h4 id="important-note-on-encoding">Important Note on Encoding</h4>
 <p>Since we will be using PyTorch to train our model, we represent their identities with integer values instead of the raw human-readable names of items (e.g., Dell 24-inch LCD monitor).
-Raw item names can be encoded easily with <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html">sklearn.preprocessing.LabelEncoder</a> (The <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OrdinalEncoder.html">sklearn.preprocessing.OrdinalEncoder</a> works as well).</p>
+Similarly, you would need to encode user indices and session indices as well.</p>
+<p>Raw item names can be encoded easily with <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html">sklearn.preprocessing.LabelEncoder</a> (The <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OrdinalEncoder.html">sklearn.preprocessing.OrdinalEncoder</a> works as well).</p>
 <p>Here is an example of encoding generic item names to integers using <code>sklearn.preprocessing.LabelEncoder</code>:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">LabelEncoder</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">enc</span> <span class="o">=</span> <span class="n">LabelEncoder</span><span class="p">()</span>
