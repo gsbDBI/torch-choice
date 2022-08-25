@@ -7,6 +7,10 @@ Specifically, for each user $u$ and item $i$, models compute a value $U_{ui}$ pr
 
 However, the usage of our models is not limited to this supermarket context; researchers can adjust the definition of **user** and **item** to fit any choice modeling context. The [related project](./projects.md) page overviews some extensions of our models to other contexts.
 
+## Notes on Encodings
+Since we will be using PyTorch to train our model, we represent their identities with *consecutive* integer values instead of the raw human-readable names of items (e.g., Dell 24-inch LCD monitor). Similarly, you would need to encode user indices and session indices as well.
+Raw item names can be encoded easily with [sklearn.preprocessing.LabelEncoder](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html) (The [sklearn.preprocessing.OrdinalEncoder](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OrdinalEncoder.html) works as well).
+
 ## Components of the Choice Modeling Problem
 We aim to predict users' choices while facing multiple items available, e.g., which brand of milk the user will purchase in the supermarket.
 
