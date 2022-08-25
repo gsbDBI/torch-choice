@@ -24,8 +24,10 @@ Suppose the researcher does not wish to model different categories differently. 
 
 For each purchasing record $b \in \{1,2,\dots, B\}$, there is a corresponding $i_b \in \{1,2,\dots,I\}$ saying which item was chosen in this record.
 
-#### Important Note on Item Encoding
+#### Important Note on Encoding
 Since we will be using PyTorch to train our model, we represent their identities with integer values instead of the raw human-readable names of items (e.g., Dell 24-inch LCD monitor).
+Similarly, you would need to encode user indices and session indices as well.
+
 Raw item names can be encoded easily with [sklearn.preprocessing.LabelEncoder](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html) (The [sklearn.preprocessing.OrdinalEncoder](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OrdinalEncoder.html) works as well).
 
 Here is an example of encoding generic item names to integers using `sklearn.preprocessing.LabelEncoder`:
