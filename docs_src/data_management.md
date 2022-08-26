@@ -10,6 +10,23 @@ This tutorial provides in-depth explanations on how the `torch-choice` library m
 
 **Note**: since this package was initially proposed for modelling consumer choices, attribute names of `ChoiceDataset` are borrowed from the consumer choice literature.
 
+**Note**: PyTorch uses the term **tensor** to denote high dimensional matrices, we will be using **tensor** and **matrix** interchangeably.
+
+After walking through this tutorial, you should be abel to initiate a `ChoiceDataset` object as the following and use it to manage data.
+```python
+dataset = ChoiceDataset(
+    # pre-specified keywords of __init__
+    item_index=item_index,  # required.
+    # optional:
+    user_index=user_index,
+    session_index=session_index,
+    item_availability=item_availability,
+    # additional keywords of __init__
+    user_obs=user_obs,
+    item_obs=item_obs,
+    session_obs=session_obs,
+    price_obs=price_obs)
+```
 
 ### Observables
 Observables are tensors with specific shapes, we classify observables into four categories based on their variations.
@@ -24,17 +41,35 @@ Optionally, the researcher can incorporate observables of, for example, users an
 
 The researcher should supply them with as appropriate keyword arguments while constructing the `ChoiceDataset` object.
 
-#### Advanced Usage: Additional Observables
-In some cases, the researcher may wish to handle different parts of `user_obs` (or other observable tensors) differently.
+#### (Optional) Advanced Usage: Additional Observables
+In some cases, the researcher have multiple sets of user (or item, or session, or price) observables, say *user income* (a scalar variable) and *user market membership*. The *user income* a matrix in $\mathbb{R}^{U\times 1}$. Further, suppose there are four types of market membership: no-membership, silver-membership, gold-membership, and diamond-membership. The *user market membership* is a binary matrix in $\{0, 1\}^{U\times 4}$ if we one-hot encode users' membership status.
+
+In this case, the researcher can either
+1. concatenate `user_income` and `user_market_membership` to a $\mathbb{R}^{U\times (1+4)}$ matrix and supply it as a single `user_obs` as the following:
+```python
+dataset = ChoiceDataset(..., user_obs=torch.cat([user_income, user_market_membership], dim=1), ...)
+```
+2. Or, supply these two sets of observables separately, namely a `user_income` $\in \mathbb{R}^{U \times 1}$ matrix and a `user_market_membership` $\in \mathbb{R}^{U \times 4}$ matrix as the following:
+```python
+dataset = ChoiceDataset(..., user_income=user_income, user_market_membership=user_market_membership, ...)
+```
+
+Supplying two separate sets of observables is particularly useful when the researcher wants different kinds of coefficients for different kinds of observables.
+
 For example, the researcher wishes to model the utility for user $u$ to purchase item $i$ in session $s$ as the following:
 
 $$
-U_{usi} = \beta_{i} X^{(u)}_{user\ income} + \gamma X^{(u)}_{user\ market\ membership}
+U_{usi} = \beta_{i} X^{(u)}_{user\ income} + \gamma X^{(u)}_{user\ market\ membership} + \varepsilon
 $$
 
+Please note that the $\beta_i$ coefficient has an $i$ subscript, which means it's item specific. The $\gamma$ coefficient has no subscript, which means it's the same for all items.
+
 The coefficient for user income is item-specific so that it captures the nature of the product (i.e., a luxury or an essential good). Additionally, the utility representation admits an user market membership becomes shoppers with active memberships tend to purchase more, and the coefficient of this term is constant across all items.
+
 As we will cover later in the modelling section, we need to supply two user observable tensors in this case for the model to build coefficient with different levels of variations (i.e., item-specific coefficients versus constant coefficients). In this case, the researcher needs to supply two tensors `user_income` and `user_market_membership` as keyword arguments to the `ChoiceDataset` constructor.
-The `ChoiceDataset` handles multiple user/item/session/price observables internally, for example, every keyword arguments passed into `ChoiceDataset` with name starting with `item_` (except for the reserved `item_availability`) will be treated as item observable tensors. All keywords with names starting `user_`, `session_` and `price_` (except for reserved names like `user_index` and `session_index` mentioned above) will be interpreted as user/session/price observable tensors.
+
+Generally, the `ChoiceDataset` handles multiple user/item/session/price observables internally, the `ChoiceDataset` class identifies the variation of observables by their prefixes. For example, every keyword arguments passed into `ChoiceDataset` with name starting with `item_` (except for the reserved `item_availability`) will be treated as item observable tensors.
+Similarly, all keywords with names starting `user_`, `session_` and `price_` (except for reserved names like `user_index` and `session_index` mentioned above) will be interpreted as user/session/price observable tensors.
 
 
 ```python
@@ -67,6 +102,12 @@ length_of_dataset = 10000
 
 ### Step 1: Generate some random purchase records and observables
 We will be creating a randomly generated dataset with 10000 purchase records from 10 users, 4 items and 500 sessions.
+
+We use the term **purchase record** to denote the observation in the dataset due to the convention in Stata documentation (because *observation* meant something else in the Stata documentation and we don't want to confuse existing Stata users).
+
+As mentioned in the introduction tutorial, one purchase record consists of *who* (i.e., user) bought *what* (i.e., item) *when* and *where* (i.e., session). 
+
+The length of the dataset equals the number of purchase records in it.
 
 The first step is to randomly generate the purchase records using the following code. For simplicity, we assume all items are available in all sessions.
 
