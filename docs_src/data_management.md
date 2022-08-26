@@ -85,6 +85,9 @@ price_obs = torch.randn(num_sessions, num_items, 12)
 
 We then generate random observable tensors for users, items, sessions and price observables, the size of observables of each type (i.e., the last dimension in the shape) is arbitrarily chosen.
 
+**Notes on Encodings** Since we will be using PyTorch to train our model, we represent their identities with *consecutive* integer values instead of the raw human-readable names of items (e.g., Dell 24-inch LCD monitor). Similarly, you would need to encode user indices and session indices as well.
+Raw item names can be encoded easily with [sklearn.preprocessing.LabelEncoder](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html) (The [sklearn.preprocessing.OrdinalEncoder](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OrdinalEncoder.html) works as well).
+
 
 ```python
 item_index = torch.LongTensor(np.random.choice(num_items, size=length_of_dataset))
