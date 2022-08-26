@@ -279,6 +279,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#notes-on-encodings" class="md-nav__link">
+    Notes on Encodings
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#components-of-the-choice-modeling-problem" class="md-nav__link">
     Components of the Choice Modeling Problem
   </a>
@@ -520,6 +527,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#notes-on-encodings" class="md-nav__link">
+    Notes on Encodings
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#components-of-the-choice-modeling-problem" class="md-nav__link">
     Components of the Choice Modeling Problem
   </a>
@@ -640,6 +654,9 @@
 <p>In short, all models (the conditional logit model, the nested logit model, and the Bayesian embedding model) in the package aim to predict which item a user will purchase while facing the shelves in a supermarket.</p>
 <p>Specifically, for each user <span class="arithmatex">\(u\)</span> and item <span class="arithmatex">\(i\)</span>, models compute a value <span class="arithmatex">\(U_{ui}\)</span> predicting the utility user <span class="arithmatex">\(u\)</span> will get from purchasing item <span class="arithmatex">\(i\)</span>. User <span class="arithmatex">\(u\)</span> is predicted to purchase the item <span class="arithmatex">\(i\)</span>, generating the maximum utility.</p>
 <p>However, the usage of our models is not limited to this supermarket context; researchers can adjust the definition of <strong>user</strong> and <strong>item</strong> to fit any choice modeling context. The <a href="../projects/">related project</a> page overviews some extensions of our models to other contexts.</p>
+<h2 id="notes-on-encodings">Notes on Encodings</h2>
+<p>Since we will be using PyTorch to train our model, we represent their identities with <em>consecutive</em> integer values instead of the raw human-readable names of items (e.g., Dell 24-inch LCD monitor). Similarly, you would need to encode user indices and session indices as well.
+Raw item names can be encoded easily with <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html">sklearn.preprocessing.LabelEncoder</a> (The <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OrdinalEncoder.html">sklearn.preprocessing.OrdinalEncoder</a> works as well).</p>
 <h2 id="components-of-the-choice-modeling-problem">Components of the Choice Modeling Problem</h2>
 <p>We aim to predict users' choices while facing multiple items available, e.g., which brand of milk the user will purchase in the supermarket.</p>
 <p>We begin with essential components of the choice modeling problem. Walking through these components should help you understand what kind of data our models are working on.</p>
