@@ -291,8 +291,12 @@ class NestedLogitModel(nn.Module):
 
     @property
     def device(self) -> torch.device:
-        for coef in self.item_coef_dict.values():
-            return coef.device
+        """Returns the device of the coefficient.
+
+        Returns:
+            torch.device: the device of the model.
+        """
+        return next(iter(self.item_coef_dict.values())).device
 
     # def clamp_lambdas(self):
     #     """

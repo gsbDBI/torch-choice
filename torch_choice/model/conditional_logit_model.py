@@ -212,8 +212,12 @@ class ConditionalLogitModel(nn.Module):
 
     @property
     def device(self) -> torch.device:
-        for coef in self.coef_dict.values():
-            return coef.device
+        """Returns the device of the coefficient.
+
+        Returns:
+            torch.device: the device of the model.
+        """
+        return next(iter(self.coef_dict.values())).device
 
     # NOTE: the method for computing Hessian and standard deviation has been moved to std.py.
     # @staticmethod
