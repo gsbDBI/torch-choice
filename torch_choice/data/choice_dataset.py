@@ -6,8 +6,10 @@ Author: Tianyu Du
 Update: Apr. 27, 2022
 """
 import copy
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
+import numpy as np
+import pandas as pd
 import torch
 
 
@@ -411,3 +413,54 @@ class ChoiceDataset(torch.utils.data.Dataset):
 
         assert out.shape == (len(self), self.num_items, num_params)
         return out
+
+    @staticmethod
+    def unique(tensor: torch.Tensor) -> Tuple[np.ndarray]:
+        arr = tensor.cpu().numpy()
+        unique, counts = np.unique(arr, return_counts=True)
+        count_sort_ind = np.argsort(-counts)
+        unique = unique[count_sort_ind]
+        counts = counts[count_sort_ind]
+        return unique, counts
+
+    def summary(self) -> None:
+        """A method to summarize the dataset.
+
+        Returns:
+            str: the string representation of the dataset.
+        """
+        summary = ['ChoiceDataset with {} sessions, {} items, {} users, {} purchase records (observations) .'.format(
+            self.num_sessions, self.num_items, self.num_users if self.user_index is not None else 'single', len(self))]
+
+        # summarize users.
+        if self.user_index is not None:
+            unique, counts = self.unique(self.user_index)
+            summary.append(f"The most frequent user is {unique[0]} with {counts[0]} observations; the least frequent user is {unique[-1]} with {counts[-1]} observations; on average, there are {counts.astype(float).mean():.2f} observations per user.")
+
+            N = len(unique)
+            K = min(5, N)
+            string = f'{K} most frequent users are: ' + ', '.join([f'{unique[i]}({counts[i]} times)' for i in range(K)]) + '.'
+            summary.append(string)
+            string = f'{K} least frequent users are: ' + ', '.join([f'{unique[N-i]}({counts[N-i]} times)' for i in range(1, K+1)]) + '.'
+            summary.append(string)
+
+        # summarize items.
+        unique, counts = self.unique(self.item_index)
+        N = len(unique)
+        K = min(5, N)
+        summary.append(f"The most frequent item is {unique[0]}, it was chosen {counts[0]} times; the least frequent item is {unique[-1]} it was {counts[-1]} times; on average, each item was purchased {counts.astype(float).mean():.2f} times.")
+
+        string = f'{K} most frequent items are: ' + ', '.join([f'{unique[i]}({counts[i]} times)' for i in range(K)]) + '.'
+        summary.append(string)
+        string = f'{K} least frequent items are: ' + ', '.join([f'{unique[N-i]}({counts[N-i]} times)' for i in range(1, K+1)]) + '.'
+        summary.append(string)
+
+        summary.append('Attribute Summaries:')
+        for key, item in self.__dict__.items():
+            if self._is_attribute(key) and torch.is_tensor(item):
+                summary.append("Observable Tensor '{}' with shape {}".format(key, item.shape))
+                # price attributes are 3-dimensional tensors, ignore  for cleanness here.
+                if not self._is_price_attribute(key):
+                    summary.append(str(pd.DataFrame(item.to('cpu').float().numpy()).describe()))
+        print('\n'.join(summary) + f"\ndevice={self.device}")
+        return None
