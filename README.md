@@ -72,7 +72,6 @@ We are modelling people's choices on transportation modes using the publicly ava
 More information about the [ModeCanada: Mode Choice for the Montreal-Toronto Corridor](https://www.rdocumentation.org/packages/mlogit/versions/1.1-1/topics/ModeCanada).
 
 In this example, we are estimating the utility for user $u$ to choose transport method $i$ in session $s$ as
-
 $$
 U_{uis} = \alpha_i + \beta_i \text{income}_s + \gamma \text{cost} + \delta \text{freq} + \eta \text{ovt} + \iota_i \text{ivt} + \varepsilon
 $$

@@ -78,7 +78,16 @@ class Coefficient(nn.Module):
         """
         return f'Coefficient(variation={self.variation}, num_items={self.num_items},' \
                + f' num_users={self.num_users}, num_params={self.num_params},' \
-               + f' {self.coef.numel()} trainable parameters in total).'
+               + f' {self.coef.numel()} trainable parameters in total, device={self.device}).'
+
+    @property
+    def device(self) ->torch.device:
+        """Returns the device of the coefficient.
+
+        Returns:
+            torch.device: the device of the coefficient.
+        """
+        return self.coef.device
 
     def forward(self,
                 x: torch.Tensor,

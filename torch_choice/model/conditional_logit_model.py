@@ -122,7 +122,7 @@ class ConditionalLogitModel(nn.Module):
         out_str_lst = ['Conditional logistic discrete choice model, expects input features:\n']
         for var_type, num_params in self.num_param_dict.items():
             out_str_lst.append(f'X[{var_type}] with {num_params} parameters, with {self.coef_variation_dict[var_type]} level variation.')
-        return super().__repr__() + '\n' + '\n'.join(out_str_lst)
+        return super().__repr__() + '\n' + '\n'.join(out_str_lst) + '\n' + f'device={self.device}'
 
     @property
     def num_params(self) -> int:
@@ -210,6 +210,14 @@ class ConditionalLogitModel(nn.Module):
         nll = - logP[torch.arange(len(y)), y].sum()
         return nll
 
+    @property
+    def device(self) -> torch.device:
+        """Returns the device of the coefficient.
+
+        Returns:
+            torch.device: the device of the model.
+        """
+        return next(iter(self.coef_dict.values())).device
 
     # NOTE: the method for computing Hessian and standard deviation has been moved to std.py.
     # @staticmethod
