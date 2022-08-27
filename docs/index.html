@@ -256,11 +256,11 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#mode-canada-example" class="md-nav__link">
-    Mode Canada Example
+  <a href="#an-example-on-transportation-choice-dataset" class="md-nav__link">
+    An Example on Transportation Choice Dataset
   </a>
   
-    <nav class="md-nav" aria-label="Mode Canada Example">
+    <nav class="md-nav" aria-label="An Example on Transportation Choice Dataset">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -459,11 +459,11 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#mode-canada-example" class="md-nav__link">
-    Mode Canada Example
+  <a href="#an-example-on-transportation-choice-dataset" class="md-nav__link">
+    An Example on Transportation Choice Dataset
   </a>
   
-    <nav class="md-nav" aria-label="Mode Canada Example">
+    <nav class="md-nav" aria-label="An Example on Transportation Choice Dataset">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -503,7 +503,7 @@
 <blockquote>
 <p>Authors: Tianyu Du and Ayush Kanodia; PI: Susan Athey; Contact: tianyudu@stanford.edu</p>
 </blockquote>
-<p><code>torch-choice</code> is a flexible, fast choice modeling with PyTorch: logit and nested logit models, designed for both estimation and prediction. See the <a href="https://deepchoice-vcghm.ondigitalocean.app">complete documentation</a> for more details.
+<p><code>torch-choice</code> is a flexible, fast choice modeling with PyTorch: logit and nested logit models, designed for both estimation and prediction. See the <a href="https://gsbdbi.github.io/torch-choice/">complete documentation</a> for more details.
 Unique features:
 1. GPU support via torch for speed
 2. Specify customized models
@@ -518,9 +518,14 @@ Unique features:
 </ol>
 <p><a href="https://gsbdbi.github.io/torch-choice/install/">The installation page</a> provides more details on installation.</p>
 <p>In this demonstration, we will guide you through a minimal example of fitting a conditional logit model using our package. We will be referencing to R code and Stata code as well to deliver a smooth knowledge transfer.</p>
-<h2 id="mode-canada-example">Mode Canada Example</h2>
+<h2 id="an-example-on-transportation-choice-dataset">An Example on Transportation Choice Dataset</h2>
 <p>In this demonstration, we will guide you through a minimal example of fitting a conditional logit model using our package. We will be referencing R code as well to deliver a smooth knowledge transfer.</p>
-<p>More information about the <a href="https://www.rdocumentation.org/packages/mlogit/versions/1.1-1/topics/ModeCanada">ModeCanada: Mode Choice for the Montreal-Toronto Corridor</a>.</p>
+<p>We are modelling people's choices on transportation modes using the publicly available <code>ModeCanada</code> dataset.
+More information about the <a href="https://www.rdocumentation.org/packages/mlogit/versions/1.1-1/topics/ModeCanada">ModeCanada: Mode Choice for the Montreal-Toronto Corridor</a>.</p>
+<p>In this example, we are estimating the utility for user <span class="arithmatex">\(u\)</span> to choose transport method <span class="arithmatex">\(i\)</span> in session <span class="arithmatex">\(s\)</span> as
+$$
+U_{uis} = \alpha_i + \beta_i \text{income}_s + \gamma \text{cost} + \delta \text{freq} + \eta \text{ovt} + \iota_i \text{ivt} + \varepsilon
+$$</p>
 <h3 id="mode-canada-with-torch-choice">Mode Canada with Torch-Choice</h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># load packages.</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -585,6 +590,16 @@ Unique features:
 <p>Setting up the PyTorch training pipelines can be frustrating. We provide easy-to-use <a href="https://www.pytorchlightning.ai">PyTorch lightning</a> wrapper of models to free researchers from the hassle from setting up PyTorch optimizers and training loops.</p>
 </li>
 </ol>
+<h1 id="more-details-on-models">More Details on Models</h1>
+<p>Models in the package fit individual choices by capturing the utility <span class="arithmatex">\(U\)</span> of user <span class="arithmatex">\(u\)</span> from choosing item <span class="arithmatex">\(i\)</span> in each occasion (called sessions) <span class="arithmatex">\(s\)</span>.</p>
+<p>The utility admits functional form consisting of product of coefficients (often called learnable parameters in computer science literature) and observables (also called features in CS literature).</p>
+<div class="arithmatex">\[
+U_{ui} = \alpha + \beta^\top X + \gamma^\top Y + \dots
+\]</div>
+<p>We allow coefficients (<span class="arithmatex">\(\alpha\)</span>, <span class="arithmatex">\(\beta\)</span> and <span class="arithmatex">\(\gamma\)</span>) to be constant, user-specific (i.e., <span class="arithmatex">\(\alpha=\alpha_u\)</span>), item-specific (i.e., <span class="arithmatex">\(\alpha=\alpha_i\)</span>), session-specific (i.e., <span class="arithmatex">\(\alpha=\alpha_t\)</span>), or (session, item)-specific (i.e., <span class="arithmatex">\(\alpha=\alpha_{ti}\)</span>). For example, specifying <span class="arithmatex">\(\alpha\)</span> to be item-specific is equivalent to adding an item-level fixed effect.</p>
+<p>Observables (<span class="arithmatex">\(X\)</span> and <span class="arithmatex">\(Y\)</span>) can be constant, user-specific, item-specific, session-specific, or (session, item)-specific as well.</p>
+<p>The flexibility in coefficients and features allows for more than 20 types of additive term to <span class="arithmatex">\(U_{ui}\)</span>, which enables modelling rich structures.</p>
+<p>We highly recommend users to go through tutorials we prepared to get a better understanding of what the package is offering.</p>
 
 
 
