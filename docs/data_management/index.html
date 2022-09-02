@@ -363,6 +363,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#datasetsummary" class="md-nav__link">
+    dataset.summary()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#datasetnum_users-items-sessions" class="md-nav__link">
     dataset.num_{users, items, sessions}
   </a>
@@ -603,6 +610,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#datasetsummary" class="md-nav__link">
+    dataset.summary()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#datasetnum_users-items-sessions" class="md-nav__link">
     dataset.num_{users, items, sessions}
   </a>
@@ -717,8 +731,9 @@ U_{usi} = \beta_{i} X^{(u)}_{user\ income} + \gamma X^{(u)}_{user\ market\ membe
 Similarly, all keywords with names starting <code>user_</code>, <code>session_</code> and <code>price_</code> (except for reserved names like <code>user_index</code> and <code>session_index</code> mentioned above) will be interpreted as user/session/price observable tensors.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># import required dependencies.</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="kn">import</span> <span class="nn">torch</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="kn">from</span> <span class="nn">torch_choice.data</span> <span class="kn">import</span> <span class="n">ChoiceDataset</span><span class="p">,</span> <span class="n">JointDataset</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="kn">import</span> <span class="nn">torch</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="kn">from</span> <span class="nn">torch_choice.data</span> <span class="kn">import</span> <span class="n">ChoiceDataset</span><span class="p">,</span> <span class="n">JointDataset</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># let&#39;s get a helper</span>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">def</span> <span class="nf">print_dict_shape</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
@@ -782,13 +797,144 @@ Raw item names can be encoded easily with <a href="https://scikit-learn.org/stab
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>ChoiceDataset(label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], price_obs=[500, 4, 12], device=cpu)
 </code></pre></div>
+<h3 id="datasetsummary"><code>dataset.summary()</code></h3>
+<p>The <code>summary</code> method provides preliminary summarization of the dataset.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nb">print</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">user_index</span><span class="p">)</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>4    1038
+8    1035
+5    1024
+1    1010
+2     997
+0     990
+6     981
+9     980
+3     974
+7     971
+dtype: int64
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nb">print</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">item_index</span><span class="p">)</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>0    2575
+1    2539
+2    2467
+3    2419
+dtype: int64
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">dataset</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>ChoiceDataset with 500 sessions, 4 items, 10 users, 10000 purchase records (observations) .
+The most frequent user is 4 with 1038 observations; the least frequent user is 7 with 971 observations; on average, there are 1000.00 observations per user.
+5 most frequent users are: 4(1038 times), 8(1035 times), 5(1024 times), 1(1010 times), 2(997 times).
+5 least frequent users are: 7(971 times), 3(974 times), 9(980 times), 6(981 times), 0(990 times).
+The most frequent item is 0, it was chosen 2575 times; the least frequent item is 3 it was 2419 times; on average, each item was purchased 2500.00 times.
+4 most frequent items are: 0(2575 times), 1(2539 times), 2(2467 times), 3(2419 times).
+4 least frequent items are: 3(2419 times), 2(2467 times), 1(2539 times), 0(2575 times).
+Attribute Summaries:
+Observable Tensor &#39;user_obs&#39; with shape torch.Size([10, 128])
+             0          1          2          3          4          5    \
+count  10.000000  10.000000  10.000000  10.000000  10.000000  10.000000   
+mean    0.687878  -0.339077  -0.375829   0.086242   0.250604  -0.344643   
+std     0.738520   1.259936   0.844018   0.766233   0.802785   0.645239   
+min    -0.578577  -2.135251  -1.335928  -0.911508  -1.396776  -1.519729   
+25%     0.264708  -0.889820  -0.845100  -0.414891  -0.132619  -0.699887   
+50%     0.902505  -0.603065  -0.638757  -0.289223   0.297693  -0.405371   
+75%     1.155211   0.021188  -0.190907   0.712183   0.768554   0.117107   
+max     1.623162   2.217712   1.624211   1.252059   1.273116   0.571998
+
+             6          7          8          9    ...        118        119  \
+count  10.000000  10.000000  10.000000  10.000000  ...  10.000000  10.000000   
+mean    0.423672   0.325855   0.258114  -0.199072  ...  -0.165618  -0.378175   
+std     1.304160   0.815934   0.938925   1.344848  ...   1.135625   0.940863   
+min    -1.440672  -1.068176  -1.280547  -2.819688  ...  -1.567793  -1.604171   
+25%    -0.535055   0.051598  -0.178302  -0.801871  ...  -1.114392  -1.066492   
+50%     0.502826   0.369002   0.230939  -0.576039  ...  -0.114789  -0.587483   
+75%     1.227700   0.899518   0.740881   0.820789  ...   0.602045   0.160254   
+max     2.462891   1.440098   1.828760   1.866570  ...   1.854828   1.386001
+
+             120        121        122        123        124        125  \
+count  10.000000  10.000000  10.000000  10.000000  10.000000  10.000000   
+mean   -0.557321   0.402392  -0.070746  -0.770201   0.594842   0.572671   
+std     1.128886   0.899030   0.757537   1.044478   0.956856   0.883374   
+min    -3.131332  -0.907885  -1.296398  -2.159384  -1.244177  -0.462607   
+25%    -0.834223  -0.059528  -0.222124  -1.332558   0.234198  -0.008799   
+50%    -0.613761   0.117478  -0.109676  -0.984450   0.656855   0.466357   
+75%     0.040239   1.136383   0.416972  -0.285216   1.246513   0.772441   
+max     1.087999   1.757588   1.022053   1.486507   2.010775   2.162550
+
+             126        127  
+count  10.000000  10.000000  
+mean    0.226993  -0.064205  
+std     1.463179   0.602277  
+min    -1.731004  -0.865115  
+25%    -0.951169  -0.418553  
+50%     0.174763  -0.112277  
+75%     0.773072   0.353951  
+max     2.991696   0.804881
+
+[8 rows x 128 columns]
+Observable Tensor &#39;item_obs&#39; with shape torch.Size([4, 64])
+             0         1         2         3         4         5         6   \
+count  4.000000  4.000000  4.000000  4.000000  4.000000  4.000000  4.000000   
+mean   0.287015 -0.180256 -0.239000  0.169168  0.159036  0.385342 -1.142672   
+std    1.339318  1.603530  0.722772  0.473407  0.392562  1.327739  0.566069   
+min   -1.138152 -2.212473 -1.051363 -0.538771 -0.330795 -0.517352 -1.770297   
+25%   -0.558802 -0.990083 -0.745828  0.132031 -0.006671 -0.485835 -1.397787   
+50%    0.170810 -0.012201 -0.154058  0.385432  0.174086 -0.125969 -1.199654   
+75%    1.016628  0.797626  0.352770  0.422569  0.339793  0.745208 -0.944538   
+max    1.944591  1.515852  0.403479  0.444577  0.618768  2.310656 -0.401083
+
+             7         8         9   ...        54        55        56  \
+count  4.000000  4.000000  4.000000  ...  4.000000  4.000000  4.000000   
+mean   0.581071 -0.169341  0.076562  ...  0.055457 -0.002887 -0.160406   
+std    0.972295  0.978922  1.116274  ...  0.777132  0.903879  1.140101   
+min   -0.596834 -1.309131 -1.563906  ... -0.481757 -0.997574 -1.721709   
+25%   -0.025344 -0.718815 -0.153971  ... -0.442894 -0.340660 -0.631280   
+50%    0.745386 -0.177989  0.514336  ... -0.240767 -0.105541  0.117918   
+75%    1.351801  0.371485  0.744870  ...  0.257583  0.232232  0.588793   
+max    1.430348  0.987744  0.841483  ...  1.185118  1.197110  0.844249
+
+             57        58        59        60        61        62        63  
+count  4.000000  4.000000  4.000000  4.000000  4.000000  4.000000  4.000000  
+mean   0.149579  0.199678  0.088542 -0.356379  1.004674  0.095064 -0.548665  
+std    0.963564  0.744614  1.170228  0.833992  0.559029  0.912057  0.730697  
+min   -0.760765 -0.419252 -1.038935 -0.989042  0.442226 -0.989018 -1.445138  
+25%   -0.268040 -0.383280 -0.604213 -0.970008  0.592259 -0.492793 -0.790356  
+50%   -0.075941  0.036190 -0.142981 -0.611959  0.966522  0.230826 -0.546745  
+75%    0.341678  0.619148  0.549774  0.001670  1.378937  0.818683 -0.305054  
+max    1.510964  1.145585  1.679067  0.787444  1.643426  0.907622  0.343970
+
+[8 rows x 64 columns]
+Observable Tensor &#39;session_obs&#39; with shape torch.Size([500, 10])
+                0           1           2           3           4           5  \
+count  500.000000  500.000000  500.000000  500.000000  500.000000  500.000000   
+mean    -0.025211   -0.018355   -0.002907    0.091295   -0.061911   -0.046364   
+std      0.976283    1.029875    0.959884    0.968500    1.020114    1.010222   
+min     -2.642895   -3.091050   -3.572037   -2.406249   -3.147900   -3.357277   
+25%     -0.745162   -0.685578   -0.636044   -0.629955   -0.754234   -0.732924   
+50%     -0.018775    0.017807   -0.018642    0.112322   -0.090321   -0.070502   
+75%      0.652438    0.646001    0.601829    0.722870    0.640275    0.652521   
+max      3.044069    3.191774    2.521059    2.695970    3.166039    2.714594
+
+                6           7           8           9  
+count  500.000000  500.000000  500.000000  500.000000  
+mean     0.000907    0.001370    0.070499   -0.007936  
+std      1.015561    1.032878    1.036212    0.936091  
+min     -2.677915   -3.489751   -2.953354   -2.424499  
+25%     -0.679291   -0.671086   -0.582997   -0.681405  
+50%      0.002569   -0.009368    0.087901    0.010856  
+75%      0.703671    0.732814    0.737692    0.618773  
+max      2.528283    3.259835    2.827300    2.492085  
+Observable Tensor &#39;price_obs&#39; with shape torch.Size([500, 4, 12])
+device=cpu
+</code></pre></div>
 <h3 id="datasetnum_users-items-sessions"><code>dataset.num_{users, items, sessions}</code></h3>
 <p>You can use the <code>num_{users, items, sessions}</code> attribute to obtain the number of users, items, and sessions, they are determined automatically from the <code>{user, item, session}_obs</code> tensors provided while initializing the dataset object.</p>
 <p><strong>Note</strong>: the print <code>=:</code> operator requires Python3.8 or higher, you can remove <code>=:</code> if you are using an earlier copy of Python.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">num_users</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">num_items</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">num_sessions</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
-<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">num_users</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">num_items</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">num_sessions</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>dataset.num_users=10
 dataset.num_items=4
@@ -797,12 +943,12 @@ len(dataset)=10000
 </code></pre></div>
 <h3 id="datasetclone"><code>dataset.clone()</code></h3>
 <p>The <code>ChoiceDataset</code> offers a <code>clone</code> method allow you to make copy of the dataset, you can modify the cloned dataset arbitrarily without changing the original dataset.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># clone</span>
-<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">item_index</span><span class="p">[:</span><span class="mi">10</span><span class="p">])</span>
-<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="n">dataset_cloned</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
-<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="n">dataset_cloned</span><span class="o">.</span><span class="n">item_index</span> <span class="o">=</span> <span class="mi">99</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">num_sessions</span><span class="p">)</span>
-<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset_cloned</span><span class="o">.</span><span class="n">item_index</span><span class="p">[:</span><span class="mi">10</span><span class="p">])</span>
-<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">item_index</span><span class="p">[:</span><span class="mi">10</span><span class="p">])</span>  <span class="c1"># does not change the original dataset.</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># clone</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">item_index</span><span class="p">[:</span><span class="mi">10</span><span class="p">])</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="n">dataset_cloned</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="n">dataset_cloned</span><span class="o">.</span><span class="n">item_index</span> <span class="o">=</span> <span class="mi">99</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">num_sessions</span><span class="p">)</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset_cloned</span><span class="o">.</span><span class="n">item_index</span><span class="p">[:</span><span class="mi">10</span><span class="p">])</span>
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">item_index</span><span class="p">[:</span><span class="mi">10</span><span class="p">])</span>  <span class="c1"># does not change the original dataset.</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>tensor([2, 2, 3, 1, 3, 2, 2, 1, 0, 1])
 tensor([99., 99., 99., 99., 99., 99., 99., 99., 99., 99.])
@@ -814,18 +960,18 @@ Please note that the following code runs only if your machine has a compatible G
 <p>Similarly, one can move data to host-memory using <code>dataset.to('cpu')</code>.
 The dataset also provides a <code>dataset._check_device_consistency()</code> method to check if all tensors are on the same device.
 If we only move the <code>label</code> to cpu without moving other tensors, this will result in an error message.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># move to device</span>
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">device</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
-<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">device</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
-<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">user_index</span><span class="o">.</span><span class="n">device</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
-<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">session_index</span><span class="o">.</span><span class="n">device</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
-<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>
-<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;cuda&#39;</span><span class="p">)</span>
-<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>
-<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">device</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
-<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">item_index</span><span class="o">.</span><span class="n">device</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
-<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">user_index</span><span class="o">.</span><span class="n">device</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
-<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">session_index</span><span class="o">.</span><span class="n">device</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># move to device</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">device</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">device</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">user_index</span><span class="o">.</span><span class="n">device</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">session_index</span><span class="o">.</span><span class="n">device</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;cuda&#39;</span><span class="p">)</span>
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>
+<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">device</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
+<a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">item_index</span><span class="o">.</span><span class="n">device</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
+<a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">user_index</span><span class="o">.</span><span class="n">device</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
+<a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">session_index</span><span class="o">.</span><span class="n">device</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>dataset.device=cpu
 dataset.device=cpu
@@ -836,11 +982,11 @@ dataset.item_index.device=cuda:0
 dataset.user_index.device=cuda:0
 dataset.session_index.device=cuda:0
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">dataset</span><span class="o">.</span><span class="n">_check_device_consistency</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="n">dataset</span><span class="o">.</span><span class="n">_check_device_consistency</span><span class="p">()</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># # NOTE: this cell will result errors, this is intentional.</span>
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="n">dataset</span><span class="o">.</span><span class="n">item_index</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">item_index</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
-<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="n">dataset</span><span class="o">.</span><span class="n">_check_device_consistency</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># # NOTE: this cell will result errors, this is intentional.</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="n">dataset</span><span class="o">.</span><span class="n">item_index</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">item_index</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="n">dataset</span><span class="o">.</span><span class="n">_check_device_consistency</span><span class="p">()</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>---------------------------------------------------------------------------
 
@@ -862,9 +1008,9 @@ Exception                                 Traceback (most recent call last)
 
 Exception: (&quot;Found tensors on different devices: {device(type=&#39;cuda&#39;, index=0), device(type=&#39;cpu&#39;)}.&quot;, &#39;Use dataset.to() method to align devices.&#39;)
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># create dictionary inputs for model.forward()</span>
-<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="c1"># collapse to a dictionary object.</span>
-<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="n">print_dict_shape</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">x_dict</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1"># create dictionary inputs for model.forward()</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="c1"># collapse to a dictionary object.</span>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="n">print_dict_shape</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">x_dict</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>dict.user_obs.shape=torch.Size([10000, 4, 128])
 dict.item_obs.shape=torch.Size([10000, 4, 64])
@@ -875,18 +1021,18 @@ dict.price_obs.shape=torch.Size([10000, 4, 12])
 <p>One can use <code>dataset[indices]</code> with <code>indices</code> as an integer-valued tensor or array to get the corresponding rows of the dataset.
 The example code block below queries the 6256-th, 4119-th, 453-th, 5520-th, and 1877-th row of the dataset object.
 The <code>item_index</code>, <code>user_index</code>, <code>session_index</code> of the resulted subset will be different from the original dataset, but other tensors will be the same.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># __getitem__ to get batch.</span>
-<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="c1"># pick 5 random sessions as the mini-batch.</span>
-<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
-<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="n">indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
-<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="nb">print</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
-<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="n">subset</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
-<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
-<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="nb">print</span><span class="p">(</span><span class="n">subset</span><span class="p">)</span>
-<a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a><span class="c1"># print_dict_shape(subset.x_dict)</span>
-<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a>
-<a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a><span class="c1"># assert torch.all(dataset.x_dict[&#39;price_obs&#39;][indices, :, :] == subset.x_dict[&#39;price_obs&#39;])</span>
-<a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a><span class="c1"># assert torch.all(dataset.item_index[indices] == subset.item_index)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="c1"># __getitem__ to get batch.</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="c1"># pick 5 random sessions as the mini-batch.</span>
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="n">indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="nb">print</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+<a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a><span class="n">subset</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+<a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+<a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a><span class="nb">print</span><span class="p">(</span><span class="n">subset</span><span class="p">)</span>
+<a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a><span class="c1"># print_dict_shape(subset.x_dict)</span>
+<a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a>
+<a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a><span class="c1"># assert torch.all(dataset.x_dict[&#39;price_obs&#39;][indices, :, :] == subset.x_dict[&#39;price_obs&#39;])</span>
+<a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a><span class="c1"># assert torch.all(dataset.item_index[indices] == subset.item_index)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>tensor([1118,  976, 1956,  290, 8283])
 ChoiceDataset(label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], price_obs=[500, 4, 12], device=cpu)
@@ -894,90 +1040,90 @@ ChoiceDataset(label=[], item_index=[5], user_index=[5], session_index=[5], item_
 </code></pre></div>
 <p>The subset method internally creates a copy of the datasets so that any modification applied on the subset will <strong>not</strong> be reflected on the original dataset.
 The researcher can feel free to do in-place modification to the subset.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="nb">print</span><span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">item_index</span><span class="p">)</span>
-<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">item_index</span><span class="p">[</span><span class="n">indices</span><span class="p">])</span>
-<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>
-<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="n">subset</span><span class="o">.</span><span class="n">item_index</span> <span class="o">+=</span> <span class="mi">1</span>  <span class="c1"># modifying the batch does not change the original dataset.</span>
-<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>
-<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="nb">print</span><span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">item_index</span><span class="p">)</span>
-<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">item_index</span><span class="p">[</span><span class="n">indices</span><span class="p">])</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="nb">print</span><span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">item_index</span><span class="p">)</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">item_index</span><span class="p">[</span><span class="n">indices</span><span class="p">])</span>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="n">subset</span><span class="o">.</span><span class="n">item_index</span> <span class="o">+=</span> <span class="mi">1</span>  <span class="c1"># modifying the batch does not change the original dataset.</span>
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="nb">print</span><span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">item_index</span><span class="p">)</span>
+<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">item_index</span><span class="p">[</span><span class="n">indices</span><span class="p">])</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>tensor([0, 1, 0, 0, 0])
 tensor([0, 1, 0, 0, 0])
 tensor([1, 2, 1, 1, 1])
 tensor([0, 1, 0, 0, 0])
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="nb">print</span><span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">item_obs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
-<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">item_obs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
-<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="n">subset</span><span class="o">.</span><span class="n">item_obs</span> <span class="o">+=</span> <span class="mi">1</span>
-<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="nb">print</span><span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">item_obs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
-<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">item_obs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="nb">print</span><span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">item_obs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">item_obs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="n">subset</span><span class="o">.</span><span class="n">item_obs</span> <span class="o">+=</span> <span class="mi">1</span>
+<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="nb">print</span><span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">item_obs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">item_obs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>tensor(-1.5811)
 tensor(-1.5811)
 tensor(-0.5811)
 tensor(-1.5811)
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="nb">print</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">item_index</span><span class="p">))</span>
-<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="nb">print</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">item_index</span><span class="p">[</span><span class="n">indices</span><span class="p">]))</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="nb">print</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">item_index</span><span class="p">))</span>
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="nb">print</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">item_index</span><span class="p">[</span><span class="n">indices</span><span class="p">]))</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>140339656298640
 140339656150528
 </code></pre></div>
 <h2 id="using-pytorch-dataloader-for-the-training-loop">Using Pytorch dataloader for the training loop.</h2>
 <p>The <code>ChoiceDataset</code> object natively support batch samplers from PyTorch. For demonstration purpose, we turned off the shuffling option.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="kn">from</span> <span class="nn">torch.utils.data.sampler</span> <span class="kn">import</span> <span class="n">BatchSampler</span><span class="p">,</span> <span class="n">SequentialSampler</span><span class="p">,</span> <span class="n">RandomSampler</span>
-<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="n">shuffle</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># for demonstration purpose.</span>
-<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="n">batch_size</span> <span class="o">=</span> <span class="mi">32</span>
-<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>
-<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="c1"># Create sampler.</span>
-<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="n">sampler</span> <span class="o">=</span> <span class="n">BatchSampler</span><span class="p">(</span>
-<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>    <span class="n">RandomSampler</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span> <span class="k">if</span> <span class="n">shuffle</span> <span class="k">else</span> <span class="n">SequentialSampler</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span>
-<a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a>    <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
-<a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a>    <span class="n">drop_last</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a>
-<a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a><span class="n">dataloader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span>
-<a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a>                                         <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span>
-<a id="__codelineno-20-13" name="__codelineno-20-13" href="#__codelineno-20-13"></a>                                         <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-<a id="__codelineno-20-14" name="__codelineno-20-14" href="#__codelineno-20-14"></a>                                         <span class="n">collate_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-<a id="__codelineno-20-15" name="__codelineno-20-15" href="#__codelineno-20-15"></a>                                         <span class="n">pin_memory</span><span class="o">=</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">device</span> <span class="o">==</span> <span class="s1">&#39;cpu&#39;</span><span class="p">))</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="kn">from</span> <span class="nn">torch.utils.data.sampler</span> <span class="kn">import</span> <span class="n">BatchSampler</span><span class="p">,</span> <span class="n">SequentialSampler</span><span class="p">,</span> <span class="n">RandomSampler</span>
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="n">shuffle</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># for demonstration purpose.</span>
+<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="n">batch_size</span> <span class="o">=</span> <span class="mi">32</span>
+<a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a>
+<a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a><span class="c1"># Create sampler.</span>
+<a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a><span class="n">sampler</span> <span class="o">=</span> <span class="n">BatchSampler</span><span class="p">(</span>
+<a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a>    <span class="n">RandomSampler</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span> <span class="k">if</span> <span class="n">shuffle</span> <span class="k">else</span> <span class="n">SequentialSampler</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span>
+<a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a>    <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+<a id="__codelineno-23-9" name="__codelineno-23-9" href="#__codelineno-23-9"></a>    <span class="n">drop_last</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<a id="__codelineno-23-10" name="__codelineno-23-10" href="#__codelineno-23-10"></a>
+<a id="__codelineno-23-11" name="__codelineno-23-11" href="#__codelineno-23-11"></a><span class="n">dataloader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span>
+<a id="__codelineno-23-12" name="__codelineno-23-12" href="#__codelineno-23-12"></a>                                         <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span>
+<a id="__codelineno-23-13" name="__codelineno-23-13" href="#__codelineno-23-13"></a>                                         <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-23-14" name="__codelineno-23-14" href="#__codelineno-23-14"></a>                                         <span class="n">collate_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+<a id="__codelineno-23-15" name="__codelineno-23-15" href="#__codelineno-23-15"></a>                                         <span class="n">pin_memory</span><span class="o">=</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">device</span> <span class="o">==</span> <span class="s1">&#39;cpu&#39;</span><span class="p">))</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">item_obs</span><span class="o">.</span><span class="n">shape</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
-<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="n">item_obs_all</span> <span class="o">=</span> <span class="n">item_obs</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_items</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="n">item_obs_all</span> <span class="o">=</span> <span class="n">item_obs_all</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
-<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="n">item_index_all</span> <span class="o">=</span> <span class="n">item_index</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
-<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">item_obs_all</span><span class="o">.</span><span class="n">shape</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">item_obs</span><span class="o">.</span><span class="n">shape</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="n">item_obs_all</span> <span class="o">=</span> <span class="n">item_obs</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_items</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a><span class="n">item_obs_all</span> <span class="o">=</span> <span class="n">item_obs_all</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+<a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a><span class="n">item_index_all</span> <span class="o">=</span> <span class="n">item_index</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+<a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">item_obs_all</span><span class="o">.</span><span class="n">shape</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>item_obs.shape=torch.Size([4, 64])
 item_obs_all.shape=torch.Size([10000, 4, 64])
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dataloader</span><span class="p">):</span>
-<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>    <span class="n">first</span><span class="p">,</span> <span class="n">last</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="n">batch_size</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">batch_size</span><span class="p">)</span>
-<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>    <span class="n">idx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">)</span>
-<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>    <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">item_obs_all</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">==</span> <span class="n">batch</span><span class="o">.</span><span class="n">x_dict</span><span class="p">[</span><span class="s1">&#39;item_obs&#39;</span><span class="p">])</span>
-<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>    <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">item_index_all</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">==</span> <span class="n">batch</span><span class="o">.</span><span class="n">item_index</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dataloader</span><span class="p">):</span>
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>    <span class="n">first</span><span class="p">,</span> <span class="n">last</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="n">batch_size</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">batch_size</span><span class="p">)</span>
+<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a>    <span class="n">idx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">)</span>
+<a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a>    <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">item_obs_all</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">==</span> <span class="n">batch</span><span class="o">.</span><span class="n">x_dict</span><span class="p">[</span><span class="s1">&#39;item_obs&#39;</span><span class="p">])</span>
+<a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a>    <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">item_index_all</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">==</span> <span class="n">batch</span><span class="o">.</span><span class="n">item_index</span><span class="p">)</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="n">batch</span><span class="o">.</span><span class="n">x_dict</span><span class="p">[</span><span class="s1">&#39;item_obs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="n">batch</span><span class="o">.</span><span class="n">x_dict</span><span class="p">[</span><span class="s1">&#39;item_obs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>torch.Size([16, 4, 64])
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="n">print_dict_shape</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">x_dict</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="n">print_dict_shape</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">x_dict</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>dict.user_obs.shape=torch.Size([10000, 4, 128])
 dict.item_obs.shape=torch.Size([10000, 4, 64])
 dict.session_obs.shape=torch.Size([10000, 4, 10])
 dict.price_obs.shape=torch.Size([10000, 4, 12])
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="n">dataset</span><span class="o">.</span><span class="fm">__len__</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="n">dataset</span><span class="o">.</span><span class="fm">__len__</span><span class="p">()</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>10000
 </code></pre></div>
 <h2 id="chaining-multiple-datasets-jointdataset-examples">Chaining Multiple Datasets: <code>JointDataset</code> Examples</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="n">dataset1</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
-<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="n">dataset2</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
-<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a><span class="n">joint_dataset</span> <span class="o">=</span> <span class="n">JointDataset</span><span class="p">(</span><span class="n">the_dataset</span><span class="o">=</span><span class="n">dataset1</span><span class="p">,</span> <span class="n">another_dataset</span><span class="o">=</span><span class="n">dataset2</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="n">dataset1</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a><span class="n">dataset2</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+<a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a><span class="n">joint_dataset</span> <span class="o">=</span> <span class="n">JointDataset</span><span class="p">(</span><span class="n">the_dataset</span><span class="o">=</span><span class="n">dataset1</span><span class="p">,</span> <span class="n">another_dataset</span><span class="o">=</span><span class="n">dataset2</span><span class="p">)</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="n">joint_dataset</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="n">joint_dataset</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>JointDataset with 2 sub-datasets: (
     the_dataset: ChoiceDataset(label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], price_obs=[500, 4, 12], device=cpu)
