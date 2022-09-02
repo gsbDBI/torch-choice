@@ -1,17 +1,64 @@
 # Introduction
-This document briefly introduces the choice model we aim to solve.
+# Introduction
 
-In short, all models (the conditional logit model, the nested logit model, and the Bayesian embedding model) in the package aim to predict which item a user will purchase while facing the shelves in a supermarket.
+## Logistic Regression and Choice Models
 
-Specifically, for each user $u$ and item $i$, models compute a value $U_{ui}$ predicting the utility user $u$ will get from purchasing item $i$. User $u$ is predicted to purchase the item $i$, generating the maximum utility.
+[Logistic Regression](https://en.wikipedia.org/wiki/Logistic_regression) models the probability that user $u$ chooses item $i$ in session $s$ by the logistic function
+$$
+P_{uis} = \frac{e^{\mu_{uis}}}{\Sigma_{j \in A_{us}}e^{\mu_{ujs}}}
+$$
+where, 
 
-However, the usage of our models is not limited to this supermarket context; researchers can adjust the definition of **user** and **item** to fit any choice modeling context. The [related project](./projects.md) page overviews some extensions of our models to other contexts.
+$$\mu_{uis} = \alpha + \beta X + \gamma W + \dots$$;
+
+here $X$, $W$ are predictors (independent variables) for users and items respectively (these can be constant or can vary across session), and greek letters $\alpha$, $\beta$ and $\gamma$ are learned parameters
+$A_{us}$ is the set of items available for user $u$ in session $s$.
+
+When users are choosing over items, we can write utility $U_{uis}$ that user $u$ derives from item $i$ in session $s$, as
+$U_{uis} = \mu_{uis} + \epsilon_{uis}$
+where $\epsilon$ is an unobserved random error term.
+
+If we assume iid extreme value type 1 errors for $\epsilon_{uis}$, this leads to the above logistic probabilities of user $u$ choosing item $i$ in session $s$, as shown by [McFadden](https://en.wikipedia.org/wiki/Choice_modelling), and as often studied in Econometrics.
+
+## Package
+We implement a fully flexible setup, where we allow 
+1. coefficients ($\alpha$, $\beta$, $\gamma$, $\dots$) to be constant, user-specific (i.e., $\alpha=\alpha_u$), item-specific (i.e., $\alpha=\alpha_i$), session-specific (i.e., $\alpha=\alpha_t$), or (session, item)-specific (i.e., $\alpha=\alpha_{ti}$). For example, specifying $\alpha$ to be item-specific is equivalent to adding an item-level fixed effect.
+2. Observables ($X$, $Y$, $\dots$) to be constant, user-specific, item-specific, session-specific, or (session, item) (such as price) and (session, user) (such as income) specific as well.
+3. Specifying availability sets $A_{us}$
+
+This flexibility in coefficients and features allows for more than 20 types of additive terms to $U_{uis}$, which enables modelling rich structures.
+
+As such, this package can be used to learn such models for
+1. Parameter Estimation, as in the Transportation Choice example below
+2. Prediction, as in the MNIST handwritten digits classification example below
+
+Examples with Utility Form:
+1. Transportation Chioce (from the Mode Canada dataset) [(Detailed Tutorial)](https://github.com/gsbDBI/torch-choice/blob/main/tutorials/conditional_logit_model_mode_canada.ipynb)
+
+$$
+U_{uit} = \beta^0_i + \beta^{1\top} X^{price: (cost, freq, ovt)}_{it} + \beta^2_i X^{session:income}_t + \beta^3_i X_{it}^{price:ivt} + \epsilon_{uit}
+$$
+
+This is also described as a conditional logit model in Econometrics.
+
+
+2. MNIST classification [(Upcoming Detailed Tutorial)]()
+
+$$
+U_{it} = \beta_i X^{session:pixelvalues} + \epsilon_{it}
+$$
+
+This is a classic problem used for exposition in Computer Science to motivate various Machine Learning models. There is no concept of a user in this setup. Our package allows for models of this nature and is fully usable for Machine Learning problems with added flexibility over [scikit-learn logistic regression](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html)
+
+We highly recommend users to go through [tutorials](https://github.com/gsbDBI/torch-choice/blob/main/tutorials) we prepared to get a better understanding of what the package is offering. We present multiple examples, and for each case we specify the utility form. The [related project](./projects.md) page overviews some extensions of our models to other contexts.
 
 ## Notes on Encodings
-Since we will be using PyTorch to train our model, we represent their identities with *consecutive* integer values instead of the raw human-readable names of items (e.g., Dell 24-inch LCD monitor). Similarly, you would need to encode user indices and session indices as well.
-Raw item names can be encoded easily with [sklearn.preprocessing.LabelEncoder](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html) (The [sklearn.preprocessing.OrdinalEncoder](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OrdinalEncoder.html) works as well).
+Since we will be using PyTorch to train our model, we accept user and item identities with integer values from [0, 1, .. *num_users* - 1] and [0, 1, .. *num_items* - 1] instead of the raw human-readable names of items (e.g., Dell 24-inch LCD monitor) or any other encoding. The user is responsible to encode user indices, item indices and session indices, wherever appliable (some setups do not require session and/or user identifiers)
+Raw item/user/session names can be encoded easily with [sklearn.preprocessing.LabelEncoder](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html) (The [sklearn.preprocessing.OrdinalEncoder](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OrdinalEncoder.html) works as well).
 
 ## Components of the Choice Modeling Problem
+For the rest of this tutorial, we will consider supermarket choice as the concrete setting.
+
 We aim to predict users' choices while facing multiple items available, e.g., which brand of milk the user will purchase in the supermarket.
 
 We begin with essential components of the choice modeling problem. Walking through these components should help you understand what kind of data our models are working on.

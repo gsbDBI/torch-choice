@@ -12,31 +12,41 @@ Unique features:
 4. Maximum Likelihood Estimation (MLE) (optionally, reporting standard errors or MAP inference with Bayesian Priors on coefficients)
 5. Estimation via minimization of Cross Entropy Loss (optionally with L1/L2 regularization)
 
-# Choice Models Supported
+# Introduction
 
-This package allows learning of flexible choice models for multinomial choice.  Denote item observables by $X$ and user observables by $Y$. Define utility $U_{uis}$ for user $u$ from choosing item $i$ in session $s$ as,
+## Logistic Regression and Choice Models
 
+[Logistic Regression](https://en.wikipedia.org/wiki/Logistic_regression) models the probability that user $u$ chooses item $i$ in session $s$ by the logistic function
 $$
-U_{uis} = \alpha + \beta^\top X + \gamma^\top Y + \dots + \epsilon_{uis}
+P_{uis} = \frac{e^{\mu_{uis}}}{\Sigma_{j \in A_{us}}e^{\mu_{ujs}}}
 $$
+where, 
 
-The probability that user $u$ chooses item $i$ in session $s$ is given by the logistic function (if we assume iid extreme value type 1 errors for $\epsilon_{uis}$, as shown by [McFadden](https://en.wikipedia.org/wiki/Choice_modelling), and as in [Logistic Regression](https://en.wikipedia.org/wiki/Logistic_regression)), is
+$$\mu_{uis} = \alpha + \beta X + \gamma W + \dots$$;
 
-$$
-P_{uis} = \frac{e^{U_{uis}}}{\Sigma_{j \in A_{us}}e^{U_{ujs}}}
-$$
+here $X$, $W$ are predictors (independent variables) for users and items respectively (these can be constant or can vary across session), and greek letters $\alpha$, $\beta$ and $\gamma$ are learned parameters
+$A_{us}$ is the set of items available for user $u$ in session $s$.
 
-where $A_{us}$ is the set of items available for user $u$ in session $s$.
+When users are choosing over items, we can write utility $U_{uis}$ that user $u$ derives from item $i$ in session $s$, as
+$U_{uis} = \mu_{uis} + \epsilon_{uis}$
+where $\epsilon$ is an unobserved random error term.
 
+If we assume iid extreme value type 1 errors for $\epsilon_{uis}$, this leads to the above logistic probabilities of user $u$ choosing item $i$ in session $s$, as shown by [McFadden](https://en.wikipedia.org/wiki/Choice_modelling), and as often studied in Econometrics.
+
+## Package
 We implement a fully flexible setup, where we allow 
 1. coefficients ($\alpha$, $\beta$, $\gamma$, $\dots$) to be constant, user-specific (i.e., $\alpha=\alpha_u$), item-specific (i.e., $\alpha=\alpha_i$), session-specific (i.e., $\alpha=\alpha_t$), or (session, item)-specific (i.e., $\alpha=\alpha_{ti}$). For example, specifying $\alpha$ to be item-specific is equivalent to adding an item-level fixed effect.
-2. Observables ($X$, $Y$, $\dots$) to be constant, user-specific, item-specific, session-specific, or (session, item)-specific as well.
+2. Observables ($X$, $Y$, $\dots$) to be constant, user-specific, item-specific, session-specific, or (session, item) (such as price) and (session, user) (such as income) specific as well.
 3. Specifying availability sets $A_{us}$
 
 This flexibility in coefficients and features allows for more than 20 types of additive terms to $U_{uis}$, which enables modelling rich structures.
 
-Utility Form Examples
-1. Mode Canada [(Detailed Tutorial)](https://github.com/gsbDBI/torch-choice/blob/main/tutorials/conditional_logit_model_mode_canada.ipynb)
+As such, this package can be used to learn such models for
+1. Parameter Estimation, as in the Transportation Choice example below
+2. Prediction, as in the MNIST handwritten digits classification example below
+
+Examples with Utility Form:
+1. Transportation Chioce (from the Mode Canada dataset) [(Detailed Tutorial)](https://github.com/gsbDBI/torch-choice/blob/main/tutorials/conditional_logit_model_mode_canada.ipynb)
 
 $$
 U_{uit} = \beta^0_i + \beta^{1\top} X^{price: (cost, freq, ovt)}_{it} + \beta^2_i X^{session:income}_t + \beta^3_i X_{it}^{price:ivt} + \epsilon_{uit}
@@ -76,7 +86,7 @@ $$
 U_{uis} = \alpha_i + \beta_i \text{income}_s + \gamma \text{cost} + \delta \text{freq} + \eta \text{ovt} + \iota_i \text{ivt} + \varepsilon
 $$
 
-### Modelling Transportation Choice with Torch-Choice
+###  Mode Canada with Torch-Choice
 
 
 ```python
@@ -111,7 +121,7 @@ model = torch_choice.model.ConditionalLogitModel(
 torch_choice.utils.run_helper.run(model, data.choice_dataset, num_epochs=5000, learning_rate=0.01, batch_size=-1)
 ```
 
-### Modelling Transportation Choice with R
+## Mode Canada with R
 
 We include the R code for the ModeCanada example as well.
 ```{r}
