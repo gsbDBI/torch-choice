@@ -418,7 +418,7 @@ Unique features:
 P_{uis} = \frac{e^{\mu_{uis}}}{\Sigma_{j \in A_{us}}e^{\mu_{ujs}}}
 \]</div>
 <p>where, </p>
-<p><span class="arithmatex">\(<span class="arithmatex">\(\mu_{uis} = \alpha + \beta X + \gamma W + \dots\)</span>\)</span>;</p>
+<div class="arithmatex">\[\mu_{uis} = \alpha + \beta X + \gamma W + \dots\]</div>
 <p>here <span class="arithmatex">\(X\)</span>, <span class="arithmatex">\(W\)</span> are predictors (independent variables) for users and items respectively (these can be constant or can vary across session), and greek letters <span class="arithmatex">\(\alpha\)</span>, <span class="arithmatex">\(\beta\)</span> and <span class="arithmatex">\(\gamma\)</span> are learned parameters. <span class="arithmatex">\(A_{us}\)</span> is the set of items available for user <span class="arithmatex">\(u\)</span> in session <span class="arithmatex">\(s\)</span>.</p>
 <p>When users are choosing over items, we can write utility <span class="arithmatex">\(U_{uis}\)</span> that user <span class="arithmatex">\(u\)</span> derives from item <span class="arithmatex">\(i\)</span> in session <span class="arithmatex">\(s\)</span>, as</p>
 <div class="arithmatex">\[
@@ -426,6 +426,14 @@ U_{uis} = \mu_{uis} + \epsilon_{uis}
 \]</div>
 <p>where <span class="arithmatex">\(\epsilon\)</span> is an unobserved random error term.</p>
 <p>If we assume iid extreme value type 1 errors for <span class="arithmatex">\(\epsilon_{uis}\)</span>, this leads to the above logistic probabilities of user <span class="arithmatex">\(u\)</span> choosing item <span class="arithmatex">\(i\)</span> in session <span class="arithmatex">\(s\)</span>, as shown by <a href="https://en.wikipedia.org/wiki/Choice_modelling">McFadden</a>, and as often studied in Econometrics.</p>
+<h2 id="installation">Installation</h2>
+<ol>
+<li>Clone the repository to your local machine or server.</li>
+<li>Install required dependencies using: <code>pip3 install -r requirements.txt</code>.</li>
+<li>Run <code>pip3 install torch-choice</code>.</li>
+<li>Check installation by running <code>python3 -c 'import torch_choice; print(torch_choice.__version__)'</code>.</li>
+</ol>
+<p><a href="https://gsbdbi.github.io/torch-choice/install/">The installation page</a> provides more details on installation.</p>
 <h2 id="package">Package</h2>
 <p>We implement a fully flexible setup, where we allow 
 1. coefficients (<span class="arithmatex">\(\alpha\)</span>, <span class="arithmatex">\(\beta\)</span>, <span class="arithmatex">\(\gamma\)</span>, <span class="arithmatex">\(\dots\)</span>) to be constant, user-specific (i.e., <span class="arithmatex">\(\alpha=\alpha_u\)</span>), item-specific (i.e., <span class="arithmatex">\(\alpha=\alpha_i\)</span>), session-specific (i.e., <span class="arithmatex">\(\alpha=\alpha_t\)</span>), or (session, item)-specific (i.e., <span class="arithmatex">\(\alpha=\alpha_{ti}\)</span>). For example, specifying <span class="arithmatex">\(\alpha\)</span> to be item-specific is equivalent to adding an item-level fixed effect.
@@ -438,34 +446,26 @@ U_{uis} = \mu_{uis} + \epsilon_{uis}
 <p>Examples with Utility Form:
 1. Transportation Choice (from the Mode Canada dataset) <a href="https://github.com/gsbDBI/torch-choice/blob/main/tutorials/conditional_logit_model_mode_canada.ipynb">(Detailed Tutorial)</a></p>
 <div class="arithmatex">\[
-U_{uit} = \beta^0_i + \beta^{1\top} X^{itemsession: (cost, freq, ovt)}_{it} + \beta^2_i X^{session:income}_t + \beta^3_i X_{it}^{itemsession:ivt} + \epsilon_{uit}
+U_{uit} = \beta^0_i + \beta^{1} X^{itemsession: (cost, freq, ovt)}_{it} + \beta^2_i X^{session:income}_t + \beta^3_i X_{it}^{itemsession:ivt} + \epsilon_{uit}
 \]</div>
 <p>This is also described as a conditional logit model in Econometrics. We note the shapes/sizes of each of the components in the above model. Suppose there are U users, I items and S sessions; in this case there is one user per session, so that U = S</p>
 <p>Then,
-- <span class="arithmatex">\(X^{itemsession: (cost, freq, ovt)}_{it}\)</span> is a matrix of size (I x S) x (3); it has three entries for each item-session, and is like a price; its coefficient <span class="arithmatex">\(\beta^{1\top}\)</span> has constant variation and is of size (1) x (3).
+- <span class="arithmatex">\(X^{itemsession: (cost, freq, ovt)}_{it}\)</span> is a matrix of size (I x S) x (3); it has three entries for each item-session, and is like a price; its coefficient <span class="arithmatex">\(\beta^{1}\)</span> has constant variation and is of size (1) x (3).
 - <span class="arithmatex">\(X^{session: income}_{it}\)</span> is a matrix which is of size (S) x (1); it has one entry for each session, and it denotes income of the user making the choice in the session. In this case, it is equivalent to <span class="arithmatex">\(X^{usersession: income}_{it}\)</span> since we observe a user making a decision only once; its coefficient <span class="arithmatex">\(\beta^2_i\)</span> has item level variation and is of size (I) x (1)
 - <span class="arithmatex">\(X_{it}^{itemsession:ivt}\)</span> is a matrix of size (I x S) x (1); this has one entry for each item-session; it is the price; its coefficent <span class="arithmatex">\(\beta^3_i\)</span> has item level variation and is of size (I) x (3)</p>
 <ol>
 <li>MNIST classification <a href="">(Upcoming Detailed Tutorial)</a></li>
 </ol>
-<p>$$
-U_{it} = \beta_i X^{session:pixelvalues}<em>{t} + \epsilon</em>{it}
-$$
-We note the shapes/sizes of each of the components in the above model. Suppose there are U users, I items and S sessions; in this case, an item is one of the 10 possible digits, so I = 10; there is one user per session, so that U=S; and each session is an image being classified.
+<div class="arithmatex">\[
+U_{it} = \beta_i X^{session:pixelvalues}_{t} + \epsilon_{it}
+\]</div>
+<p>We note the shapes/sizes of each of the components in the above model. Suppose there are U users, I items and S sessions; in this case, an item is one of the 10 possible digits, so I = 10; there is one user per session, so that U=S; and each session is an image being classified.
 Then,
 - <span class="arithmatex">\(X^{session:pixelvalues}_{t}\)</span> is a matrix of size (S) x (H x W) where H x W are the dimensions of the image being classified; its coefficient <span class="arithmatex">\(\beta_i\)</span> has item level vartiation and is of size (I) x (1)</p>
 <p>This is a classic problem used for exposition in Computer Science to motivate various Machine Learning models. There is no concept of a user in this setup. Our package allows for models of this nature and is fully usable for Machine Learning problems with added flexibility over <a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html">scikit-learn logistic regression</a></p>
-<p>We highly recommend users to go through <a href="https://github.com/gsbDBI/torch-choice/blob/main/tutorials">tutorials</a> we prepared to get a better understanding of what the package is offering. We present multiple examples, and for each case we specify the utility form.</p>
-<h2 id="installation">Installation</h2>
-<ol>
-<li>Clone the repository to your local machine or server.</li>
-<li>Install required dependencies using: <code>pip3 install -r requirements.txt</code>.</li>
-<li>Run <code>pip3 install torch-choice</code>.</li>
-<li>Check installation by running <code>python3 -c 'import torch_choice; print(torch_choice.__version__)'</code>.</li>
-</ol>
-<p><a href="https://gsbdbi.github.io/torch-choice/install/">The installation page</a> provides more details on installation.</p>
+<p>We highly recommend users to go through <a href="https://github.com/gsbDBI/torch-choice/blob/main/tutorials">tutorials</a> we prepared to get a better understanding of what the package offers. We present multiple examples, and for each case we specify the utility form.</p>
 <p>In this demonstration, we will guide you through a minimal example of fitting a conditional logit model using our package. We will be referencing to R code and Stata code as well to deliver a smooth knowledge transfer.</p>
-<h2 id="an-example-on-transportation-choice-dataset">An Example on Transportation Choice Dataset</h2>
+<h2 id="example-usage-transportation-choice-dataset">Example Usage - Transportation Choice Dataset</h2>
 <p>In this demonstration, we will guide you through a minimal example of fitting a conditional logit model using our package. We will be referencing R code as well to deliver a smooth knowledge transfer.</p>
 <p>We are modelling people's choices on transportation modes using the publicly available <code>ModeCanada</code> dataset.
 More information about the <a href="https://www.rdocumentation.org/packages/mlogit/versions/1.1-1/topics/ModeCanada">ModeCanada: Mode Choice for the Montreal-Toronto Corridor</a>.</p>
@@ -473,6 +473,7 @@ More information about the <a href="https://www.rdocumentation.org/packages/mlog
 $$
 U_{uis} = \alpha_i + \beta_i \text{income}_s + \gamma \text{cost} + \delta \text{freq} + \eta \text{ovt} + \iota_i \text{ivt} + \varepsilon
 $$</p>
+<p>this is equivalent to the functional form described in the previous section</p>
 <h3 id="mode-canada-with-torch-choice">Mode Canada with Torch-Choice</h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># load packages.</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
