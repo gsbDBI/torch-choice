@@ -440,22 +440,6 @@ U_{it} = \beta_i X^{session:pixelvalues} + \epsilon_{it}
 <h2 id="notes-on-encodings">Notes on Encodings</h2>
 <p>Since we will be using PyTorch to train our model, we accept user and item identities with integer values from [0, 1, .. <em>num_users</em> - 1] and [0, 1, .. <em>num_items</em> - 1] instead of the raw human-readable names of items (e.g., Dell 24-inch LCD monitor) or any other encoding. The user is responsible to encode user indices, item indices and session indices, wherever appliable (some setups do not require session and/or user identifiers)
 Raw item/user/session names can be encoded easily with <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html">sklearn.preprocessing.LabelEncoder</a> (The <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OrdinalEncoder.html">sklearn.preprocessing.OrdinalEncoder</a> works as well).</p>
-<h2 id="components-of-the-choice-modeling-problem">Components of the Choice Modeling Problem</h2>
-<p>For the rest of this tutorial, we will consider supermarket choice as the concrete setting.</p>
-<p>We aim to predict users' choices while facing multiple items available, e.g., which brand of milk the user will purchase in the supermarket.</p>
-<p>We begin with essential components of the choice modeling problem. Walking through these components should help you understand what kind of data our models are working on.</p>
-<h3 id="purchasing-record">Purchasing Record</h3>
-<p>A <strong>purchasing record</strong> is a record describing <em>who</em> bought <em>what</em> at <em>when</em> and <em>where</em>.
-Let <span class="arithmatex">\(B\)</span> denote the number of <strong>purchasing records</strong> in the dataset (i.e., number of rows/observation of the dataset). Each row <span class="arithmatex">\(b \in \{1,2,\dots, B\}\)</span> corresponds to a purchase record.</p>
-<h3 id="what-items-and-categories"><em>What</em>: Items and Categories</h3>
-<p>To begin with, suppose there are <span class="arithmatex">\(I\)</span> <strong>items</strong> indexed by <span class="arithmatex">\(i \in \{1,2,\dots,I\}\)</span>.</p>
-<p>The researcher can optionally partition the set items into <span class="arithmatex">\(C\)</span> <strong>categories</strong> indexed by <span class="arithmatex">\(c \in \{1,2,\dots,C\}\)</span>. Let <span class="arithmatex">\(I_c\)</span> denote the collection of items in category <span class="arithmatex">\(c\)</span>. It's easy to see that the union of all <span class="arithmatex">\(I_c\)</span> is the entire set of items <span class="arithmatex">\(\{1, 2, \dots I\}\)</span>.
-Suppose the researcher does not wish to model different categories differently. In that case, the researcher can put all items in one category: <span class="arithmatex">\(I_1 = \{1, 2, \dots I\}\)</span>, so all items belong to the same category.</p>
-<p>For each purchasing record <span class="arithmatex">\(b \in \{1,2,\dots, B\}\)</span>, there is a corresponding <span class="arithmatex">\(i_b \in \{1,2,\dots,I\}\)</span> saying which item was chosen in this record.</p>
-<h4 id="important-note-on-encoding">Important Note on Encoding</h4>
-<p>Since we will be using PyTorch to train our model, we represent their identities with integer values instead of the raw human-readable names of items (e.g., Dell 24-inch LCD monitor).
-Similarly, you would need to encode user indices and session indices as well.</p>
-<p>Raw item names can be encoded easily with <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html">sklearn.preprocessing.LabelEncoder</a> (The <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OrdinalEncoder.html">sklearn.preprocessing.OrdinalEncoder</a> works as well).</p>
 <p>Here is an example of encoding generic item names to integers using <code>sklearn.preprocessing.LabelEncoder</code>:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">LabelEncoder</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">enc</span> <span class="o">=</span> <span class="n">LabelEncoder</span><span class="p">()</span>
@@ -471,9 +455,21 @@ Similarly, you would need to encode user indices and session indices as well.</p
 <a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="c1"># For example, the first entry of enc.classes_ is &#39;Apple (Fruit)&#39;, this means &#39;Apple (Fruit)&#39; was encoded to 0 in this process.</span>
 <a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="c1"># The last item in the `raw_item` list was &#39;Apple (Fruit)&#39;, and the last item in the `encoded_item` list was 0 as we expected.</span>
 </code></pre></div>
+<h2 id="components-of-the-choice-modeling-problem">Components of the Choice Modeling Problem</h2>
+<p>For the rest of this tutorial, we will consider retail supermarket choice as the concrete setting.</p>
+<p>We aim to predict users' choices while choosing between multiple available items, e.g., which brand of milk the user will purchase in the supermarket.</p>
+<p>We begin with essential components of the choice modeling problem. Walking through these components helps understand what kind of data our models are working on.</p>
+<h3 id="purchase-record">Purchase Record</h3>
+<p>A <strong>purchase record</strong> is a record describing <em>who</em> bought <em>what</em> at <em>when</em> and <em>where</em>.
+Let <span class="arithmatex">\(B\)</span> denote the number of <strong>purchase records</strong> in the dataset (i.e., number of rows/observation of the dataset). Each row <span class="arithmatex">\(b \in \{1,2,\dots, B\}\)</span> corresponds to a purchase record.</p>
+<h3 id="what-items-and-categories"><em>What</em>: Items and Categories</h3>
+<p>To begin with, suppose there are <span class="arithmatex">\(I\)</span> <strong>items</strong> indexed by <span class="arithmatex">\(i \in \{1,2,\dots,I\}\)</span>.</p>
+<p>The researcher can optionally partition the set items into <span class="arithmatex">\(C\)</span> <strong>categories</strong> indexed by <span class="arithmatex">\(c \in \{1,2,\dots,C\}\)</span>. Let <span class="arithmatex">\(I_c\)</span> denote the collection of items in category <span class="arithmatex">\(c\)</span>. It's easy to see that the union of all <span class="arithmatex">\(I_c\)</span> is the entire set of items <span class="arithmatex">\(\{1, 2, \dots I\}\)</span>.
+Suppose the researcher does not wish to model different categories differently. In that case, the researcher can put all items in one category: <span class="arithmatex">\(I_1 = \{1, 2, \dots I\}\)</span>, so all items belong to the same category.</p>
+<p>For each purchase record <span class="arithmatex">\(b \in \{1,2,\dots, B\}\)</span>, there is a corresponding <span class="arithmatex">\(i_b \in \{1,2,\dots,I\}\)</span> saying which item was chosen in this record.</p>
 <h3 id="who-users"><em>Who</em>: Users</h3>
-<p>The counter-part of items in our setting are <strong>user</strong> indexed by <span class="arithmatex">\(u \in \{1,2,\dots,U\}\)</span> as well.</p>
-<p>For each purchasing record <span class="arithmatex">\(b \in \{1,2,\dots, B\}\)</span>, there is a corresponding <span class="arithmatex">\(u_b \in \{1,2,\dots,I\}\)</span> describing which user was making the decision.</p>
+<p>The agent which makes choices in our setting is a <strong>user</strong> indexed by <span class="arithmatex">\(u \in \{1,2,\dots,U\}\)</span> as well.</p>
+<p>For each purchase record <span class="arithmatex">\(b \in \{1,2,\dots, B\}\)</span>, there is a corresponding <span class="arithmatex">\(u_b \in \{1,2,\dots,I\}\)</span> describing which user was making the decision.</p>
 <h3 id="when-and-where-sessions"><em>When and Where</em>: Sessions</h3>
 <p>Our data structure encompasses <em>where and when</em> using a notion called <strong>session</strong> indexed by <span class="arithmatex">\(s \in \{1,2,\dots, S\}\)</span>.</p>
 <p>For example, we had the purchase record from five different stores for every day in 2021, then a session <span class="arithmatex">\(s\)</span> is defined as a pair of <em>(date, storeID)</em>, and there are <span class="arithmatex">\(5 \times 365\)</span> sessions in total.</p>
@@ -482,30 +478,26 @@ Similarly, you would need to encode user indices and session indices as well.</p
 The session variable serves as a tool for the researcher to split the dataset; the usefulness of the session will be more evident after introducing observables (features) later.</p>
 <p>If the researcher does not wish to handle records from different sessions differently, the researcher can assign the same session ID to all dataset rows.</p>
 <h3 id="putting-everything-together">Putting Everything Together</h3>
-<p>To summarize, each purchasing record <span class="arithmatex">\(b \in \{1, 2, \dots, B\}\)</span> in the dataset is characterized by a user-session-item tuple <span class="arithmatex">\((u_b, s_b, i_b)\)</span>. The totality of <span class="arithmatex">\(B\)</span> purchasing records consists of the dataset we are modeling.</p>
-<p>When the same user buys multiple items in the same session, the dataset will have multiple purchasing records with the same <span class="arithmatex">\((u, s)\)</span> corresponding to the same receipt.</p>
+<p>To summarize, each purchase record <span class="arithmatex">\(b \in \{1, 2, \dots, B\}\)</span> in the dataset is characterized by a user-session-item tuple <span class="arithmatex">\((u_b, s_b, i_b)\)</span>. The totality of <span class="arithmatex">\(B\)</span> purchase records consists of the dataset we are modeling.</p>
+<p>When the same user buys multiple items in the same session, the dataset will have multiple purchase records with the same <span class="arithmatex">\((u, s)\)</span> corresponding to the same receipt. In this case, the modeling assumption is that the user buys at most one item from each category available to choose from.</p>
 <h3 id="item-availability">Item Availability</h3>
 <p>It is not necessarily that all items are available in every session; items can get out of stock in particular sessions.</p>
-<p>To handle these cases, the researcher can <em>optionally</em> provide a boolean tensor <span class="arithmatex">\(A \in \{\texttt{True}, \texttt{False}\}^{S\times I}\)</span> to indicate which items are available for purchasing in each session. <span class="arithmatex">\(A_{s, i} = \texttt{True}\)</span> if and only if item <span class="arithmatex">\(i\)</span> was available in session <span class="arithmatex">\(s\)</span>.</p>
+<p>To handle these cases, the researcher can <em>optionally</em> provide a boolean tensor <span class="arithmatex">\(A \in \{\texttt{True}, \texttt{False}\}^{S\times I}\)</span> to indicate which items are available for purchase in each session. <span class="arithmatex">\(A_{s, i} = \texttt{True}\)</span> if and only if item <span class="arithmatex">\(i\)</span> was available in session <span class="arithmatex">\(s\)</span>.</p>
 <p>While predicting the purchase probabilities, the model sets the probability for these unavailable items to zero and normalizes probabilities among available items.
 If the item availability is not provided, the model assumes all items are available in all sessions.</p>
 <h3 id="observables">Observables</h3>
-<p>Next, let's talk about observables (yes, it's the same as <em>feature</em> in machine learning literature, it's the <span class="arithmatex">\(X\)</span> variable).
-The researcher can incorporate observables of, for example, users and items into the model.</p>
+<p>Next, let's talk about observables. This is the same as a <em>feature</em> in machine learning literature, commonly denoted using <span class="arithmatex">\(X\)</span>.
+The researcher can incorporate observables of, for example, users and/or items into the model.</p>
 <p>Currently, the package support the following types of observables, where <span class="arithmatex">\(K_{...}\)</span> denote the number of observables.</p>
 <ol>
 <li><code>user_obs</code> <span class="arithmatex">\(\in \mathbb{R}^{U\times K_{user}}\)</span>: user observables such as user age.</li>
 <li><code>item_obs</code> <span class="arithmatex">\(\in \mathbb{R}^{I\times K_{item}}\)</span>: item observables such as item quality.</li>
 <li><code>session_obs</code> <span class="arithmatex">\(\in \mathbb{R}^{S \times K_{session}}\)</span>: session observable such as whether the purchase was made on weekdays.</li>
-<li><code>price_obs</code> <span class="arithmatex">\(\in \mathbb{R}^{S \times I \times K_{price}}\)</span>, price observables are values depending on <strong>both</strong> session and item such as the price of item.</li>
+<li><code>itemsession_obs</code> <span class="arithmatex">\(\in \mathbb{R}^{S \times I \times K_{itemsession}}\)</span>, item-session observables are values depending on <strong>both</strong> session and item such as the price of item. These can also be called <code>price_obs</code></li>
+<li><code>usersession_obs</code> <span class="arithmatex">\(\in \mathbb{R}^{S \times U \times K_{usersession}}\)</span>, user-session observables are values depending on <strong>both</strong> session and user such as the income of the user.</li>
 </ol>
 <p>Please note that we consider these four types as <strong>definitions</strong> of observable types. For example, whenever a variable is user-specific, then we call it an <code>user_obs</code>.
 This package defines observables in the above way so that the package can easily track the variation of variables and handle these observable tensors correctly.</p>
-<h4 id="note-on-the-price-observable">Note on the <code>Price</code> Observable</h4>
-<p>The <code>price_obs</code> term might look confusing at the first glance.
-As mentioned above, price-observables are defined to be these observables depending on both session and item. If an observable depends on both session and item, it is called a <em>price observable</em> no matter if it is related to the actual price or not.</p>
-<p>For example, in the context of online shopping, the shipping cost depends on both the item (i.e., the item purchased) and the session (i.e., when and where you purchase). In this case, the shipping cost observable is a price-observable but it's not an actual price.</p>
-<p>Conversely, the actual price of an item might not change across sessions. For example, a 10-dollar Amazon gift card costs 10 dollars regardless of the session; in this case the <em>price</em> variable is in fact an <em>item observable</em> as it <em>only</em> depends on the item.</p>
 <h3 id="a-toy-example">A Toy Example</h3>
 <p>Suppose we have a dataset of purchase history from two stores (Store A and B) on two dates (Sep 16 and 17), both stores sell {apple, banana, orange} (<code>num_items=3</code>) and there are three people came to those stores between Sep 16 and 17.</p>
 <table>
@@ -549,7 +541,7 @@ As mentioned above, price-observables are defined to be these observables depend
 - <code>user_index=[0,1,1,2,2]</code> (with encoding <code>0=Amy, 1=Ben, 2=Charlie</code>),
 - <code>session_index=[0,1,2,3,3]</code> (with encoding <code>0=Sep-17-2021-Store-A, 1=Sep-17-2021-Store-B, 2=Sep-16-2021-Store-A, 3=Sep-16-2021-Store-B</code>),
 - <code>item_index=[0,1,2,1,2]</code> (with encoding <code>0=banana, 1=apple, 2=orange</code>).</p>
-<p>Suppose we believe people's purchasing decision depends on the nutrition levels of these fruits; suppose apple has the highest nutrition level and banana has the lowest one, we can add</p>
+<p>Suppose we believe people's purchase decision depends on the nutrition levels of these fruits; suppose apple has the highest nutrition level and banana has the lowest one, we can add</p>
 <p><code>item_obs=[[1.5], [12.0], [3.3]]</code> <span class="arithmatex">\(\in \mathbb{R}^{3\times 1}\)</span>. The shape of this tensor is number-of-items by number-of-observable.</p>
 <p><strong>NOTE</strong>: If someone went to one store and bought multiple items (e.g., Charlie bought both apple and orange at Store B on Sep-16), we include them as separate rows in the dataset and model them independently.</p>
 <h2 id="models">Models</h2>
