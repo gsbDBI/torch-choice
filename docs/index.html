@@ -224,67 +224,9 @@
         
       
       
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Home
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
       <a href="." class="md-nav__link md-nav__link--active">
         Home
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    Installation
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#an-example-on-transportation-choice-dataset" class="md-nav__link">
-    An Example on Transportation Choice Dataset
-  </a>
-  
-    <nav class="md-nav" aria-label="An Example on Transportation Choice Dataset">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#mode-canada-with-torch-choice" class="md-nav__link">
-    Mode Canada with Torch-Choice
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#mode-canada-with-r" class="md-nav__link">
-    Mode Canada with R
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
       
     </li>
   
@@ -445,48 +387,6 @@
     
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    Installation
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#an-example-on-transportation-choice-dataset" class="md-nav__link">
-    An Example on Transportation Choice Dataset
-  </a>
-  
-    <nav class="md-nav" aria-label="An Example on Transportation Choice Dataset">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#mode-canada-with-torch-choice" class="md-nav__link">
-    Mode Canada with Torch-Choice
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#mode-canada-with-r" class="md-nav__link">
-    Mode Canada with R
-  </a>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -501,14 +401,61 @@
 
 <h1 id="torch-choice">torch-choice</h1>
 <blockquote>
-<p>Authors: Tianyu Du and Ayush Kanodia; PI: Susan Athey; Contact: tianyudu@stanford.edu</p>
+<p>Authors: Tianyu Du, Ayush Kanodia and Susan Athey; Contact: tianyudu@stanford.edu</p>
+<p>Acknowledgements: We would like to thank Erik Sverdrup, Charles Pebereau and Keshav Agrawal for their feedback.</p>
 </blockquote>
-<p><code>torch-choice</code> is a flexible, fast choice modeling with PyTorch: logit and nested logit models, designed for both estimation and prediction. See the <a href="https://gsbdbi.github.io/torch-choice/">complete documentation</a> for more details.
+<p><code>torch-choice</code> is a library for flexible, fast choice modeling with PyTorch: it has logit and nested logit models, designed for both estimation and prediction. See the <a href="https://gsbdbi.github.io/torch-choice/">complete documentation</a> for more details.
 Unique features:
 1. GPU support via torch for speed
 2. Specify customized models
 3. Specify availability sets
-4. Report standard errors</p>
+4. Maximum Likelihood Estimation (MLE) (optionally, reporting standard errors or MAP inference with Bayesian Priors on coefficients)
+5. Estimation via minimization of Cross Entropy Loss (optionally with L1/L2 regularization)</p>
+<h1 id="introduction">Introduction</h1>
+<h2 id="logistic-regression-and-choice-models">Logistic Regression and Choice Models</h2>
+<p><a href="https://en.wikipedia.org/wiki/Logistic_regression">Logistic Regression</a> models the probability that user <span class="arithmatex">\(u\)</span> chooses item <span class="arithmatex">\(i\)</span> in session <span class="arithmatex">\(s\)</span> by the logistic function</p>
+<div class="arithmatex">\[
+P_{uis} = \frac{e^{\mu_{uis}}}{\Sigma_{j \in A_{us}}e^{\mu_{ujs}}}
+\]</div>
+<p>where, </p>
+<p><span class="arithmatex">\(<span class="arithmatex">\(\mu_{uis} = \alpha + \beta X + \gamma W + \dots\)</span>\)</span>;</p>
+<p>here <span class="arithmatex">\(X\)</span>, <span class="arithmatex">\(W\)</span> are predictors (independent variables) for users and items respectively (these can be constant or can vary across session), and greek letters <span class="arithmatex">\(\alpha\)</span>, <span class="arithmatex">\(\beta\)</span> and <span class="arithmatex">\(\gamma\)</span> are learned parameters. <span class="arithmatex">\(A_{us}\)</span> is the set of items available for user <span class="arithmatex">\(u\)</span> in session <span class="arithmatex">\(s\)</span>.</p>
+<p>When users are choosing over items, we can write utility <span class="arithmatex">\(U_{uis}\)</span> that user <span class="arithmatex">\(u\)</span> derives from item <span class="arithmatex">\(i\)</span> in session <span class="arithmatex">\(s\)</span>, as</p>
+<div class="arithmatex">\[
+U_{uis} = \mu_{uis} + \epsilon_{uis}
+\]</div>
+<p>where <span class="arithmatex">\(\epsilon\)</span> is an unobserved random error term.</p>
+<p>If we assume iid extreme value type 1 errors for <span class="arithmatex">\(\epsilon_{uis}\)</span>, this leads to the above logistic probabilities of user <span class="arithmatex">\(u\)</span> choosing item <span class="arithmatex">\(i\)</span> in session <span class="arithmatex">\(s\)</span>, as shown by <a href="https://en.wikipedia.org/wiki/Choice_modelling">McFadden</a>, and as often studied in Econometrics.</p>
+<h2 id="package">Package</h2>
+<p>We implement a fully flexible setup, where we allow 
+1. coefficients (<span class="arithmatex">\(\alpha\)</span>, <span class="arithmatex">\(\beta\)</span>, <span class="arithmatex">\(\gamma\)</span>, <span class="arithmatex">\(\dots\)</span>) to be constant, user-specific (i.e., <span class="arithmatex">\(\alpha=\alpha_u\)</span>), item-specific (i.e., <span class="arithmatex">\(\alpha=\alpha_i\)</span>), session-specific (i.e., <span class="arithmatex">\(\alpha=\alpha_t\)</span>), or (session, item)-specific (i.e., <span class="arithmatex">\(\alpha=\alpha_{ti}\)</span>). For example, specifying <span class="arithmatex">\(\alpha\)</span> to be item-specific is equivalent to adding an item-level fixed effect.
+2. Observables (<span class="arithmatex">\(X\)</span>, <span class="arithmatex">\(Y\)</span>, <span class="arithmatex">\(\dots\)</span>) to be constant, user-specific, item-specific, session-specific, or (session, item) (such as price) and (session, user) (such as income) specific as well.
+3. Specifying availability sets <span class="arithmatex">\(A_{us}\)</span></p>
+<p>This flexibility in coefficients and features allows for more than 20 types of additive terms to <span class="arithmatex">\(U_{uis}\)</span>, which enables modelling rich structures.</p>
+<p>As such, this package can be used to learn such models for
+1. Parameter Estimation, as in the Transportation Choice example below
+2. Prediction, as in the MNIST handwritten digits classification example below</p>
+<p>Examples with Utility Form:
+1. Transportation Choice (from the Mode Canada dataset) <a href="https://github.com/gsbDBI/torch-choice/blob/main/tutorials/conditional_logit_model_mode_canada.ipynb">(Detailed Tutorial)</a></p>
+<div class="arithmatex">\[
+U_{uit} = \beta^0_i + \beta^{1\top} X^{itemsession: (cost, freq, ovt)}_{it} + \beta^2_i X^{session:income}_t + \beta^3_i X_{it}^{itemsession:ivt} + \epsilon_{uit}
+\]</div>
+<p>This is also described as a conditional logit model in Econometrics. We note the shapes/sizes of each of the components in the above model. Suppose there are U users, I items and S sessions; in this case there is one user per session, so that U = S</p>
+<p>Then,
+- <span class="arithmatex">\(X^{itemsession: (cost, freq, ovt)}_{it}\)</span> is a matrix of size (I x S) x (3); it has three entries for each item-session, and is like a price; its coefficient <span class="arithmatex">\(\beta^{1\top}\)</span> has constant variation and is of size (1) x (3).
+- <span class="arithmatex">\(X^{session: income}_{it}\)</span> is a matrix which is of size (S) x (1); it has one entry for each session, and it denotes income of the user making the choice in the session. In this case, it is equivalent to <span class="arithmatex">\(X^{usersession: income}_{it}\)</span> since we observe a user making a decision only once; its coefficient <span class="arithmatex">\(\beta^2_i\)</span> has item level variation and is of size (I) x (1)
+- <span class="arithmatex">\(X_{it}^{itemsession:ivt}\)</span> is a matrix of size (I x S) x (1); this has one entry for each item-session; it is the price; its coefficent <span class="arithmatex">\(\beta^3_i\)</span> has item level variation and is of size (I) x (3)</p>
+<ol>
+<li>MNIST classification <a href="">(Upcoming Detailed Tutorial)</a></li>
+</ol>
+<p>$$
+U_{it} = \beta_i X^{session:pixelvalues}<em>{t} + \epsilon</em>{it}
+$$
+We note the shapes/sizes of each of the components in the above model. Suppose there are U users, I items and S sessions; in this case, an item is one of the 10 possible digits, so I = 10; there is one user per session, so that U=S; and each session is an image being classified.
+Then,
+- <span class="arithmatex">\(X^{session:pixelvalues}_{t}\)</span> is a matrix of size (S) x (H x W) where H x W are the dimensions of the image being classified; its coefficient <span class="arithmatex">\(\beta_i\)</span> has item level vartiation and is of size (I) x (1)</p>
+<p>This is a classic problem used for exposition in Computer Science to motivate various Machine Learning models. There is no concept of a user in this setup. Our package allows for models of this nature and is fully usable for Machine Learning problems with added flexibility over <a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html">scikit-learn logistic regression</a></p>
+<p>We highly recommend users to go through <a href="https://github.com/gsbDBI/torch-choice/blob/main/tutorials">tutorials</a> we prepared to get a better understanding of what the package is offering. We present multiple examples, and for each case we specify the utility form.</p>
 <h2 id="installation">Installation</h2>
 <ol>
 <li>Clone the repository to your local machine or server.</li>
@@ -590,16 +537,8 @@ $$</p>
 <p>Setting up the PyTorch training pipelines can be frustrating. We provide easy-to-use <a href="https://www.pytorchlightning.ai">PyTorch lightning</a> wrapper of models to free researchers from the hassle from setting up PyTorch optimizers and training loops.</p>
 </li>
 </ol>
-<h1 id="more-details-on-models">More Details on Models</h1>
-<p>Models in the package fit individual choices by capturing the utility <span class="arithmatex">\(U\)</span> of user <span class="arithmatex">\(u\)</span> from choosing item <span class="arithmatex">\(i\)</span> in each occasion (called sessions) <span class="arithmatex">\(s\)</span>.</p>
-<p>The utility admits functional form consisting of product of coefficients (often called learnable parameters in computer science literature) and observables (also called features in CS literature).</p>
-<div class="arithmatex">\[
-U_{ui} = \alpha + \beta^\top X + \gamma^\top Y + \dots
-\]</div>
-<p>We allow coefficients (<span class="arithmatex">\(\alpha\)</span>, <span class="arithmatex">\(\beta\)</span> and <span class="arithmatex">\(\gamma\)</span>) to be constant, user-specific (i.e., <span class="arithmatex">\(\alpha=\alpha_u\)</span>), item-specific (i.e., <span class="arithmatex">\(\alpha=\alpha_i\)</span>), session-specific (i.e., <span class="arithmatex">\(\alpha=\alpha_t\)</span>), or (session, item)-specific (i.e., <span class="arithmatex">\(\alpha=\alpha_{ti}\)</span>). For example, specifying <span class="arithmatex">\(\alpha\)</span> to be item-specific is equivalent to adding an item-level fixed effect.</p>
-<p>Observables (<span class="arithmatex">\(X\)</span> and <span class="arithmatex">\(Y\)</span>) can be constant, user-specific, item-specific, session-specific, or (session, item)-specific as well.</p>
-<p>The flexibility in coefficients and features allows for more than 20 types of additive term to <span class="arithmatex">\(U_{ui}\)</span>, which enables modelling rich structures.</p>
-<p>We highly recommend users to go through tutorials we prepared to get a better understanding of what the package is offering.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>
+</code></pre></div>
 
 
 
