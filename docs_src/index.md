@@ -24,7 +24,7 @@ $$
 
 where, 
 
-$$\mu_{uis} = \alpha + \beta X + \gamma W + \dots$$;
+$$\mu_{uis} = \alpha + \beta X + \gamma W + \dots$$
 
 here $X$, $W$ are predictors (independent variables) for users and items respectively (these can be constant or can vary across session), and greek letters $\alpha$, $\beta$ and $\gamma$ are learned parameters. $A_{us}$ is the set of items available for user $u$ in session $s$.
 
@@ -37,6 +37,14 @@ $$
 where $\epsilon$ is an unobserved random error term.
 
 If we assume iid extreme value type 1 errors for $\epsilon_{uis}$, this leads to the above logistic probabilities of user $u$ choosing item $i$ in session $s$, as shown by [McFadden](https://en.wikipedia.org/wiki/Choice_modelling), and as often studied in Econometrics.
+
+## Installation
+1. Clone the repository to your local machine or server.
+2. Install required dependencies using: `pip3 install -r requirements.txt`.
+3. Run `pip3 install torch-choice`.
+4. Check installation by running `python3 -c 'import torch_choice; print(torch_choice.__version__)'`.
+
+[The installation page](https://gsbdbi.github.io/torch-choice/install/) provides more details on installation.
 
 ## Package
 We implement a fully flexible setup, where we allow 
@@ -54,13 +62,13 @@ Examples with Utility Form:
 1. Transportation Choice (from the Mode Canada dataset) [(Detailed Tutorial)](https://github.com/gsbDBI/torch-choice/blob/main/tutorials/conditional_logit_model_mode_canada.ipynb)
 
 $$
-U_{uit} = \beta^0_i + \beta^{1\top} X^{itemsession: (cost, freq, ovt)}_{it} + \beta^2_i X^{session:income}_t + \beta^3_i X_{it}^{itemsession:ivt} + \epsilon_{uit}
+U_{uit} = \beta^0_i + \beta^{1} X^{itemsession: (cost, freq, ovt)}_{it} + \beta^2_i X^{session:income}_t + \beta^3_i X_{it}^{itemsession:ivt} + \epsilon_{uit}
 $$
 
 This is also described as a conditional logit model in Econometrics. We note the shapes/sizes of each of the components in the above model. Suppose there are U users, I items and S sessions; in this case there is one user per session, so that U = S
 
 Then,
-- $X^{itemsession: (cost, freq, ovt)}_{it}$ is a matrix of size (I x S) x (3); it has three entries for each item-session, and is like a price; its coefficient $\beta^{1\top}$ has constant variation and is of size (1) x (3).
+- $X^{itemsession: (cost, freq, ovt)}_{it}$ is a matrix of size (I x S) x (3); it has three entries for each item-session, and is like a price; its coefficient $\beta^{1}$ has constant variation and is of size (1) x (3).
 - $X^{session: income}_{it}$ is a matrix which is of size (S) x (1); it has one entry for each session, and it denotes income of the user making the choice in the session. In this case, it is equivalent to $X^{usersession: income}_{it}$ since we observe a user making a decision only once; its coefficient $\beta^2_i$ has item level variation and is of size (I) x (1)
 - $X_{it}^{itemsession:ivt}$ is a matrix of size (I x S) x (1); this has one entry for each item-session; it is the price; its coefficent $\beta^3_i$ has item level variation and is of size (I) x (3)
 
@@ -69,25 +77,18 @@ Then,
 $$
 U_{it} = \beta_i X^{session:pixelvalues}_{t} + \epsilon_{it}
 $$
+
 We note the shapes/sizes of each of the components in the above model. Suppose there are U users, I items and S sessions; in this case, an item is one of the 10 possible digits, so I = 10; there is one user per session, so that U=S; and each session is an image being classified.
 Then,
 - $X^{session:pixelvalues}_{t}$ is a matrix of size (S) x (H x W) where H x W are the dimensions of the image being classified; its coefficient $\beta_i$ has item level vartiation and is of size (I) x (1)
 
 This is a classic problem used for exposition in Computer Science to motivate various Machine Learning models. There is no concept of a user in this setup. Our package allows for models of this nature and is fully usable for Machine Learning problems with added flexibility over [scikit-learn logistic regression](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html)
 
-We highly recommend users to go through [tutorials](https://github.com/gsbDBI/torch-choice/blob/main/tutorials) we prepared to get a better understanding of what the package is offering. We present multiple examples, and for each case we specify the utility form.
-
-## Installation
-1. Clone the repository to your local machine or server.
-2. Install required dependencies using: `pip3 install -r requirements.txt`.
-3. Run `pip3 install torch-choice`.
-4. Check installation by running `python3 -c 'import torch_choice; print(torch_choice.__version__)'`.
-
-[The installation page](https://gsbdbi.github.io/torch-choice/install/) provides more details on installation.
+We highly recommend users to go through [tutorials](https://github.com/gsbDBI/torch-choice/blob/main/tutorials) we prepared to get a better understanding of what the package offers. We present multiple examples, and for each case we specify the utility form.
 
 In this demonstration, we will guide you through a minimal example of fitting a conditional logit model using our package. We will be referencing to R code and Stata code as well to deliver a smooth knowledge transfer.
 
-## An Example on Transportation Choice Dataset
+## Example Usage - Transportation Choice Dataset
 In this demonstration, we will guide you through a minimal example of fitting a conditional logit model using our package. We will be referencing R code as well to deliver a smooth knowledge transfer.
 
 We are modelling people's choices on transportation modes using the publicly available `ModeCanada` dataset.
@@ -97,6 +98,8 @@ In this example, we are estimating the utility for user $u$ to choose transport 
 $$
 U_{uis} = \alpha_i + \beta_i \text{income}_s + \gamma \text{cost} + \delta \text{freq} + \eta \text{ovt} + \iota_i \text{ivt} + \varepsilon
 $$
+
+this is equivalent to the functional form described in the previous section
 
 ###  Mode Canada with Torch-Choice
 
