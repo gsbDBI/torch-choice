@@ -38,14 +38,6 @@ where $\epsilon$ is an unobserved random error term.
 
 If we assume iid extreme value type 1 errors for $\epsilon_{uis}$, this leads to the above logistic probabilities of user $u$ choosing item $i$ in session $s$, as shown by [McFadden](https://en.wikipedia.org/wiki/Choice_modelling), and as often studied in Econometrics.
 
-## Installation
-1. Clone the repository to your local machine or server.
-2. Install required dependencies using: `pip3 install -r requirements.txt`.
-3. Run `pip3 install torch-choice`.
-4. Check installation by running `python3 -c 'import torch_choice; print(torch_choice.__version__)'`.
-
-[The installation page](https://gsbdbi.github.io/torch-choice/install/) provides more details on installation.
-
 ## Package
 We implement a fully flexible setup, where we allow 
 1. coefficients ($\alpha$, $\beta$, $\gamma$, $\dots$) to be constant, user-specific (i.e., $\alpha=\alpha_u$), item-specific (i.e., $\alpha=\alpha_i$), session-specific (i.e., $\alpha=\alpha_t$), or (session, item)-specific (i.e., $\alpha=\alpha_{ti}$). For example, specifying $\alpha$ to be item-specific is equivalent to adding an item-level fixed effect.
@@ -86,10 +78,16 @@ This is a classic problem used for exposition in Computer Science to motivate va
 
 We highly recommend users to go through [tutorials](https://github.com/gsbDBI/torch-choice/blob/main/tutorials) we prepared to get a better understanding of what the package offers. We present multiple examples, and for each case we specify the utility form.
 
-In this demonstration, we will guide you through a minimal example of fitting a conditional logit model using our package. We will be referencing to R code and Stata code as well to deliver a smooth knowledge transfer.
+## Installation
+1. Clone the repository to your local machine or server.
+2. Install required dependencies using: `pip3 install -r requirements.txt`.
+3. Run `pip3 install torch-choice`.
+4. Check installation by running `python3 -c 'import torch_choice; print(torch_choice.__version__)'`.
+
+[The installation page](https://gsbdbi.github.io/torch-choice/install/) provides more details on installation.
 
 ## Example Usage - Transportation Choice Dataset
-In this demonstration, we will guide you through a minimal example of fitting a conditional logit model using our package. We will be referencing R code as well to deliver a smooth knowledge transfer.
+In this demonstration, we setup a minimal example of fitting a conditional logit model using our package. We provide equivalent R code as well for reference, to aid replicating from R to this package.
 
 We are modelling people's choices on transportation modes using the publicly available `ModeCanada` dataset.
 More information about the [ModeCanada: Mode Choice for the Montreal-Toronto Corridor](https://www.rdocumentation.org/packages/mlogit/versions/1.1-1/topics/ModeCanada).
@@ -98,7 +96,6 @@ In this example, we are estimating the utility for user $u$ to choose transport 
 $$
 U_{uis} = \alpha_i + \beta_i \text{income}_s + \gamma \text{cost} + \delta \text{freq} + \eta \text{ovt} + \iota_i \text{ivt} + \varepsilon
 $$
-
 this is equivalent to the functional form described in the previous section
 
 ###  Mode Canada with Torch-Choice
