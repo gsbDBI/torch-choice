@@ -33,14 +33,18 @@ def run(model, dataset, batch_size=-1, learning_rate=0.01, num_epochs=5000):
         ll, count = 0.0, 0.0
         for batch in data_loader:
             item_index = batch['item'].item_index if isinstance(model, NestedLogitModel) else batch.item_index
-            loss = model.negative_log_likelihood(batch, item_index)
+            # the model.loss returns negative log-likelihood + regularization term.
+            loss = model.loss(batch, item_index)
 
-            ll -= loss.detach().item()# * len(batch)
-            count += len(batch)
+            if e % (num_epochs // 10) == 0:
+                # record log-likelihood.
+                ll -= model.negative_log_likelihood(batch, item_index).detach().item() # * len(batch)
+                count += len(batch)
 
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
+
         # ll /= count
         if e % (num_epochs // 10) == 0:
             print(f'Epoch {e}: Log-likelihood={ll}')
