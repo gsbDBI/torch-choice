@@ -14,8 +14,11 @@ from torch_choice.model.conditional_logit_model import ConditionalLogitModel
 from torch_choice.model.nested_logit_model import NestedLogitModel
 
 
-def run(model, dataset, dataset_test=None, batch_size=-1, learning_rate=0.01, num_epochs=5000):
+def run(model, dataset, dataset_test=None, batch_size=-1, learning_rate=0.01, num_epochs=5000, report_frequency=None):
     """All in one script for the model training and result presentation."""
+    if report_frequency is None:
+        report_frequency = (num_epochs // 10)
+
     assert isinstance(model, ConditionalLogitModel) or isinstance(model, NestedLogitModel), \
         f'A model of type {type(model)} is not supported by this runner.'
     model = deepcopy(model)  # do not modify the model outside.
@@ -36,7 +39,7 @@ def run(model, dataset, dataset_test=None, batch_size=-1, learning_rate=0.01, nu
             # the model.loss returns negative log-likelihood + regularization term.
             loss = model.loss(batch, item_index)
 
-            if e % (num_epochs // 10) == 0:
+            if (e % report_frequency) == 0:
                 # record log-likelihood.
                 ll -= model.negative_log_likelihood(batch, item_index).detach().item() # * len(batch)
                 count += len(batch)
@@ -46,7 +49,7 @@ def run(model, dataset, dataset_test=None, batch_size=-1, learning_rate=0.01, nu
             optimizer.step()
 
         # ll /= count
-        if e % (num_epochs // 10) == 0:
+        if (e % report_frequency) == 0:
             print(f'Epoch {e}: Log-likelihood={ll}')
 
     if dataset_test is not None:
