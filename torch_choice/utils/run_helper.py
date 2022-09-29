@@ -14,7 +14,7 @@ from torch_choice.model.conditional_logit_model import ConditionalLogitModel
 from torch_choice.model.nested_logit_model import NestedLogitModel
 
 
-def run(model, dataset, batch_size=-1, learning_rate=0.01, num_epochs=5000):
+def run(model, dataset, dataset_test=None, batch_size=-1, learning_rate=0.01, num_epochs=5000):
     """All in one script for the model training and result presentation."""
     assert isinstance(model, ConditionalLogitModel) or isinstance(model, NestedLogitModel), \
         f'A model of type {type(model)} is not supported by this runner.'
@@ -33,17 +33,25 @@ def run(model, dataset, batch_size=-1, learning_rate=0.01, num_epochs=5000):
         ll, count = 0.0, 0.0
         for batch in data_loader:
             item_index = batch['item'].item_index if isinstance(model, NestedLogitModel) else batch.item_index
-            loss = model.negative_log_likelihood(batch, item_index)
+            # the model.loss returns negative log-likelihood + regularization term.
+            loss = model.loss(batch, item_index)
 
-            ll -= loss.detach().item()# * len(batch)
-            count += len(batch)
+            if e % (num_epochs // 10) == 0:
+                # record log-likelihood.
+                ll -= model.negative_log_likelihood(batch, item_index).detach().item() # * len(batch)
+                count += len(batch)
 
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
+
         # ll /= count
         if e % (num_epochs // 10) == 0:
             print(f'Epoch {e}: Log-likelihood={ll}')
+
+    if dataset_test is not None:
+        test_ll = - model.negative_log_likelihood(dataset_test, dataset_test.item_index).detach().item()
+        print('Test set log-likelihood: ', test_ll)
 
     # current methods of computing standard deviation will corrupt the model, load weights into another model for returning.
     state_dict = deepcopy(model.state_dict())

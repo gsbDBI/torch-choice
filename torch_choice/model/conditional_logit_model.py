@@ -43,7 +43,9 @@ class ConditionalLogitModel(nn.Module):
                  coef_variation_dict: Dict[str, str],
                  num_param_dict: Optional[Dict[str, int]]=None,
                  num_items: Optional[int]=None,
-                 num_users: Optional[int]=None
+                 num_users: Optional[int]=None,
+                 regularization: Optional[str]=None,
+                 regularization_weight: Optional[float]=None
                  ) -> None:
         """
         Args:
@@ -77,6 +79,16 @@ class ConditionalLogitModel(nn.Module):
                 as the `coef_variation_dict`. Values of `num_param_dict` records numbers of features in each kind of variable.
                 If None is supplied, num_param_dict will be a dictionary with the same keys as the `coef_variation_dict` dictionary
                 and values of all ones. Default to be None.
+            regularization (Optional[str]): this argument takes values from {'L1', 'L2', None}, which specifies the type of
+                regularization added to the log-likelihood.
+                - 'L1' will subtract regularization_weight * 1-norm of parameters from the log-likelihood.
+                - 'L2' will subtract regularization_weight * 2-norm of parameters from the log-likelihood.
+                - None does not modify the log-likelihood.
+                Defaults to None.
+            regularization_weight (Optional[float]): the weight of parameter norm subtracted from the log-likelihood.
+                This term controls the strength of regularization. This argument is required if and only if regularization
+                is not None.
+                Defaults to None.
         """
         super(ConditionalLogitModel, self).__init__()
 
@@ -92,6 +104,14 @@ class ConditionalLogitModel(nn.Module):
 
         self.num_items = num_items
         self.num_users = num_users
+
+        self.regularization = regularization
+        assert self.regularization in ['L1', 'L2', None], f"Provided regularization={self.regularization} is not allowed, allowed values are ['L1', 'L2', None]."
+        self.regularization_weight = regularization_weight
+        if (self.regularization is not None) and (self.regularization_weight is None):
+            raise ValueError(f'You specified regularization type {self.regularization} without providing regularization_weight.')
+        if (self.regularization is None) and (self.regularization_weight is not None):
+            raise ValueError(f'You specified no regularization but you provide regularization_weight={self.regularization_weight}, you should leave regularization_weight as None if you do not want to regularize the model.')
 
         # check number of parameters specified are all positive.
         for var_type, num_params in self.num_param_dict.items():
@@ -208,6 +228,15 @@ class ConditionalLogitModel(nn.Module):
         total_utility = self.forward(batch)
         logP = torch.log_softmax(total_utility, dim=1)
         nll = - logP[torch.arange(len(y)), y].sum()
+        return nll
+
+    def loss(self, *args, **kwargs):
+        """The loss function to be optimized. This is a wrapper of `negative_log_likelihood` + regularization loss if required."""
+        nll = self.negative_log_likelihood(*args, **kwargs)
+        if self.regularization is not None:
+            L = {'L1': 1, 'L2': 2}[self.regularization]
+            for param in self.parameters():
+                nll += self.regularization_weight * torch.norm(param, p=L)
         return nll
 
     @property
