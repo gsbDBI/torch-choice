@@ -101,6 +101,9 @@ class ChoiceDataset(torch.utils.data.Dataset):
         self.item_availability = item_availability
 
         for key, item in kwargs.items():
+            if self._is_attribute(key):
+                # all observable should be float.
+                item = item.float()
             setattr(self, key, item)
 
         # TODO: add a validation procedure to check the consistency of the dataset.
