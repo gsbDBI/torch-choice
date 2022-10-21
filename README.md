@@ -22,7 +22,7 @@ $$
 P_{uis} = \frac{e^{\mu_{uis}}}{\Sigma_{j \in A_{us}}e^{\mu_{ujs}}}
 $$
 
-where, 
+where,
 
 $$\mu_{uis} = \alpha + \beta X + \gamma W + \dots$$
 
@@ -39,7 +39,7 @@ where $\epsilon$ is an unobserved random error term.
 If we assume iid extreme value type 1 errors for $\epsilon_{uis}$, this leads to the above logistic probabilities of user $u$ choosing item $i$ in session $s$, as shown by [McFadden](https://en.wikipedia.org/wiki/Choice_modelling), and as often studied in Econometrics.
 
 ## Package
-We implement a fully flexible setup, where we allow 
+We implement a fully flexible setup, where we allow
 1. coefficients ($\alpha$, $\beta$, $\gamma$, $\dots$) to be constant, user-specific (i.e., $\alpha=\alpha_u$), item-specific (i.e., $\alpha=\alpha_i$), session-specific (i.e., $\alpha=\alpha_t$), or (session, item)-specific (i.e., $\alpha=\alpha_{ti}$). For example, specifying $\alpha$ to be item-specific is equivalent to adding an item-level fixed effect.
 2. Observables ($X$, $Y$, $\dots$) to be constant, user-specific, item-specific, session-specific, or (session, item) (such as price) and (session, user) (such as income) specific as well.
 3. Specifying availability sets $A_{us}$
@@ -79,6 +79,13 @@ This is a classic problem used for exposition in Computer Science to motivate va
 We highly recommend users to go through [tutorials](https://github.com/gsbDBI/torch-choice/blob/main/tutorials) we prepared to get a better understanding of what the package offers. We present multiple examples, and for each case we specify the utility form.
 
 ## Installation
+We offer two ways to install the package.
+### Installation from Pip
+Simply run `pip install torch-choice` to install the package. This will install the latest *stable* version of the package.
+
+### Installation from Source
+For those wish to leverage the latest feature, you can install `torch-choice` from Github source.
+
 1. Clone the repository to your local machine or server.
 2. Install required dependencies using: `pip3 install -r requirements.txt`.
 3. Run `pip3 install torch-choice`.
