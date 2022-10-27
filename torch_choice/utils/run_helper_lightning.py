@@ -8,9 +8,8 @@ This is a modified version of the original run_helper.py script, which is modifi
 """
 import time
 from copy import deepcopy
-from typing import List, Optional, Union
+from typing import Optional, Union
 
-import numpy as np
 import pandas as pd
 import torch
 import torch.nn.functional as F
@@ -51,7 +50,7 @@ class LightningModelWrapper(pl.LightningModule):
     def training_step(self, batch, batch_idx):
         item_index = batch['item'].item_index if isinstance(self.model, NestedLogitModel) else batch.item_index
         loss = self.model.loss(batch, item_index)
-        self.log('train_loss', loss, prog_bar=True, batch_size=len(batch))
+        self.log('train_loss', loss, prog_bar=False, batch_size=len(batch))
         # skip computing log-likelihood for training steps to speed up training.
         # for key, val in self._get_performance_dict(batch).items():
             # self.log('test_' + key, val, prog_bar=True, batch_size=len(batch))
@@ -59,31 +58,31 @@ class LightningModelWrapper(pl.LightningModule):
 
     def validation_step(self, batch, batch_idx):
         for key, val in self._get_performance_dict(batch).items():
-            self.log('val_' + key, val, prog_bar=True, batch_size=len(batch))
+            self.log('val_' + key, val, prog_bar=False, batch_size=len(batch))
 
     def test_step(self, batch, batch_idx):
         for key, val in self._get_performance_dict(batch).items():
-            self.log('test_' + key, val, prog_bar=True, batch_size=len(batch))
+            self.log('test_' + key, val, prog_bar=False, batch_size=len(batch))
 
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
         return optimizer
 
 
-def run_original(model, dataset, dataset_test=None, batch_size=-1, learning_rate=0.01, num_epochs=5000, report_frequency=None):
-    """All in one script for the model training and result presentation."""
-    if report_frequency is None:
-        report_frequency = (num_epochs // 10)
+# def run_original(model, dataset, dataset_test=None, batch_size=-1, learning_rate=0.01, num_epochs=5000, report_frequency=None):
+#     """All in one script for the model training and result presentation."""
+#     if report_frequency is None:
+#         report_frequency = (num_epochs // 10)
 
-    assert isinstance(model, ConditionalLogitModel) or isinstance(model, NestedLogitModel), \
-        f'A model of type {type(model)} is not supported by this runner.'
-    model = deepcopy(model)  # do not modify the model outside.
-    trained_model = deepcopy(model)  # create another copy for returning.
-    print('=' * 20, 'received model', '=' * 20)
-    print(model)
-    print('=' * 20, 'received dataset', '=' * 20)
-    print(dataset)
-    print('=' * 20, 'training the model', '=' * 20)
+#     assert isinstance(model, ConditionalLogitModel) or isinstance(model, NestedLogitModel), \
+#         f'A model of type {type(model)} is not supported by this runner.'
+#     model = deepcopy(model)  # do not modify the model outside.
+#     trained_model = deepcopy(model)  # create another copy for returning.
+#     print('=' * 20, 'received model', '=' * 20)
+#     print(model)
+#     print('=' * 20, 'received dataset', '=' * 20)
+#     print(dataset)
+#     print('=' * 20, 'training the model', '=' * 20)
 
 
 def section_print(input_text):
