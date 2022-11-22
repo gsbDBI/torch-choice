@@ -12,8 +12,10 @@ from typing import Dict, Optional, Tuple, Union
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+
 from torch_choice.data.choice_dataset import ChoiceDataset
 from torch_choice.model.coefficient import Coefficient
+from torch_choice.model.formula_parser import parse_formula
 
 
 class ConditionalLogitModel(nn.Module):
@@ -40,7 +42,9 @@ class ConditionalLogitModel(nn.Module):
     """
 
     def __init__(self,
-                 coef_variation_dict: Dict[str, str],
+                 coef_variation_dict: Optional[Dict[str, str]]=None,
+                 formula: Optional[str]=None,
+                 dataset: Optional[ChoiceDataset]=None,
                  num_param_dict: Optional[Dict[str, int]]=None,
                  num_items: Optional[int]=None,
                  num_users: Optional[int]=None,
@@ -90,6 +94,19 @@ class ConditionalLogitModel(nn.Module):
                 is not None.
                 Defaults to None.
         """
+        if coef_variation_dict is None and formula is None:
+            raise ValueError("Either coef_variation_dict or formula should be provided to specify the model.")
+
+        if (coef_variation_dict is not None) and (formula is not None):
+            raise ValueError("Only one of coef_variation_dict or formula should be provided to specify the model.")
+
+        if (formula is not None) and (dataset is None):
+            raise ValueError("If formula is provided, data should be provided to specify the model.")
+
+        # Use the formula to infer model, override dictionaries.
+        if formula is not None:
+            coef_variation_dict, num_param_dict = parse_formula(formula, dataset)
+
         super(ConditionalLogitModel, self).__init__()
 
         if num_param_dict is None:
