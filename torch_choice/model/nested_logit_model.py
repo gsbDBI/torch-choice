@@ -50,6 +50,18 @@ class NestedLogitModel(nn.Module):
             item_num_param_dict (Dict[str, int]): the same as category_num_param_dict but for item
                 features.
 
+            {category, item}_formula (str): a string representing the utility formula for the {category, item} level logit model.
+                The formula consists of '(variable_name|variation)'s separated by '+', for example:
+                "(var1|item) + (var2|user) + (var3|constant)"
+                where the first part of each term is the name of the variable
+                and the second part is the variation of the coefficient.
+                The variation can be one of the following:
+                'constant', 'item', 'item-full', 'user', 'user-item', 'user-item-full'.
+                All spaces in the formula will be ignored, hence please do not use spaces in variable/observable names.
+            dataset (JointDataset): a JointDataset object for training the model, the parser will infer dimensions of variables
+                and sizes of coefficients for the category level model from dataset.datasets['category']. The parser will
+                infer dimensions of variables and sizes of coefficients for the item level model from dataset.datasets['item'].
+
             num_users (Optional[int], optional): number of users to be modelled, this is only
                 required if any of variable type requires user-specific variations.
                 Defaults to None.
