@@ -42,9 +42,9 @@ class ConditionalLogitModel(nn.Module):
     """
 
     def __init__(self,
-                 coef_variation_dict: Optional[Dict[str, str]]=None,
                  formula: Optional[str]=None,
                  dataset: Optional[ChoiceDataset]=None,
+                 coef_variation_dict: Optional[Dict[str, str]]=None,
                  num_param_dict: Optional[Dict[str, int]]=None,
                  num_items: Optional[int]=None,
                  num_users: Optional[int]=None,
@@ -53,8 +53,16 @@ class ConditionalLogitModel(nn.Module):
                  ) -> None:
         """
         Args:
-            num_items (int): number of items in the dataset.
-            num_users (int): number of users in the dataset.
+            formula (str): a string representing the utility formula.
+                The formula consists of '(variable_name|variation)'s separated by '+', for example:
+                "(var1|item) + (var2|user) + (var3|constant)"
+                where the first part of each term is the name of the variable
+                and the second part is the variation of the coefficient.
+                The variation can be one of the following:
+                'constant', 'item', 'item-full', 'user', 'user-item', 'user-item-full'.
+                All spaces in the formula will be ignored, hence please do not use spaces in variable/observable names.
+            data (ChoiceDataset): a ChoiceDataset object for training the model, the parser will infer dimensions of variables
+                and sizes of coefficients from the ChoiceDataset.
             coef_variation_dict (Dict[str, str]): variable type to variation level dictionary. Keys of this dictionary
                 should be variable names in the dataset (i.e., these starting with `price_`, `user_`, etc), or `intercept`
                 if the researcher requires an intercept term.
@@ -78,11 +86,12 @@ class ConditionalLogitModel(nn.Module):
                     for all users are forced to be zero.
 
                 - `user-item-full`: parameters that are specific to both user and item, explicitly model for all items.
-
             num_param_dict (Optional[Dict[str, int]]): variable type to number of parameters dictionary with keys exactly the same
                 as the `coef_variation_dict`. Values of `num_param_dict` records numbers of features in each kind of variable.
                 If None is supplied, num_param_dict will be a dictionary with the same keys as the `coef_variation_dict` dictionary
                 and values of all ones. Default to be None.
+            num_items (int): number of items in the dataset.
+            num_users (int): number of users in the dataset.
             regularization (Optional[str]): this argument takes values from {'L1', 'L2', None}, which specifies the type of
                 regularization added to the log-likelihood.
                 - 'L1' will subtract regularization_weight * 1-norm of parameters from the log-likelihood.
