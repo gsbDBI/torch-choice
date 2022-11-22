@@ -1,30 +1,47 @@
-"""
-Formula parser for easier model specification.
-"""
 from torch_choice.data.choice_dataset import ChoiceDataset
 from typing import Tuple, Dict
 
 
 def parse_formula(formula: str, data: ChoiceDataset) -> Tuple[Dict[str, int], Dict[str, int]]:
-    """
-    Parse a formula string to the coef_variation_dict and num_param_dict.
+    """Generates the coef_variation_dict and the num_samples_dict for Conditional/Nested logit models from a R-like
+    formula and a ChoiceDataset.
+    The parser reads variations of coefficients for different observables from the formula, then the parser retrieves
+    the number of parameters for each coefficient (i.e., the dimension of each observable) from the ChoiceDataset.
+
+    Args:
+        formula (str): a string representing the utility formula.
+            The formula consists of '(variable_name|variation)'s separated by '+', for example:
+            "(var1|item) + (var2|user) + (var3|constant)"
+            where the first part of each term is the name of the variable
+            and the second part is the variation of the coefficient.
+            The variation can be one of the following:
+            'constant', 'item', 'item-full', 'user', 'user-item', 'user-item-full'.
+            All spaces in the formula will be ignored, hence please do not use spaces in variable/observable names.
+        data (ChoiceDataset): a ChoiceDataset object for training the model, the parser will infer dimensions of variables
+            and sizes of coefficients from the ChoiceDataset.
+
+    Returns:
+        Tuple[Dict[str, int], Dict[str, int]]: coef_variation_dict and num_param_dict representing the model specified by the formula.
     """
     coef_variation_dict = dict()
     num_param_dict = dict()
     if formula == '':
-        # empty formula.
+        # empty formula, which is allowed for the category-level model in the nested logit model.
         return coef_variation_dict, num_param_dict
 
 
     # example: (var1|item) + (var2|item) + (var3|item)
-    # infer num param from data.
     formula = formula.replace(' ', '')  # delete all spaces.
     term_list = formula.split('+')  # a list of elements like (var2|item).
     for term in term_list:
-        # e.g., term: (var2|item)
-        term = term.strip('()')
+        # e.g., term: (var|item)
+        term = term.strip('()')  # (var|item) --> var|item
         # get the variable/observable and its variation.
         variable, specificity = term.split('|')[0], term.split('|')[1]
+        if variable == '1':
+            # the R-way of saying intercept, change it to intercept.
+            variable = 'intercept'
+
         assert specificity in ['constant', 'item', 'item-full', 'user', 'user-item', 'user-item-full'], f'Component {term} must be one of constant, item, item-full, user, user-item, user-item-full.'
 
         # add to the coef_variation_dict dictionary.
@@ -36,7 +53,6 @@ def parse_formula(formula: str, data: ChoiceDataset) -> Tuple[Dict[str, int], Di
             num_param_dict[variable] = 1
         else:
             # get the dimension of variable/observable from the data.
-            variable_dimension = getattr(data, variable).shape[-1]
-            num_param_dict[variable] = variable_dimension
+            num_param_dict[variable] = getattr(data, variable).shape[-1]
 
     return coef_variation_dict, num_param_dict
