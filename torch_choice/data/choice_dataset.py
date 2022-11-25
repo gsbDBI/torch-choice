@@ -16,6 +16,7 @@ import torch
 class ChoiceDataset(torch.utils.data.Dataset):
     def __init__(self,
                  item_index: torch.LongTensor,
+                 num_items: int = None,
                  label: Optional[torch.LongTensor] = None,
                  user_index: Optional[torch.LongTensor] = None,
                  session_index: Optional[torch.LongTensor] = None,
@@ -87,6 +88,10 @@ class ChoiceDataset(torch.utils.data.Dataset):
         super(ChoiceDataset, self).__init__()
         self.label = label
         self.item_index = item_index
+        if num_items is not None:
+            self.provided_num_items = num_items
+        else:
+            self.provided_num_items = None
         self.user_index = user_index
         self.session_index = session_index
 
@@ -201,7 +206,11 @@ class ChoiceDataset(torch.utils.data.Dataset):
         Returns:
             int: the number of items involved in this dataset.
         """
-        return len(torch.unique(self.item_index))
+        if self.provided_num_items is None:
+            # infer the number of items from item_index.
+            return len(torch.unique(self.item_index))
+        else:
+            return self.provided_num_items
 
         # for key, val in self.__dict__.items():
         #     if torch.is_tensor(val):
