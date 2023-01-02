@@ -64,7 +64,7 @@ class ConditionalLogitModel(nn.Module):
             data (ChoiceDataset): a ChoiceDataset object for training the model, the parser will infer dimensions of variables
                 and sizes of coefficients from the ChoiceDataset.
             coef_variation_dict (Dict[str, str]): variable type to variation level dictionary. Keys of this dictionary
-                should be variable names in the dataset (i.e., these starting with `price_`, `user_`, etc), or `intercept`
+                should be variable names in the dataset (i.e., these starting with `itemsession_`, `price_`, `user_`, etc), or `intercept`
                 if the researcher requires an intercept term.
                 For each variable name X_var (e.g., `user_income`) or `intercept`, the corresponding dictionary key should
                 be one of the following values, this value specifies the "level of variation" of the coefficient.
