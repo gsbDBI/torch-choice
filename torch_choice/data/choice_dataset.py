@@ -3,7 +3,7 @@ The dataset object for management large scale consumer choice datasets.
 Please refer to the documentation and tutorials for more details on using `ChoiceDataset`.
 
 Author: Tianyu Du
-Update: Apr. 27, 2022
+Update: Jan. 2, 2023
 """
 import copy
 from typing import Dict, List, Optional, Tuple, Union
