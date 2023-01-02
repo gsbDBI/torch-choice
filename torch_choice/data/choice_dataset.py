@@ -83,6 +83,8 @@ class ChoiceDataset(torch.utils.data.Dataset):
             NOTE: we don't recommend using taste observables, because num_users * num_items is potentially large.
             5. price observables (those vary by session and item) must start with `price_` and have
                 shape (num_sessions, num_items, *)
+            6. itemsession observables starting with `itemsession_`, this is a more intuitive alias to the price
+                observable.
         """
         # ENHANCEMENT(Tianyu): add item_names for summary.
         super(ChoiceDataset, self).__init__()
@@ -377,7 +379,7 @@ class ChoiceDataset(torch.utils.data.Dataset):
 
     @staticmethod
     def _is_price_attribute(key: str) -> bool:
-        return key.startswith('price_')
+        return key.startswith('price_') or key.startswith('itemsession_')
 
     def _is_attribute(self, key: str) -> bool:
         return self._is_item_attribute(key) \
