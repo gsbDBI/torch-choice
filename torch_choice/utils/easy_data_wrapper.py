@@ -172,7 +172,7 @@ class EasyDatasetWrapper():
                 # val: data-frame of observable data.
                 assert self.item_name_column in val.columns, f"{self.item_name_column} is not a column of provided item observable data-frame."
                 for item in self.item_name_encoder.classes_:
-                    assert item in val[self.item_name_column], f"item {item} is not in the {self.item_name_column} column of the item observable data-frame."
+                    assert item in val[self.item_name_column].values, f"item {item} is not in the {self.item_name_column} column of the item observable data-frame."
 
                 self.item_observable_data['item_' + key] = val.set_index(self.item_name_column).loc[self.item_name_encoder.classes_]
 
