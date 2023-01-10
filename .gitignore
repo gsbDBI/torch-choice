@@ -129,3 +129,14 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+tutorials/benchmark_data/choice_data.csv
+tutorials/benchmark_data/mode_canada_1.csv
+tutorials/benchmark_data/mode_canada_5.csv
+tutorials/benchmark_data/mode_canada_10.csv
+tutorials/benchmark_data/mode_canada_50.csv
+tutorials/benchmark_data/mode_canada_100.csv
+tutorials/benchmark_data/mode_canada_500.csv
+tutorials/benchmark_data/mode_canada_1000.csv
+tutorials/benchmark_data/mode_canada_5000.csv
+tutorials/benchmark_data/mode_canada_10000.csv
+tutorials/benchmark_data/R_performances.csv

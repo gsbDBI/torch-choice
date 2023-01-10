@@ -3,7 +3,7 @@ The dataset object for management large scale consumer choice datasets.
 Please refer to the documentation and tutorials for more details on using `ChoiceDataset`.
 
 Author: Tianyu Du
-Update: Apr. 27, 2022
+Update: Jan. 2, 2023
 """
 import copy
 from typing import Dict, List, Optional, Tuple, Union
@@ -16,6 +16,7 @@ import torch
 class ChoiceDataset(torch.utils.data.Dataset):
     def __init__(self,
                  item_index: torch.LongTensor,
+                 num_items: int = None,
                  label: Optional[torch.LongTensor] = None,
                  user_index: Optional[torch.LongTensor] = None,
                  session_index: Optional[torch.LongTensor] = None,
@@ -82,11 +83,17 @@ class ChoiceDataset(torch.utils.data.Dataset):
             NOTE: we don't recommend using taste observables, because num_users * num_items is potentially large.
             5. price observables (those vary by session and item) must start with `price_` and have
                 shape (num_sessions, num_items, *)
+            6. itemsession observables starting with `itemsession_`, this is a more intuitive alias to the price
+                observable.
         """
         # ENHANCEMENT(Tianyu): add item_names for summary.
         super(ChoiceDataset, self).__init__()
         self.label = label
         self.item_index = item_index
+        if num_items is not None:
+            self.provided_num_items = num_items
+        else:
+            self.provided_num_items = None
         self.user_index = user_index
         self.session_index = session_index
 
@@ -201,7 +208,11 @@ class ChoiceDataset(torch.utils.data.Dataset):
         Returns:
             int: the number of items involved in this dataset.
         """
-        return len(torch.unique(self.item_index))
+        if self.provided_num_items is None:
+            # infer the number of items from item_index.
+            return len(torch.unique(self.item_index))
+        else:
+            return self.provided_num_items
 
         # for key, val in self.__dict__.items():
         #     if torch.is_tensor(val):
@@ -368,7 +379,7 @@ class ChoiceDataset(torch.utils.data.Dataset):
 
     @staticmethod
     def _is_price_attribute(key: str) -> bool:
-        return key.startswith('price_')
+        return key.startswith('price_') or key.startswith('itemsession_')
 
     def _is_attribute(self, key: str) -> bool:
         return self._is_item_attribute(key) \

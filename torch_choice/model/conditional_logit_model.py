@@ -12,8 +12,10 @@ from typing import Dict, Optional, Tuple, Union
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+
 from torch_choice.data.choice_dataset import ChoiceDataset
 from torch_choice.model.coefficient import Coefficient
+from torch_choice.model.formula_parser import parse_formula
 
 
 class ConditionalLogitModel(nn.Module):
@@ -40,7 +42,9 @@ class ConditionalLogitModel(nn.Module):
     """
 
     def __init__(self,
-                 coef_variation_dict: Dict[str, str],
+                 formula: Optional[str]=None,
+                 dataset: Optional[ChoiceDataset]=None,
+                 coef_variation_dict: Optional[Dict[str, str]]=None,
                  num_param_dict: Optional[Dict[str, int]]=None,
                  num_items: Optional[int]=None,
                  num_users: Optional[int]=None,
@@ -49,10 +53,18 @@ class ConditionalLogitModel(nn.Module):
                  ) -> None:
         """
         Args:
-            num_items (int): number of items in the dataset.
-            num_users (int): number of users in the dataset.
+            formula (str): a string representing the utility formula.
+                The formula consists of '(variable_name|variation)'s separated by '+', for example:
+                "(var1|item) + (var2|user) + (var3|constant)"
+                where the first part of each term is the name of the variable
+                and the second part is the variation of the coefficient.
+                The variation can be one of the following:
+                'constant', 'item', 'item-full', 'user', 'user-item', 'user-item-full'.
+                All spaces in the formula will be ignored, hence please do not use spaces in variable/observable names.
+            data (ChoiceDataset): a ChoiceDataset object for training the model, the parser will infer dimensions of variables
+                and sizes of coefficients from the ChoiceDataset.
             coef_variation_dict (Dict[str, str]): variable type to variation level dictionary. Keys of this dictionary
-                should be variable names in the dataset (i.e., these starting with `price_`, `user_`, etc), or `intercept`
+                should be variable names in the dataset (i.e., these starting with `itemsession_`, `price_`, `user_`, etc), or `intercept`
                 if the researcher requires an intercept term.
                 For each variable name X_var (e.g., `user_income`) or `intercept`, the corresponding dictionary key should
                 be one of the following values, this value specifies the "level of variation" of the coefficient.
@@ -74,11 +86,12 @@ class ConditionalLogitModel(nn.Module):
                     for all users are forced to be zero.
 
                 - `user-item-full`: parameters that are specific to both user and item, explicitly model for all items.
-
             num_param_dict (Optional[Dict[str, int]]): variable type to number of parameters dictionary with keys exactly the same
                 as the `coef_variation_dict`. Values of `num_param_dict` records numbers of features in each kind of variable.
                 If None is supplied, num_param_dict will be a dictionary with the same keys as the `coef_variation_dict` dictionary
                 and values of all ones. Default to be None.
+            num_items (int): number of items in the dataset.
+            num_users (int): number of users in the dataset.
             regularization (Optional[str]): this argument takes values from {'L1', 'L2', None}, which specifies the type of
                 regularization added to the log-likelihood.
                 - 'L1' will subtract regularization_weight * 1-norm of parameters from the log-likelihood.
@@ -90,6 +103,19 @@ class ConditionalLogitModel(nn.Module):
                 is not None.
                 Defaults to None.
         """
+        if coef_variation_dict is None and formula is None:
+            raise ValueError("Either coef_variation_dict or formula should be provided to specify the model.")
+
+        if (coef_variation_dict is not None) and (formula is not None):
+            raise ValueError("Only one of coef_variation_dict or formula should be provided to specify the model.")
+
+        if (formula is not None) and (dataset is None):
+            raise ValueError("If formula is provided, data should be provided to specify the model.")
+
+        # Use the formula to infer model, override dictionaries.
+        if formula is not None:
+            coef_variation_dict, num_param_dict = parse_formula(formula, dataset)
+
         super(ConditionalLogitModel, self).__init__()
 
         if num_param_dict is None:

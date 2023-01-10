@@ -30,11 +30,13 @@ class EasyDatasetWrapper():
                  item_observable_data: Optional[Dict[str, pd.DataFrame]] = None,
                  session_observable_data: Optional[Dict[str, pd.DataFrame]] = None,
                  price_observable_data: Optional[Dict[str, pd.DataFrame]] = None,
+                 itemsession_observable_data: Optional[Dict[str, pd.DataFrame]] = None,
                  # Option 2: derive observables from columns of main_data.
                  user_observable_columns: Optional[List[str]] = None,
                  item_observable_columns: Optional[List[str]] = None,
                  session_observable_columns: Optional[List[str]] = None,
                  price_observable_columns: Optional[List[str]] = None,
+                 itemsession_observable_columns: Optional[List[str]] = None,
                  device: str = 'cpu'):
         """The initialization method of EasyDatasetWrapper.
 
@@ -71,12 +73,17 @@ class EasyDatasetWrapper():
                 and consists of values from `main_data[session_index_column]` and (2) a column named by the value of `item_name_column`
                 and consisting of values from `main_data[item_name_column]`. Defaults to dict().
 
+            itemsession_observable_data (Optional[Dict[str, pd.DataFrame]], optional) is an alias for the
+                price_observable_data argument for backward compatibility. All items of itemsession_observable_data
+                will be added to price_observable_data. Defaults to dict().
+
             Another method to include observables is via *_observable_columns keywords, which takes column name(s) of the main_data
                 data-frame. The data wrapper will derive observable data from the main_data data-frame.
                 For example, with `user_observable_columns = ['feature_A', 'feature_B']`, this wrapper will create two user-specific
                 observable tensors derived from main_data['feature_A'] and main_data['feature_B'].
 
-            # format (str, optional): the input format of the dataset. Defaults to 'stata'.
+            The itemsession_observable_column is an alias for the `price_observable_column` argument for backward compatibility,
+                all elements of `itemsession_observable_columns` will be appended to `price_observable_column`.
 
         Raises:
             ValueError: _description_
@@ -96,11 +103,25 @@ class EasyDatasetWrapper():
         # encode item name, user index, session index.
         self.encode()
 
+        # adding alias itemsession_observable_data to price_observable_data.
+        if itemsession_observable_data is not None:
+            if price_observable_data is None:
+                price_observable_data = itemsession_observable_data
+            else:
+                price_observable_data.extend(itemsession_observable_data)
+
         # re-format observable data-frames and set correct index.
         self.align_observable_data(item_observable_data,
                                    user_observable_data,
                                    session_observable_data,
                                    price_observable_data)
+
+        if itemsession_observable_columns is not None:
+            # merge the item-session observable columns to price_observable_columns.
+            if price_observable_columns is None:
+                price_observable_columns = itemsession_observable_columns
+            else:
+                price_observable_columns.extend(itemsession_observable_columns)
 
         # derive observables from columns of the main data-frame.
         self.derive_observable_from_main_data(item_observable_columns,
@@ -198,7 +219,7 @@ class EasyDatasetWrapper():
                 # complete index = Cartesian product of all sessions and all items.
                 complete_index = pd.MultiIndex.from_product([self.session_name_encoder.classes_, self.item_name_encoder.classes_],
                                                             names=[self.session_index_column, self.item_name_column])
-                self.price_observable_data['price_' + key] = val.set_index([self.session_index_column, self.item_name_column]).reindex(complete_index)
+                self.price_observable_data['itemsession_' + key] = val.set_index([self.session_index_column, self.item_name_column]).reindex(complete_index)
 
     def derive_observable_from_main_data(self,
                                          item_observable_columns: Optional[List[str]],
@@ -229,7 +250,7 @@ class EasyDatasetWrapper():
                 val = self.main_data.groupby([self.session_index_column, self.item_name_column]).first()[[obs_col]]
                 complete_index = pd.MultiIndex.from_product([self.session_name_encoder.classes_, self.item_name_encoder.classes_],
                                                             names=[self.session_index_column, self.item_name_column])
-                self.price_observable_data['price_' + obs_col] = val.reindex(complete_index)
+                self.price_observable_data['itemsession_' + obs_col] = val.reindex(complete_index)
 
     def observable_data_to_observable_tensors(self) -> None:
         """Convert all self.*_observable_data to self.*_observable_tensors for PyTorch."""

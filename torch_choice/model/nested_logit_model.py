@@ -9,17 +9,25 @@ from typing import Dict, List, Optional
 
 import torch
 import torch.nn as nn
-from torch_choice.model.coefficient import Coefficient
+
 from torch_choice.data.choice_dataset import ChoiceDataset
+from torch_choice.data.joint_dataset import JointDataset
+from torch_choice.model.coefficient import Coefficient
+from torch_choice.model.formula_parser import parse_formula
 
 
 class NestedLogitModel(nn.Module):
     def __init__(self,
                  category_to_item: Dict[object, List[int]],
-                 category_coef_variation_dict: Dict[str, str],
-                 category_num_param_dict: Dict[str, int],
-                 item_coef_variation_dict: Dict[str, str],
-                 item_num_param_dict: Dict[str, int],
+                 # method 1: specify variation and num param. dictionary.
+                 category_coef_variation_dict: Optional[Dict[str, str]]=None,
+                 category_num_param_dict: Optional[Dict[str, int]]=None,
+                 item_coef_variation_dict: Optional[Dict[str, str]]=None,
+                 item_num_param_dict: Optional[Dict[str, int]]=None,
+                 # method 2: specify formula and dataset.
+                 item_formula: Optional[str]=None,
+                 category_formula: Optional[str]=None,
+                 dataset: Optional[JointDataset]=None,
                  num_users: Optional[int]=None,
                  shared_lambda: bool=False,
                  regularization: Optional[str]=None,
@@ -41,6 +49,18 @@ class NestedLogitModel(nn.Module):
                 for item features.
             item_num_param_dict (Dict[str, int]): the same as category_num_param_dict but for item
                 features.
+
+            {category, item}_formula (str): a string representing the utility formula for the {category, item} level logit model.
+                The formula consists of '(variable_name|variation)'s separated by '+', for example:
+                "(var1|item) + (var2|user) + (var3|constant)"
+                where the first part of each term is the name of the variable
+                and the second part is the variation of the coefficient.
+                The variation can be one of the following:
+                'constant', 'item', 'item-full', 'user', 'user-item', 'user-item-full'.
+                All spaces in the formula will be ignored, hence please do not use spaces in variable/observable names.
+            dataset (JointDataset): a JointDataset object for training the model, the parser will infer dimensions of variables
+                and sizes of coefficients for the category level model from dataset.datasets['category']. The parser will
+                infer dimensions of variables and sizes of coefficients for the item level model from dataset.datasets['item'].
 
             num_users (Optional[int], optional): number of users to be modelled, this is only
                 required if any of variable type requires user-specific variations.
@@ -67,6 +87,30 @@ class NestedLogitModel(nn.Module):
                 is not None.
                 Defaults to None.
         """
+        # handle category level model.
+        using_formula_to_initiate = (item_formula is not None) and (category_formula is not None)
+        if using_formula_to_initiate:
+            # make sure that the research does not specify duplicated information, which might cause conflict.
+            if (category_coef_variation_dict is not None) or (item_coef_variation_dict is not None):
+                raise ValueError('You specify the {item, category}_formula to initiate the model, you should not specify the {item, category}_coef_variation_dict at the same time.')
+            if (category_num_param_dict is not None) or (item_num_param_dict is not None):
+                raise ValueError('You specify the {item, category}_formula to initiate the model, you should not specify the {item, category}_num_param_dict at the same time.')
+            if dataset is None:
+                raise ValueError('Dataset is required if {item, category}_formula is specified to initiate the model.')
+
+            category_coef_variation_dict, category_num_param_dict = parse_formula(category_formula, dataset.datasets['category'])
+            item_coef_variation_dict, item_num_param_dict = parse_formula(item_formula, dataset.datasets['item'])
+
+        else:
+            # check for conflicting information.
+            if (category_formula is not None) or (item_formula is not None):
+                raise ValueError('You should not specify {item, category}_formula and {item, category}_coef_variation_dict at the same time.')
+            # make sure that the research specifies all the required information.
+            if (category_coef_variation_dict is None) or (item_coef_variation_dict is None):
+                raise ValueError('You should specify the {item, category}_coef_variation_dict to initiate the model.')
+            if (category_num_param_dict is None) or (item_num_param_dict is None):
+                raise ValueError('You should specify the {item, category}_num_param_dict to initiate the model.')
+
         super(NestedLogitModel, self).__init__()
         self.category_to_item = category_to_item
         self.category_coef_variation_dict = category_coef_variation_dict
