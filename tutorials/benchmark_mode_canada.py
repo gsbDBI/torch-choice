@@ -5,8 +5,6 @@ import pandas as pd
 import torch
 from tqdm import tqdm
 
-import torch_choice
-import torch_choice.utils
 from torch_choice.data import ChoiceDataset, utils
 from torch_choice.model import ConditionalLogitModel
 from torch_choice.utils.run_helper import run
