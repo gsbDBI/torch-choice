@@ -19,7 +19,7 @@ num.seeds <- 5
 for (seed in 1:num.seeds) {
   tic()
   print(paste0('Seed=', seed))
-  for (num_items in c(10, 20, 30, 50, 100, 150, 200)) {
+  for (num_items in c(10, 30, 50, 100, 150, 200)) {
     # get substring to construct formula. Only 5 dimensions of latents are used.
     df <- read.csv(str_glue("simulated_choice_data_num_items_experiment_{num_items}.csv"))
     df$item_id <- as.factor(df$item_id)
