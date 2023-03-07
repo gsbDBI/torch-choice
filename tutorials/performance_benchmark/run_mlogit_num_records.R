@@ -47,4 +47,5 @@ for (seed in 1:num.seeds) {
   toc()
 }
 records <- data.frame('time'=t.list, 'formula'=f.list, 'num_records'=num.records.list, 'seed'=seed.list)
-write.csv(records, "/home/tianyudu/Development/torch-choice/tutorials/performance_benchmark/R_performance_num_records_all.csv", row.names=FALSE)
+# write.csv(records, "/home/tianyudu/Development/torch-choice/tutorials/performance_benchmark/R_performance_num_records_all.csv", row.names=FALSE)
+write.csv(records, "./R_performance_num_records.csv", row.names=FALSE)

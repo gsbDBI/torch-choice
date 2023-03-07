@@ -19,7 +19,7 @@ num.seeds <- 5
 for (seed in 1:num.seeds) {
   tic()
   print(paste0('Seed=', seed))
-  for (num_items in c(200)) {
+  for (num_items in c(10, 20, 30, 50, 100, 150, 200)) {
     # get substring to construct formula. Only 5 dimensions of latents are used.
     df <- read.csv(str_glue("simulated_choice_data_num_items_experiment_{num_items}.csv"))
     df$item_id <- as.factor(df$item_id)
@@ -45,4 +45,5 @@ for (seed in 1:num.seeds) {
   toc()
 }
 records <- data.frame('time'=t.list, 'formula'=f.list, 'num_items'=num.items.list, 'seed'=seed.list)
-write.csv(records, "/home/tianyudu/Development/torch-choice/tutorials/performance_benchmark/R_performance_num_items_larger.csv", row.names=FALSE)
+# write.csv(records, "/home/tianyudu/Development/torch-choice/tutorials/performance_benchmark/R_performance_num_items_larger.csv", row.names=FALSE)
+write.csv(records, "./R_performance_num_items.csv", row.names=FALSE)
