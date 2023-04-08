@@ -3,7 +3,7 @@ Implementation of the nested logit model, see page 86 of the book
 "discrete choice methods with simulation" by Train. for more details.
 
 Author: Tianyu Du
-Update; Apr. 28, 2022
+Update; Apr. 7, 2023
 """
 from typing import Dict, List, Optional
 
@@ -192,20 +192,6 @@ class NestedLogitModel(nn.Module):
                                               num_params=num_params)
         return nn.ModuleDict(coef_dict)
 
-    # def _check_input_shapes(self, category_x_dict, item_x_dict, user_index, item_availability) -> None:
-    #     T = list(category_x_dict.values())[0].shape[0]  # batch size.
-    #     for var_type, x_category in category_x_dict.items():
-    #         x_item = item_x_dict[var_type]
-    #         assert len(x_item.shape) == len(x_item.shape) == 3
-    #         assert x_category.shape[0] == x_item.shape[0]
-    #         assert x_category.shape == (T, self.num_categories, self.category_num_param_dict[var_type])
-    #         assert x_item.shape == (T, self.num_items, self.item_num_param_dict[var_type])
-
-    #     if (user_index is not None) and (self.num_users is not None):
-    #         assert user_index.shape == (T,)
-
-    #     if item_availability is not None:
-    #         assert item_availability.shape == (T, self.num_items)
 
     def forward(self, batch: ChoiceDataset) -> torch.Tensor:
         """An standard forward method for the model, the user feeds a ChoiceDataset batch and the model returns the
