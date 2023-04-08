@@ -29,13 +29,13 @@ class TestConditionalLogitModel(unittest.TestCase):
         item_index = item_index.map(lambda x: encoder[x])
         item_index = torch.LongTensor(item_index)
 
-        category_dataset = ChoiceDataset(item_index=item_index.clone())
+        nest_dataset = ChoiceDataset(item_index=item_index.clone())
 
         item_feat_cols = ['ich', 'och', 'icca', 'occa', 'inc.room', 'inc.cooling', 'int.cooling']
         price_obs = utils.pivot3d(df, dim0='idx.id1', dim1='idx.id2', values=item_feat_cols)
 
         item_dataset = ChoiceDataset(item_index=item_index, price_obs=price_obs)
-        dataset = JointDataset(category=category_dataset, item=item_dataset)
+        dataset = JointDataset(nest=nest_dataset, item=item_dataset)
         return encoder, dataset
 
     # ==================================================================================================================
@@ -43,18 +43,18 @@ class TestConditionalLogitModel(unittest.TestCase):
     # ==================================================================================================================
 
     def test_initialization_example_1(self):
-        category_to_item = {0: ['gcc', 'ecc', 'erc', 'hpc'],
+        nest_to_item = {0: ['gcc', 'ecc', 'erc', 'hpc'],
                             1: ['gc', 'ec', 'er']}
 
         encoder, _ = self.load_house_cooling_datasets()
         # encode items to integers.
-        for k, v in category_to_item.items():
+        for k, v in nest_to_item.items():
             v = [encoder[item] for item in v]
-            category_to_item[k] = sorted(v)
+            nest_to_item[k] = sorted(v)
 
-        model = NestedLogitModel(category_to_item=category_to_item,
-                                 category_coef_variation_dict={},
-                                 category_num_param_dict={},
+        model = NestedLogitModel(nest_to_item=nest_to_item,
+                                 nest_coef_variation_dict={},
+                                 nest_num_param_dict={},
                                  item_coef_variation_dict={'price_obs': 'constant'},
                                  item_num_param_dict={'price_obs': 7},
                                  shared_lambda=True)
@@ -63,17 +63,17 @@ class TestConditionalLogitModel(unittest.TestCase):
 
     def test_initialization_example_2(self):
         # different definition of categories compared to example 1.
-        category_to_item = {0: ['ec', 'ecc', 'gc', 'gcc', 'hpc'],
+        nest_to_item = {0: ['ec', 'ecc', 'gc', 'gcc', 'hpc'],
                             1: ['er', 'erc']}
 
         encoder, _ = self.load_house_cooling_datasets()
-        for k, v in category_to_item.items():
+        for k, v in nest_to_item.items():
             v = [encoder[item] for item in v]
-            category_to_item[k] = sorted(v)
+            nest_to_item[k] = sorted(v)
 
-        model = NestedLogitModel(category_to_item=category_to_item,
-                                    category_coef_variation_dict={},
-                                    category_num_param_dict={},
+        model = NestedLogitModel(nest_to_item=nest_to_item,
+                                    nest_coef_variation_dict={},
+                                    nest_num_param_dict={},
                                     item_coef_variation_dict={'price_obs': 'constant'},
                                     item_num_param_dict={'price_obs': 7},
                                     shared_lambda=True
@@ -81,18 +81,18 @@ class TestConditionalLogitModel(unittest.TestCase):
         return model
 
     def test_initialization_example_3(self):
-        category_to_item = {0: ['gcc', 'ecc', 'erc'],
+        nest_to_item = {0: ['gcc', 'ecc', 'erc'],
                             1: ['hpc'],
                             2: ['gc', 'ec', 'er']}
 
         encoder, _ = self.load_house_cooling_datasets()
-        for k, v in category_to_item.items():
+        for k, v in nest_to_item.items():
             v = [encoder[item] for item in v]
-            category_to_item[k] = sorted(v)
+            nest_to_item[k] = sorted(v)
 
-        model = NestedLogitModel(category_to_item=category_to_item,
-                                category_coef_variation_dict={},
-                                category_num_param_dict={},
+        model = NestedLogitModel(nest_to_item=nest_to_item,
+                                nest_coef_variation_dict={},
+                                nest_num_param_dict={},
                                 item_coef_variation_dict={'price_obs': 'constant'},
                                 item_num_param_dict={'price_obs': 7},
                                 shared_lambda=True
