@@ -221,12 +221,15 @@ class NestedLogitModel(nn.Module):
         Let n denote the ID of the user involved in trip t, then P[t, i] = P_{ni} on page 86 of the
         book "discrete choice methods with simulation" by Train.
 
+        The `_forward` method is an internal API, users should refer to the `forward` method.
+
         Args:
-            # TODO: update the docstring.
-            x_nest (torch.Tensor): a tensor with shape (num_trips, num_nests, *) including
-                features of all nests in each trip.
-            x_item (torch.Tensor): a tensor with shape (num_trips, num_items, *) including features
-                of all items in each trip.
+            nest_x_dict (torch.Tensor): a dictionary mapping from nest-level feature names to the corresponding feature tensor.
+
+            item_x_dict (torch.Tensor): a dictionary mapping from item-level feature names to the corresponding feature tensor.
+
+                More details on the shape of the tensors can be found in the docstring of the `x_dict` method of `ChoiceDataset`.
+
             user_index (torch.LongTensor): a tensor of shape (num_trips,) indicating which user is
                 making decision in each trip. Setting user_index = None assumes the same user is
                 making decisions in all trips.
