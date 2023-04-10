@@ -2,6 +2,9 @@
 
 > Authors: Tianyu Du, Ayush Kanodia and Susan Athey; Contact: tianyudu@stanford.edu
 
+**Note on Installation**: This is a work in progress. We recommend installing the package from source to get the latest version and bug-fix patches.
+We are actively working on this package and will be adding more features and examples. Please feel free to reach out to us with any questions or suggestions.
+
 > Acknowledgements: We would like to thank Erik Sverdrup, Charles Pebereau and Keshav Agrawal for their feedback.
 
 `torch-choice` is a library for flexible, fast choice modeling with PyTorch: it has logit and nested logit models, designed for both estimation and prediction. See the [complete documentation](https://gsbdbi.github.io/torch-choice/) for more details.
