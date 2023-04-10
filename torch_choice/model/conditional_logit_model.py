@@ -228,7 +228,7 @@ class ConditionalLogitModel(nn.Module):
         assert total_utility.shape == (len(batch), self.num_items)
 
         if batch.item_availability is not None:
-            # mask out unavilable items.
+            # mask out unavailable items.
             total_utility[~batch.item_availability[batch.session_index, :]] = torch.finfo(total_utility.dtype).min / 2
         return total_utility
 
