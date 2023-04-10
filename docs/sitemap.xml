@@ -2,52 +2,57 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://gsbdbi.github.io/torch-choice/</loc>
-         <lastmod>2023-04-08</lastmod>
+         <lastmod>2023-04-10</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://gsbdbi.github.io/torch-choice/api_torch_choice/</loc>
-         <lastmod>2023-04-08</lastmod>
+         <lastmod>2023-04-10</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://gsbdbi.github.io/torch-choice/conditional_logit_model_mode_canada/</loc>
-         <lastmod>2023-04-08</lastmod>
+         <lastmod>2023-04-10</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://gsbdbi.github.io/torch-choice/data_management/</loc>
-         <lastmod>2023-04-08</lastmod>
+         <lastmod>2023-04-10</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://gsbdbi.github.io/torch-choice/easy_data_management/</loc>
-         <lastmod>2023-04-08</lastmod>
+         <lastmod>2023-04-10</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://gsbdbi.github.io/torch-choice/install/</loc>
-         <lastmod>2023-04-08</lastmod>
+         <lastmod>2023-04-10</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://gsbdbi.github.io/torch-choice/intro/</loc>
-         <lastmod>2023-04-08</lastmod>
+         <lastmod>2023-04-10</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://gsbdbi.github.io/torch-choice/nested_logit_model_house_cooling/</loc>
-         <lastmod>2023-04-08</lastmod>
+         <lastmod>2023-04-10</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://gsbdbi.github.io/torch-choice/post_estimation_demos/</loc>
+         <lastmod>2023-04-10</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://gsbdbi.github.io/torch-choice/projects/</loc>
-         <lastmod>2023-04-08</lastmod>
+         <lastmod>2023-04-10</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://gsbdbi.github.io/torch-choice/test/</loc>
-         <lastmod>2023-04-08</lastmod>
+         <lastmod>2023-04-10</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
