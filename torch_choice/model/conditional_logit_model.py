@@ -235,6 +235,7 @@ class ConditionalLogitModel(nn.Module):
                 # intercept term has no input tensor from the ChoiceDataset data structure.
                 # the tensor for intercept has only 1 feature, every entry is 1.
                 x_dict['intercept'] = torch.ones((len(batch), self.num_items, 1), device=batch.device)
+                break
 
         # compute the utility from each item in each choice session.
         total_utility = torch.zeros((len(batch), self.num_items), device=batch.device)
