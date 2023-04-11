@@ -312,4 +312,4 @@ class ConditionalLogitModel(nn.Module):
         Returns:
             torch.Tensor: the corresponding coefficient tensor of the requested variable.
         """
-        return self.state_dict()['coef_dict.' + variable + '.coef']
+        return self.state_dict()[f"coef_dict.{variable}.coef"].detach().clone()
