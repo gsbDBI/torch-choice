@@ -470,16 +470,16 @@ print('Time taken:', time() - start_time)
     ==================== received dataset ====================
     ChoiceDataset(label=[], item_index=[2779], user_index=[], session_index=[2779], item_availability=[], price_cost_freq_ovt=[2779, 4, 3], session_income=[2779, 1], price_ivt=[2779, 4, 1], device=cpu)
     ==================== training the model ====================
-    Epoch 5000: Log-likelihood=-1875.2281494140625
-    Epoch 10000: Log-likelihood=-1882.3001708984375
-    Epoch 15000: Log-likelihood=-1879.052001953125
-    Epoch 20000: Log-likelihood=-1878.7576904296875
-    Epoch 25000: Log-likelihood=-1880.744873046875
-    Epoch 30000: Log-likelihood=-1885.927978515625
-    Epoch 35000: Log-likelihood=-1893.18408203125
-    Epoch 40000: Log-likelihood=-1874.5340576171875
-    Epoch 45000: Log-likelihood=-1881.76611328125
-    Epoch 50000: Log-likelihood=-1875.5556640625
+    Epoch 5000: Log-likelihood=-1877.81640625
+    Epoch 10000: Log-likelihood=-1878.5775146484375
+    Epoch 15000: Log-likelihood=-1879.2830810546875
+    Epoch 20000: Log-likelihood=-1895.0306396484375
+    Epoch 25000: Log-likelihood=-1876.6690673828125
+    Epoch 30000: Log-likelihood=-1874.603759765625
+    Epoch 35000: Log-likelihood=-1877.6473388671875
+    Epoch 40000: Log-likelihood=-1891.16357421875
+    Epoch 45000: Log-likelihood=-1877.5592041015625
+    Epoch 50000: Log-likelihood=-1876.2728271484375
     ==================== model results ====================
     Training Epochs: 50000
     
@@ -487,26 +487,26 @@ print('Time taken:', time() - start_time)
     
     Batch Size: 2779 out of 2779 observations in total
     
-    Final Log-likelihood: -1875.5556640625
+    Final Log-likelihood: -1876.2728271484375
     
     Coefficients:
     
     | Coefficient                     |   Estimation |   Std. Err. |
     |:--------------------------------|-------------:|------------:|
-    | price_cost_freq_ovt[constant]_0 |  -0.0333441  |  0.00715266 |
-    | price_cost_freq_ovt[constant]_1 |   0.0925371  |  0.00512202 |
-    | price_cost_freq_ovt[constant]_2 |  -0.0432182  |  0.00326949 |
-    | session_income[item]_0          |  -0.0892718  |  0.0187317  |
-    | session_income[item]_1          |  -0.0279309  |  0.00386399 |
-    | session_income[item]_2          |  -0.0383558  |  0.00412799 |
-    | price_ivt[item-full]_0          |   0.059479   |  0.0101213  |
-    | price_ivt[item-full]_1          |  -0.00687637 |  0.00451956 |
-    | price_ivt[item-full]_2          |  -0.00633334 |  0.00190736 |
-    | price_ivt[item-full]_3          |  -0.00158631 |  0.00119772 |
-    | intercept[item]_0               |   0.701061   |  1.3008     |
-    | intercept[item]_1               |   1.84944    |  0.713116   |
-    | intercept[item]_2               |   3.27901    |  0.630046   |
-    Time taken: 107.26875686645508
+    | price_cost_freq_ovt[constant]_0 |  -0.0334654  |  0.00716249 |
+    | price_cost_freq_ovt[constant]_1 |   0.0924185  |  0.00512754 |
+    | price_cost_freq_ovt[constant]_2 |  -0.0432329  |  0.0032801  |
+    | session_income[item]_0          |  -0.0892292  |  0.0188848  |
+    | session_income[item]_1          |  -0.0278481  |  0.00386248 |
+    | session_income[item]_2          |  -0.0383362  |  0.00414    |
+    | price_ivt[item-full]_0          |   0.0593935  |  0.0101313  |
+    | price_ivt[item-full]_1          |  -0.00697196 |  0.00456365 |
+    | price_ivt[item-full]_2          |  -0.00629515 |  0.0019084  |
+    | price_ivt[item-full]_3          |  -0.00164838 |  0.00119982 |
+    | intercept[item]_0               |   0.701135   |  1.30931    |
+    | intercept[item]_1               |   1.84954    |  0.714135   |
+    | intercept[item]_2               |   3.27894    |  0.631329   |
+    Time taken: 109.68721008300781
 
 
 ### Parameter Estimation from `R`

@@ -468,14 +468,13 @@
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="kn">import</span> <span class="nn">torch</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="kn">from</span> <span class="nn">torch_choice.data</span> <span class="kn">import</span> <span class="n">ChoiceDataset</span><span class="p">,</span> <span class="n">JointDataset</span><span class="p">,</span> <span class="n">utils</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="kn">from</span> <span class="nn">torch_choice.model</span> <span class="kn">import</span> <span class="n">ConditionalLogitModel</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="kn">from</span> <span class="nn">torch_choice.utils.run_helper</span> <span class="kn">import</span> <span class="n">run</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="kn">import</span> <span class="nn">torch</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="kn">from</span> <span class="nn">torch_choice.data</span> <span class="kn">import</span> <span class="n">ChoiceDataset</span><span class="p">,</span> <span class="n">JointDataset</span><span class="p">,</span> <span class="n">utils</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="kn">from</span> <span class="nn">torch_choice.model</span> <span class="kn">import</span> <span class="n">ConditionalLogitModel</span><span class="p">,</span> <span class="n">NestedLogitModel</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="kn">from</span> <span class="nn">torch_choice.utils.run_helper</span> <span class="kn">import</span> <span class="n">run</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># let&#39;s get a helper</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">def</span> <span class="nf">print_dict_shape</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
@@ -529,14 +528,14 @@
 <h1 id="conditional-logit-model">Conditional Logit Model</h1>
 <p>Suppose that we are creating a very complicated dummy model as the following. Please note that model and dataset here are for demonstration purpose only, the model is unlikely to converge if one estimate it on this dataset.</p>
 <div class="arithmatex">\[
-U_{uis} = \alpha + \beta_i + \gamma_u + \delta_i^\top \textbf{x}^{(user)}_u + \eta^\top \textbf{y}^{(item)}_i + \theta_u^\top \textbf{z}^{(session)}_{ui} + \kappa_i^\top \textbf{w}^{(user-item)}_{ui} + \epsilon_{uis}
+U_{uis} = \alpha + \beta_i + \gamma_u + \delta_i^\top \textbf{x}^{(user)}_u + \eta^\top \textbf{y}^{(item)}_i + \theta_u^\top \textbf{z}^{(session)}_{s} + \kappa_i^\top \textbf{w}^{(itemsession)}_{is} + \iota_u^\top \textbf{w}^{(itemsession)}_{is} + \epsilon_{uis}
 \]</div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">model</span> <span class="o">=</span> <span class="n">ConditionalLogitModel</span><span class="p">(</span><span class="n">formula</span><span class="o">=</span><span class="s1">&#39;(1|constant) + (1|item) + (1|user) + (user_obs|item) + (item_obs|constant) + (session_obs|user) + (itemsession_obs|user)&#39;</span><span class="p">,</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">model</span> <span class="o">=</span> <span class="n">ConditionalLogitModel</span><span class="p">(</span><span class="n">formula</span><span class="o">=</span><span class="s1">&#39;(1|constant) + (1|item) + (1|user) + (user_obs|item) + (item_obs|constant) + (session_obs|user) + (itemsession_obs|item) + (itemsession_obs|user)&#39;</span><span class="p">,</span>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>                              <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
 <a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>                              <span class="n">num_users</span><span class="o">=</span><span class="n">num_users</span><span class="p">,</span>
 <a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>                              <span class="n">num_items</span><span class="o">=</span><span class="n">num_items</span><span class="p">)</span>
 <a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1"># estimate the model.</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1"># estimate the model... omitted in this tutorial.</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">model</span>
 </code></pre></div>
@@ -545,10 +544,11 @@ U_{uis} = \alpha + \beta_i + \gamma_u + \delta_i^\top \textbf{x}^{(user)}_u + \e
     (intercept[constant]): Coefficient(variation=constant, num_items=25, num_users=100, num_params=1, 1 trainable parameters in total, device=cpu).
     (intercept[item]): Coefficient(variation=item, num_items=25, num_users=100, num_params=1, 24 trainable parameters in total, device=cpu).
     (intercept[user]): Coefficient(variation=user, num_items=25, num_users=100, num_params=1, 100 trainable parameters in total, device=cpu).
-    (user_obs): Coefficient(variation=item, num_items=25, num_users=100, num_params=128, 3072 trainable parameters in total, device=cpu).
-    (item_obs): Coefficient(variation=constant, num_items=25, num_users=100, num_params=64, 64 trainable parameters in total, device=cpu).
-    (session_obs): Coefficient(variation=user, num_items=25, num_users=100, num_params=10, 1000 trainable parameters in total, device=cpu).
-    (itemsession_obs): Coefficient(variation=user, num_items=25, num_users=100, num_params=12, 1200 trainable parameters in total, device=cpu).
+    (user_obs[item]): Coefficient(variation=item, num_items=25, num_users=100, num_params=128, 3072 trainable parameters in total, device=cpu).
+    (item_obs[constant]): Coefficient(variation=constant, num_items=25, num_users=100, num_params=64, 64 trainable parameters in total, device=cpu).
+    (session_obs[user]): Coefficient(variation=user, num_items=25, num_users=100, num_params=10, 1000 trainable parameters in total, device=cpu).
+    (itemsession_obs[item]): Coefficient(variation=item, num_items=25, num_users=100, num_params=12, 288 trainable parameters in total, device=cpu).
+    (itemsession_obs[user]): Coefficient(variation=user, num_items=25, num_users=100, num_params=12, 1200 trainable parameters in total, device=cpu).
   )
 )
 Conditional logistic discrete choice model, expects input features:
@@ -556,33 +556,113 @@ Conditional logistic discrete choice model, expects input features:
 X[intercept[constant]] with 1 parameters, with constant level variation.
 X[intercept[item]] with 1 parameters, with item level variation.
 X[intercept[user]] with 1 parameters, with user level variation.
-X[user_obs] with 128 parameters, with item level variation.
-X[item_obs] with 64 parameters, with constant level variation.
-X[session_obs] with 10 parameters, with user level variation.
-X[itemsession_obs] with 12 parameters, with user level variation.
+X[user_obs[item]] with 128 parameters, with item level variation.
+X[item_obs[constant]] with 64 parameters, with constant level variation.
+X[session_obs[user]] with 10 parameters, with user level variation.
+X[itemsession_obs[item]] with 12 parameters, with item level variation.
+X[itemsession_obs[user]] with 12 parameters, with user level variation.
 device=cpu
 </code></pre></div>
-<h1 id="retrieving-model-parameters-with-the-get_coefficient-method">Retrieving Model Parameters with the <code>get_coefficient()</code> method.</h1>
+<h2 id="retrieving-model-parameters-with-the-get_coefficient-method">Retrieving Model Parameters with the <code>get_coefficient()</code> method.</h2>
 <p>In the model representation above, we can see that the model has coefficients from <code>intercept[constant]</code> to <code>itemsession_obs</code>. 
 The <code>get_coefficient()</code> method allows users to retrieve the coefficient values from the model using the general syntax <code>model.get_coefficient(COEFFICIENT_NAME)</code>.</p>
 <p>For example, <code>model.get_coefficient('intercept[constant]')</code> will return the value of <span class="arithmatex">\(\alpha\)</span>, which is a scalar.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">model</span><span class="o">.</span><span class="n">get_coefficient</span><span class="p">(</span><span class="s1">&#39;intercept[constant]&#39;</span><span class="p">)</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>tensor([0.0972])
+<div class="highlight"><pre><span></span><code>tensor([1.2126])
 </code></pre></div>
 <p><code>model.get_coefficient('intercept[user]')</code> returns the array of <span class="arithmatex">\(\gamma_u\)</span>'s, which is a 1D array of length <code>num_users</code>.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">model</span><span class="o">.</span><span class="n">get_coefficient</span><span class="p">(</span><span class="s1">&#39;intercept[user]&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>torch.Size([100, 1])
 </code></pre></div>
-<p><code>model.get_coefficient('session_obs')</code> returns the corresponding coefficient <code>theta_u</code>, which is a 2D array of shape <code>(num_users, num_session_features)</code>. Each row of the returned tensor corresponds to the coefficient vector of a user.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">model</span><span class="o">.</span><span class="n">get_coefficient</span><span class="p">(</span><span class="s1">&#39;session_obs&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+<p><code>model.get_coefficient('session_obs[user]')</code> returns the corresponding coefficient <span class="arithmatex">\(\theta_u\)</span>, which is a 2D array of shape <code>(num_users, num_session_features)</code>. Each row of the returned tensor corresponds to the coefficient vector of a user.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">model</span><span class="o">.</span><span class="n">get_coefficient</span><span class="p">(</span><span class="s1">&#39;session_obs[user]&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>torch.Size([100, 10])
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">model</span><span class="o">.</span><span class="n">get_coefficient</span><span class="p">(</span><span class="s1">&#39;itemsession_obs&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+<p>Lastly, the <code>itemsession_obs</code> (a 12-dimensional feature vector for each <span class="arithmatex">\((i, s)\)</span> pairs) affects the utility through both <span class="arithmatex">\(\kappa_i\)</span> and <span class="arithmatex">\(\iota_u\)</span>. For each item (except for the first item indexed with <code>0</code>, all coefficients of it are <code>0</code>), the <code>get_coefficient()</code> method returns a 2D array of shape <code>(num_items-1, num_itemsession_features)</code>.</p>
+<p>The first row of the returned tensor corresponds to the coefficient vector of the <strong>second</strong> item, and so on.</p>
+<p><code>model.get_coefficient('itemsession_obs[user]')</code> provides the user-specific relationship between utility and item-session observables, <span class="arithmatex">\(\iota_u\)</span>, which is a 2D array of shape <code>(num_users, num_itemsession_features)</code>. Each row of the returned tensor corresponds to the coefficient vector of a user.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">model</span><span class="o">.</span><span class="n">get_coefficient</span><span class="p">(</span><span class="s1">&#39;itemsession_obs[item]&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>torch.Size([24, 12])
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">model</span><span class="o">.</span><span class="n">get_coefficient</span><span class="p">(</span><span class="s1">&#39;itemsession_obs[user]&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>torch.Size([100, 12])
+</code></pre></div>
+<h1 id="nested-logit-model">Nested Logit Model</h1>
+<p>The nested logit model has a very similar interface for coefficient extraction to the conditional logit model demonstrated above.</p>
+<p>Consider a nested logit model with the same item-level model but with nest-level model incorporating user-fixed effect, category-fixed effect (specified by <code>(1|item)</code> in the <code>nest_formula</code>), and user-specific coefficient on a 64-dimensional nest-specific observable (specified by <code>(item_obs|user)</code> in the <code>nest_formula</code>).</p>
+<p>The only difference is researcher would need to retrieve the coefficients of the nested logit model using the <code>get_coefficient()</code> method with the <code>level</code> argument.</p>
+<h2 id="nestedlogitmodelget_coefficient-method"><code>NestedLogitModel.get_coefficient()</code> Method.</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">nest_to_item</span> <span class="o">=</span> <span class="p">{</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>    <span class="mi">0</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>    <span class="mi">1</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">],</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>    <span class="mi">2</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">14</span><span class="p">],</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>    <span class="mi">3</span><span class="p">:</span> <span class="p">[</span><span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">19</span><span class="p">],</span>
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>    <span class="mi">4</span><span class="p">:</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">24</span><span class="p">]</span>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="p">}</span>
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="n">nest_dataset</span> <span class="o">=</span> <span class="n">ChoiceDataset</span><span class="p">(</span><span class="n">item_index</span><span class="o">=</span><span class="n">item_index</span><span class="p">,</span> <span class="n">user_index</span><span class="o">=</span><span class="n">user_index</span><span class="p">,</span> <span class="n">num_items</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">nest_to_item</span><span class="p">),</span> <span class="n">num_users</span><span class="o">=</span><span class="n">num_users</span><span class="p">,</span> <span class="n">item_obs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nest_to_item</span><span class="p">),</span> <span class="mi">64</span><span class="p">))</span>
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="n">joint_dataset</span> <span class="o">=</span> <span class="n">JointDataset</span><span class="p">(</span><span class="n">nest</span><span class="o">=</span><span class="n">nest_dataset</span><span class="p">,</span> <span class="n">item</span><span class="o">=</span><span class="n">dataset</span><span class="p">)</span>
+<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a><span class="n">joint_dataset</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>No `session_index` is provided, assume each choice instance is in its own session.
+
+
+
+
+
+JointDataset with 2 sub-datasets: (
+    nest: ChoiceDataset(label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[], item_obs=[5, 64], device=cpu)
+    item: ChoiceDataset(label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 25], user_obs=[100, 128], item_obs=[25, 64], session_obs=[500, 10], itemsession_obs=[500, 25, 12], device=cpu)
+)
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">nested_model</span> <span class="o">=</span> <span class="n">NestedLogitModel</span><span class="p">(</span><span class="n">nest_to_item</span><span class="o">=</span><span class="n">nest_to_item</span><span class="p">,</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>                                <span class="n">nest_formula</span><span class="o">=</span><span class="s1">&#39;(1|user) + (1|item) + (item_obs|user)&#39;</span><span class="p">,</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>                                <span class="n">item_formula</span><span class="o">=</span><span class="s1">&#39;(1|constant) + (1|item) + (1|user) + (user_obs|item) + (item_obs|constant) + (session_obs|user) + (itemsession_obs|item) + (itemsession_obs|user)&#39;</span><span class="p">,</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>                                <span class="n">num_users</span><span class="o">=</span><span class="n">num_users</span><span class="p">,</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>                                <span class="n">dataset</span><span class="o">=</span><span class="n">joint_dataset</span><span class="p">,</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>                                <span class="n">shared_lambda</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="n">nested_model</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>NestedLogitModel(
+  (nest_coef_dict): ModuleDict(
+    (intercept[user]): Coefficient(variation=user, num_items=5, num_users=100, num_params=1, 100 trainable parameters in total, device=cpu).
+    (intercept[item]): Coefficient(variation=item, num_items=5, num_users=100, num_params=1, 4 trainable parameters in total, device=cpu).
+    (item_obs[user]): Coefficient(variation=user, num_items=5, num_users=100, num_params=64, 6400 trainable parameters in total, device=cpu).
+  )
+  (item_coef_dict): ModuleDict(
+    (intercept[constant]): Coefficient(variation=constant, num_items=25, num_users=100, num_params=1, 1 trainable parameters in total, device=cpu).
+    (intercept[item]): Coefficient(variation=item, num_items=25, num_users=100, num_params=1, 24 trainable parameters in total, device=cpu).
+    (intercept[user]): Coefficient(variation=user, num_items=25, num_users=100, num_params=1, 100 trainable parameters in total, device=cpu).
+    (user_obs[item]): Coefficient(variation=item, num_items=25, num_users=100, num_params=128, 3072 trainable parameters in total, device=cpu).
+    (item_obs[constant]): Coefficient(variation=constant, num_items=25, num_users=100, num_params=64, 64 trainable parameters in total, device=cpu).
+    (session_obs[user]): Coefficient(variation=user, num_items=25, num_users=100, num_params=10, 1000 trainable parameters in total, device=cpu).
+    (itemsession_obs[item]): Coefficient(variation=item, num_items=25, num_users=100, num_params=12, 288 trainable parameters in total, device=cpu).
+    (itemsession_obs[user]): Coefficient(variation=user, num_items=25, num_users=100, num_params=12, 1200 trainable parameters in total, device=cpu).
+  )
+)
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># estimate the model... omitted in this tutorial.</span>
+</code></pre></div>
+<p>For example, you can use the following code snippet to retrieve the coefficient of the user-fixed effect in the nest level model, which is a vector with <code>num_users</code> elements.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">nested_model</span><span class="o">.</span><span class="n">get_coefficient</span><span class="p">(</span><span class="s1">&#39;intercept[user]&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s1">&#39;nest&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>torch.Size([100, 1])
+</code></pre></div>
+<p>Similarly, by changing to <code>level='item'</code>, the researcher can obtain the coefficient of user-specific fixed effect in the item level model, which is a also vector with <code>num_users</code> elements.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="n">nested_model</span><span class="o">.</span><span class="n">get_coefficient</span><span class="p">(</span><span class="s1">&#39;intercept[user]&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s1">&#39;item&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>torch.Size([100, 1])
+</code></pre></div>
+<p>This API generalizes to all other coefficients listed above such as <code>itemsession_obs[item]</code> and <code>itemsession_obs[user]</code>.</p>
+<p>One exception is the coefficients for inclusive values, (often denoted as <span class="arithmatex">\(\lambda\)</span>). Researchers can retrieve the coefficient of the inclusive value by using <code>get_coefficient('lambda')</code> without specifying the <code>level</code> argument (<code>get_coefficient</code> will disregard any <code>level</code> argument if the coefficient name is <code>lambda</code>). The returned value is a scalar if <code>shared_lambda</code> is <code>True</code>, and a 1D array of length <code>num_nests</code> if <code>shared_lambda</code> is <code>False</code>. In our case, the returned value is an array of length five (we have five nests in this model).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="n">nested_model</span><span class="o">.</span><span class="n">get_coefficient</span><span class="p">(</span><span class="s1">&#39;lambda&#39;</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>tensor([0.5000, 0.5000, 0.5000, 0.5000, 0.5000])
 </code></pre></div>
 
               

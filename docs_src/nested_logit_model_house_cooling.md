@@ -351,8 +351,8 @@ print(dataset)
 ```
 
     JointDataset with 2 sub-datasets: (
-    	nest: ChoiceDataset(label=[], item_index=[250], provided_num_items=[], user_index=[], session_index=[250], item_availability=[], device=cpu)
-    	item: ChoiceDataset(label=[], item_index=[250], provided_num_items=[], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cpu)
+    	nest: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], device=cpu)
+    	item: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cpu)
     )
 
 
@@ -425,7 +425,7 @@ print(model)
     NestedLogitModel(
       (nest_coef_dict): ModuleDict()
       (item_coef_dict): ModuleDict(
-        (price_obs): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
+        (price_obs[constant]): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
       )
     )
 
@@ -443,25 +443,25 @@ run(model, dataset, num_epochs=10000)
     NestedLogitModel(
       (nest_coef_dict): ModuleDict()
       (item_coef_dict): ModuleDict(
-        (price_obs): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
+        (price_obs[constant]): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
       )
     )
     ==================== received dataset ====================
     JointDataset with 2 sub-datasets: (
-    	nest: ChoiceDataset(label=[], item_index=[250], provided_num_items=[], user_index=[], session_index=[250], item_availability=[], device=cpu)
-    	item: ChoiceDataset(label=[], item_index=[250], provided_num_items=[], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cpu)
+    	nest: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], device=cpu)
+    	item: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cpu)
     )
     ==================== training the model ====================
-    Epoch 1000: Log-likelihood=-178.98236083984375
-    Epoch 2000: Log-likelihood=-178.536376953125
-    Epoch 3000: Log-likelihood=-178.3140869140625
-    Epoch 4000: Log-likelihood=-178.17807006835938
-    Epoch 5000: Log-likelihood=-178.13162231445312
-    Epoch 6000: Log-likelihood=-178.16209411621094
-    Epoch 7000: Log-likelihood=-178.124755859375
+    Epoch 1000: Log-likelihood=-179.78282165527344
+    Epoch 2000: Log-likelihood=-178.6439666748047
+    Epoch 3000: Log-likelihood=-178.45376586914062
+    Epoch 4000: Log-likelihood=-178.30226135253906
+    Epoch 5000: Log-likelihood=-178.19009399414062
+    Epoch 6000: Log-likelihood=-178.1377716064453
+    Epoch 7000: Log-likelihood=-178.1256866455078
     Epoch 8000: Log-likelihood=-178.124755859375
-    Epoch 9000: Log-likelihood=-178.12474060058594
-    Epoch 10000: Log-likelihood=-178.12472534179688
+    Epoch 9000: Log-likelihood=-178.12757873535156
+    Epoch 10000: Log-likelihood=-178.12527465820312
     ==================== model results ====================
     Training Epochs: 10000
     
@@ -469,20 +469,20 @@ run(model, dataset, num_epochs=10000)
     
     Batch Size: 250 out of 250 observations in total
     
-    Final Log-likelihood: -178.12472534179688
+    Final Log-likelihood: -178.12527465820312
     
     Coefficients:
     
-    | Coefficient      |   Estimation |   Std. Err. |
-    |:-----------------|-------------:|------------:|
-    | lambda_weight_0  |     0.585929 |   0.166625  |
-    | item_price_obs_0 |    -0.554882 |   0.144517  |
-    | item_price_obs_1 |    -0.857888 |   0.237495  |
-    | item_price_obs_2 |    -0.225068 |   0.110575  |
-    | item_price_obs_3 |    -1.08936  |   1.03673   |
-    | item_price_obs_4 |    -0.378972 |   0.100705  |
-    | item_price_obs_5 |     0.249572 |   0.0518545 |
-    | item_price_obs_6 |    -6.00091  |   4.82945   |
+    | Coefficient                |   Estimation |   Std. Err. |
+    |:---------------------------|-------------:|------------:|
+    | lambda_weight_0            |     0.585844 |    0.166706 |
+    | item_price_obs[constant]_0 |    -0.555026 |    0.144731 |
+    | item_price_obs[constant]_1 |    -0.858004 |    0.237756 |
+    | item_price_obs[constant]_2 |    -0.224923 |    0.110701 |
+    | item_price_obs[constant]_3 |    -1.08933  |    1.03791  |
+    | item_price_obs[constant]_4 |    -0.379122 |    0.100874 |
+    | item_price_obs[constant]_5 |     0.249721 |    0.051977 |
+    | item_price_obs[constant]_6 |    -5.99982  |    4.83646  |
 
 
 
@@ -491,7 +491,7 @@ run(model, dataset, num_epochs=10000)
     NestedLogitModel(
       (nest_coef_dict): ModuleDict()
       (item_coef_dict): ModuleDict(
-        (price_obs): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
+        (price_obs[constant]): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
       )
     )
 
@@ -584,7 +584,7 @@ model = model.to(DEVICE)
     NestedLogitModel(
       (nest_coef_dict): ModuleDict()
       (item_coef_dict): ModuleDict(
-        (price_obs): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
+        (price_obs[constant]): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
       )
     )
 
@@ -610,25 +610,25 @@ run(model, dataset, num_epochs=50000, learning_rate=0.3)
     NestedLogitModel(
       (nest_coef_dict): ModuleDict()
       (item_coef_dict): ModuleDict(
-        (price_obs): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
+        (price_obs[constant]): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
       )
     )
     ==================== received dataset ====================
     JointDataset with 2 sub-datasets: (
-    	nest: ChoiceDataset(label=[], item_index=[250], provided_num_items=[], user_index=[], session_index=[250], item_availability=[], device=cpu)
-    	item: ChoiceDataset(label=[], item_index=[250], provided_num_items=[], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cpu)
+    	nest: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], device=cpu)
+    	item: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cpu)
     )
     ==================== training the model ====================
-    Epoch 5000: Log-likelihood=-180.21339416503906
-    Epoch 10000: Log-likelihood=-180.1459503173828
-    Epoch 15000: Log-likelihood=-180.33145141601562
-    Epoch 20000: Log-likelihood=-180.25845336914062
-    Epoch 25000: Log-likelihood=-180.2908172607422
-    Epoch 30000: Log-likelihood=-182.10595703125
-    Epoch 35000: Log-likelihood=-180.81361389160156
-    Epoch 40000: Log-likelihood=-181.11842346191406
-    Epoch 45000: Log-likelihood=-181.28170776367188
-    Epoch 50000: Log-likelihood=-180.13404846191406
+    Epoch 5000: Log-likelihood=-180.560791015625
+    Epoch 10000: Log-likelihood=-180.80062866210938
+    Epoch 15000: Log-likelihood=-181.21275329589844
+    Epoch 20000: Log-likelihood=-180.3982696533203
+    Epoch 25000: Log-likelihood=-180.29925537109375
+    Epoch 30000: Log-likelihood=-182.28366088867188
+    Epoch 35000: Log-likelihood=-180.1341552734375
+    Epoch 40000: Log-likelihood=-182.2633514404297
+    Epoch 45000: Log-likelihood=-180.19305419921875
+    Epoch 50000: Log-likelihood=-180.68240356445312
     ==================== model results ====================
     Training Epochs: 50000
     
@@ -636,20 +636,20 @@ run(model, dataset, num_epochs=50000, learning_rate=0.3)
     
     Batch Size: 250 out of 250 observations in total
     
-    Final Log-likelihood: -180.13404846191406
+    Final Log-likelihood: -180.68240356445312
     
     Coefficients:
     
-    | Coefficient      |   Estimation |   Std. Err. |
-    |:-----------------|-------------:|------------:|
-    | lambda_weight_0  |     1.61843  |    0.656913 |
-    | item_price_obs_0 |    -1.34665  |    0.521992 |
-    | item_price_obs_1 |    -2.16643  |    0.872617 |
-    | item_price_obs_2 |    -0.404303 |    0.237506 |
-    | item_price_obs_3 |    -2.58484  |    2.04241  |
-    | item_price_obs_4 |    -0.891892 |    0.329965 |
-    | item_price_obs_5 |     0.495561 |    0.201054 |
-    | item_price_obs_6 |   -16.0342   |    9.28342  |
+    | Coefficient                |   Estimation |   Std. Err. |
+    |:---------------------------|-------------:|------------:|
+    | lambda_weight_0            |     1.63154  |    0.678117 |
+    | item_price_obs[constant]_0 |    -1.34966  |    0.531558 |
+    | item_price_obs[constant]_1 |    -2.17924  |    0.894518 |
+    | item_price_obs[constant]_2 |    -0.412631 |    0.243317 |
+    | item_price_obs[constant]_3 |    -2.61227  |    2.06289  |
+    | item_price_obs[constant]_4 |    -0.885769 |    0.337734 |
+    | item_price_obs[constant]_5 |     0.49301  |    0.199931 |
+    | item_price_obs[constant]_6 |   -16.0524   |    9.32373  |
 
 
 
@@ -658,7 +658,7 @@ run(model, dataset, num_epochs=50000, learning_rate=0.3)
     NestedLogitModel(
       (nest_coef_dict): ModuleDict()
       (item_coef_dict): ModuleDict(
-        (price_obs): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
+        (price_obs[constant]): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
       )
     )
 
@@ -749,25 +749,25 @@ run(model, dataset, num_epochs=50000, learning_rate=0.3)
     NestedLogitModel(
       (nest_coef_dict): ModuleDict()
       (item_coef_dict): ModuleDict(
-        (price_obs): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
+        (price_obs[constant]): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
       )
     )
     ==================== received dataset ====================
     JointDataset with 2 sub-datasets: (
-    	nest: ChoiceDataset(label=[], item_index=[250], provided_num_items=[], user_index=[], session_index=[250], item_availability=[], device=cpu)
-    	item: ChoiceDataset(label=[], item_index=[250], provided_num_items=[], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cpu)
+    	nest: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], device=cpu)
+    	item: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cpu)
     )
     ==================== training the model ====================
-    Epoch 5000: Log-likelihood=-185.87640380859375
-    Epoch 10000: Log-likelihood=-184.1634979248047
-    Epoch 15000: Log-likelihood=-183.0250244140625
-    Epoch 20000: Log-likelihood=-181.58428955078125
-    Epoch 25000: Log-likelihood=-180.6302490234375
-    Epoch 30000: Log-likelihood=-180.73257446289062
-    Epoch 35000: Log-likelihood=-180.42218017578125
-    Epoch 40000: Log-likelihood=-180.72393798828125
-    Epoch 45000: Log-likelihood=-180.31214904785156
-    Epoch 50000: Log-likelihood=-184.1131591796875
+    Epoch 5000: Log-likelihood=-180.84153747558594
+    Epoch 10000: Log-likelihood=-182.17794799804688
+    Epoch 15000: Log-likelihood=-181.74029541015625
+    Epoch 20000: Log-likelihood=-182.3179931640625
+    Epoch 25000: Log-likelihood=-182.50352478027344
+    Epoch 30000: Log-likelihood=-181.481201171875
+    Epoch 35000: Log-likelihood=-181.8275604248047
+    Epoch 40000: Log-likelihood=-180.5753173828125
+    Epoch 45000: Log-likelihood=-182.4506072998047
+    Epoch 50000: Log-likelihood=-185.08358764648438
     ==================== model results ====================
     Training Epochs: 50000
     
@@ -775,20 +775,20 @@ run(model, dataset, num_epochs=50000, learning_rate=0.3)
     
     Batch Size: 250 out of 250 observations in total
     
-    Final Log-likelihood: -184.1131591796875
+    Final Log-likelihood: -185.08358764648438
     
     Coefficients:
     
-    | Coefficient      |   Estimation |   Std. Err. |
-    |:-----------------|-------------:|------------:|
-    | lambda_weight_0  |     1.05132  |   0.234648  |
-    | item_price_obs_0 |    -0.878631 |   0.106054  |
-    | item_price_obs_1 |    -1.34351  |   0.189688  |
-    | item_price_obs_2 |    -0.286618 |   0.126163  |
-    | item_price_obs_3 |    -1.4505   |   1.15697   |
-    | item_price_obs_4 |    -0.547107 |   0.0694016 |
-    | item_price_obs_5 |     0.308886 |   0.0532438 |
-    | item_price_obs_6 |   -10.5577   |   5.15473   |
+    | Coefficient                |   Estimation |   Std. Err. |
+    |:---------------------------|-------------:|------------:|
+    | lambda_weight_0            |     0.949264 |   0.19245   |
+    | item_price_obs[constant]_0 |    -0.852556 |   0.100724  |
+    | item_price_obs[constant]_1 |    -1.35082  |   0.188374  |
+    | item_price_obs[constant]_2 |    -0.248292 |   0.14014   |
+    | item_price_obs[constant]_3 |    -1.41068  |   1.2839    |
+    | item_price_obs[constant]_4 |    -0.581716 |   0.0771356 |
+    | item_price_obs[constant]_5 |     0.336492 |   0.0656387 |
+    | item_price_obs[constant]_6 |   -10.5186   |   5.71641   |
 
 
 
@@ -797,7 +797,7 @@ run(model, dataset, num_epochs=50000, learning_rate=0.3)
     NestedLogitModel(
       (nest_coef_dict): ModuleDict()
       (item_coef_dict): ModuleDict(
-        (price_obs): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
+        (price_obs[constant]): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
       )
     )
 
