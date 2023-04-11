@@ -14,6 +14,7 @@ from time import time
 import numpy as np
 import pandas as pd
 import seaborn as sns
+import matplotlib.pyplot as plt
 import torch
 import torch.nn.functional as F
 
@@ -150,7 +151,7 @@ model.get_coefficient('intercept[constant]')
 
 
 
-    tensor([1.2126])
+    tensor([0.3743])
 
 
 
@@ -210,6 +211,61 @@ model.get_coefficient('itemsession_obs[user]').shape
 
     torch.Size([100, 12])
 
+
+
+## Visualizing Model Parameters
+Researchers can use any plotting library to visualize the model parameters. Here we use `matplotlib` to demonstrate how to visualize the model parameters.
+
+For example, we can plot the distribution of user fixed effect $\gamma_u$'s as the following.
+
+1. Researcher can use the `get_coefficient()` method to retrieve the coefficient values. 
+
+
+```python
+gamma = model.get_coefficient('intercept[user]')
+```
+
+2. After estimating the model with GPU, the coefficient values are stored in the GPU memory. We need move the coefficient values to CPU memory and convert it to a numpy array before plotting.
+
+
+```python
+gamma = gamma.cpu().numpy()
+```
+
+3. The tensor of individual fixed effects has shape (num_users, 1), you can use `squeeze()` to remove the dimension of size 1. Since we haven't updated the model in this tutorial, the coefficient values are all zeros.
+
+
+```python
+gamma = gamma.squeeze()
+gamma
+```
+
+
+
+
+    array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+           0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+           0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+           0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+           0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+           0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+          dtype=float32)
+
+
+
+4. Researcher can use `matplotlib` to plot the distribution of the coefficient values. For example, the distribution plot of coefficients is helpful to identify potential groups of users with different preferences.
+
+
+```python
+fig, ax = plt.subplots(figsize=(10, 5))
+ax.hist(gamma)
+plt.show()
+```
+
+
+    
+![png](post_estimation_demos_files/post_estimation_demos_25_0.png)
+    
 
 
 # Nested Logit Model
