@@ -1,5 +1,7 @@
+import copy
+from typing import Dict, Tuple
+
 from torch_choice.data.choice_dataset import ChoiceDataset
-from typing import Tuple, Dict
 
 
 def parse_formula(formula: str, data: ChoiceDataset) -> Tuple[Dict[str, int], Dict[str, int]]:
@@ -37,10 +39,17 @@ def parse_formula(formula: str, data: ChoiceDataset) -> Tuple[Dict[str, int], Di
         # e.g., term: (var|item)
         term = term.strip('()')  # (var|item) --> var|item
         # get the variable/observable and its variation.
-        variable, specificity = term.split('|')[0], term.split('|')[1]
+        corresponding_observable, specificity = term.split('|')[0], term.split('|')[1]
+        variable = copy.deepcopy(corresponding_observable)
+
         if variable == '1':
-            # the R-way of saying intercept, change it to intercept.
-            variable = 'intercept'
+            variable = 'intercept'  # the R-fashion for specifying intercept is 1, but we use `intercept` internally instead.
+
+        # rename variable to incorporate the variation.
+        variable = f"{variable}[{specificity}]"
+
+        if variable in coef_variation_dict.keys():
+            raise ValueError(f"variable[level of variation]={variable} is specified more than once in the formula, please remove the redundant one.")
 
         assert specificity in ['constant', 'item', 'item-full', 'user', 'user-item', 'user-item-full'], f'Component {term} must be one of constant, item, item-full, user, user-item, user-item-full.'
 
@@ -48,11 +57,11 @@ def parse_formula(formula: str, data: ChoiceDataset) -> Tuple[Dict[str, int], Di
         coef_variation_dict[variable] = specificity
 
         # retrieve the dimension of observable (i.e., number of parameters).
-        if variable == 'intercept':
+        if variable.startswith('intercept[') and variable.endswith(']'):
             # intercept only has one parameter.
             num_param_dict[variable] = 1
         else:
             # get the dimension of variable/observable from the data.
-            num_param_dict[variable] = getattr(data, variable).shape[-1]
+            num_param_dict[variable] = getattr(data, corresponding_observable).shape[-1]
 
     return coef_variation_dict, num_param_dict

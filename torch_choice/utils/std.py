@@ -8,7 +8,7 @@ import torch.nn as nn
 def parameter_std(model_trained: nn.Module, loss_fn: callable) -> Tuple[dict, Optional[torch.Tensor]]:
     """This method firstly computes the Hessian of loss_fn(model_trained) with respect to
     model_trained.parameters(), then computes the standard error from the Hessian.
-    
+
     NOTE: the current implementation involving deletion of attributes in model, this is an unsafe
     workaround for now. See https://github.com/pytorch/pytorch/issues/50138 for details.
 
@@ -44,8 +44,14 @@ def parameter_std(model_trained: nn.Module, loss_fn: callable) -> Tuple[dict, Op
         # unwrap parameters.
         for k in state_dict.keys():
             src = input_tensor[start[k]: end[k]].view(*shape[k])
-            exec(f'del model.{k}')
-            exec(f'model.{k} = src')
+            # NOTE: The removeprefix and removesuffix require Python >= 3.9!
+            # variable_name = k.removeprefix("coef_dict.").removesuffix(".coef")
+            # less elegant/robust but supports earlier versions of python.
+            prefix = "coef_dict."
+            suffix = ".coef"
+            variable_name = k[len(prefix):-len(suffix)]
+            del model.coef_dict[variable_name].coef
+            model.coef_dict[variable_name].coef = src
         return loss_fn(model)
 
     H = torch.autograd.functional.hessian(func, all_params)

@@ -2,16 +2,14 @@
 Conditional Logit Model.
 
 Author: Tianyu Du
-Date: Aug. 8, 2021
-Update: Apr. 28, 2022
+Update: Apr. 10, 2023
 """
 import warnings
 from copy import deepcopy
-from typing import Dict, Optional, Tuple, Union
+from typing import Dict, Optional
 
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 from torch_choice.data.choice_dataset import ChoiceDataset
 from torch_choice.model.coefficient import Coefficient
@@ -103,6 +101,9 @@ class ConditionalLogitModel(nn.Module):
                 is not None.
                 Defaults to None.
         """
+        # ==============================================================================================================
+        # Check that the model received a valid combination of inputs so that it can be initialized.
+        # ==============================================================================================================
         if coef_variation_dict is None and formula is None:
             raise ValueError("Either coef_variation_dict or formula should be provided to specify the model.")
 
@@ -112,18 +113,34 @@ class ConditionalLogitModel(nn.Module):
         if (formula is not None) and (dataset is None):
             raise ValueError("If formula is provided, data should be provided to specify the model.")
 
-        # Use the formula to infer model, override dictionaries.
-        if formula is not None:
+
+        # ==============================================================================================================
+        # Build necessary dictionaries for model initialization.
+        # ==============================================================================================================
+        if formula is None:
+            # Use dictionaries to initialize the model.
+            if num_param_dict is None:
+                warnings.warn("`num_param_dict` is not provided, all variables will be treated as having one parameter.")
+                num_param_dict = {key:1 for key in coef_variation_dict.keys()}
+
+            assert coef_variation_dict.keys() == num_param_dict.keys()
+
+            # variable `var` with variation `spec` to variable `var[spec]`.
+            rename = dict()  # old variable name --> new variable name.
+            for variable, specificity in coef_variation_dict.items():
+                rename[variable] = f"{variable}[{specificity}]"
+
+            for old_name, new_name in rename.items():
+                coef_variation_dict[new_name] = coef_variation_dict.pop(old_name)
+                num_param_dict[new_name] = num_param_dict.pop(old_name)
+        else:
+            # Use the formula to infer model.
             coef_variation_dict, num_param_dict = parse_formula(formula, dataset)
 
+        # ==============================================================================================================
+        # Model Initialization.
+        # ==============================================================================================================
         super(ConditionalLogitModel, self).__init__()
-
-        if num_param_dict is None:
-            num_param_dict = {key:1 for key in coef_variation_dict.keys()}
-
-        assert coef_variation_dict.keys() == num_param_dict.keys()
-
-        self.variable_types = list(deepcopy(num_param_dict).keys())
 
         self.coef_variation_dict = deepcopy(coef_variation_dict)
         self.num_param_dict = deepcopy(num_param_dict)
@@ -144,9 +161,10 @@ class ConditionalLogitModel(nn.Module):
             assert num_params > 0, f'num_params needs to be positive, got: {num_params}.'
 
         # infer the number of parameters for intercept if the researcher forgets.
-        if 'intercept' in self.coef_variation_dict.keys() and 'intercept' not in self.num_param_dict.keys():
-            warnings.warn("'intercept' key found in coef_variation_dict but not in num_param_dict, num_param_dict['intercept'] has been set to 1.")
-            self.num_param_dict['intercept'] = 1
+        for variable in self.coef_variation_dict.keys():
+            if self.is_intercept_term(variable) and variable not in self.num_param_dict.keys():
+                warnings.warn(f"`{variable}` key found in coef_variation_dict but not in num_param_dict, num_param_dict['{variable}'] has been set to 1.")
+                self.num_param_dict[variable] = 1
 
         # construct trainable parameters.
         coef_dict = dict()
@@ -212,17 +230,22 @@ class ConditionalLogitModel(nn.Module):
         """
         x_dict = batch.x_dict
 
-        if 'intercept' in self.coef_variation_dict.keys():
-            # intercept term has no input tensor, which has only 1 feature.
-            x_dict['intercept'] = torch.ones((len(batch), self.num_items, 1), device=batch.device)
+        for variable in self.coef_variation_dict.keys():
+            if self.is_intercept_term(variable):
+                # intercept term has no input tensor from the ChoiceDataset data structure.
+                # the tensor for intercept has only 1 feature, every entry is 1.
+                x_dict['intercept'] = torch.ones((len(batch), self.num_items, 1), device=batch.device)
 
         # compute the utility from each item in each choice session.
         total_utility = torch.zeros((len(batch), self.num_items), device=batch.device)
         # for each type of variables, apply the corresponding coefficient to input x.
 
         for var_type, coef in self.coef_dict.items():
+            # variable type is named as "observable_name[variation]", retrieve the corresponding observable name.
+            corresponding_observable = var_type.split("[")[0]
             total_utility += coef(
-                x_dict[var_type], batch.user_index,
+                x_dict[corresponding_observable],
+                batch.user_index,
                 manual_coef_value=None if manual_coef_value_dict is None else manual_coef_value_dict[var_type])
 
         assert total_utility.shape == (len(batch), self.num_items)
@@ -274,95 +297,19 @@ class ConditionalLogitModel(nn.Module):
         """
         return next(iter(self.coef_dict.values())).device
 
-    # NOTE: the method for computing Hessian and standard deviation has been moved to std.py.
-    # @staticmethod
-    # def flatten_coef_dict(coef_dict: Dict[str, Union[torch.Tensor, torch.nn.Parameter]]) -> Tuple[torch.Tensor, dict]:
-    #     """Flattens the coef_dict into a 1-dimension tensor, used for hessian computation.
+    @staticmethod
+    def is_intercept_term(variable: str):
+        # check if the given variable is an intercept (fixed effect) term.
+        # intercept (fixed effect) terms are defined as 'intercept[*]' and looks like 'intercept[user]', 'intercept[item]', etc.
+        return (variable.startswith('intercept[') and variable.endswith(']'))
 
-    #     Args:
-    #         coef_dict (Dict[str, Union[torch.Tensor, torch.nn.Parameter]]): a dictionary holding learnable parameters.
+    def get_coefficient(self, variable: str) -> torch.Tensor:
+        """Retrieve the coefficient tensor for the given variable.
 
-    #     Returns:
-    #         Tuple[torch.Tensor, dict]: 1. the flattened tensors with shape (num_params,), 2. an indexing dictionary
-    #             used for reconstructing the original coef_dict from the flatten tensor.
-    #     """
-    #     type2idx = dict()
-    #     param_list = list()
-    #     start = 0
+        Args:
+            variable (str): the variable name.
 
-    #     for var_type in coef_dict.keys():
-    #         num_params = coef_dict[var_type].coef.numel()
-    #         # track which portion of all_param tensor belongs to this variable type.
-    #         type2idx[var_type] = (start, start + num_params)
-    #         start += num_params
-    #         # use reshape instead of view to make a copy.
-    #         param_list.append(coef_dict[var_type].coef.clone().reshape(-1,))
-
-    #     all_param = torch.cat(param_list)  # (self.num_params(), )
-    #     return all_param, type2idx
-
-    # @staticmethod
-    # def unwrap_coef_dict(param: torch.Tensor, type2idx: Dict[str, Tuple[int, int]]) -> Dict[str, torch.Tensor]:
-    #     """Rebuilds coef_dict from output of self.flatten_coef_dict method.
-
-    #     Args:
-    #         param (torch.Tensor): the flattened coef_dict from self.flatten_coef_dict.
-    #         type2idx (Dict[str, Tuple[int, int]]): the indexing dictionary from self.flatten_coef_dict.
-
-    #     Returns:
-    #         Dict[str, torch.Tensor]: the re-constructed coefficient dictionary.
-    #     """
-    #     coef_dict = dict()
-    #     for var_type in type2idx.keys():
-    #         start, end = type2idx[var_type]
-    #         # no need to reshape here, Coefficient handles it.
-    #         coef_dict[var_type] = param[start:end]
-    #     return coef_dict
-
-    # def compute_hessian(self, x_dict, availability, user_index, y) -> torch.Tensor:
-    #     """Computes the Hessian of negative log-likelihood (total cross-entropy loss) with respect
-    #     to all parameters in this model. The Hessian can be later used for constructing the standard deviation of
-    #     parameters.
-
-    #     Args:
-    #         x_dict ,availability, user_index: see definitions in self.forward method.
-    #         y (torch.LongTensor): a tensor with shape (num_trips,) of IDs of items actually purchased.
-
-    #     Returns:
-    #         torch.Tensor: a (self.num_params, self.num_params) tensor of the Hessian matrix.
-    #     """
-    #     all_coefs, type2idx = self.flatten_coef_dict(self.coef_dict)
-
-    #     def compute_nll(P: torch.Tensor) -> float:
-    #         coef_dict = self.unwrap_coef_dict(P, type2idx)
-    #         y_pred = self._forward(x_dict=x_dict,
-    #                                availability=availability,
-    #                                user_index=user_index,
-    #                                manual_coef_value_dict=coef_dict)
-    #         # the reduction needs to be 'sum' to obtain NLL.
-    #         loss = F.cross_entropy(y_pred, y, reduction='sum')
-    #         return loss
-
-    #     H = torch.autograd.functional.hessian(compute_nll, all_coefs)
-    #     assert H.shape == (self.num_params, self.num_params)
-    #     return H
-
-    # def compute_std(self, x_dict, availability, user_index, y) -> Dict[str, torch.Tensor]:
-    #     """Computes
-
-    #     Args:f
-    #         See definitions in self.compute_hessian.
-
-    #     Returns:
-    #         Dict[str, torch.Tensor]: a dictionary whose keys are the same as self.coef_dict.keys()
-    #         the values are standard errors of coefficients in each coefficient group.
-    #     """
-    #     _, type2idx = self.flatten_coef_dict(self.coef_dict)
-    #     H = self.compute_hessian(x_dict, availability, user_index, y)
-    #     std_all = torch.sqrt(torch.diag(torch.inverse(H)))
-    #     std_dict = dict()
-    #     for var_type in type2idx.keys():
-    #         # get std of variables belonging to each type.
-    #         start, end = type2idx[var_type]
-    #         std_dict[var_type] = std_all[start:end]
-    #     return std_dict
+        Returns:
+            torch.Tensor: the corresponding coefficient tensor of the requested variable.
+        """
+        return self.state_dict()['coef_dict.' + variable + '.coef']
