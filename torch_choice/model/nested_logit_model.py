@@ -257,16 +257,25 @@ class NestedLogitModel(nn.Module):
         # compute nest-specific utility with shape (T, num_nests).
         W = torch.zeros(T, self.num_nests).to(device)
 
-        if 'intercept' in self.nest_coef_variation_dict.keys():
-            nest_x_dict['intercept'] = torch.ones((T, self.num_nests, 1)).to(device)
+        for variable in self.nest_coef_variation_dict.keys():
+            if self.is_intercept_term(variable):
+                nest_x_dict['intercept'] = torch.ones((T, self.num_nests, 1)).to(device)
+                break
+
+        for variable in self.item_coef_variation_dict.keys():
+            if self.is_intercept_term(variable):
+                item_x_dict['intercept'] = torch.ones((T, self.num_items, 1)).to(device)
+                break
 
         for var_type, coef in self.nest_coef_dict.items():
-            W += coef(nest_x_dict[var_type], user_index)
+            corresponding_observable = var_type.split("[")[0]
+            W += coef(nest_x_dict[corresponding_observable], user_index)
 
         # compute item-specific utility (T, num_items).
         Y = torch.zeros(T, self.num_items).to(device)
         for var_type, coef in self.item_coef_dict.items():
-            Y += coef(item_x_dict[var_type], user_index)
+            corresponding_observable = var_type.split("[")[0]
+            Y += coef(item_x_dict[corresponding_observable], user_index)
 
         if item_availability is not None:
             Y[~item_availability] =torch.finfo(Y.dtype).min / 2
@@ -363,6 +372,30 @@ class NestedLogitModel(nn.Module):
             torch.device: the device of the model.
         """
         return next(iter(self.item_coef_dict.values())).device
+
+    @staticmethod
+    def is_intercept_term(variable: str):
+        # check if the given variable is an intercept (fixed effect) term.
+        # intercept (fixed effect) terms are defined as 'intercept[*]' and looks like 'intercept[user]', 'intercept[item]', etc.
+        return (variable.startswith('intercept[') and variable.endswith(']'))
+
+    def get_coefficient(self, variable: str, level: Optional[str] = None) -> torch.Tensor:
+        """Retrieve the coefficient tensor for the given variable.
+
+        Args:
+            variable (str): the variable name.
+            level (str): from which level of model to extract the coefficient, can be 'item' or 'nest'. The `level` argument will be discarded if `variable` is `lambda`.
+
+        Returns:
+            torch.Tensor: the corresponding coefficient tensor of the requested variable.
+        """
+        if variable == 'lambda':
+            return self.lambda_weight.detach().clone()
+
+        if level not in ['item', 'nest']:
+            raise ValueError(f"Level should be either 'item' or 'nest', got {level}.")
+
+        return self.state_dict()[f'{level}_coef_dict.{variable}.coef'].detach().clone()
 
     # def clamp_lambdas(self):
     #     """
