@@ -1,12 +1,19 @@
+"""
+The helper function for running the model with pytorch lightning.
+
+Author: Tianyu Du
+"""
 import time
 from copy import deepcopy
 from typing import Optional, Union
 
 import pandas as pd
+import pytorch_lightning as pl
 import torch
 import torch.nn.functional as F
-import pytorch_lightning as pl
+from pytorch_lightning.callbacks import LearningRateMonitor
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 from torch_choice.data import ChoiceDataset
 from torch_choice.data.utils import create_data_loader
@@ -58,7 +65,8 @@ class LightningModelWrapper(pl.LightningModule):
 
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
-        return optimizer
+        scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.5, verbose=True, cooldown=100)
+        return {"optimizer": optimizer, "lr_scheduler": scheduler, "monitor": "train_loss"}
 
 
 def section_print(input_text):
@@ -133,9 +141,19 @@ def run(model: Union [ConditionalLogitModel, NestedLogitModel],
     # Training the model.
     # ==================================================================================================================
     # if the validation dataset is provided, do early stopping.
-    callbacks = [EarlyStopping(monitor="val_ll", mode="max", patience=10, min_delta=0.001)] if val_dataloader is not None else []
+    lr_monitor = LearningRateMonitor(logging_interval='step')
+    callbacks = [lr_monitor]
+    if val_dataloader is not None:
+        print("Validation dataset provided, do early stopping based on validation log-likelihood.")
+        callbacks.append(EarlyStopping(monitor="val_log_likelihood", mode="max", patience=10, min_delta=0.001))
+    else:
+        print("No early-stopping is performed; provide a validation dataset if you want to do early-stopping.")
+        # print("No validation dataset provided, do early stopping based on training loss.")
+        # TODO: figure out why early stopping isn't working.
+        # callbacks.append(EarlyStopping(monitor="train_loss", mode="min", patience=10, min_delta=0.001))
 
-    trainer = pl.Trainer(gpus=1 if ('cuda' in str(model.device)) else 0,  # use GPU if the model is currently on the GPU.
+    trainer = pl.Trainer(accelerator="auto",
+                         devices="auto",
                          max_epochs=num_epochs,
                          check_val_every_n_epoch=num_epochs // 100,
                          log_every_n_steps=num_epochs // 100,
@@ -172,7 +190,7 @@ def run(model: Union [ConditionalLogitModel, NestedLogitModel],
             return model.negative_log_likelihood(d, d['item'].item_index)
     std_dict = parameter_std(model_clone, nll_loss)
 
-    print('=' * 20, 'model results', '=' * 20)
+    section_print('model results')
     report = list()
     for coef_name, std in std_dict.items():
         std = std.cpu().detach().numpy()
