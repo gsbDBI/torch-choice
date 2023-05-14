@@ -1,15 +1,16 @@
 site_name: Torch Choice
-site_url: https://example.com/
+site_url: https://gsbdbi.github.io/torch-choice/
 docs_dir: docs_src
 site_dir: docs
 nav:
     - Home: index.md
     - Installation: install.md
     - Introduction: intro.md
-    - Tutorial for Data Management: data_management.md
-    - Tutorial for Easy Data Management and Stata Users: easy_data_management.md
-    - Tutorial for Conditional Logit Model: conditional_logit_model_mode_canada.md
-    - Tutorial for Nested Logit Model: nested_logit_model_house_cooling.md
+    - Data Management: data_management.md
+    - Easy Data Management and Stata Users: easy_data_management.md
+    - Conditional Logit Model: conditional_logit_model_mode_canada.md
+    - Nested Logit Model: nested_logit_model_house_cooling.md
+    - Post Estimation: post_estimation_demos.md
     - Related Projects: projects.md
     - Compatibility Tests: test.md
     - API Reference Torch-Choice: api_torch_choice.md

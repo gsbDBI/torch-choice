@@ -8,25 +8,23 @@
       
       
       
-        <link rel="canonical" href="https://example.com/nested_logit_model_house_cooling/">
+        <link rel="canonical" href="https://gsbdbi.github.io/torch-choice/nested_logit_model_house_cooling/">
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.0, mkdocs-material-8.5.3">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.13">
     
     
       
-        <title>Tutorial for Nested Logit Model - Torch Choice</title>
+        <title>Nested Logit Model - Torch Choice</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.7a952b86.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.e411adfe.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.cbb835fc.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.cc9b2e1e.min.css">
         
       
-      
-
     
     
     
@@ -41,11 +39,10 @@
     
       <link rel="stylesheet" href="../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
-    
     
     
   </head>
@@ -115,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Tutorial for Nested Logit Model
+              Nested Logit Model
             
           </span>
         </div>
@@ -138,7 +135,7 @@
       </label>
       <nav class="md-search__options" aria-label="Search">
         
-        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
         </button>
       </nav>
@@ -263,7 +260,7 @@
   
     <li class="md-nav__item">
       <a href="../data_management/" class="md-nav__link">
-        Tutorial for Data Management
+        Data Management
       </a>
     </li>
   
@@ -278,7 +275,7 @@
   
     <li class="md-nav__item">
       <a href="../easy_data_management/" class="md-nav__link">
-        Tutorial for Easy Data Management and Stata Users
+        Easy Data Management and Stata Users
       </a>
     </li>
   
@@ -293,7 +290,7 @@
   
     <li class="md-nav__item">
       <a href="../conditional_logit_model_mode_canada/" class="md-nav__link">
-        Tutorial for Conditional Logit Model
+        Conditional Logit Model
       </a>
     </li>
   
@@ -317,12 +314,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Tutorial for Nested Logit Model
+          Nested Logit Model
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Tutorial for Nested Logit Model
+        Nested Logit Model
       </a>
       
         
@@ -363,8 +360,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#category-level-dataset" class="md-nav__link">
-    Category Level Dataset
+  <a href="#nest-level-dataset" class="md-nav__link">
+    Nest Level Dataset
   </a>
   
 </li>
@@ -458,6 +455,21 @@
   
 </nav>
       
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../post_estimation_demos/" class="md-nav__link">
+        Post Estimation
+      </a>
     </li>
   
 
@@ -556,8 +568,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#category-level-dataset" class="md-nav__link">
-    Category Level Dataset
+  <a href="#nest-level-dataset" class="md-nav__link">
+    Nest Level Dataset
   </a>
   
 </li>
@@ -655,16 +667,15 @@
               </div>
             
           
-          
-            <div class="md-content" data-md-component="content">
-              <article class="md-content__inner md-typeset">
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
                 
-                  
 
 
 <h1 id="random-utility-model-rum-part-ii-nested-logit-model">Random Utility Model (RUM) Part II: Nested Logit Model</h1>
 <p>Author: Tianyu Du</p>
-<p>The package implements the nested logit model as well, which allows researchers to model choices as a two-stage process: the user first picks a category of purchase and then picks the item from the chosen category that generates the most utility.</p>
+<p>The package implements the nested logit model as well, which allows researchers to model choices as a two-stage process: the user first picks a nest of purchase and then picks the item from the chosen nest that generates the most utility.</p>
 <p>Examples here are modified from <a href="https://cran.r-project.org/web/packages/mlogit/vignettes/e2nlogit.html">Exercise 2: Nested logit model by Kenneth Train and Yves Croissant</a>.</p>
 <p>The House Cooling (HC) dataset from <code>mlogit</code> contains data in R format on the choice of heating and central cooling system for 250 single-family, newly built houses in California.</p>
 <p>The dataset is small and serve as a demonstration of the nested logit model.</p>
@@ -691,42 +702,43 @@
 <p>Note that the full installation cost of alternative gcc is ich.gcc+icca, and similarly for the operating cost and for the other alternatives with cooling.</p>
 <h2 id="nested-logit-model-background">Nested Logit Model: Background</h2>
 <p>The following code block provides an example initialization of the <code>NestedLogitModel</code> (please refer to examples below for details).
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">model</span> <span class="o">=</span> <span class="n">NestedLogitModel</span><span class="p">(</span><span class="n">category_to_item</span><span class="o">=</span><span class="n">category_to_item</span><span class="p">,</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>                         <span class="n">category_coef_variation_dict</span><span class="o">=</span><span class="p">{},</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>                         <span class="n">category_num_param_dict</span><span class="o">=</span><span class="p">{},</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">model</span> <span class="o">=</span> <span class="n">NestedLogitModel</span><span class="p">(</span><span class="n">nest_to_item</span><span class="o">=</span><span class="n">nest_to_item</span><span class="p">,</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>                         <span class="n">nest_coef_variation_dict</span><span class="o">=</span><span class="p">{},</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>                         <span class="n">nest_num_param_dict</span><span class="o">=</span><span class="p">{},</span>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>                         <span class="n">item_coef_variation_dict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;price_obs&#39;</span><span class="p">:</span> <span class="s1">&#39;constant&#39;</span><span class="p">},</span>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>                         <span class="n">item_num_param_dict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;price_obs&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">},</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>                         <span class="n">shared_lambda</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div></p>
-<p>The nested logit model decompose the utility of choosing item <span class="arithmatex">\(i\)</span> into the (1) item-specific values and (2) category specify values.  For simplicity, suppose item <span class="arithmatex">\(i\)</span>  belongs to category <span class="arithmatex">\(k \in \{1, \dots, K\}\)</span>: <span class="arithmatex">\(i \in B_k\)</span>.</p>
+<p>The nested logit model decompose the utility of choosing item <span class="arithmatex">\(i\)</span> into the (1) item-specific values and (2) nest specify values.  For simplicity, suppose item <span class="arithmatex">\(i\)</span>  belongs to nest <span class="arithmatex">\(k \in \{1, \dots, K\}\)</span>: <span class="arithmatex">\(i \in B_k\)</span>.</p>
 <div class="arithmatex">\[
 U_{uit} = W_{ukt} + Y_{uit}
 \]</div>
 <p>Where both <span class="arithmatex">\(W\)</span> and <span class="arithmatex">\(Y\)</span> are estimated using linear models from as in the conditional logit model.</p>
-<p>The log-likelihood for user <span class="arithmatex">\(u\)</span> to choose item <span class="arithmatex">\(i\)</span> at time/session <span class="arithmatex">\(t\)</span> decomposes into the item-level likelihood and category-level likelihood.</p>
+<p>The log-likelihood for user <span class="arithmatex">\(u\)</span> to choose item <span class="arithmatex">\(i\)</span> at time/session <span class="arithmatex">\(t\)</span> decomposes into the item-level likelihood and nest-level likelihood.</p>
 <div class="arithmatex">\[
 \log P(i \mid u, t) = \log P(i \mid u, t, B_k) + \log P(k \mid u, t) \\
 = \log \left(\frac{\exp(Y_{uit}/\lambda_k)}{\sum_{j \in B_k} \exp(Y_{ujt}/\lambda_k)}\right) + \log \left( \frac{\exp(W_{ukt} + \lambda_k I_{ukt})}{\sum_{\ell=1}^K \exp(W_{u\ell t} + \lambda_\ell I_{u\ell t})}\right)
 \]</div>
-<p>The <strong>inclusive value</strong> of category <span class="arithmatex">\(k\)</span>, <span class="arithmatex">\(I_{ukt}\)</span> is defined as <span class="arithmatex">\(\log \sum_{j \in B_k} \exp(Y_{ujt}/\lambda_k)\)</span>, which is the <em>expected utility from choosing the best alternative from category <span class="arithmatex">\(k\)</span></em>.</p>
-<p>The <code>category_to_item</code> keyword defines a dictionary of the mapping <span class="arithmatex">\(k \mapsto B_k\)</span>, where keys of <code>category_to_item</code>  are integer <span class="arithmatex">\(k\)</span>'s and  <code>category_to_item[k]</code>  is a list consisting of IDs of items in <span class="arithmatex">\(B_k\)</span>.</p>
-<p>The <code>{category, item}_coef_variation_dict</code> provides specification to <span class="arithmatex">\(W_{ukt}\)</span> and <span class="arithmatex">\(Y_{uit}\)</span> respectively, <code>torch_choice</code> allows for empty category level models by providing an empty dictionary (in this case, <span class="arithmatex">\(W_{ukt} = \epsilon_{ukt}\)</span>) since the inclusive value term <span class="arithmatex">\(\lambda_k I_{ukt}\)</span> will be used to model the choice over categories. However, by specifying an empty second stage model (<span class="arithmatex">\(Y_{uit} = \epsilon_{uit}\)</span>), the nested logit model reduces to a conditional logit model of choices over categories. Hence, one should never use the <code>NestedLogitModel</code> class with an empty item-level model.</p>
-<p>Similar to the conditional logit model, <code>{category, item}_num_param_dict</code> specify the dimension (number of observables to be multiplied with the coefficient) of coefficients. The above code initializes a simple model built upon item-time-specific observables <span class="arithmatex">\(X_{it} \in \mathbb{R}^7\)</span>,</p>
+<p>The <strong>inclusive value</strong> of nest <span class="arithmatex">\(k\)</span>, <span class="arithmatex">\(I_{ukt}\)</span> is defined as <span class="arithmatex">\(\log \sum_{j \in B_k} \exp(Y_{ujt}/\lambda_k)\)</span>, which is the <em>expected utility from choosing the best alternative from nest <span class="arithmatex">\(k\)</span></em>.</p>
+<p>The <code>nest_to_item</code> keyword defines a dictionary of the mapping <span class="arithmatex">\(k \mapsto B_k\)</span>, where keys of <code>nest_to_item</code>  are integer <span class="arithmatex">\(k\)</span>'s and  <code>nest_to_item[k]</code>  is a list consisting of IDs of items in <span class="arithmatex">\(B_k\)</span>.</p>
+<p>The <code>{nest, item}_coef_variation_dict</code> provides specification to <span class="arithmatex">\(W_{ukt}\)</span> and <span class="arithmatex">\(Y_{uit}\)</span> respectively, <code>torch_choice</code> allows for empty nest level models by providing an empty dictionary (in this case, <span class="arithmatex">\(W_{ukt} = \epsilon_{ukt}\)</span>) since the inclusive value term <span class="arithmatex">\(\lambda_k I_{ukt}\)</span> will be used to model the choice over nests. However, by specifying an empty second stage model (<span class="arithmatex">\(Y_{uit} = \epsilon_{uit}\)</span>), the nested logit model reduces to a conditional logit model of choices over nests. Hence, one should never use the <code>NestedLogitModel</code> class with an empty item-level model.</p>
+<p>Similar to the conditional logit model, <code>{nest, item}_num_param_dict</code> specify the dimension (number of observables to be multiplied with the coefficient) of coefficients. The above code initializes a simple model built upon item-time-specific observables <span class="arithmatex">\(X_{it} \in \mathbb{R}^7\)</span>,</p>
 <div class="arithmatex">\[
 Y_{uit} = \beta^\top X_{it} + \epsilon_{uit} \\
 W_{ukt} = \epsilon_{ukt}
 \]</div>
-<p>The research may wish to enfoce the <em>elasiticity</em> <span class="arithmatex">\(\lambda_k\)</span> to be constant across categories, setting <code>shared_lambda=True</code> enforces <span class="arithmatex">\(\lambda_k = \lambda\ \forall k \in [K]\)</span>.</p>
+<p>The research may wish to enfoce the <em>elasiticity</em> <span class="arithmatex">\(\lambda_k\)</span> to be constant across nests, setting <code>shared_lambda=True</code> enforces <span class="arithmatex">\(\lambda_k = \lambda\ \forall k \in [K]\)</span>.</p>
 <h2 id="load-essential-packages">Load Essential Packages</h2>
 <p>We firstly read essential packages for this tutorial.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">import</span> <span class="nn">argparse</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="kn">import</span> <span class="nn">torch</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="kn">from</span> <span class="nn">torch_choice.data</span> <span class="kn">import</span> <span class="n">ChoiceDataset</span><span class="p">,</span> <span class="n">JointDataset</span><span class="p">,</span> <span class="n">utils</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="kn">from</span> <span class="nn">torch_choice.model.nested_logit_model</span> <span class="kn">import</span> <span class="n">NestedLogitModel</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="kn">from</span> <span class="nn">torch_choice.utils.run_helper</span> <span class="kn">import</span> <span class="n">run</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">import</span> <span class="nn">torch</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="kn">from</span> <span class="nn">torch_choice.data</span> <span class="kn">import</span> <span class="n">ChoiceDataset</span><span class="p">,</span> <span class="n">JointDataset</span><span class="p">,</span> <span class="n">utils</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="kn">from</span> <span class="nn">torch_choice.model.nested_logit_model</span> <span class="kn">import</span> <span class="n">NestedLogitModel</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="kn">from</span> <span class="nn">torch_choice.utils.run_helper</span> <span class="kn">import</span> <span class="n">run</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="nb">print</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>2.0.0
 </code></pre></div>
 <p>We then select the appropriate device to run the model on, our package supports both CPU and GPU.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
@@ -734,13 +746,14 @@ W_{ukt} = \epsilon_{ukt}
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">DEVICE</span> <span class="o">=</span> <span class="s1">&#39;cuda&#39;</span>
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="k">else</span><span class="p">:</span>
 <a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Running tutorial on CPU&#39;</span><span class="p">)</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">DEVICE</span> <span class="o">=</span> <span class="s1">&#39;cpu&#39;</span> 
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">DEVICE</span> <span class="o">=</span> <span class="s1">&#39;cpu&#39;</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>CUDA device used: NVIDIA GeForce RTX 3090
+<div class="highlight"><pre><span></span><code>Running tutorial on CPU
 </code></pre></div>
 <h2 id="load-datasets">Load Datasets</h2>
-<p>We firstly read the dataset for this tutorial, the <code>csv</code> file can be found at <code>./public_datasets/HC.csv</code>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;./public_datasets/HC.csv&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<p>We firstly read the dataset for this tutorial, the <code>csv</code> file can be found at <code>./public_datasets/HC.csv</code>.
+Alternatively, we load the dataset directly from the Github website.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;https://raw.githubusercontent.com/gsbDBI/torch-choice/main/tutorials/public_datasets/HC.csv&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </code></pre></div>
@@ -890,11 +903,11 @@ We do this manually in this exercise given the small amount of items, for more i
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>{&#39;ec&#39;: 0, &#39;ecc&#39;: 1, &#39;er&#39;: 2, &#39;erc&#39;: 3, &#39;gc&#39;: 4, &#39;gcc&#39;: 5, &#39;hpc&#39;: 6}
 </code></pre></div>
-<h3 id="category-level-dataset">Category Level Dataset</h3>
-<p>We firstly construct the category-level dataset, however, there is no observable that is constant within the same category, so we don't need to include any observable tensor to the <code>category_dataset</code>.</p>
-<p>All we need to do is adding the <code>item_index</code> (i.e., which item is chosen) to the dataset, so that <code>category_dataset</code> knows the total number of choices made.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># category feature: no category feature, all features are item-level.</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">category_dataset</span> <span class="o">=</span> <span class="n">ChoiceDataset</span><span class="p">(</span><span class="n">item_index</span><span class="o">=</span><span class="n">item_index</span><span class="o">.</span><span class="n">clone</span><span class="p">())</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span>
+<h3 id="nest-level-dataset">Nest Level Dataset</h3>
+<p>We firstly construct the nest-level dataset, however, there is no observable that is constant within the same nest, so we don't need to include any observable tensor to the <code>nest_dataset</code>.</p>
+<p>All we need to do is adding the <code>item_index</code> (i.e., which item is chosen) to the dataset, so that <code>nest_dataset</code> knows the total number of choices made.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># nest feature: no nest feature, all features are item-level.</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">nest_dataset</span> <span class="o">=</span> <span class="n">ChoiceDataset</span><span class="p">(</span><span class="n">item_index</span><span class="o">=</span><span class="n">item_index</span><span class="o">.</span><span class="n">clone</span><span class="p">())</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>No `session_index` is provided, assume each choice instance is in its own session.
 </code></pre></div>
@@ -914,57 +927,63 @@ We do this manually in this exercise given the small amount of items, for more i
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>No `session_index` is provided, assume each choice instance is in its own session.
 </code></pre></div>
-<p>Finally, we chain the category-level and item-level dataset into a single <code>JointDataset</code>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">JointDataset</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="n">category_dataset</span><span class="p">,</span> <span class="n">item</span><span class="o">=</span><span class="n">item_dataset</span><span class="p">)</span>
+<p>Finally, we chain the nest-level and item-level dataset into a single <code>JointDataset</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">JointDataset</span><span class="p">(</span><span class="n">nest</span><span class="o">=</span><span class="n">nest_dataset</span><span class="p">,</span> <span class="n">item</span><span class="o">=</span><span class="n">item_dataset</span><span class="p">)</span>
 </code></pre></div>
 <p>One can print the joint dataset to see its contents, and tensors contained in each of these sub-datasets.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>JointDataset with 2 sub-datasets: (
-    category: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], device=cuda:0)
-    item: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cuda:0)
+    nest: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], device=cpu)
+    item: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cpu)
 )
 </code></pre></div>
 <h2 id="examples">Examples</h2>
-<p>There are multiple ways to group 7 items into categories, different classification will result in different utility functions and estimations (see the background of nested logit models).</p>
+<p>There are multiple ways to group 7 items into nests, different classification will result in different utility functions and estimations (see the background of nested logit models).</p>
 <p>We will demonstrate the usage of our package by presenting three different categorization schemes and corresponding model estimations.</p>
 <h3 id="example-1">Example 1</h3>
-<p>In the first example, the model is specified to have the <em>cooling alternatives</em> <code>{gcc, ecc, erc, hpc}</code> in one category and the <em>non-cooling alternatives</em> <code>{gc, ec, er}</code> in another category.</p>
-<p>We create a <code>category_to_item</code> dictionary to inform the model our categorization scheme. The dictionary should have keys ranging from <code>0</code> to <code>number_of_categories - 1</code>, each integer corresponds to a category. The value of each key is a list of item IDs in the category, the encoding of item names should be exactly the same as in the construction of <code>item_index</code>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">category_to_item</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;gcc&#39;</span><span class="p">,</span> <span class="s1">&#39;ecc&#39;</span><span class="p">,</span> <span class="s1">&#39;erc&#39;</span><span class="p">,</span> <span class="s1">&#39;hpc&#39;</span><span class="p">],</span>
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>                    <span class="mi">1</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;gc&#39;</span><span class="p">,</span> <span class="s1">&#39;ec&#39;</span><span class="p">,</span> <span class="s1">&#39;er&#39;</span><span class="p">]}</span>
+<p>In the first example, the model is specified to have the <em>cooling alternatives</em> <code>{gcc, ecc, erc, hpc}</code> in one nest and the <em>non-cooling alternatives</em> <code>{gc, ec, er}</code> in another nest.</p>
+<p>We create a <code>nest_to_item</code> dictionary to inform the model our categorization scheme. The dictionary should have keys ranging from <code>0</code> to <code>number_of_nests - 1</code>, each integer corresponds to a nest. The value of each key is a list of item IDs in the nest, the encoding of item names should be exactly the same as in the construction of <code>item_index</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">nest_to_item</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;gcc&#39;</span><span class="p">,</span> <span class="s1">&#39;ecc&#39;</span><span class="p">,</span> <span class="s1">&#39;erc&#39;</span><span class="p">,</span> <span class="s1">&#39;hpc&#39;</span><span class="p">],</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>                <span class="mi">1</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;gc&#39;</span><span class="p">,</span> <span class="s1">&#39;ec&#39;</span><span class="p">,</span> <span class="s1">&#39;er&#39;</span><span class="p">]}</span>
 <a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
 <a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="c1"># encode items to integers.</span>
-<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">category_to_item</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">nest_to_item</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 <a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>    <span class="n">v</span> <span class="o">=</span> <span class="p">[</span><span class="n">encoder</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">v</span><span class="p">]</span>
-<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>    <span class="n">category_to_item</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>    <span class="n">nest_to_item</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
 </code></pre></div>
-<p>In this example, we have item <code>[1, 3, 5, 6]</code> in the first category (category <code>0</code>) and the rest of items in the second category (category <code>1</code>).</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nb">print</span><span class="p">(</span><span class="n">category_to_item</span><span class="p">)</span>
+<p>In this example, we have item <code>[1, 3, 5, 6]</code> in the first nest (i.e., the nest with ID <code>0</code>) and the rest of items in the second nest (i.e., the nest with ID <code>1</code>).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nb">print</span><span class="p">(</span><span class="n">nest_to_item</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>{0: [1, 3, 5, 6], 1: [0, 2, 4]}
 </code></pre></div>
 <p>Next, let's create the <code>NestedLogitModel</code> class!</p>
-<p>The first thing to put in is the <code>category_to_item</code> dictionary we just built.</p>
-<p>For <code>category_coef_variation_dict</code>, <code>category_num_param_dict</code>, since we don't have any category-specific observables, we can simply put an empty dictionary there.</p>
+<p>The first thing to put in is the <code>nest_to_item</code> dictionary we just built.</p>
+<p>For <code>nest_coef_variation_dict</code>, <code>nest_num_param_dict</code>, since we don't have any nest-specific observables, we can simply put an empty dictionary there.</p>
 <p>Coefficients for all observables are constant across items, and there are 7 observables in total.</p>
 <p>As for <code>shared_lambda=True</code>, please refer to the background recap for nested logit model.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">model</span> <span class="o">=</span> <span class="n">NestedLogitModel</span><span class="p">(</span><span class="n">category_to_item</span><span class="o">=</span><span class="n">category_to_item</span><span class="p">,</span>
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>                         <span class="n">category_coef_variation_dict</span><span class="o">=</span><span class="p">{},</span>
-<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>                         <span class="n">category_num_param_dict</span><span class="o">=</span><span class="p">{},</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">model</span> <span class="o">=</span> <span class="n">NestedLogitModel</span><span class="p">(</span><span class="n">nest_to_item</span><span class="o">=</span><span class="n">nest_to_item</span><span class="p">,</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>                         <span class="n">nest_coef_variation_dict</span><span class="o">=</span><span class="p">{},</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>                         <span class="n">nest_num_param_dict</span><span class="o">=</span><span class="p">{},</span>
 <a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>                         <span class="n">item_coef_variation_dict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;price_obs&#39;</span><span class="p">:</span> <span class="s1">&#39;constant&#39;</span><span class="p">},</span>
 <a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>                         <span class="n">item_num_param_dict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;price_obs&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">},</span>
 <a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>                         <span class="n">shared_lambda</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>
-<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span>
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="n">model</span> <span class="o">=</span> <span class="n">NestedLogitModel</span><span class="p">(</span><span class="n">nest_to_item</span><span class="o">=</span><span class="n">nest_to_item</span><span class="p">,</span>
+<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>                         <span class="n">nest_formula</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a>                         <span class="n">item_formula</span><span class="o">=</span><span class="s1">&#39;(price_obs|constant)&#39;</span><span class="p">,</span>
+<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a>                         <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+<a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a>                         <span class="n">shared_lambda</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a>
+<a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a><span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span>
 </code></pre></div>
 <p>You can print the model to get summary information of the <code>NestedLogitModel</code> class.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>NestedLogitModel(
-  (category_coef_dict): ModuleDict()
+  (nest_coef_dict): ModuleDict()
   (item_coef_dict): ModuleDict(
-    (price_obs): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total).
+    (price_obs[constant]): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
   )
 )
 </code></pre></div>
@@ -975,27 +994,27 @@ results compared with R implementation.</p>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>==================== received model ====================
 NestedLogitModel(
-  (category_coef_dict): ModuleDict()
+  (nest_coef_dict): ModuleDict()
   (item_coef_dict): ModuleDict(
-    (price_obs): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total).
+    (price_obs[constant]): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
   )
 )
 ==================== received dataset ====================
 JointDataset with 2 sub-datasets: (
-    category: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], device=cuda:0)
-    item: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cuda:0)
+    nest: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], device=cpu)
+    item: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cpu)
 )
 ==================== training the model ====================
-Epoch 1000: Log-likelihood=-187.43597412109375
-Epoch 2000: Log-likelihood=-179.69964599609375
-Epoch 3000: Log-likelihood=-178.70831298828125
-Epoch 4000: Log-likelihood=-178.28799438476562
-Epoch 5000: Log-likelihood=-178.17779541015625
-Epoch 6000: Log-likelihood=-178.13650512695312
-Epoch 7000: Log-likelihood=-178.12576293945312
-Epoch 8000: Log-likelihood=-178.14144897460938
-Epoch 9000: Log-likelihood=-178.12478637695312
-Epoch 10000: Log-likelihood=-178.13674926757812
+Epoch 1000: Log-likelihood=-179.78282165527344
+Epoch 2000: Log-likelihood=-178.6439666748047
+Epoch 3000: Log-likelihood=-178.45376586914062
+Epoch 4000: Log-likelihood=-178.30226135253906
+Epoch 5000: Log-likelihood=-178.19009399414062
+Epoch 6000: Log-likelihood=-178.1377716064453
+Epoch 7000: Log-likelihood=-178.1256866455078
+Epoch 8000: Log-likelihood=-178.124755859375
+Epoch 9000: Log-likelihood=-178.12757873535156
+Epoch 10000: Log-likelihood=-178.12527465820312
 ==================== model results ====================
 Training Epochs: 10000
 
@@ -1003,29 +1022,29 @@ Learning Rate: 0.01
 
 Batch Size: 250 out of 250 observations in total
 
-Final Log-likelihood: -178.13674926757812
+Final Log-likelihood: -178.12527465820312
 
 Coefficients:
 
-| Coefficient      |   Estimation |   Std. Err. |
-|:-----------------|-------------:|------------:|
-| lambda_weight_0  |     0.585981 |   0.167168  |
-| item_price_obs_0 |    -0.555577 |   0.145414  |
-| item_price_obs_1 |    -0.85812  |   0.238405  |
-| item_price_obs_2 |    -0.224599 |   0.111092  |
-| item_price_obs_3 |    -1.08912  |   1.04131   |
-| item_price_obs_4 |    -0.379067 |   0.101126  |
-| item_price_obs_5 |     0.250203 |   0.0522721 |
-| item_price_obs_6 |    -5.99917  |   4.85404   |
+| Coefficient                |   Estimation |   Std. Err. |
+|:---------------------------|-------------:|------------:|
+| lambda_weight_0            |     0.585844 |    0.166706 |
+| item_price_obs[constant]_0 |    -0.555026 |    0.144731 |
+| item_price_obs[constant]_1 |    -0.858004 |    0.237756 |
+| item_price_obs[constant]_2 |    -0.224923 |    0.110701 |
+| item_price_obs[constant]_3 |    -1.08933  |    1.03791  |
+| item_price_obs[constant]_4 |    -0.379122 |    0.100874 |
+| item_price_obs[constant]_5 |     0.249721 |    0.051977 |
+| item_price_obs[constant]_6 |    -5.99982  |    4.83646  |
 
 
 
 
 
 NestedLogitModel(
-  (category_coef_dict): ModuleDict()
+  (nest_coef_dict): ModuleDict()
   (item_coef_dict): ModuleDict(
-    (price_obs): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total).
+    (price_obs[constant]): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
   )
 )
 </code></pre></div>
@@ -1105,79 +1124,103 @@ NestedLogitModel(
 <a id="__codelineno-17-29" name="__codelineno-17-29" href="#__codelineno-17-29"></a>## Log-Likelihood: -178.12
 </code></pre></div>
 <h3 id="example-2">Example 2</h3>
-<p>The second example is similar to the first one, but we change the way we group items into different categories.
+<p>The second example is similar to the first one, but we change the way we group items into different nests.
 Re-estimate the model with the room alternatives in one nest and the central alternatives in another nest. (Note that a heat pump is a central system.)</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="n">category_to_item</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ec&#39;</span><span class="p">,</span> <span class="s1">&#39;ecc&#39;</span><span class="p">,</span> <span class="s1">&#39;gc&#39;</span><span class="p">,</span> <span class="s1">&#39;gcc&#39;</span><span class="p">,</span> <span class="s1">&#39;hpc&#39;</span><span class="p">],</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="n">nest_to_item</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ec&#39;</span><span class="p">,</span> <span class="s1">&#39;ecc&#39;</span><span class="p">,</span> <span class="s1">&#39;gc&#39;</span><span class="p">,</span> <span class="s1">&#39;gcc&#39;</span><span class="p">,</span> <span class="s1">&#39;hpc&#39;</span><span class="p">],</span>
 <a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>                    <span class="mi">1</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;er&#39;</span><span class="p">,</span> <span class="s1">&#39;erc&#39;</span><span class="p">]}</span>
-<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">category_to_item</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">nest_to_item</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 <a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>    <span class="n">v</span> <span class="o">=</span> <span class="p">[</span><span class="n">encoder</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">v</span><span class="p">]</span>
-<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>    <span class="n">category_to_item</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>    <span class="n">nest_to_item</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
 <a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>
-<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="n">model</span> <span class="o">=</span> <span class="n">NestedLogitModel</span><span class="p">(</span><span class="n">category_to_item</span><span class="o">=</span><span class="n">category_to_item</span><span class="p">,</span>
-<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a>                            <span class="n">category_coef_variation_dict</span><span class="o">=</span><span class="p">{},</span>
-<a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>                            <span class="n">category_num_param_dict</span><span class="o">=</span><span class="p">{},</span>
-<a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a>                            <span class="n">item_coef_variation_dict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;price_obs&#39;</span><span class="p">:</span> <span class="s1">&#39;constant&#39;</span><span class="p">},</span>
-<a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a>                            <span class="n">item_num_param_dict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;price_obs&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">},</span>
-<a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a>                            <span class="n">shared_lambda</span><span class="o">=</span><span class="kc">True</span>
-<a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a>                            <span class="p">)</span>
-<a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a>
-<a id="__codelineno-18-15" name="__codelineno-18-15" href="#__codelineno-18-15"></a><span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span>
+<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="c1"># these two initializations are equivalent.</span>
+<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="n">model</span> <span class="o">=</span> <span class="n">NestedLogitModel</span><span class="p">(</span><span class="n">nest_to_item</span><span class="o">=</span><span class="n">nest_to_item</span><span class="p">,</span>
+<a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>                         <span class="n">nest_coef_variation_dict</span><span class="o">=</span><span class="p">{},</span>
+<a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a>                         <span class="n">nest_num_param_dict</span><span class="o">=</span><span class="p">{},</span>
+<a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a>                         <span class="n">item_coef_variation_dict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;price_obs&#39;</span><span class="p">:</span> <span class="s1">&#39;constant&#39;</span><span class="p">},</span>
+<a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a>                         <span class="n">item_num_param_dict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;price_obs&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">},</span>
+<a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a>                         <span class="n">shared_lambda</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a><span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<a id="__codelineno-18-15" name="__codelineno-18-15" href="#__codelineno-18-15"></a>
+<a id="__codelineno-18-16" name="__codelineno-18-16" href="#__codelineno-18-16"></a><span class="n">model</span> <span class="o">=</span> <span class="n">NestedLogitModel</span><span class="p">(</span><span class="n">nest_to_item</span><span class="o">=</span><span class="n">nest_to_item</span><span class="p">,</span>
+<a id="__codelineno-18-17" name="__codelineno-18-17" href="#__codelineno-18-17"></a>                         <span class="n">nest_formula</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+<a id="__codelineno-18-18" name="__codelineno-18-18" href="#__codelineno-18-18"></a>                         <span class="n">item_formula</span><span class="o">=</span><span class="s1">&#39;(price_obs|constant)&#39;</span><span class="p">,</span>
+<a id="__codelineno-18-19" name="__codelineno-18-19" href="#__codelineno-18-19"></a>                         <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+<a id="__codelineno-18-20" name="__codelineno-18-20" href="#__codelineno-18-20"></a>                         <span class="n">shared_lambda</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-18-21" name="__codelineno-18-21" href="#__codelineno-18-21"></a><span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<a id="__codelineno-18-22" name="__codelineno-18-22" href="#__codelineno-18-22"></a><span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="n">run</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">num_epochs</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code>NestedLogitModel(
+  (nest_coef_dict): ModuleDict()
+  (item_coef_dict): ModuleDict(
+    (price_obs): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
+  )
+)
+NestedLogitModel(
+  (nest_coef_dict): ModuleDict()
+  (item_coef_dict): ModuleDict(
+    (price_obs[constant]): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
+  )
+)
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="n">run</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>&lt;function torch_choice.utils.run_helper.run(model, dataset, dataset_test=None, batch_size=-1, learning_rate=0.01, num_epochs=5000, report_frequency=None, compute_std=True, return_final_training_log_likelihood=False)&gt;
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="n">run</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">num_epochs</span><span class="o">=</span><span class="mi">50000</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>==================== received model ====================
 NestedLogitModel(
-  (category_coef_dict): ModuleDict()
+  (nest_coef_dict): ModuleDict()
   (item_coef_dict): ModuleDict(
-    (price_obs): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total).
+    (price_obs[constant]): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
   )
 )
 ==================== received dataset ====================
 JointDataset with 2 sub-datasets: (
-    category: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], device=cuda:0)
-    item: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cuda:0)
+    nest: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], device=cpu)
+    item: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cpu)
 )
 ==================== training the model ====================
-Epoch 500: Log-likelihood=-193.73406982421875
-Epoch 1000: Log-likelihood=-185.25933837890625
-Epoch 1500: Log-likelihood=-183.55142211914062
-Epoch 2000: Log-likelihood=-181.8164825439453
-Epoch 2500: Log-likelihood=-180.4320526123047
-Epoch 3000: Log-likelihood=-180.04095458984375
-Epoch 3500: Log-likelihood=-180.7447509765625
-Epoch 4000: Log-likelihood=-180.39688110351562
-Epoch 4500: Log-likelihood=-180.27947998046875
-Epoch 5000: Log-likelihood=-181.1483612060547
+Epoch 5000: Log-likelihood=-180.560791015625
+Epoch 10000: Log-likelihood=-180.80062866210938
+Epoch 15000: Log-likelihood=-181.21275329589844
+Epoch 20000: Log-likelihood=-180.3982696533203
+Epoch 25000: Log-likelihood=-180.29925537109375
+Epoch 30000: Log-likelihood=-182.28366088867188
+Epoch 35000: Log-likelihood=-180.1341552734375
+Epoch 40000: Log-likelihood=-182.2633514404297
+Epoch 45000: Log-likelihood=-180.19305419921875
+Epoch 50000: Log-likelihood=-180.68240356445312
 ==================== model results ====================
-Training Epochs: 5000
+Training Epochs: 50000
 
 Learning Rate: 0.3
 
 Batch Size: 250 out of 250 observations in total
 
-Final Log-likelihood: -181.1483612060547
+Final Log-likelihood: -180.68240356445312
 
 Coefficients:
 
-| Coefficient      |   Estimation |   Std. Err. |
-|:-----------------|-------------:|------------:|
-| lambda_weight_0  |     1.61072  |    0.787735 |
-| item_price_obs_0 |    -1.34719  |    0.631206 |
-| item_price_obs_1 |    -2.16109  |    1.0451   |
-| item_price_obs_2 |    -0.393868 |    0.255138 |
-| item_price_obs_3 |    -2.53253  |    2.2719   |
-| item_price_obs_4 |    -0.884873 |    0.379626 |
-| item_price_obs_5 |     0.496491 |    0.248118 |
-| item_price_obs_6 |   -15.6477   |    9.88054  |
+| Coefficient                |   Estimation |   Std. Err. |
+|:---------------------------|-------------:|------------:|
+| lambda_weight_0            |     1.63154  |    0.678117 |
+| item_price_obs[constant]_0 |    -1.34966  |    0.531558 |
+| item_price_obs[constant]_1 |    -2.17924  |    0.894518 |
+| item_price_obs[constant]_2 |    -0.412631 |    0.243317 |
+| item_price_obs[constant]_3 |    -2.61227  |    2.06289  |
+| item_price_obs[constant]_4 |    -0.885769 |    0.337734 |
+| item_price_obs[constant]_5 |     0.49301  |    0.199931 |
+| item_price_obs[constant]_6 |   -16.0524   |    9.32373  |
 
 
 
 
 
 NestedLogitModel(
-  (category_coef_dict): ModuleDict()
+  (nest_coef_dict): ModuleDict()
   (item_coef_dict): ModuleDict(
-    (price_obs): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total).
+    (price_obs[constant]): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
   )
 )
 </code></pre></div>
@@ -1225,110 +1268,115 @@ NestedLogitModel(
 </tr>
 </tbody>
 </table>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>## 
-<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>## Call:
-<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>## mlogit(formula = depvar ~ ich + och + icca + occa + inc.room + 
-<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>##     inc.cooling + int.cooling | 0, data = HC, nests = list(central = c(&quot;ec&quot;, 
-<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>##     &quot;ecc&quot;, &quot;gc&quot;, &quot;gcc&quot;, &quot;hpc&quot;), room = c(&quot;er&quot;, &quot;erc&quot;)), un.nest.el = TRUE)
-<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>## 
-<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>## Frequencies of alternatives:choice
-<a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a>##    ec   ecc    er   erc    gc   gcc   hpc 
-<a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a>## 0.004 0.016 0.032 0.004 0.096 0.744 0.104 
-<a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a>## 
-<a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a>## bfgs method
-<a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a>## 10 iterations, 0h:0m:0s 
-<a id="__codelineno-20-13" name="__codelineno-20-13" href="#__codelineno-20-13"></a>## g&#39;(-H)^-1g = 5.87E-07 
-<a id="__codelineno-20-14" name="__codelineno-20-14" href="#__codelineno-20-14"></a>## gradient close to zero 
-<a id="__codelineno-20-15" name="__codelineno-20-15" href="#__codelineno-20-15"></a>## 
-<a id="__codelineno-20-16" name="__codelineno-20-16" href="#__codelineno-20-16"></a>## Coefficients :
-<a id="__codelineno-20-17" name="__codelineno-20-17" href="#__codelineno-20-17"></a>##              Estimate Std. Error z-value Pr(&gt;|z|)  
-<a id="__codelineno-20-18" name="__codelineno-20-18" href="#__codelineno-20-18"></a>## ich          -1.13818    0.54216 -2.0993  0.03579 *
-<a id="__codelineno-20-19" name="__codelineno-20-19" href="#__codelineno-20-19"></a>## och          -1.82532    0.93228 -1.9579  0.05024 .
-<a id="__codelineno-20-20" name="__codelineno-20-20" href="#__codelineno-20-20"></a>## icca         -0.33746    0.26934 -1.2529  0.21024  
-<a id="__codelineno-20-21" name="__codelineno-20-21" href="#__codelineno-20-21"></a>## occa         -2.06328    1.89726 -1.0875  0.27681  
-<a id="__codelineno-20-22" name="__codelineno-20-22" href="#__codelineno-20-22"></a>## inc.room     -0.75722    0.34292 -2.2081  0.02723 *
-<a id="__codelineno-20-23" name="__codelineno-20-23" href="#__codelineno-20-23"></a>## inc.cooling   0.41689    0.20742  2.0099  0.04444 *
-<a id="__codelineno-20-24" name="__codelineno-20-24" href="#__codelineno-20-24"></a>## int.cooling -13.82487    7.94031 -1.7411  0.08167 .
-<a id="__codelineno-20-25" name="__codelineno-20-25" href="#__codelineno-20-25"></a>## iv            1.36201    0.65393  2.0828  0.03727 *
-<a id="__codelineno-20-26" name="__codelineno-20-26" href="#__codelineno-20-26"></a>## ---
-<a id="__codelineno-20-27" name="__codelineno-20-27" href="#__codelineno-20-27"></a>## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-<a id="__codelineno-20-28" name="__codelineno-20-28" href="#__codelineno-20-28"></a>## 
-<a id="__codelineno-20-29" name="__codelineno-20-29" href="#__codelineno-20-29"></a>## Log-Likelihood: -180.02
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>## 
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>## Call:
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>## mlogit(formula = depvar ~ ich + och + icca + occa + inc.room + 
+<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a>##     inc.cooling + int.cooling | 0, data = HC, nests = list(central = c(&quot;ec&quot;, 
+<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a>##     &quot;ecc&quot;, &quot;gc&quot;, &quot;gcc&quot;, &quot;hpc&quot;), room = c(&quot;er&quot;, &quot;erc&quot;)), un.nest.el = TRUE)
+<a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a>## 
+<a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a>## Frequencies of alternatives:choice
+<a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a>##    ec   ecc    er   erc    gc   gcc   hpc 
+<a id="__codelineno-21-9" name="__codelineno-21-9" href="#__codelineno-21-9"></a>## 0.004 0.016 0.032 0.004 0.096 0.744 0.104 
+<a id="__codelineno-21-10" name="__codelineno-21-10" href="#__codelineno-21-10"></a>## 
+<a id="__codelineno-21-11" name="__codelineno-21-11" href="#__codelineno-21-11"></a>## bfgs method
+<a id="__codelineno-21-12" name="__codelineno-21-12" href="#__codelineno-21-12"></a>## 10 iterations, 0h:0m:0s 
+<a id="__codelineno-21-13" name="__codelineno-21-13" href="#__codelineno-21-13"></a>## g&#39;(-H)^-1g = 5.87E-07 
+<a id="__codelineno-21-14" name="__codelineno-21-14" href="#__codelineno-21-14"></a>## gradient close to zero 
+<a id="__codelineno-21-15" name="__codelineno-21-15" href="#__codelineno-21-15"></a>## 
+<a id="__codelineno-21-16" name="__codelineno-21-16" href="#__codelineno-21-16"></a>## Coefficients :
+<a id="__codelineno-21-17" name="__codelineno-21-17" href="#__codelineno-21-17"></a>##              Estimate Std. Error z-value Pr(&gt;|z|)  
+<a id="__codelineno-21-18" name="__codelineno-21-18" href="#__codelineno-21-18"></a>## ich          -1.13818    0.54216 -2.0993  0.03579 *
+<a id="__codelineno-21-19" name="__codelineno-21-19" href="#__codelineno-21-19"></a>## och          -1.82532    0.93228 -1.9579  0.05024 .
+<a id="__codelineno-21-20" name="__codelineno-21-20" href="#__codelineno-21-20"></a>## icca         -0.33746    0.26934 -1.2529  0.21024  
+<a id="__codelineno-21-21" name="__codelineno-21-21" href="#__codelineno-21-21"></a>## occa         -2.06328    1.89726 -1.0875  0.27681  
+<a id="__codelineno-21-22" name="__codelineno-21-22" href="#__codelineno-21-22"></a>## inc.room     -0.75722    0.34292 -2.2081  0.02723 *
+<a id="__codelineno-21-23" name="__codelineno-21-23" href="#__codelineno-21-23"></a>## inc.cooling   0.41689    0.20742  2.0099  0.04444 *
+<a id="__codelineno-21-24" name="__codelineno-21-24" href="#__codelineno-21-24"></a>## int.cooling -13.82487    7.94031 -1.7411  0.08167 .
+<a id="__codelineno-21-25" name="__codelineno-21-25" href="#__codelineno-21-25"></a>## iv            1.36201    0.65393  2.0828  0.03727 *
+<a id="__codelineno-21-26" name="__codelineno-21-26" href="#__codelineno-21-26"></a>## ---
+<a id="__codelineno-21-27" name="__codelineno-21-27" href="#__codelineno-21-27"></a>## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+<a id="__codelineno-21-28" name="__codelineno-21-28" href="#__codelineno-21-28"></a>## 
+<a id="__codelineno-21-29" name="__codelineno-21-29" href="#__codelineno-21-29"></a>## Log-Likelihood: -180.02
 </code></pre></div>
 <h3 id="example-3">Example 3</h3>
-<p>For the third example, we now group items into three categories. Specifically, we have items <code>gcc</code>, <code>ecc</code> and <code>erc</code> in the first category (category <code>0</code> in the <code>category_to_item</code> dictionary), <code>hpc</code> in a category (category <code>1</code>) alone, and items <code>gc</code>, <code>ec</code> and <code>er</code> in the last category (category <code>2</code>).</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="n">category_to_item</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;gcc&#39;</span><span class="p">,</span> <span class="s1">&#39;ecc&#39;</span><span class="p">,</span> <span class="s1">&#39;erc&#39;</span><span class="p">],</span>
-<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>                    <span class="mi">1</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;hpc&#39;</span><span class="p">],</span>
-<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>                    <span class="mi">2</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;gc&#39;</span><span class="p">,</span> <span class="s1">&#39;ec&#39;</span><span class="p">,</span> <span class="s1">&#39;er&#39;</span><span class="p">]}</span>
-<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">category_to_item</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a>    <span class="n">v</span> <span class="o">=</span> <span class="p">[</span><span class="n">encoder</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">v</span><span class="p">]</span>
-<a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a>    <span class="n">category_to_item</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-<a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a>
-<a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a><span class="n">model</span> <span class="o">=</span> <span class="n">NestedLogitModel</span><span class="p">(</span><span class="n">category_to_item</span><span class="o">=</span><span class="n">category_to_item</span><span class="p">,</span>
-<a id="__codelineno-21-9" name="__codelineno-21-9" href="#__codelineno-21-9"></a>                         <span class="n">category_coef_variation_dict</span><span class="o">=</span><span class="p">{},</span>
-<a id="__codelineno-21-10" name="__codelineno-21-10" href="#__codelineno-21-10"></a>                         <span class="n">category_num_param_dict</span><span class="o">=</span><span class="p">{},</span>
-<a id="__codelineno-21-11" name="__codelineno-21-11" href="#__codelineno-21-11"></a>                         <span class="n">item_coef_variation_dict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;price_obs&#39;</span><span class="p">:</span> <span class="s1">&#39;constant&#39;</span><span class="p">},</span>
-<a id="__codelineno-21-12" name="__codelineno-21-12" href="#__codelineno-21-12"></a>                         <span class="n">item_num_param_dict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;price_obs&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">},</span>
-<a id="__codelineno-21-13" name="__codelineno-21-13" href="#__codelineno-21-13"></a>                         <span class="n">shared_lambda</span><span class="o">=</span><span class="kc">True</span>
-<a id="__codelineno-21-14" name="__codelineno-21-14" href="#__codelineno-21-14"></a>                         <span class="p">)</span>
-<a id="__codelineno-21-15" name="__codelineno-21-15" href="#__codelineno-21-15"></a>
-<a id="__codelineno-21-16" name="__codelineno-21-16" href="#__codelineno-21-16"></a><span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span>
+<p>For the third example, we now group items into three nests. Specifically, we have items <code>gcc</code>, <code>ecc</code> and <code>erc</code> in the first nest (nest <code>0</code> in the <code>nest_to_item</code> dictionary), <code>hpc</code> in a nest (nest <code>1</code>) alone, and items <code>gc</code>, <code>ec</code> and <code>er</code> in the last nest (nest <code>2</code>).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="n">nest_to_item</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;gcc&#39;</span><span class="p">,</span> <span class="s1">&#39;ecc&#39;</span><span class="p">,</span> <span class="s1">&#39;erc&#39;</span><span class="p">],</span>
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>                <span class="mi">1</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;hpc&#39;</span><span class="p">],</span>
+<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>                <span class="mi">2</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;gc&#39;</span><span class="p">,</span> <span class="s1">&#39;ec&#39;</span><span class="p">,</span> <span class="s1">&#39;er&#39;</span><span class="p">]}</span>
+<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">nest_to_item</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>    <span class="n">v</span> <span class="o">=</span> <span class="p">[</span><span class="n">encoder</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">v</span><span class="p">]</span>
+<a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a>    <span class="n">nest_to_item</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a>
+<a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a><span class="n">model</span> <span class="o">=</span> <span class="n">NestedLogitModel</span><span class="p">(</span><span class="n">nest_to_item</span><span class="o">=</span><span class="n">nest_to_item</span><span class="p">,</span>
+<a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a>                         <span class="n">nest_coef_variation_dict</span><span class="o">=</span><span class="p">{},</span>
+<a id="__codelineno-22-10" name="__codelineno-22-10" href="#__codelineno-22-10"></a>                         <span class="n">nest_num_param_dict</span><span class="o">=</span><span class="p">{},</span>
+<a id="__codelineno-22-11" name="__codelineno-22-11" href="#__codelineno-22-11"></a>                         <span class="n">item_coef_variation_dict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;price_obs&#39;</span><span class="p">:</span> <span class="s1">&#39;constant&#39;</span><span class="p">},</span>
+<a id="__codelineno-22-12" name="__codelineno-22-12" href="#__codelineno-22-12"></a>                         <span class="n">item_num_param_dict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;price_obs&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">},</span>
+<a id="__codelineno-22-13" name="__codelineno-22-13" href="#__codelineno-22-13"></a>                         <span class="n">shared_lambda</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-22-14" name="__codelineno-22-14" href="#__codelineno-22-14"></a>
+<a id="__codelineno-22-15" name="__codelineno-22-15" href="#__codelineno-22-15"></a><span class="n">model</span> <span class="o">=</span> <span class="n">NestedLogitModel</span><span class="p">(</span><span class="n">nest_to_item</span><span class="o">=</span><span class="n">nest_to_item</span><span class="p">,</span>
+<a id="__codelineno-22-16" name="__codelineno-22-16" href="#__codelineno-22-16"></a>                         <span class="n">nest_formula</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+<a id="__codelineno-22-17" name="__codelineno-22-17" href="#__codelineno-22-17"></a>                         <span class="n">item_formula</span><span class="o">=</span><span class="s1">&#39;(price_obs|constant)&#39;</span><span class="p">,</span>
+<a id="__codelineno-22-18" name="__codelineno-22-18" href="#__codelineno-22-18"></a>                         <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+<a id="__codelineno-22-19" name="__codelineno-22-19" href="#__codelineno-22-19"></a>                         <span class="n">shared_lambda</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-22-20" name="__codelineno-22-20" href="#__codelineno-22-20"></a>
+<a id="__codelineno-22-21" name="__codelineno-22-21" href="#__codelineno-22-21"></a><span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="n">run</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataset</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="n">run</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">num_epochs</span><span class="o">=</span><span class="mi">50000</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>==================== received model ====================
 NestedLogitModel(
-  (category_coef_dict): ModuleDict()
+  (nest_coef_dict): ModuleDict()
   (item_coef_dict): ModuleDict(
-    (price_obs): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total).
+    (price_obs[constant]): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
   )
 )
 ==================== received dataset ====================
 JointDataset with 2 sub-datasets: (
-    category: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], device=cuda:0)
-    item: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cuda:0)
+    nest: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], device=cpu)
+    item: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cpu)
 )
 ==================== training the model ====================
-Epoch 500: Log-likelihood=-187.12100219726562
-Epoch 1000: Log-likelihood=-182.98468017578125
-Epoch 1500: Log-likelihood=-181.72171020507812
-Epoch 2000: Log-likelihood=-181.3906707763672
-Epoch 2500: Log-likelihood=-181.2037353515625
-Epoch 3000: Log-likelihood=-181.0186767578125
-Epoch 3500: Log-likelihood=-180.83331298828125
-Epoch 4000: Log-likelihood=-180.6610107421875
-Epoch 4500: Log-likelihood=-180.51480102539062
-Epoch 5000: Log-likelihood=-180.40383911132812
+Epoch 5000: Log-likelihood=-180.84153747558594
+Epoch 10000: Log-likelihood=-182.17794799804688
+Epoch 15000: Log-likelihood=-181.74029541015625
+Epoch 20000: Log-likelihood=-182.3179931640625
+Epoch 25000: Log-likelihood=-182.50352478027344
+Epoch 30000: Log-likelihood=-181.481201171875
+Epoch 35000: Log-likelihood=-181.8275604248047
+Epoch 40000: Log-likelihood=-180.5753173828125
+Epoch 45000: Log-likelihood=-182.4506072998047
+Epoch 50000: Log-likelihood=-185.08358764648438
 ==================== model results ====================
-Training Epochs: 5000
+Training Epochs: 50000
 
-Learning Rate: 0.01
+Learning Rate: 0.3
 
 Batch Size: 250 out of 250 observations in total
 
-Final Log-likelihood: -180.40383911132812
+Final Log-likelihood: -185.08358764648438
 
 Coefficients:
 
-| Coefficient      |   Estimation |   Std. Err. |
-|:-----------------|-------------:|------------:|
-| lambda_weight_0  |     0.939528 |   0.193704  |
-| item_price_obs_0 |    -0.823672 |   0.0973065 |
-| item_price_obs_1 |    -1.31387  |   0.182701  |
-| item_price_obs_2 |    -0.305365 |   0.12726   |
-| item_price_obs_3 |    -1.89104  |   1.14781   |
-| item_price_obs_4 |    -0.559503 |   0.0734163 |
-| item_price_obs_5 |     0.310081 |   0.0551569 |
-| item_price_obs_6 |    -7.68508  |   5.09592   |
+| Coefficient                |   Estimation |   Std. Err. |
+|:---------------------------|-------------:|------------:|
+| lambda_weight_0            |     0.949264 |   0.19245   |
+| item_price_obs[constant]_0 |    -0.852556 |   0.100724  |
+| item_price_obs[constant]_1 |    -1.35082  |   0.188374  |
+| item_price_obs[constant]_2 |    -0.248292 |   0.14014   |
+| item_price_obs[constant]_3 |    -1.41068  |   1.2839    |
+| item_price_obs[constant]_4 |    -0.581716 |   0.0771356 |
+| item_price_obs[constant]_5 |     0.336492 |   0.0656387 |
+| item_price_obs[constant]_6 |   -10.5186   |   5.71641   |
 
 
 
 
 
 NestedLogitModel(
-  (category_coef_dict): ModuleDict()
+  (nest_coef_dict): ModuleDict()
   (item_coef_dict): ModuleDict(
-    (price_obs): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total).
+    (price_obs[constant]): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
   )
 )
 </code></pre></div>
@@ -1376,58 +1424,51 @@ NestedLogitModel(
 </tr>
 </tbody>
 </table>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>## 
-<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>## Call:
-<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>## mlogit(formula = depvar ~ ich + och + icca + occa + inc.room + 
-<a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a>##     inc.cooling + int.cooling | 0, data = HC, nests = list(n1 = c(&quot;gcc&quot;, 
-<a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a>##     &quot;ecc&quot;, &quot;erc&quot;), n2 = c(&quot;hpc&quot;), n3 = c(&quot;gc&quot;, &quot;ec&quot;, &quot;er&quot;)), 
-<a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a>##     un.nest.el = TRUE)
-<a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a>## 
-<a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a>## Frequencies of alternatives:choice
-<a id="__codelineno-23-9" name="__codelineno-23-9" href="#__codelineno-23-9"></a>##    ec   ecc    er   erc    gc   gcc   hpc 
-<a id="__codelineno-23-10" name="__codelineno-23-10" href="#__codelineno-23-10"></a>## 0.004 0.016 0.032 0.004 0.096 0.744 0.104 
-<a id="__codelineno-23-11" name="__codelineno-23-11" href="#__codelineno-23-11"></a>## 
-<a id="__codelineno-23-12" name="__codelineno-23-12" href="#__codelineno-23-12"></a>## bfgs method
-<a id="__codelineno-23-13" name="__codelineno-23-13" href="#__codelineno-23-13"></a>## 8 iterations, 0h:0m:0s 
-<a id="__codelineno-23-14" name="__codelineno-23-14" href="#__codelineno-23-14"></a>## g&#39;(-H)^-1g = 3.71E-08 
-<a id="__codelineno-23-15" name="__codelineno-23-15" href="#__codelineno-23-15"></a>## gradient close to zero 
-<a id="__codelineno-23-16" name="__codelineno-23-16" href="#__codelineno-23-16"></a>## 
-<a id="__codelineno-23-17" name="__codelineno-23-17" href="#__codelineno-23-17"></a>## Coefficients :
-<a id="__codelineno-23-18" name="__codelineno-23-18" href="#__codelineno-23-18"></a>##               Estimate Std. Error z-value  Pr(&gt;|z|)    
-<a id="__codelineno-23-19" name="__codelineno-23-19" href="#__codelineno-23-19"></a>## ich          -0.838394   0.100546 -8.3384 &lt; 2.2e-16 ***
-<a id="__codelineno-23-20" name="__codelineno-23-20" href="#__codelineno-23-20"></a>## och          -1.331598   0.252069 -5.2827 1.273e-07 ***
-<a id="__codelineno-23-21" name="__codelineno-23-21" href="#__codelineno-23-21"></a>## icca         -0.256131   0.145564 -1.7596   0.07848 .  
-<a id="__codelineno-23-22" name="__codelineno-23-22" href="#__codelineno-23-22"></a>## occa         -1.405656   1.207281 -1.1643   0.24430    
-<a id="__codelineno-23-23" name="__codelineno-23-23" href="#__codelineno-23-23"></a>## inc.room     -0.571352   0.077950 -7.3297 2.307e-13 ***
-<a id="__codelineno-23-24" name="__codelineno-23-24" href="#__codelineno-23-24"></a>## inc.cooling   0.311355   0.056357  5.5247 3.301e-08 ***
-<a id="__codelineno-23-25" name="__codelineno-23-25" href="#__codelineno-23-25"></a>## int.cooling -10.413384   5.612445 -1.8554   0.06354 .  
-<a id="__codelineno-23-26" name="__codelineno-23-26" href="#__codelineno-23-26"></a>## iv            0.956544   0.180722  5.2929 1.204e-07 ***
-<a id="__codelineno-23-27" name="__codelineno-23-27" href="#__codelineno-23-27"></a>## ---
-<a id="__codelineno-23-28" name="__codelineno-23-28" href="#__codelineno-23-28"></a>## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-<a id="__codelineno-23-29" name="__codelineno-23-29" href="#__codelineno-23-29"></a>## 
-<a id="__codelineno-23-30" name="__codelineno-23-30" href="#__codelineno-23-30"></a>## Log-Likelihood: -180.26
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>## 
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>## Call:
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>## mlogit(formula = depvar ~ ich + och + icca + occa + inc.room + 
+<a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a>##     inc.cooling + int.cooling | 0, data = HC, nests = list(n1 = c(&quot;gcc&quot;, 
+<a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a>##     &quot;ecc&quot;, &quot;erc&quot;), n2 = c(&quot;hpc&quot;), n3 = c(&quot;gc&quot;, &quot;ec&quot;, &quot;er&quot;)), 
+<a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a>##     un.nest.el = TRUE)
+<a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a>## 
+<a id="__codelineno-24-8" name="__codelineno-24-8" href="#__codelineno-24-8"></a>## Frequencies of alternatives:choice
+<a id="__codelineno-24-9" name="__codelineno-24-9" href="#__codelineno-24-9"></a>##    ec   ecc    er   erc    gc   gcc   hpc 
+<a id="__codelineno-24-10" name="__codelineno-24-10" href="#__codelineno-24-10"></a>## 0.004 0.016 0.032 0.004 0.096 0.744 0.104 
+<a id="__codelineno-24-11" name="__codelineno-24-11" href="#__codelineno-24-11"></a>## 
+<a id="__codelineno-24-12" name="__codelineno-24-12" href="#__codelineno-24-12"></a>## bfgs method
+<a id="__codelineno-24-13" name="__codelineno-24-13" href="#__codelineno-24-13"></a>## 8 iterations, 0h:0m:0s 
+<a id="__codelineno-24-14" name="__codelineno-24-14" href="#__codelineno-24-14"></a>## g&#39;(-H)^-1g = 3.71E-08 
+<a id="__codelineno-24-15" name="__codelineno-24-15" href="#__codelineno-24-15"></a>## gradient close to zero 
+<a id="__codelineno-24-16" name="__codelineno-24-16" href="#__codelineno-24-16"></a>## 
+<a id="__codelineno-24-17" name="__codelineno-24-17" href="#__codelineno-24-17"></a>## Coefficients :
+<a id="__codelineno-24-18" name="__codelineno-24-18" href="#__codelineno-24-18"></a>##               Estimate Std. Error z-value  Pr(&gt;|z|)    
+<a id="__codelineno-24-19" name="__codelineno-24-19" href="#__codelineno-24-19"></a>## ich          -0.838394   0.100546 -8.3384 &lt; 2.2e-16 ***
+<a id="__codelineno-24-20" name="__codelineno-24-20" href="#__codelineno-24-20"></a>## och          -1.331598   0.252069 -5.2827 1.273e-07 ***
+<a id="__codelineno-24-21" name="__codelineno-24-21" href="#__codelineno-24-21"></a>## icca         -0.256131   0.145564 -1.7596   0.07848 .  
+<a id="__codelineno-24-22" name="__codelineno-24-22" href="#__codelineno-24-22"></a>## occa         -1.405656   1.207281 -1.1643   0.24430    
+<a id="__codelineno-24-23" name="__codelineno-24-23" href="#__codelineno-24-23"></a>## inc.room     -0.571352   0.077950 -7.3297 2.307e-13 ***
+<a id="__codelineno-24-24" name="__codelineno-24-24" href="#__codelineno-24-24"></a>## inc.cooling   0.311355   0.056357  5.5247 3.301e-08 ***
+<a id="__codelineno-24-25" name="__codelineno-24-25" href="#__codelineno-24-25"></a>## int.cooling -10.413384   5.612445 -1.8554   0.06354 .  
+<a id="__codelineno-24-26" name="__codelineno-24-26" href="#__codelineno-24-26"></a>## iv            0.956544   0.180722  5.2929 1.204e-07 ***
+<a id="__codelineno-24-27" name="__codelineno-24-27" href="#__codelineno-24-27"></a>## ---
+<a id="__codelineno-24-28" name="__codelineno-24-28" href="#__codelineno-24-28"></a>## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+<a id="__codelineno-24-29" name="__codelineno-24-29" href="#__codelineno-24-29"></a>## 
+<a id="__codelineno-24-30" name="__codelineno-24-30" href="#__codelineno-24-30"></a>## Log-Likelihood: -180.26
 </code></pre></div>
 
-
-
-
-
-                
-              </article>
-            </div>
-          
-          
+              
+            </article>
+          </div>
         </div>
         
       </main>
       
         <footer class="md-footer">
   
-    
-    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href="../conditional_logit_model_mode_canada/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Tutorial for Conditional Logit Model" rel="prev">
+        <a href="../conditional_logit_model_mode_canada/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Conditional Logit Model" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -1436,20 +1477,20 @@ NestedLogitModel(
               <span class="md-footer__direction">
                 Previous
               </span>
-              Tutorial for Conditional Logit Model
+              Conditional Logit Model
             </div>
           </div>
         </a>
       
       
         
-        <a href="../projects/" class="md-footer__link md-footer__link--next" aria-label="Next: Related Projects" rel="next">
+        <a href="../post_estimation_demos/" class="md-footer__link md-footer__link--next" aria-label="Next: Post Estimation" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Related Projects
+              Post Estimation
             </div>
           </div>
           <div class="md-footer__button md-icon">
@@ -1479,11 +1520,10 @@ NestedLogitModel(
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
-    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.5bf1dace.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
-    
-      <script src="../assets/javascripts/bundle.37e9125f.min.js"></script>
+      <script src="../assets/javascripts/bundle.ed9748b7.min.js"></script>
       
         <script src="../javascripts/mathjax.js"></script>
       

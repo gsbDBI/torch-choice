@@ -8,25 +8,23 @@
       
       
       
-        <link rel="canonical" href="https://example.com/conditional_logit_model_mode_canada/">
+        <link rel="canonical" href="https://gsbdbi.github.io/torch-choice/conditional_logit_model_mode_canada/">
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.0, mkdocs-material-8.5.3">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.13">
     
     
       
-        <title>Tutorial for Conditional Logit Model - Torch Choice</title>
+        <title>Conditional Logit Model - Torch Choice</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.7a952b86.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.e411adfe.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.cbb835fc.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.cc9b2e1e.min.css">
         
       
-      
-
     
     
     
@@ -41,11 +39,10 @@
     
       <link rel="stylesheet" href="../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
-    
     
     
   </head>
@@ -115,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Tutorial for Conditional Logit Model
+              Conditional Logit Model
             
           </span>
         </div>
@@ -138,7 +135,7 @@
       </label>
       <nav class="md-search__options" aria-label="Search">
         
-        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
         </button>
       </nav>
@@ -263,7 +260,7 @@
   
     <li class="md-nav__item">
       <a href="../data_management/" class="md-nav__link">
-        Tutorial for Data Management
+        Data Management
       </a>
     </li>
   
@@ -278,7 +275,7 @@
   
     <li class="md-nav__item">
       <a href="../easy_data_management/" class="md-nav__link">
-        Tutorial for Easy Data Management and Stata Users
+        Easy Data Management and Stata Users
       </a>
     </li>
   
@@ -302,12 +299,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Tutorial for Conditional Logit Model
+          Conditional Logit Model
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Tutorial for Conditional Logit Model
+        Conditional Logit Model
       </a>
       
         
@@ -394,6 +391,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#creating-model-using-formula" class="md-nav__link">
+    Creating Model using Formula
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#train-the-model" class="md-nav__link">
     Train the Model
   </a>
@@ -437,7 +441,22 @@
   
     <li class="md-nav__item">
       <a href="../nested_logit_model_house_cooling/" class="md-nav__link">
-        Tutorial for Nested Logit Model
+        Nested Logit Model
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../post_estimation_demos/" class="md-nav__link">
+        Post Estimation
       </a>
     </li>
   
@@ -583,6 +602,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#creating-model-using-formula" class="md-nav__link">
+    Creating Model using Formula
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#train-the-model" class="md-nav__link">
     Train the Model
   </a>
@@ -617,11 +643,10 @@
               </div>
             
           
-          
-            <div class="md-content" data-md-component="content">
-              <article class="md-content__inner md-typeset">
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
                 
-                  
 
 
 <h1 id="tutorial-conditional-logit-model-on-modecanada-dataset">Tutorial: Conditional Logit Model on ModeCanada Dataset</h1>
@@ -796,7 +821,7 @@ Please refer to the data management tutorial for notations.</p>
 2       air
 3       air
 4       air
-       ...
+       ... 
 2774    car
 2775    car
 2776    car
@@ -878,6 +903,8 @@ In contrast, the <code>income</code> information depends only on session but not
 <a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>                        <span class="n">price_ivt</span><span class="o">=</span><span class="n">price_ivt</span>
 <a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>                        <span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 </code></pre></div>
+<div class="highlight"><pre><span></span><code>No `session_index` is provided, assume each choice instance is in its own session.
+</code></pre></div>
 <p>You can <code>print(dataset)</code> to check shapes of tensors contained in the <code>ChoiceDataset</code>.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
 </code></pre></div>
@@ -926,55 +953,84 @@ For example, the <code>price_cost_freq_ovt</code> consists of three observables 
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>ConditionalLogitModel(
   (coef_dict): ModuleDict(
-    (price_cost_freq_ovt): Coefficient(variation=constant, num_items=4, num_users=None, num_params=3, 3 trainable parameters in total).
-    (session_income): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total).
-    (price_ivt): Coefficient(variation=item-full, num_items=4, num_users=None, num_params=1, 4 trainable parameters in total).
-    (intercept): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total).
+    (price_cost_freq_ovt[constant]): Coefficient(variation=constant, num_items=4, num_users=None, num_params=3, 3 trainable parameters in total, device=cpu).
+    (session_income[item]): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cpu).
+    (price_ivt[item-full]): Coefficient(variation=item-full, num_items=4, num_users=None, num_params=1, 4 trainable parameters in total, device=cpu).
+    (intercept[item]): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cpu).
   )
 )
 Conditional logistic discrete choice model, expects input features:
 
-X[price_cost_freq_ovt] with 3 parameters, with constant level variation.
-X[session_income] with 1 parameters, with item level variation.
-X[price_ivt] with 1 parameters, with item-full level variation.
-X[intercept] with 1 parameters, with item level variation.
+X[price_cost_freq_ovt[constant]] with 3 parameters, with constant level variation.
+X[session_income[item]] with 1 parameters, with item level variation.
+X[price_ivt[item-full]] with 1 parameters, with item-full level variation.
+X[intercept[item]] with 1 parameters, with item level variation.
+device=cpu
+</code></pre></div>
+<h2 id="creating-model-using-formula">Creating Model using Formula</h2>
+<p>Alternatively, researchers can create the model using a <code>formula</code> like in R.</p>
+<p>The formula consists of a list of additive terms separated by <code>+</code> sign, and each term looks like <code>(variable_name|variation)</code>. Where <code>variable_name</code> is the name of the variable in the dataset, and <code>variation</code> is one of <code>constant</code>, <code>user</code>, <code>item</code>, <code>item-full</code>. Initializing the model using <code>formula</code> requires you to pass in the <code>ChoiceDataset</code> object as well so that the model can infer the dimension of each variable.</p>
+<p>These two ways of creating models lead to equivalent models.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">model</span> <span class="o">=</span> <span class="n">model</span> <span class="o">=</span> <span class="n">ConditionalLogitModel</span><span class="p">(</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>    <span class="n">formula</span><span class="o">=</span><span class="s1">&#39;(price_cost_freq_ovt|constant) + (session_income|item) + (price_ivt|item-full) + (intercept|item)&#39;</span><span class="p">,</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>    <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>    <span class="n">num_items</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>ConditionalLogitModel(
+  (coef_dict): ModuleDict(
+    (price_cost_freq_ovt[constant]): Coefficient(variation=constant, num_items=4, num_users=None, num_params=3, 3 trainable parameters in total, device=cpu).
+    (session_income[item]): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cpu).
+    (price_ivt[item-full]): Coefficient(variation=item-full, num_items=4, num_users=None, num_params=1, 4 trainable parameters in total, device=cpu).
+    (intercept[item]): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cpu).
+  )
+)
+Conditional logistic discrete choice model, expects input features:
+
+X[price_cost_freq_ovt[constant]] with 3 parameters, with constant level variation.
+X[session_income[item]] with 1 parameters, with item level variation.
+X[price_ivt[item-full]] with 1 parameters, with item-full level variation.
+X[intercept[item]] with 1 parameters, with item level variation.
+device=cpu
 </code></pre></div>
 <h2 id="train-the-model">Train the Model</h2>
 <p>We provide an easy-to-use helper function <code>run()</code> imported from <code>torch_choice.utils.run_helper</code> to fit the model with a particular dataset.</p>
 <p>We provide an easy-to-use model runner for both <code>ConditionalLogitModel</code> and <code>NestedLogitModel</code> (see later) instances.</p>
 <p>The <code>run()</code> mehtod supports mini-batch updating as well, for small datasets like the one we are dealing right now, we can use <code>batch_size = -1</code> to conduct full-batch gradient update.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="n">run</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">num_epochs</span><span class="o">=</span><span class="mi">50000</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Time taken:&#39;</span><span class="p">,</span> <span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="n">run</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">num_epochs</span><span class="o">=</span><span class="mi">50000</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Time taken:&#39;</span><span class="p">,</span> <span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>==================== received model ====================
 ConditionalLogitModel(
   (coef_dict): ModuleDict(
-    (price_cost_freq_ovt): Coefficient(variation=constant, num_items=4, num_users=None, num_params=3, 3 trainable parameters in total).
-    (session_income): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total).
-    (price_ivt): Coefficient(variation=item-full, num_items=4, num_users=None, num_params=1, 4 trainable parameters in total).
-    (intercept): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total).
+    (price_cost_freq_ovt[constant]): Coefficient(variation=constant, num_items=4, num_users=None, num_params=3, 3 trainable parameters in total, device=cpu).
+    (session_income[item]): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cpu).
+    (price_ivt[item-full]): Coefficient(variation=item-full, num_items=4, num_users=None, num_params=1, 4 trainable parameters in total, device=cpu).
+    (intercept[item]): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cpu).
   )
 )
 Conditional logistic discrete choice model, expects input features:
 
-X[price_cost_freq_ovt] with 3 parameters, with constant level variation.
-X[session_income] with 1 parameters, with item level variation.
-X[price_ivt] with 1 parameters, with item-full level variation.
-X[intercept] with 1 parameters, with item level variation.
+X[price_cost_freq_ovt[constant]] with 3 parameters, with constant level variation.
+X[session_income[item]] with 1 parameters, with item level variation.
+X[price_ivt[item-full]] with 1 parameters, with item-full level variation.
+X[intercept[item]] with 1 parameters, with item level variation.
+device=cpu
 ==================== received dataset ====================
 ChoiceDataset(label=[], item_index=[2779], user_index=[], session_index=[2779], item_availability=[], price_cost_freq_ovt=[2779, 4, 3], session_income=[2779, 1], price_ivt=[2779, 4, 1], device=cpu)
 ==================== training the model ====================
-Epoch 5000: Log-likelihood=-1875.552490234375
-Epoch 10000: Log-likelihood=-1892.94775390625
-Epoch 15000: Log-likelihood=-1877.9156494140625
-Epoch 20000: Log-likelihood=-1881.0845947265625
-Epoch 25000: Log-likelihood=-1884.7335205078125
-Epoch 30000: Log-likelihood=-1874.423828125
-Epoch 35000: Log-likelihood=-1875.3016357421875
-Epoch 40000: Log-likelihood=-1874.3779296875
-Epoch 45000: Log-likelihood=-1875.703125
-Epoch 50000: Log-likelihood=-1899.8175048828125
+Epoch 5000: Log-likelihood=-1877.81640625
+Epoch 10000: Log-likelihood=-1878.5775146484375
+Epoch 15000: Log-likelihood=-1879.2830810546875
+Epoch 20000: Log-likelihood=-1895.0306396484375
+Epoch 25000: Log-likelihood=-1876.6690673828125
+Epoch 30000: Log-likelihood=-1874.603759765625
+Epoch 35000: Log-likelihood=-1877.6473388671875
+Epoch 40000: Log-likelihood=-1891.16357421875
+Epoch 45000: Log-likelihood=-1877.5592041015625
+Epoch 50000: Log-likelihood=-1876.2728271484375
 ==================== model results ====================
 Training Epochs: 50000
 
@@ -982,217 +1038,108 @@ Learning Rate: 0.01
 
 Batch Size: 2779 out of 2779 observations in total
 
-Final Log-likelihood: -1899.8175048828125
+Final Log-likelihood: -1876.2728271484375
 
 Coefficients:
 
-| Coefficient           |   Estimation |   Std. Err. |
-|:----------------------|-------------:|------------:|
-| price_cost_freq_ovt_0 |  -0.0342194  |  0.00731707 |
-| price_cost_freq_ovt_1 |   0.092262   |  0.00520946 |
-| price_cost_freq_ovt_2 |  -0.0439827  |  0.00342765 |
-| session_income_0      |  -0.0901207  |  0.0205214  |
-| session_income_1      |  -0.0272581  |  0.00385396 |
-| session_income_2      |  -0.0390468  |  0.00428838 |
-| price_ivt_0           |   0.0592097  |  0.0102933  |
-| price_ivt_1           |  -0.00753696 |  0.00496264 |
-| price_ivt_2           |  -0.00604297 |  0.00193414 |
-| price_ivt_3           |  -0.00207518 |  0.00123286 |
-| intercept_0           |   0.700786   |  1.39368    |
-| intercept_1           |   1.85016    |  0.728283   |
-| intercept_2           |   3.2782     |  0.648064   |
-Time taken: 179.84411025047302
+| Coefficient                     |   Estimation |   Std. Err. |
+|:--------------------------------|-------------:|------------:|
+| price_cost_freq_ovt[constant]_0 |  -0.0334654  |  0.00716249 |
+| price_cost_freq_ovt[constant]_1 |   0.0924185  |  0.00512754 |
+| price_cost_freq_ovt[constant]_2 |  -0.0432329  |  0.0032801  |
+| session_income[item]_0          |  -0.0892292  |  0.0188848  |
+| session_income[item]_1          |  -0.0278481  |  0.00386248 |
+| session_income[item]_2          |  -0.0383362  |  0.00414    |
+| price_ivt[item-full]_0          |   0.0593935  |  0.0101313  |
+| price_ivt[item-full]_1          |  -0.00697196 |  0.00456365 |
+| price_ivt[item-full]_2          |  -0.00629515 |  0.0019084  |
+| price_ivt[item-full]_3          |  -0.00164838 |  0.00119982 |
+| intercept[item]_0               |   0.701135   |  1.30931    |
+| intercept[item]_1               |   1.84954    |  0.714135   |
+| intercept[item]_2               |   3.27894    |  0.631329   |
+Time taken: 109.68721008300781
 </code></pre></div>
 <h3 id="parameter-estimation-from-r">Parameter Estimation from <code>R</code></h3>
 <p>The following is the R-output from the <code>mlogit</code> implementation, the estimation, standard error, and log-likelihood from our <code>torch_choice</code> implementation is the same as the result from <code>mlogit</code> implementation.</p>
 <p>We see that the final log-likelihood of models estimated using two packages are all around <code>-1874</code>.</p>
 <p>The <code>run()</code> method calculates the standard deviation using <span class="arithmatex">\(\sqrt{\text{diag}(H^{-1})}\)</span>, where <span class="arithmatex">\(H\)</span> is the hessian of negative log-likelihood with repsect to model parameters.</p>
 <p>Names of coefficients are slightly different, one can use the following conversion table to compare estimations and standard deviations reported by both packages.</p>
-<table>
-<thead>
-<tr>
-<th align="center">Coefficient Name in Python</th>
-<th align="right">Estimation</th>
-<th align="right">Std. Err.</th>
-<th align="center">Coeffcient Name in R</th>
-<th align="right">R Estimation</th>
-<th align="right">R Std. Err.</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="center">price_cost_freq_ovt_0</td>
-<td align="right">-0.0342194</td>
-<td align="right">0.00731707</td>
-<td align="center">cost</td>
-<td align="right">-0.0333389</td>
-<td align="right">0.0070955</td>
-</tr>
-<tr>
-<td align="center">price_cost_freq_ovt_1</td>
-<td align="right">0.092262</td>
-<td align="right">0.00520946</td>
-<td align="center">freq</td>
-<td align="right">0.0925297</td>
-<td align="right">0.0050976</td>
-</tr>
-<tr>
-<td align="center">price_cost_freq_ovt_2</td>
-<td align="right">-0.0439827</td>
-<td align="right">0.00342765</td>
-<td align="center">ovt</td>
-<td align="right">-0.0430036</td>
-<td align="right">0.0032247</td>
-</tr>
-<tr>
-<td align="center">session_income_0</td>
-<td align="right">-0.0901207</td>
-<td align="right">0.0205214</td>
-<td align="center">income:bus</td>
-<td align="right">-0.0890867</td>
-<td align="right">0.0183471</td>
-</tr>
-<tr>
-<td align="center">session_income_1</td>
-<td align="right">-0.0272581</td>
-<td align="right">0.00385396</td>
-<td align="center">income:car</td>
-<td align="right">-0.0279930</td>
-<td align="right">0.0038726</td>
-</tr>
-<tr>
-<td align="center">session_income_2</td>
-<td align="right">-0.0390468</td>
-<td align="right">0.00428838</td>
-<td align="center">ivt:train</td>
-<td align="right">-0.0014504</td>
-<td align="right">0.0011875</td>
-</tr>
-<tr>
-<td align="center">price_ivt_0</td>
-<td align="right">0.0592097</td>
-<td align="right">0.0102933</td>
-<td align="center">ivt:air</td>
-<td align="right">0.0595097</td>
-<td align="right">0.0100727</td>
-</tr>
-<tr>
-<td align="center">price_ivt_1</td>
-<td align="right">-0.00753696</td>
-<td align="right">0.00496264</td>
-<td align="center">ivt:bus</td>
-<td align="right">-0.0067835</td>
-<td align="right">0.0044334</td>
-</tr>
-<tr>
-<td align="center">price_ivt_2</td>
-<td align="right">-0.00604297</td>
-<td align="right">0.00193414</td>
-<td align="center">ivt:car</td>
-<td align="right">-0.0064603</td>
-<td align="right">0.0018985</td>
-</tr>
-<tr>
-<td align="center">price_ivt_3</td>
-<td align="right">-0.00207518</td>
-<td align="right">0.00123286</td>
-<td align="center">ivt:train</td>
-<td align="right">-0.0014504</td>
-<td align="right">0.0011875</td>
-</tr>
-<tr>
-<td align="center">intercept_0</td>
-<td align="right">0.700786</td>
-<td align="right">1.39368</td>
-<td align="center">(Intercept):bus</td>
-<td align="right">0.6983381</td>
-<td align="right">1.2802466</td>
-</tr>
-<tr>
-<td align="center">intercept_1</td>
-<td align="right">1.85016</td>
-<td align="right">0.728283</td>
-<td align="center">(Intercept):car</td>
-<td align="right">1.8441129</td>
-<td align="right">0.7085089</td>
-</tr>
-<tr>
-<td align="center">intercept_2</td>
-<td align="right">3.2782</td>
-<td align="right">0.648064</td>
-<td align="center">(Intercept):train</td>
-<td align="right">3.2741952</td>
-<td align="right">0.6244152</td>
-</tr>
-</tbody>
-</table>
+<!-- | Coefficient Name in Python |  Estimation |   Std. Err. |  Coeffcient Name in R | R Estimation | R Std. Err. | 
+|:---------------------:|-------------:|------------:| :--------------: | ----------: | ------: |
+| price_cost_freq_ovt_0 |  -0.0342194  |  0.00731707 | cost             | -0.0333389  |0.0070955|
+| price_cost_freq_ovt_1 |   0.092262   |  0.00520946 | freq             |  0.0925297  |0.0050976|
+| price_cost_freq_ovt_2 |  -0.0439827  |  0.00342765 | ovt              | -0.0430036  |0.0032247|
+| session_income_0      |  -0.0901207  |  0.0205214  | income:bus       | -0.0890867  |0.0183471|
+| session_income_1      |  -0.0272581  |  0.00385396 | income:car       | -0.0279930  |0.0038726|
+| session_income_2      |  -0.0390468  |  0.00428838 | ivt:train        | -0.0014504  |0.0011875|
+| price_ivt_0           |   0.0592097  |  0.0102933  | ivt:air          |  0.0595097  |0.0100727|
+| price_ivt_1           |  -0.00753696 |  0.00496264 | ivt:bus          | -0.0067835  |0.0044334|
+| price_ivt_2           |  -0.00604297 |  0.00193414 | ivt:car          | -0.0064603  |0.0018985|
+| price_ivt_3           |  -0.00207518 |  0.00123286 | ivt:train        | -0.0014504  |0.0011875|
+| intercept_0           |   0.700786   |  1.39368    | (Intercept):bus  |  0.6983381  |1.2802466|
+| intercept_1           |   1.85016    |  0.728283   | (Intercept):car  |  1.8441129  |0.7085089|
+| intercept_2           |   3.2782     |  0.648064   | (Intercept):train|  3.2741952  |0.6244152| -->
+
 <h3 id="r-output">R Output</h3>
-<p><div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="nf">install.packages</span><span class="p">(</span><span class="s">&quot;mlogit&quot;</span><span class="p">)</span>
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="nf">library</span><span class="p">(</span><span class="s">&quot;mlogit&quot;</span><span class="p">)</span>
-<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="nf">data</span><span class="p">(</span><span class="s">&quot;ModeCanada&quot;</span><span class="p">,</span> <span class="n">package</span> <span class="o">=</span> <span class="s">&quot;mlogit&quot;</span><span class="p">)</span>
-<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="n">MC</span> <span class="o">&lt;-</span> <span class="nf">dfidx</span><span class="p">(</span><span class="n">ModeCanada</span><span class="p">,</span> <span class="n">subset</span> <span class="o">=</span> <span class="n">noalt</span> <span class="o">==</span> <span class="m">4</span><span class="p">)</span>
-<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="n">ml.MC1</span> <span class="o">&lt;-</span> <span class="nf">mlogit</span><span class="p">(</span><span class="n">choice</span> <span class="o">~</span> <span class="n">cost</span> <span class="o">+</span> <span class="n">freq</span> <span class="o">+</span> <span class="n">ovt</span> <span class="o">|</span> <span class="n">income</span> <span class="o">|</span> <span class="n">ivt</span><span class="p">,</span> <span class="n">MC</span><span class="p">,</span> <span class="n">reflevel</span><span class="o">=</span><span class="s">&#39;air&#39;</span><span class="p">)</span>
-<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>
-<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="nf">summary</span><span class="p">(</span><span class="n">ml.MC1</span><span class="p">)</span>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="nf">install.packages</span><span class="p">(</span><span class="s">&quot;mlogit&quot;</span><span class="p">)</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="nf">library</span><span class="p">(</span><span class="s">&quot;mlogit&quot;</span><span class="p">)</span>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="nf">data</span><span class="p">(</span><span class="s">&quot;ModeCanada&quot;</span><span class="p">,</span> <span class="n">package</span> <span class="o">=</span> <span class="s">&quot;mlogit&quot;</span><span class="p">)</span>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="n">MC</span> <span class="o">&lt;-</span> <span class="nf">dfidx</span><span class="p">(</span><span class="n">ModeCanada</span><span class="p">,</span> <span class="n">subset</span> <span class="o">=</span> <span class="n">noalt</span> <span class="o">==</span> <span class="m">4</span><span class="p">)</span>
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="n">ml.MC1</span> <span class="o">&lt;-</span> <span class="nf">mlogit</span><span class="p">(</span><span class="n">choice</span> <span class="o">~</span> <span class="n">cost</span> <span class="o">+</span> <span class="n">freq</span> <span class="o">+</span> <span class="n">ovt</span> <span class="o">|</span> <span class="n">income</span> <span class="o">|</span> <span class="n">ivt</span><span class="p">,</span> <span class="n">MC</span><span class="p">,</span> <span class="n">reflevel</span><span class="o">=</span><span class="s">&#39;air&#39;</span><span class="p">)</span>
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="nf">summary</span><span class="p">(</span><span class="n">ml.MC1</span><span class="p">)</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>Call:
-<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>mlogit(formula = choice ~ cost + freq + ovt | income | ivt, data = MC,
-<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>    reflevel = &quot;air&quot;, method = &quot;nr&quot;)
-<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>
-<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>Frequencies of alternatives:choice
-<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>      air     train       bus       car
-<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>0.3738755 0.1666067 0.0035984 0.4559194
-<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>
-<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>nr method
-<a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a>9 iterations, 0h:0m:0s
-<a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a>g&#39;(-H)^-1g = 0.00014
-<a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a>successive function values within tolerance limits
-<a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a>
-<a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a>Coefficients :
-<a id="__codelineno-15-15" name="__codelineno-15-15" href="#__codelineno-15-15"></a>                    Estimate Std. Error  z-value  Pr(&gt;|z|)
-<a id="__codelineno-15-16" name="__codelineno-15-16" href="#__codelineno-15-16"></a>(Intercept):train  3.2741952  0.6244152   5.2436 1.575e-07 ***
-<a id="__codelineno-15-17" name="__codelineno-15-17" href="#__codelineno-15-17"></a>(Intercept):bus    0.6983381  1.2802466   0.5455 0.5854292
-<a id="__codelineno-15-18" name="__codelineno-15-18" href="#__codelineno-15-18"></a>(Intercept):car    1.8441129  0.7085089   2.6028 0.0092464 **
-<a id="__codelineno-15-19" name="__codelineno-15-19" href="#__codelineno-15-19"></a>cost              -0.0333389  0.0070955  -4.6986 2.620e-06 ***
-<a id="__codelineno-15-20" name="__codelineno-15-20" href="#__codelineno-15-20"></a>freq               0.0925297  0.0050976  18.1517 &lt; 2.2e-16 ***
-<a id="__codelineno-15-21" name="__codelineno-15-21" href="#__codelineno-15-21"></a>ovt               -0.0430036  0.0032247 -13.3356 &lt; 2.2e-16 ***
-<a id="__codelineno-15-22" name="__codelineno-15-22" href="#__codelineno-15-22"></a>income:train      -0.0381466  0.0040831  -9.3426 &lt; 2.2e-16 ***
-<a id="__codelineno-15-23" name="__codelineno-15-23" href="#__codelineno-15-23"></a>income:bus        -0.0890867  0.0183471  -4.8556 1.200e-06 ***
-<a id="__codelineno-15-24" name="__codelineno-15-24" href="#__codelineno-15-24"></a>income:car        -0.0279930  0.0038726  -7.2286 4.881e-13 ***
-<a id="__codelineno-15-25" name="__codelineno-15-25" href="#__codelineno-15-25"></a>ivt:air            0.0595097  0.0100727   5.9080 3.463e-09 ***
-<a id="__codelineno-15-26" name="__codelineno-15-26" href="#__codelineno-15-26"></a>ivt:train         -0.0014504  0.0011875  -1.2214 0.2219430
-<a id="__codelineno-15-27" name="__codelineno-15-27" href="#__codelineno-15-27"></a>ivt:bus           -0.0067835  0.0044334  -1.5301 0.1259938
-<a id="__codelineno-15-28" name="__codelineno-15-28" href="#__codelineno-15-28"></a>ivt:car           -0.0064603  0.0018985  -3.4029 0.0006668 ***
-<a id="__codelineno-15-29" name="__codelineno-15-29" href="#__codelineno-15-29"></a>---
-<a id="__codelineno-15-30" name="__codelineno-15-30" href="#__codelineno-15-30"></a>Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-<a id="__codelineno-15-31" name="__codelineno-15-31" href="#__codelineno-15-31"></a>
-<a id="__codelineno-15-32" name="__codelineno-15-32" href="#__codelineno-15-32"></a>Log-Likelihood: -1874.3
-<a id="__codelineno-15-33" name="__codelineno-15-33" href="#__codelineno-15-33"></a>McFadden R^2:  0.35443
-<a id="__codelineno-15-34" name="__codelineno-15-34" href="#__codelineno-15-34"></a>Likelihood ratio test : chisq = 2058.1 (p.value = &lt; 2.22e-16)
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>Call:
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>mlogit(formula = choice ~ cost + freq + ovt | income | ivt, data = MC, 
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>    reflevel = &quot;air&quot;, method = &quot;nr&quot;)
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>Frequencies of alternatives:choice
+<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>      air     train       bus       car 
+<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>0.3738755 0.1666067 0.0035984 0.4559194 
+<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>
+<a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>nr method
+<a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a>9 iterations, 0h:0m:0s 
+<a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a>g&#39;(-H)^-1g = 0.00014 
+<a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a>successive function values within tolerance limits 
+<a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a>
+<a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a>Coefficients :
+<a id="__codelineno-17-15" name="__codelineno-17-15" href="#__codelineno-17-15"></a>                    Estimate Std. Error  z-value  Pr(&gt;|z|)    
+<a id="__codelineno-17-16" name="__codelineno-17-16" href="#__codelineno-17-16"></a>(Intercept):train  3.2741952  0.6244152   5.2436 1.575e-07 ***
+<a id="__codelineno-17-17" name="__codelineno-17-17" href="#__codelineno-17-17"></a>(Intercept):bus    0.6983381  1.2802466   0.5455 0.5854292    
+<a id="__codelineno-17-18" name="__codelineno-17-18" href="#__codelineno-17-18"></a>(Intercept):car    1.8441129  0.7085089   2.6028 0.0092464 ** 
+<a id="__codelineno-17-19" name="__codelineno-17-19" href="#__codelineno-17-19"></a>cost              -0.0333389  0.0070955  -4.6986 2.620e-06 ***
+<a id="__codelineno-17-20" name="__codelineno-17-20" href="#__codelineno-17-20"></a>freq               0.0925297  0.0050976  18.1517 &lt; 2.2e-16 ***
+<a id="__codelineno-17-21" name="__codelineno-17-21" href="#__codelineno-17-21"></a>ovt               -0.0430036  0.0032247 -13.3356 &lt; 2.2e-16 ***
+<a id="__codelineno-17-22" name="__codelineno-17-22" href="#__codelineno-17-22"></a>income:train      -0.0381466  0.0040831  -9.3426 &lt; 2.2e-16 ***
+<a id="__codelineno-17-23" name="__codelineno-17-23" href="#__codelineno-17-23"></a>income:bus        -0.0890867  0.0183471  -4.8556 1.200e-06 ***
+<a id="__codelineno-17-24" name="__codelineno-17-24" href="#__codelineno-17-24"></a>income:car        -0.0279930  0.0038726  -7.2286 4.881e-13 ***
+<a id="__codelineno-17-25" name="__codelineno-17-25" href="#__codelineno-17-25"></a>ivt:air            0.0595097  0.0100727   5.9080 3.463e-09 ***
+<a id="__codelineno-17-26" name="__codelineno-17-26" href="#__codelineno-17-26"></a>ivt:train         -0.0014504  0.0011875  -1.2214 0.2219430    
+<a id="__codelineno-17-27" name="__codelineno-17-27" href="#__codelineno-17-27"></a>ivt:bus           -0.0067835  0.0044334  -1.5301 0.1259938    
+<a id="__codelineno-17-28" name="__codelineno-17-28" href="#__codelineno-17-28"></a>ivt:car           -0.0064603  0.0018985  -3.4029 0.0006668 ***
+<a id="__codelineno-17-29" name="__codelineno-17-29" href="#__codelineno-17-29"></a>---
+<a id="__codelineno-17-30" name="__codelineno-17-30" href="#__codelineno-17-30"></a>Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+<a id="__codelineno-17-31" name="__codelineno-17-31" href="#__codelineno-17-31"></a>
+<a id="__codelineno-17-32" name="__codelineno-17-32" href="#__codelineno-17-32"></a>Log-Likelihood: -1874.3
+<a id="__codelineno-17-33" name="__codelineno-17-33" href="#__codelineno-17-33"></a>McFadden R^2:  0.35443 
+<a id="__codelineno-17-34" name="__codelineno-17-34" href="#__codelineno-17-34"></a>Likelihood ratio test : chisq = 2058.1 (p.value = &lt; 2.22e-16)
 </code></pre></div></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>
 </code></pre></div>
 
-
-
-
-
-                
-              </article>
-            </div>
-          
-          
+              
+            </article>
+          </div>
         </div>
         
       </main>
       
         <footer class="md-footer">
   
-    
-    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href="../easy_data_management/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Tutorial for Easy Data Management and Stata Users" rel="prev">
+        <a href="../easy_data_management/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Easy Data Management and Stata Users" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -1201,20 +1148,20 @@ Time taken: 179.84411025047302
               <span class="md-footer__direction">
                 Previous
               </span>
-              Tutorial for Easy Data Management and Stata Users
+              Easy Data Management and Stata Users
             </div>
           </div>
         </a>
       
       
         
-        <a href="../nested_logit_model_house_cooling/" class="md-footer__link md-footer__link--next" aria-label="Next: Tutorial for Nested Logit Model" rel="next">
+        <a href="../nested_logit_model_house_cooling/" class="md-footer__link md-footer__link--next" aria-label="Next: Nested Logit Model" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Tutorial for Nested Logit Model
+              Nested Logit Model
             </div>
           </div>
           <div class="md-footer__button md-icon">
@@ -1244,11 +1191,10 @@ Time taken: 179.84411025047302
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
-    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.5bf1dace.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
-    
-      <script src="../assets/javascripts/bundle.37e9125f.min.js"></script>
+      <script src="../assets/javascripts/bundle.ed9748b7.min.js"></script>
       
         <script src="../javascripts/mathjax.js"></script>
       

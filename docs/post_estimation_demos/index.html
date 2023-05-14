@@ -8,14 +8,14 @@
       
       
       
-        <link rel="canonical" href="https://gsbdbi.github.io/torch-choice/easy_data_management/">
+        <link rel="canonical" href="https://gsbdbi.github.io/torch-choice/post_estimation_demos/">
       
       <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.13">
     
     
       
-        <title>Easy Data Management and Stata Users - Torch Choice</title>
+        <title>Post Estimation - Torch Choice</title>
       
     
     
@@ -63,7 +63,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#easy-data-wrapper-tutorial" class="md-skip">
+        <a href="#tutorial-post-estimations" class="md-skip">
           Skip to content
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Easy Data Management and Stata Users
+              Post Estimation
             
           </span>
         </div>
@@ -272,52 +272,11 @@
 
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Easy Data Management and Stata Users
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../easy_data_management/" class="md-nav__link">
         Easy Data Management and Stata Users
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#references-and-background-for-stata-users" class="md-nav__link">
-    References and Background for Stata Users
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -358,11 +317,52 @@
 
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../post_estimation_demos/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Post Estimation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Post Estimation
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#creating-choicedataset-object" class="md-nav__link">
+    Creating  ChoiceDataset Object
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -439,8 +439,8 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#references-and-background-for-stata-users" class="md-nav__link">
-    References and Background for Stata Users
+  <a href="#creating-choicedataset-object" class="md-nav__link">
+    Creating  ChoiceDataset Object
   </a>
   
 </li>
@@ -459,1174 +459,247 @@
                 
 
 
-<h1 id="easy-data-wrapper-tutorial">Easy Data Wrapper Tutorial</h1>
-<p>The data construction covered in the Data Management tutorial might be too complicated for users without prior experience in PyTorch.
-This tutorial offers a helper class to wrap the dataset, all the user needs to know is</p>
-<p>(1) loading data-frames to Python, Pandas provides one-line solution to loading various types of data files including CSV, TSV, Stata, and Excel.</p>
-<p>(2) basic usage of pandas. </p>
-<p>We aim to make this tutorial as self-contained as possible, so you don't need to be worried if you haven't went through the <em>Data Management tutorial</em>. But we invite you to go through that tutorial to obtain a more in-depth understanding of data management in this project.</p>
-<p>Author: Tianyu Du</p>
-<p>Date: May. 20, 2022</p>
-<p>Update: Jul. 9, 2022</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Tianyu Du&#39;</span>
+<h1 id="tutorial-post-estimations">Tutorial: Post-Estimations</h1>
+<p><strong>Author: Tianyu Du (tianyudu@stanford.edu)</strong></p>
+<p>This tutorial covers the toolkit in <code>torch-choice</code> for visualizing and analyzing models after model estimation.</p>
+<p><strong>Note</strong>: models demonstrated in this tutorial are for demonstration purpose only, hence we don't estimate them in this tutorial. Instead, this tutorial focuses on APIs to visualize and analyze models.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># import required dependencies.</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="kn">import</span> <span class="nn">torch</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="kn">from</span> <span class="nn">torch_choice.data</span> <span class="kn">import</span> <span class="n">ChoiceDataset</span><span class="p">,</span> <span class="n">JointDataset</span><span class="p">,</span> <span class="n">utils</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="kn">from</span> <span class="nn">torch_choice.model</span> <span class="kn">import</span> <span class="n">ConditionalLogitModel</span><span class="p">,</span> <span class="n">NestedLogitModel</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="kn">from</span> <span class="nn">torch_choice.utils.run_helper</span> <span class="kn">import</span> <span class="n">run</span>
 </code></pre></div>
-<p>Let's import a few necessary packages.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">import</span> <span class="nn">torch</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="kn">from</span> <span class="nn">torch_choice.utils.easy_data_wrapper</span> <span class="kn">import</span> <span class="n">EasyDatasetWrapper</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># let&#39;s get a helper</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">def</span> <span class="nf">print_dict_shape</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>        <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dict.</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">.shape=</span><span class="si">{</span><span class="n">val</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </code></pre></div>
-<h2 id="references-and-background-for-stata-users">References and Background for Stata Users</h2>
-<p>This tutorial aim to show how to manage choice datasets using the <code>torch-choice</code> package, we will follow the Stata documentation <a href="https://www.stata.com/manuals/cm.pdf">here</a> to offer a seamless experience for the user to transfer prior knowledge in other packages to our package.</p>
-<p><em>From Stata Documentation</em>: Choice models (CM) are models for data with outcomes that are choices. The choices are selected by a decision maker, such as a person or a business (i.e., the <strong>user</strong>), from a set of possible alternatives (i.e., the <strong>items</strong>). For instance, we could model choices made by consumers who select a breakfast cereal from several different brands. Or we could model choices made by businesses who chose whether to buy TV, radio, Internet, or newspaper advertising.</p>
-<p>Models for choice data come in two varieties—models for discrete choices and models for rank-ordered alternatives. When each individual selects a single alternative, say, he or she purchases one box of cereal, the data are discrete choice data. When each individual ranks the choices, say, he or she orders cereals from most favorite to least favorite, the data are rank-ordered data. Stata has commands for fitting both discrete choice models and rank-ordered models.</p>
-<p>Our <code>torch-choice</code> package handles the <strong>discrete choice</strong> models in the Stata document above.</p>
-<h1 id="motivations">Motivations</h1>
-<p>In the following parts, we demonstrate how to convert a long-format data (e.g., the one used in Stata) to the <code>ChoiceDataset</code> data format expected by our package.</p>
-<p>But first, <em>Why do we want another <code>ChoiceDataset</code> object instead of just one long-format data-frame?</em>
-In earlier versions of Stata, we can only have one single data-frame loaded in memory, this would introduce memory error especially when teh dataset is large. For example, you have a dataset of a million decisions recorded, each consists of four items, and each item has a persistent <em>built quality</em> that stay the same in all observations. The Stata format would make a million copy of these variables, which is very inefficient.</p>
-<p>We would need to collect a couple of data-frames as the essential pieces to build our <code>ChoiceDataset</code>. Don't worry, as soon as you have the data-frames ready, the <code>EasyDataWrapper</code> helper class would take care of the rest.</p>
-<p>We call a single statistical observation a <strong>"purchase record"</strong> and use this terminology throughout the tutorial. </p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_stata</span><span class="p">(</span><span class="s1">&#39;https://www.stata-press.com/data/r17/carchoice.dta&#39;</span><span class="p">)</span>
+<h2 id="creating-choicedataset-object">Creating  <code>ChoiceDataset</code> Object</h2>
+<p>We first create a dummy <code>ChoiceDataset</code> object, please refer to the <strong>data management</strong> tutorial for more details.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Feel free to modify it as you want.</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">num_users</span> <span class="o">=</span> <span class="mi">100</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">num_items</span> <span class="o">=</span> <span class="mi">25</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">num_sessions</span> <span class="o">=</span> <span class="mi">500</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">length_of_dataset</span> <span class="o">=</span> <span class="mi">10000</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># create observables/features, the number of parameters are arbitrarily chosen.</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="c1"># generate 128 features for each user, e.g., race, gender.</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="n">user_obs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">num_users</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="c1"># generate 64 features for each user, e.g., quality.</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="n">item_obs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">num_items</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="c1"># generate 10 features for each session, e.g., weekday indicator. </span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="n">session_obs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">num_sessions</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="c1"># generate 12 features for each session user pair, e.g., the budget of that user at the shopping day.</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="n">itemsession_obs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">num_sessions</span><span class="p">,</span> <span class="n">num_items</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="n">item_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">num_items</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">length_of_dataset</span><span class="p">))</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="n">user_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">num_users</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">length_of_dataset</span><span class="p">))</span>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="n">session_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">num_sessions</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">length_of_dataset</span><span class="p">))</span>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="c1"># assume all items are available in all sessions.</span>
+<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="n">item_availability</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">num_sessions</span><span class="p">,</span> <span class="n">num_items</span><span class="p">)</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
+<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>
+<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a><span class="c1"># initialize a ChoiceDataset object.</span>
+<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">ChoiceDataset</span><span class="p">(</span>
+<a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>    <span class="c1"># pre-specified keywords of __init__</span>
+<a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a>    <span class="n">item_index</span><span class="o">=</span><span class="n">item_index</span><span class="p">,</span>  <span class="c1"># required.</span>
+<a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a>    <span class="c1"># optional:</span>
+<a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a>    <span class="n">num_users</span><span class="o">=</span><span class="n">num_users</span><span class="p">,</span>
+<a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a>    <span class="n">num_items</span><span class="o">=</span><span class="n">num_items</span><span class="p">,</span>
+<a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a>    <span class="n">user_index</span><span class="o">=</span><span class="n">user_index</span><span class="p">,</span>
+<a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a>    <span class="n">session_index</span><span class="o">=</span><span class="n">session_index</span><span class="p">,</span>
+<a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a>    <span class="n">item_availability</span><span class="o">=</span><span class="n">item_availability</span><span class="p">,</span>
+<a id="__codelineno-2-32" name="__codelineno-2-32" href="#__codelineno-2-32"></a>    <span class="c1"># additional keywords of __init__</span>
+<a id="__codelineno-2-33" name="__codelineno-2-33" href="#__codelineno-2-33"></a>    <span class="n">user_obs</span><span class="o">=</span><span class="n">user_obs</span><span class="p">,</span>
+<a id="__codelineno-2-34" name="__codelineno-2-34" href="#__codelineno-2-34"></a>    <span class="n">item_obs</span><span class="o">=</span><span class="n">item_obs</span><span class="p">,</span>
+<a id="__codelineno-2-35" name="__codelineno-2-35" href="#__codelineno-2-35"></a>    <span class="n">session_obs</span><span class="o">=</span><span class="n">session_obs</span><span class="p">,</span>
+<a id="__codelineno-2-36" name="__codelineno-2-36" href="#__codelineno-2-36"></a>    <span class="n">itemsession_obs</span><span class="o">=</span><span class="n">itemsession_obs</span><span class="p">)</span>
 </code></pre></div>
-<p>We load the artificial dataset from the Stata website. Here we borrow the description of dataset reported from the <code>describe</code> command in Stata. </p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>Contains data from https://www.stata-press.com/data/r17/carchoice.dta
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a> Observations:         3,160                  Car choice data
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    Variables:             6                  30 Jul 2020 14:58
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>---------------------------------------------------------------------------------------------------------------------------------------------------
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>Variable      Storage   Display    Value
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    name         type    format    label      Variable label
-<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>---------------------------------------------------------------------------------------------------------------------------------------------------
-<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>consumerid      int     %8.0g                 ID of individual consumer
-<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>car             byte    %9.0g      nation     Nationality of car
-<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>purchase        byte    %10.0g                Indicator of car purchased
-<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>gender          byte    %9.0g      gender     Gender: 0 = Female, 1 = Male
-<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>income          float   %9.0g                 Income (in $1,000)
-<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>dealers         byte    %9.0g                 No. of dealerships in community
-<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>---------------------------------------------------------------------------------------------------------------------------------------------------
-<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>Sorted by: consumerid  car
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
 </code></pre></div>
-<p>In this dataset, the first four rows with <code>consumerid == 1</code> corresponds to the first <strong>purchasing record</strong>, it means the consumer with ID 1 was making the decision among four types of cars (i.e., <strong>items</strong>) and chose <code>American</code> car (since the <code>purchase == 1</code> in that row of <code>American</code> car).</p>
-<p>Even though there were four types of cars, not all of them were available all the time. For example, for the <strong>purchase record</strong> by consumer with ID 4, only American, Japanese, and European cars were available (note that there is no row in the dataset with <code>consumerid == 4</code> and <code>car == 'Korean'</code>, this indicates unavailability of a certain item.)</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code>ChoiceDataset(label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 25], user_obs=[100, 128], item_obs=[25, 64], session_obs=[500, 10], itemsession_obs=[500, 25, 12], device=cpu)
 </code></pre></div>
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>consumerid</th>
-      <th>car</th>
-      <th>purchase</th>
-      <th>gender</th>
-      <th>income</th>
-      <th>dealers</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>1</td>
-      <td>American</td>
-      <td>1</td>
-      <td>Male</td>
-      <td>46.699997</td>
-      <td>9</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>1</td>
-      <td>Japanese</td>
-      <td>0</td>
-      <td>Male</td>
-      <td>46.699997</td>
-      <td>11</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>1</td>
-      <td>European</td>
-      <td>0</td>
-      <td>Male</td>
-      <td>46.699997</td>
-      <td>5</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>1</td>
-      <td>Korean</td>
-      <td>0</td>
-      <td>Male</td>
-      <td>46.699997</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>2</td>
-      <td>American</td>
-      <td>1</td>
-      <td>Male</td>
-      <td>26.100000</td>
-      <td>10</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>2</td>
-      <td>Japanese</td>
-      <td>0</td>
-      <td>Male</td>
-      <td>26.100000</td>
-      <td>7</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>2</td>
-      <td>European</td>
-      <td>0</td>
-      <td>Male</td>
-      <td>26.100000</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>2</td>
-      <td>Korean</td>
-      <td>0</td>
-      <td>Male</td>
-      <td>26.100000</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>3</td>
-      <td>American</td>
-      <td>0</td>
-      <td>Male</td>
-      <td>32.700001</td>
-      <td>8</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>3</td>
-      <td>Japanese</td>
-      <td>1</td>
-      <td>Male</td>
-      <td>32.700001</td>
-      <td>6</td>
-    </tr>
-    <tr>
-      <th>10</th>
-      <td>3</td>
-      <td>European</td>
-      <td>0</td>
-      <td>Male</td>
-      <td>32.700001</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <th>11</th>
-      <td>4</td>
-      <td>American</td>
-      <td>1</td>
-      <td>Female</td>
-      <td>49.199997</td>
-      <td>5</td>
-    </tr>
-    <tr>
-      <th>12</th>
-      <td>4</td>
-      <td>Japanese</td>
-      <td>0</td>
-      <td>Female</td>
-      <td>49.199997</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>13</th>
-      <td>4</td>
-      <td>European</td>
-      <td>0</td>
-      <td>Female</td>
-      <td>49.199997</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <th>14</th>
-      <td>5</td>
-      <td>American</td>
-      <td>0</td>
-      <td>Male</td>
-      <td>24.299999</td>
-      <td>8</td>
-    </tr>
-    <tr>
-      <th>15</th>
-      <td>5</td>
-      <td>Japanese</td>
-      <td>0</td>
-      <td>Male</td>
-      <td>24.299999</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <th>16</th>
-      <td>5</td>
-      <td>European</td>
-      <td>1</td>
-      <td>Male</td>
-      <td>24.299999</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <th>17</th>
-      <td>6</td>
-      <td>American</td>
-      <td>1</td>
-      <td>Female</td>
-      <td>39.000000</td>
-      <td>10</td>
-    </tr>
-    <tr>
-      <th>18</th>
-      <td>6</td>
-      <td>Japanese</td>
-      <td>0</td>
-      <td>Female</td>
-      <td>39.000000</td>
-      <td>6</td>
-    </tr>
-    <tr>
-      <th>19</th>
-      <td>6</td>
-      <td>European</td>
-      <td>0</td>
-      <td>Female</td>
-      <td>39.000000</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>20</th>
-      <td>7</td>
-      <td>American</td>
-      <td>0</td>
-      <td>Male</td>
-      <td>33.000000</td>
-      <td>10</td>
-    </tr>
-    <tr>
-      <th>21</th>
-      <td>7</td>
-      <td>Japanese</td>
-      <td>0</td>
-      <td>Male</td>
-      <td>33.000000</td>
-      <td>6</td>
-    </tr>
-    <tr>
-      <th>22</th>
-      <td>7</td>
-      <td>European</td>
-      <td>1</td>
-      <td>Male</td>
-      <td>33.000000</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>23</th>
-      <td>7</td>
-      <td>Korean</td>
-      <td>0</td>
-      <td>Male</td>
-      <td>33.000000</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>24</th>
-      <td>8</td>
-      <td>American</td>
-      <td>1</td>
-      <td>Male</td>
-      <td>20.299999</td>
-      <td>6</td>
-    </tr>
-    <tr>
-      <th>25</th>
-      <td>8</td>
-      <td>Japanese</td>
-      <td>0</td>
-      <td>Male</td>
-      <td>20.299999</td>
-      <td>5</td>
-    </tr>
-    <tr>
-      <th>26</th>
-      <td>8</td>
-      <td>European</td>
-      <td>0</td>
-      <td>Male</td>
-      <td>20.299999</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <th>27</th>
-      <td>9</td>
-      <td>American</td>
-      <td>0</td>
-      <td>Male</td>
-      <td>38.000000</td>
-      <td>9</td>
-    </tr>
-    <tr>
-      <th>28</th>
-      <td>9</td>
-      <td>Japanese</td>
-      <td>1</td>
-      <td>Male</td>
-      <td>38.000000</td>
-      <td>9</td>
-    </tr>
-    <tr>
-      <th>29</th>
-      <td>9</td>
-      <td>European</td>
-      <td>0</td>
-      <td>Male</td>
-      <td>38.000000</td>
-      <td>2</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-<h1 id="components-of-the-consumer-choice-modelling-problem">Components of the Consumer Choice Modelling Problem</h1>
-<p>We begin with essential component of the consumer choice modelling problem. Walking through these components should help you understand what kind of data our models are working on.</p>
-<h3 id="purchasing-record">Purchasing Record</h3>
-<p>Each row (record) of the dataset is called a <strong>purchasing record</strong>, which includes <em>who</em> bought <em>what</em> at <em>when</em> and <em>where</em>.
-Let <span class="arithmatex">\(B\)</span> denote the number of <strong>purchasing records</strong> in the dataset (i.e., number of rows of the dataset). Each row <span class="arithmatex">\(b \in \{1,2,\dots, B\}\)</span> corresponds to a purchase record (i.e., <em>who</em> bought <em>what</em> at <em>where and when</em>).</p>
-<h3 id="items-and-categories">Items and Categories</h3>
-<p>To begin with, there are <span class="arithmatex">\(I\)</span> <strong>items</strong> indexed by <span class="arithmatex">\(i \in \{1,2,\dots,I\}\)</span> under our consideration.</p>
-<p>Further, the researcher can optionally partition the set items into <span class="arithmatex">\(C\)</span> <strong>categories</strong> indexed by <span class="arithmatex">\(c \in \{1,2,\dots,C\}\)</span>. Let <span class="arithmatex">\(I_c\)</span> denote the collection of items in category <span class="arithmatex">\(c\)</span>, it is easy to verify that</p>
+<h1 id="conditional-logit-model">Conditional Logit Model</h1>
+<p>Suppose that we are creating a very complicated dummy model as the following. Please note that model and dataset here are for demonstration purpose only, the model is unlikely to converge if one estimate it on this dataset.</p>
 <div class="arithmatex">\[
-\bigcup_{c \in \{1, 2, \dots, C\}} I_c = \{1, 2, \dots I\}
+U_{uis} = \alpha + \beta_i + \gamma_u + \delta_i^\top \textbf{x}^{(user)}_u + \eta^\top \textbf{y}^{(item)}_i + \theta_u^\top \textbf{z}^{(session)}_{s} + \kappa_i^\top \textbf{w}^{(itemsession)}_{is} + \iota_u^\top \textbf{w}^{(itemsession)}_{is} + \epsilon_{uis}
 \]</div>
-<p>If the researcher does not wish to model different categories differently, the researcher can simply put all items in one single category: <span class="arithmatex">\(I_1 = \{1, 2, \dots I\}\)</span>, so that all items belong to the same category.</p>
-<p><strong>Note</strong>: since we will be using PyTorch to train our model, we represent their identities with integer values instead of the raw human-readable names of items (e.g., Dell 24 inch LCD monitor).
-Raw item names can be encoded easily with <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OrdinalEncoder.html">sklearn.preprocessing.OrdinalEncoder</a>.</p>
-<h3 id="users">Users</h3>
-<p>Each purchaing reocrd is naturally associated with an <strong>user</strong> indexed by <span class="arithmatex">\(u \in \{1,2,\dots,U\}\)</span> (<em>who</em>) as well.</p>
-<h3 id="sessions">Sessions</h3>
-<p>Our data structure encompasses <em>where and when</em> using a notion called <strong>session</strong> indexed by <span class="arithmatex">\(s \in \{1,2,\dots, S\}\)</span>.
-For example, when the data came from a single store over the period of a year. In this case, the notion of <em>where</em> does not matter that much, and session <span class="arithmatex">\(s\)</span> is simply the date of purchase.</p>
-<p>Another example is that we have the purchase record from different stores, the session <span class="arithmatex">\(s\)</span> can be defined as a pair of <em>(date, store)</em> instead.</p>
-<p>If the researcher does not wish to handle records from different sessions differently, the researcher can assign the same session ID to all rows of the dataset.</p>
-<p>To summarize, each purchasing record <span class="arithmatex">\(b\)</span> in the dataset is characterized by a user-session-item tuple <span class="arithmatex">\((u, s, i)\)</span>.</p>
-<p>When there are multiple items bought by the same user in the same session, there will be multiple rows in the dataset with the same <span class="arithmatex">\((u, s)\)</span> corresponding to the same receipt.</p>
-<h1 id="format-the-dataset-a-little-bit">Format the Dataset a Little Bit</h1>
-<p>The wrapper we built requires several data frames, providing the correct information is all we need to do in this tutorial, the data wrapper will handle the construction of <code>ChoiceDataset</code> for you.</p>
-<p><strong>Note</strong>: The dataset in this tutorial is a bit over-simplified, we only have one purchase record for each user in each session, so the <code>consumerid</code> column identifies all of the user, the session, and the purchase record (because we have different dealers for the same type of car, we define each purchase record of it's session instead of assigning all purchase records to the same session).
-That is, we have a single user makes a single choice in each single session.</p>
-<p>The <strong>main dataset</strong> should contain the following columns:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">model</span> <span class="o">=</span> <span class="n">ConditionalLogitModel</span><span class="p">(</span><span class="n">formula</span><span class="o">=</span><span class="s1">&#39;(1|constant) + (1|item) + (1|user) + (user_obs|item) + (item_obs|constant) + (session_obs|user) + (itemsession_obs|item) + (itemsession_obs|user)&#39;</span><span class="p">,</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>                              <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>                              <span class="n">num_users</span><span class="o">=</span><span class="n">num_users</span><span class="p">,</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>                              <span class="n">num_items</span><span class="o">=</span><span class="n">num_items</span><span class="p">)</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1"># estimate the model... omitted in this tutorial.</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">model</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>ConditionalLogitModel(
+  (coef_dict): ModuleDict(
+    (intercept[constant]): Coefficient(variation=constant, num_items=25, num_users=100, num_params=1, 1 trainable parameters in total, device=cpu).
+    (intercept[item]): Coefficient(variation=item, num_items=25, num_users=100, num_params=1, 24 trainable parameters in total, device=cpu).
+    (intercept[user]): Coefficient(variation=user, num_items=25, num_users=100, num_params=1, 100 trainable parameters in total, device=cpu).
+    (user_obs[item]): Coefficient(variation=item, num_items=25, num_users=100, num_params=128, 3072 trainable parameters in total, device=cpu).
+    (item_obs[constant]): Coefficient(variation=constant, num_items=25, num_users=100, num_params=64, 64 trainable parameters in total, device=cpu).
+    (session_obs[user]): Coefficient(variation=user, num_items=25, num_users=100, num_params=10, 1000 trainable parameters in total, device=cpu).
+    (itemsession_obs[item]): Coefficient(variation=item, num_items=25, num_users=100, num_params=12, 288 trainable parameters in total, device=cpu).
+    (itemsession_obs[user]): Coefficient(variation=user, num_items=25, num_users=100, num_params=12, 1200 trainable parameters in total, device=cpu).
+  )
+)
+Conditional logistic discrete choice model, expects input features:
+
+X[intercept[constant]] with 1 parameters, with constant level variation.
+X[intercept[item]] with 1 parameters, with item level variation.
+X[intercept[user]] with 1 parameters, with user level variation.
+X[user_obs[item]] with 128 parameters, with item level variation.
+X[item_obs[constant]] with 64 parameters, with constant level variation.
+X[session_obs[user]] with 10 parameters, with user level variation.
+X[itemsession_obs[item]] with 12 parameters, with item level variation.
+X[itemsession_obs[user]] with 12 parameters, with user level variation.
+device=cpu
+</code></pre></div>
+<h2 id="retrieving-model-parameters-with-the-get_coefficient-method">Retrieving Model Parameters with the <code>get_coefficient()</code> method.</h2>
+<p>In the model representation above, we can see that the model has coefficients from <code>intercept[constant]</code> to <code>itemsession_obs</code>. 
+The <code>get_coefficient()</code> method allows users to retrieve the coefficient values from the model using the general syntax <code>model.get_coefficient(COEFFICIENT_NAME)</code>.</p>
+<p>For example, <code>model.get_coefficient('intercept[constant]')</code> will return the value of <span class="arithmatex">\(\alpha\)</span>, which is a scalar.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">model</span><span class="o">.</span><span class="n">get_coefficient</span><span class="p">(</span><span class="s1">&#39;intercept[constant]&#39;</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>tensor([0.3743])
+</code></pre></div>
+<p><code>model.get_coefficient('intercept[user]')</code> returns the array of <span class="arithmatex">\(\gamma_u\)</span>'s, which is a 1D array of length <code>num_users</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">model</span><span class="o">.</span><span class="n">get_coefficient</span><span class="p">(</span><span class="s1">&#39;intercept[user]&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>torch.Size([100, 1])
+</code></pre></div>
+<p><code>model.get_coefficient('session_obs[user]')</code> returns the corresponding coefficient <span class="arithmatex">\(\theta_u\)</span>, which is a 2D array of shape <code>(num_users, num_session_features)</code>. Each row of the returned tensor corresponds to the coefficient vector of a user.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">model</span><span class="o">.</span><span class="n">get_coefficient</span><span class="p">(</span><span class="s1">&#39;session_obs[user]&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>torch.Size([100, 10])
+</code></pre></div>
+<p>Lastly, the <code>itemsession_obs</code> (a 12-dimensional feature vector for each <span class="arithmatex">\((i, s)\)</span> pairs) affects the utility through both <span class="arithmatex">\(\kappa_i\)</span> and <span class="arithmatex">\(\iota_u\)</span>. For each item (except for the first item indexed with <code>0</code>, all coefficients of it are <code>0</code>), the <code>get_coefficient()</code> method returns a 2D array of shape <code>(num_items-1, num_itemsession_features)</code>.</p>
+<p>The first row of the returned tensor corresponds to the coefficient vector of the <strong>second</strong> item, and so on.</p>
+<p><code>model.get_coefficient('itemsession_obs[user]')</code> provides the user-specific relationship between utility and item-session observables, <span class="arithmatex">\(\iota_u\)</span>, which is a 2D array of shape <code>(num_users, num_itemsession_features)</code>. Each row of the returned tensor corresponds to the coefficient vector of a user.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">model</span><span class="o">.</span><span class="n">get_coefficient</span><span class="p">(</span><span class="s1">&#39;itemsession_obs[item]&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>torch.Size([24, 12])
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">model</span><span class="o">.</span><span class="n">get_coefficient</span><span class="p">(</span><span class="s1">&#39;itemsession_obs[user]&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>torch.Size([100, 12])
+</code></pre></div>
+<h2 id="visualizing-model-parameters">Visualizing Model Parameters</h2>
+<p>Researchers can use any plotting library to visualize the model parameters. Here we use <code>matplotlib</code> to demonstrate how to visualize the model parameters.</p>
+<p>For example, we can plot the distribution of user fixed effect <span class="arithmatex">\(\gamma_u\)</span>'s as the following.</p>
 <ol>
-<li><code>purchase_record_column</code>: a column identifies <strong>purchase record</strong> (also called <strong>case</strong> in Stata syntax). this tutorial, the <code>consumerid</code> column is the identifier. For example, the first 4 rows of the dataset (see above) has <code>consumerid == 1</code>, this means we should look at the first 4 rows together and they constitute the first purchase record.</li>
-<li><code>item_name_column</code>: a column identifies <strong>names of items</strong>, which is <code>car</code> in the dataset above. This column provides information above the availability as well. As mentioned above, there is no column with <code>car == Korean</code> in the fourth purchasing record (<code>consumerid == 4</code>), so we know that Korean car was not available that time.</li>
-<li><code>choice_column</code>: a column identifies the <strong>choice</strong> made by the consumer in each purchase record, which is the <code>purchase</code> column in our example. Exactly one row per purchase record (i.e., rows with the same values in <code>purchase_record_column</code>) should have 1, while the values are zeros for all other rows.</li>
-<li><code>user_index_column</code>: a <em>optional</em> column identifies the <strong>user</strong> making the choice, which is also <code>consumerid</code> in our case.</li>
-<li><code>session_index_column</code>: a <em>optional</em> column identifies the <strong>session</strong> of the choice, which is also <code>consumerid</code> in our case.</li>
+<li>Researcher can use the <code>get_coefficient()</code> method to retrieve the coefficient values. </li>
 </ol>
-<p>As you might have noticed, the <code>consumerid</code> column in the data-frame identifies multiple pieces of information: <code>purchase_record</code>, <code>user_index</code>, and <code>session_index</code>. This is not a mistake, you can use the same column in <code>df</code> to supply multiple pieces of information. </p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">df</span><span class="o">.</span><span class="n">gender</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">dropna</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">gamma</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_coefficient</span><span class="p">(</span><span class="s1">&#39;intercept[user]&#39;</span><span class="p">)</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>Male      2283
-Female     854
-NaN         23
-Name: gender, dtype: int64
-</code></pre></div>
-<p>The only modification required is to convert <code>gender</code> (with values of <code>Male</code>, <code>Female</code> or <code>NaN</code>) to integers because PyTorch does <strong>not</strong> handle strings. For simplicity, we will assume all <code>NaN</code> gender to be <code>Female</code> (you should <strong>not</strong> do this in a real application!) and re-define the gender variable as <span class="arithmatex">\(\mathbb{I}\{\texttt{gender} == \texttt{Male}\}\)</span>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># we change gender to binary 0/1 because pytorch doesn&#39;t handle strings.</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">df</span><span class="p">[</span><span class="s1">&#39;gender&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;gender&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Male&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-</code></pre></div>
-<p>Now the <code>gender</code> column contains only binary integers.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">df</span><span class="o">.</span><span class="n">gender</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">dropna</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>1    2283
-0     877
-Name: gender, dtype: int64
-</code></pre></div>
-<p>The data-frame looks like the following right now:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
-</code></pre></div>
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>consumerid</th>
-      <th>car</th>
-      <th>purchase</th>
-      <th>gender</th>
-      <th>income</th>
-      <th>dealers</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>1</td>
-      <td>American</td>
-      <td>1</td>
-      <td>1</td>
-      <td>46.699997</td>
-      <td>9</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>1</td>
-      <td>Japanese</td>
-      <td>0</td>
-      <td>1</td>
-      <td>46.699997</td>
-      <td>11</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>1</td>
-      <td>European</td>
-      <td>0</td>
-      <td>1</td>
-      <td>46.699997</td>
-      <td>5</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>1</td>
-      <td>Korean</td>
-      <td>0</td>
-      <td>1</td>
-      <td>46.699997</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>2</td>
-      <td>American</td>
-      <td>1</td>
-      <td>1</td>
-      <td>26.100000</td>
-      <td>10</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-<h1 id="adding-the-observables">Adding the Observables</h1>
-<p>The next step is to identify observables going into the model.</p>
-<p>Specifically, we would want to add:
-1. <code>gender</code> and <code>income</code> as user-specific observables
-2. and <code>dealers</code> as (session, item)-specific observable. Such observables are called <strong>price observables</strong> in our setting, why? because price is the most typical (session, item)-specific observable.</p>
-<h2 id="method-1-adding-observables-by-extracting-columns-of-the-dataset">Method 1: Adding Observables by Extracting Columns of the Dataset</h2>
-<p>As you can see, <code>gender</code>, <code>income</code> and <code>dealers</code> are already encompassed in <code>df</code>, the first way to add observables is simply mentioning these columns while initializing the <code>EasyDatasetWrapper</code> object.</p>
-<p>You can supply a list of names of columns to each of <code>{user, item, session, price}_observable_columns</code> keyword argument. For example, we use <code>user_observable_columns=['gender', 'income']</code> to inform the <code>EasyDatasetWrapper</code> that we wish to derive user-specific observables from the <code>gender</code> and <code>income</code> columns of <code>df</code>.</p>
-<p>Also, we inform the <code>EasyDatasetWrapper</code> that we want to derive (session, item)-specific (i.e., price observable) by specifying <code>price_observable_columns=['dealers']</code>.</p>
-<p>Since our package leverages GPU-acceleration, it is necessary to supply the <strong>device</strong> on which the dataset should reside.
-The <code>EasyDatasetWrapper</code> also takes a <code>device</code> keyword, which can be either <code>'cpu'</code> or an appropriate CUDA device.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    <span class="n">device</span> <span class="o">=</span> <span class="s1">&#39;cuda&#39;</span>  <span class="c1"># use GPU if available</span>
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="k">else</span><span class="p">:</span>
-<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>    <span class="n">device</span> <span class="o">=</span> <span class="s1">&#39;cpu&#39;</span>  <span class="c1"># use CPU otherwise</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">data_1</span> <span class="o">=</span> <span class="n">EasyDatasetWrapper</span><span class="p">(</span><span class="n">main_data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>                            <span class="c1"># TODO: better naming convention? Need to discuss.</span>
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>                            <span class="c1"># after discussion, we add it to the default value</span>
-<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>                            <span class="c1"># in the data wrapper class.</span>
-<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>                            <span class="c1"># these are just names.</span>
-<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>                            <span class="n">purchase_record_column</span><span class="o">=</span><span class="s1">&#39;consumerid&#39;</span><span class="p">,</span>
-<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>                            <span class="n">choice_column</span><span class="o">=</span><span class="s1">&#39;purchase&#39;</span><span class="p">,</span>
-<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>                            <span class="n">item_name_column</span><span class="o">=</span><span class="s1">&#39;car&#39;</span><span class="p">,</span>
-<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>                            <span class="n">user_index_column</span><span class="o">=</span><span class="s1">&#39;consumerid&#39;</span><span class="p">,</span>
-<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>                            <span class="n">session_index_column</span><span class="o">=</span><span class="s1">&#39;consumerid&#39;</span><span class="p">,</span>
-<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>                            <span class="c1"># it can be derived from columns of the dataframe or supplied as</span>
-<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a>                            <span class="n">user_observable_columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;gender&#39;</span><span class="p">,</span> <span class="s1">&#39;income&#39;</span><span class="p">],</span>
-<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a>                            <span class="n">price_observable_columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;dealers&#39;</span><span class="p">],</span>
-<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>                            <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>Creating choice dataset from stata format data-frames...
-Note: choice sets of different sizes found in different purchase records: {&#39;size 4&#39;: &#39;occurrence 505&#39;, &#39;size 3&#39;: &#39;occurrence 380&#39;}
-Finished Creating Choice Dataset.
-</code></pre></div>
-<p>The dataset has a <code>summary()</code> method, which can be used to print out the summary of the dataset.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">data_1</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>* purchase record index range: [1 2 3] ... [883 884 885]
-* Space of 4 items:
-                   0         1         2       3
-item name  American  European  Japanese  Korean
-* Number of purchase records/cases: 885.
-* Preview of main data frame:
-      consumerid       car  purchase  gender     income  dealers
-0              1  American         1       1  46.699997        9
-1              1  Japanese         0       1  46.699997       11
-2              1  European         0       1  46.699997        5
-3              1    Korean         0       1  46.699997        1
-4              2  American         1       1  26.100000       10
-...          ...       ...       ...     ...        ...      ...
-3155         884  Japanese         1       1  20.900000       10
-3156         884  European         0       1  20.900000        4
-3157         885  American         1       1  30.600000       10
-3158         885  Japanese         0       1  30.600000        5
-3159         885  European         0       1  30.600000        4
-
-[3160 rows x 6 columns]
-* Preview of ChoiceDataset:
-ChoiceDataset(label=[], item_index=[885], user_index=[885], session_index=[885], item_availability=[885, 4], user_gender=[885, 1], user_income=[885, 1], price_dealers=[885, 4, 1], device=cuda:0)
-</code></pre></div>
-<p>You can access the <code>ChoiceDataset</code> object constructed by calling the <code>data.choice_dataset</code> object. </p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">data_1</span><span class="o">.</span><span class="n">choice_dataset</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>ChoiceDataset(label=[], item_index=[885], user_index=[885], session_index=[885], item_availability=[885, 4], user_gender=[885, 1], user_income=[885, 1], price_dealers=[885, 4, 1], device=cuda:0)
-</code></pre></div>
-<h2 id="method-2-adding-observables-as-data-frames">Method 2: Adding Observables as Data Frames</h2>
-<p>We can also construct data frames and use data frames to supply different observables. This is useful when you have a large dataset, for example, if there are many purchase records for the same user (to be concrete, say <span class="arithmatex">\(U\)</span> users and <span class="arithmatex">\(N\)</span> purchase records for each user, resulting <span class="arithmatex">\(U \times N\)</span> total purchase records). Using a single data-frame requires a lot of memory: you need to store <span class="arithmatex">\(U \times N\)</span> entires of user genders in total. However, user genders should be persistent across all purchasing records, if we use a separate data-frame mapping user index to gender of the user, we only need to store <span class="arithmatex">\(U\)</span> entries (i.e., one for each user) of gender information.</p>
-<p>Similarly, the long-format data requires storing each piece of item-specific information for number of purchase records times, which leads to inefficient usage of disk/memory space.</p>
-<h3 id="how-do-observable-data-frame-look-like">How Do Observable Data-frame Look Like?</h3>
-<p>Our package natively support the following four types of observables:</p>
 <ol>
-<li>
-<p><strong>User Observables</strong>: user-specific observables (e.g., gender and income) should (1) have length equal to the number of unique users in the dataset (885 here); (2) contains a column named as <code>user_index_column</code> (<code>user_index_column</code> is a variable, the actual column name should be the <strong>value</strong> of variable <code>user_index_column</code>! E.g., here the user observable data-frame should have a column named <code>'consumerid'</code>); (3) the user observable can have any number of other columns beside the <code>user_index_column</code> column, each of them corresponding to a user-specific observable. For example, a data-frame containing <span class="arithmatex">\(X\)</span> user-specific observables has shape <code>(num_users, X + 1)</code>.</p>
-</li>
-<li>
-<p><strong>Item Observables</strong> item-specific observables (not shown in this tutorial) should be (1) have length equal to the number of unique items in the dataset (4 here); (2) contain a column named as <code>item_index_column</code> (<code>item_index_column</code> is a variable, the actual column name should be the <strong>value</strong> of variable <code>item_index_column</code>! E.g., here the item observable data-frame should have a column named <code>'car'</code>); (3) the item observable can have any number of other columns beside the <code>item_index_column</code> column, each of them corresponding to a item-specific observable.</p>
-</li>
-<li>
-<p><strong>Session Observable</strong> session-specific observables (not shown in this tutorial) should be (1) have length equal to the number of unique sessions in the dataset; (2) contain a column named as <code>session_index_column</code> (<code>session_index_column</code> is a variable, the actual column name should be the <strong>value</strong> of variable <code>session_index_column</code>! E.g., here the session observable data-frame should have a column named <code>'consumerid'</code>); (3) the session observable can have any number of other columns beside the <code>session_index_column</code> column, each of them corresponding to a session-specific observable.</p>
-</li>
-<li>
-<p><strong>Price Observables</strong> (session, item)-specific observables (e.g., dealers) should be (1) contains a column named as <code>session_index_column</code> (e.g., <code>consumerid</code> in our example) <strong>and</strong> a column named as <code>item_name_column</code> (e.g., <code>car</code> in our example), (2) the price observable can have any number of other columns beside the <code>session_index_column</code> and <code>item_name_column</code> columns, each of them corresponding to a (session, item)-specific observable. For example, a data-frame containing <span class="arithmatex">\(X\)</span> (session, item)-specific observables has shape <code>(num_sessions, num_items, X + 2)</code>.</p>
-</li>
+<li>After estimating the model with GPU, the coefficient values are stored in the GPU memory. We need move the coefficient values to CPU memory and convert it to a numpy array before plotting.</li>
 </ol>
-<p>We encourage the reader to review the <em>Data Management Tutorial</em> for more details on types of observables.</p>
-<h3 id="suggested-procedure-of-storing-and-loading-data">Suggested Procedure of Storing and Loading Data</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">gamma</span> <span class="o">=</span> <span class="n">gamma</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+</code></pre></div>
 <ol>
-<li>Suppose <code>SESSION_INDEX</code> column in <code>df_main</code> is the index of the session, <code>ALTERNATIVES</code> column is the index of the car.</li>
-<li>For user-specific observables, you should have a CSV on disk with columns {<code>consumerid</code>, <code>var_1</code>, <code>var_2</code>, ...}.</li>
-<li>You load the user-specific dataset as <code>user_obs = pd.read_csv(..., index='consumerid')</code>.</li>
+<li>The tensor of individual fixed effects has shape (num_users, 1), you can use <code>squeeze()</code> to remove the dimension of size 1. Since we haven't updated the model in this tutorial, the coefficient values are all zeros.</li>
 </ol>
-<p>Let's first construct the data frame for user genders first.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">gender</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;consumerid&#39;</span><span class="p">)[</span><span class="s1">&#39;gender&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">gamma</span> <span class="o">=</span> <span class="n">gamma</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="n">gamma</span>
 </code></pre></div>
-<p>The user-observable data-frame contains a column of user IDs (the <code>consumerid</code> column), this column should have exactly the same name as the column containing user indices. Otherwise, the wrapper won't know which column corresponds to user IDs and which column corresponds to variables.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">gender</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code>array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+       0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+       0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+       0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+       0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+       0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+      dtype=float32)
 </code></pre></div>
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<ol>
+<li>Researcher can use <code>matplotlib</code> to plot the distribution of the coefficient values. For example, the distribution plot of coefficients is helpful to identify potential groups of users with different preferences.</li>
+</ol>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">gamma</span><span class="p">)</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+<p><img alt="png" src="../post_estimation_demos_files/post_estimation_demos_25_0.png" /></p>
+<h1 id="nested-logit-model">Nested Logit Model</h1>
+<p>The nested logit model has a very similar interface for coefficient extraction to the conditional logit model demonstrated above.</p>
+<p>Consider a nested logit model with the same item-level model but with nest-level model incorporating user-fixed effect, category-fixed effect (specified by <code>(1|item)</code> in the <code>nest_formula</code>), and user-specific coefficient on a 64-dimensional nest-specific observable (specified by <code>(item_obs|user)</code> in the <code>nest_formula</code>).</p>
+<p>The only difference is researcher would need to retrieve the coefficients of the nested logit model using the <code>get_coefficient()</code> method with the <code>level</code> argument.</p>
+<h2 id="nestedlogitmodelget_coefficient-method"><code>NestedLogitModel.get_coefficient()</code> Method.</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="n">nest_to_item</span> <span class="o">=</span> <span class="p">{</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>    <span class="mi">0</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>    <span class="mi">1</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">],</span>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>    <span class="mi">2</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">14</span><span class="p">],</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>    <span class="mi">3</span><span class="p">:</span> <span class="p">[</span><span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">19</span><span class="p">],</span>
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>    <span class="mi">4</span><span class="p">:</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">24</span><span class="p">]</span>
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="p">}</span>
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>
+<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="n">nest_dataset</span> <span class="o">=</span> <span class="n">ChoiceDataset</span><span class="p">(</span><span class="n">item_index</span><span class="o">=</span><span class="n">item_index</span><span class="p">,</span> <span class="n">user_index</span><span class="o">=</span><span class="n">user_index</span><span class="p">,</span> <span class="n">num_items</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">nest_to_item</span><span class="p">),</span> <span class="n">num_users</span><span class="o">=</span><span class="n">num_users</span><span class="p">,</span> <span class="n">item_obs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nest_to_item</span><span class="p">),</span> <span class="mi">64</span><span class="p">))</span>
+<a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="n">joint_dataset</span> <span class="o">=</span> <span class="n">JointDataset</span><span class="p">(</span><span class="n">nest</span><span class="o">=</span><span class="n">nest_dataset</span><span class="p">,</span> <span class="n">item</span><span class="o">=</span><span class="n">dataset</span><span class="p">)</span>
+<a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a><span class="n">joint_dataset</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>No `session_index` is provided, assume each choice instance is in its own session.
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
 
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>consumerid</th>
-      <th>gender</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>1</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>2</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>3</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>4</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>5</td>
-      <td>1</td>
-    </tr>
-  </tbody>
-</table>
-</div>
 
-<p>Then, let's build the data-frame for user-specific income variables.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="n">income</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;consumerid&#39;</span><span class="p">)[</span><span class="s1">&#39;income&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="n">income</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
-</code></pre></div>
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
 
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>consumerid</th>
-      <th>income</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>1</td>
-      <td>46.699997</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>2</td>
-      <td>26.100000</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>3</td>
-      <td>32.700001</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>4</td>
-      <td>49.199997</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>5</td>
-      <td>24.299999</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-<p>Please note that we can have multiple observables contained in the same data-frame as well.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="n">gender_and_income</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;consumerid&#39;</span><span class="p">)[[</span><span class="s1">&#39;gender&#39;</span><span class="p">,</span> <span class="s1">&#39;income&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="n">gender_and_income</span>
+JointDataset with 2 sub-datasets: (
+    nest: ChoiceDataset(label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[], item_obs=[5, 64], device=cpu)
+    item: ChoiceDataset(label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 25], user_obs=[100, 128], item_obs=[25, 64], session_obs=[500, 10], itemsession_obs=[500, 25, 12], device=cpu)
+)
 </code></pre></div>
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>consumerid</th>
-      <th>gender</th>
-      <th>income</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>1</td>
-      <td>1</td>
-      <td>46.699997</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>2</td>
-      <td>1</td>
-      <td>26.100000</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>3</td>
-      <td>1</td>
-      <td>32.700001</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>4</td>
-      <td>0</td>
-      <td>49.199997</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>5</td>
-      <td>1</td>
-      <td>24.299999</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>880</th>
-      <td>881</td>
-      <td>1</td>
-      <td>45.700001</td>
-    </tr>
-    <tr>
-      <th>881</th>
-      <td>882</td>
-      <td>1</td>
-      <td>69.800003</td>
-    </tr>
-    <tr>
-      <th>882</th>
-      <td>883</td>
-      <td>0</td>
-      <td>45.599998</td>
-    </tr>
-    <tr>
-      <th>883</th>
-      <td>884</td>
-      <td>1</td>
-      <td>20.900000</td>
-    </tr>
-    <tr>
-      <th>884</th>
-      <td>885</td>
-      <td>1</td>
-      <td>30.600000</td>
-    </tr>
-  </tbody>
-</table>
-<p>885 rows × 3 columns</p>
-</div>
-
-<p>The price observable data-frame contains two columns identifying session (i.e., the <code>consumerid</code> column) and item (i.e., the <code>car</code> column). The session index column should have exactly the same name as the session index column in <code>df</code> and the column indexing columns should have exactly the same name as the item-name-column in <code>df</code>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="n">dealers</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s1">&#39;consumerid&#39;</span><span class="p">,</span> <span class="s1">&#39;car&#39;</span><span class="p">,</span> <span class="s1">&#39;dealers&#39;</span><span class="p">]]</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="n">nested_model</span> <span class="o">=</span> <span class="n">NestedLogitModel</span><span class="p">(</span><span class="n">nest_to_item</span><span class="o">=</span><span class="n">nest_to_item</span><span class="p">,</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>                                <span class="n">nest_formula</span><span class="o">=</span><span class="s1">&#39;(1|user) + (1|item) + (item_obs|user)&#39;</span><span class="p">,</span>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>                                <span class="n">item_formula</span><span class="o">=</span><span class="s1">&#39;(1|constant) + (1|item) + (1|user) + (user_obs|item) + (item_obs|constant) + (session_obs|user) + (itemsession_obs|item) + (itemsession_obs|user)&#39;</span><span class="p">,</span>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>                                <span class="n">num_users</span><span class="o">=</span><span class="n">num_users</span><span class="p">,</span>
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>                                <span class="n">dataset</span><span class="o">=</span><span class="n">joint_dataset</span><span class="p">,</span>
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>                                <span class="n">shared_lambda</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="n">nested_model</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="n">dealers</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code>NestedLogitModel(
+  (nest_coef_dict): ModuleDict(
+    (intercept[user]): Coefficient(variation=user, num_items=5, num_users=100, num_params=1, 100 trainable parameters in total, device=cpu).
+    (intercept[item]): Coefficient(variation=item, num_items=5, num_users=100, num_params=1, 4 trainable parameters in total, device=cpu).
+    (item_obs[user]): Coefficient(variation=user, num_items=5, num_users=100, num_params=64, 6400 trainable parameters in total, device=cpu).
+  )
+  (item_coef_dict): ModuleDict(
+    (intercept[constant]): Coefficient(variation=constant, num_items=25, num_users=100, num_params=1, 1 trainable parameters in total, device=cpu).
+    (intercept[item]): Coefficient(variation=item, num_items=25, num_users=100, num_params=1, 24 trainable parameters in total, device=cpu).
+    (intercept[user]): Coefficient(variation=user, num_items=25, num_users=100, num_params=1, 100 trainable parameters in total, device=cpu).
+    (user_obs[item]): Coefficient(variation=item, num_items=25, num_users=100, num_params=128, 3072 trainable parameters in total, device=cpu).
+    (item_obs[constant]): Coefficient(variation=constant, num_items=25, num_users=100, num_params=64, 64 trainable parameters in total, device=cpu).
+    (session_obs[user]): Coefficient(variation=user, num_items=25, num_users=100, num_params=10, 1000 trainable parameters in total, device=cpu).
+    (itemsession_obs[item]): Coefficient(variation=item, num_items=25, num_users=100, num_params=12, 288 trainable parameters in total, device=cpu).
+    (itemsession_obs[user]): Coefficient(variation=user, num_items=25, num_users=100, num_params=12, 1200 trainable parameters in total, device=cpu).
+  )
+)
 </code></pre></div>
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>consumerid</th>
-      <th>car</th>
-      <th>dealers</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>1</td>
-      <td>American</td>
-      <td>9</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>1</td>
-      <td>Japanese</td>
-      <td>11</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>1</td>
-      <td>European</td>
-      <td>5</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>1</td>
-      <td>Korean</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>2</td>
-      <td>American</td>
-      <td>10</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-<h2 id="build-datasets-using-easydatasetwrapper-with-observables-as-data-frames">Build Datasets using <code>EasyDatasetWrapper</code> with Observables as Data-Frames</h2>
-<p>We can observables as data-frames using <code>{user, item, session, price}_observable_data</code> keyword arguments. </p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="n">data_2</span> <span class="o">=</span> <span class="n">EasyDatasetWrapper</span><span class="p">(</span><span class="n">main_data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
-<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>                            <span class="n">purchase_record_column</span><span class="o">=</span><span class="s1">&#39;consumerid&#39;</span><span class="p">,</span>
-<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>                            <span class="n">choice_column</span><span class="o">=</span><span class="s1">&#39;purchase&#39;</span><span class="p">,</span>
-<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>                            <span class="n">item_name_column</span><span class="o">=</span><span class="s1">&#39;car&#39;</span><span class="p">,</span>
-<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>                            <span class="n">user_index_column</span><span class="o">=</span><span class="s1">&#39;consumerid&#39;</span><span class="p">,</span>
-<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>                            <span class="n">session_index_column</span><span class="o">=</span><span class="s1">&#39;consumerid&#39;</span><span class="p">,</span>
-<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>                            <span class="c1"># above are the same as before, but we update the following.</span>
-<a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a>                            <span class="n">user_observable_data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="n">gender</span><span class="p">,</span> <span class="s1">&#39;income&#39;</span><span class="p">:</span> <span class="n">income</span><span class="p">},</span>
-<a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a>                            <span class="n">price_observable_data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;dealers&#39;</span><span class="p">:</span> <span class="n">dealers</span><span class="p">},</span>
-<a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a>                            <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># estimate the model... omitted in this tutorial.</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>Creating choice dataset from stata format data-frames...
-Note: choice sets of different sizes found in different purchase records: {&#39;size 4&#39;: &#39;occurrence 505&#39;, &#39;size 3&#39;: &#39;occurrence 380&#39;}
-Finished Creating Choice Dataset.
+<p>For example, you can use the following code snippet to retrieve the coefficient of the user-fixed effect in the nest level model, which is a vector with <code>num_users</code> elements.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="n">nested_model</span><span class="o">.</span><span class="n">get_coefficient</span><span class="p">(</span><span class="s1">&#39;intercept[user]&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s1">&#39;nest&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="c1"># Use summary to see what&#39;s inside the data wrapper.</span>
-<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="n">data_2</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code>torch.Size([100, 1])
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>* purchase record index range: [1 2 3] ... [883 884 885]
-* Space of 4 items:
-                   0         1         2       3
-item name  American  European  Japanese  Korean
-* Number of purchase records/cases: 885.
-* Preview of main data frame:
-      consumerid       car  purchase  gender     income  dealers
-0              1  American         1       1  46.699997        9
-1              1  Japanese         0       1  46.699997       11
-2              1  European         0       1  46.699997        5
-3              1    Korean         0       1  46.699997        1
-4              2  American         1       1  26.100000       10
-...          ...       ...       ...     ...        ...      ...
-3155         884  Japanese         1       1  20.900000       10
-3156         884  European         0       1  20.900000        4
-3157         885  American         1       1  30.600000       10
-3158         885  Japanese         0       1  30.600000        5
-3159         885  European         0       1  30.600000        4
-
-[3160 rows x 6 columns]
-* Preview of ChoiceDataset:
-ChoiceDataset(label=[], item_index=[885], user_index=[885], session_index=[885], item_availability=[885, 4], user_gender=[885, 1], user_income=[885, 1], price_dealers=[885, 4, 1], device=cuda:0)
+<p>Similarly, by changing to <code>level='item'</code>, the researcher can obtain the coefficient of user-specific fixed effect in the item level model, which is a also vector with <code>num_users</code> elements.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="n">nested_model</span><span class="o">.</span><span class="n">get_coefficient</span><span class="p">(</span><span class="s1">&#39;intercept[user]&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s1">&#39;item&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
 </code></pre></div>
-<p>Alternatively, we can supply user income and gender as a single dataframe, instead of <code>user_gender</code> and <code>user_income</code> tensors, now the constructed <code>ChoiceDataset</code> contains a single <code>user_gender_and_income</code> tensor with shape (885, 2) encompassing both income and gender of users.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="n">data_3</span> <span class="o">=</span> <span class="n">EasyDatasetWrapper</span><span class="p">(</span><span class="n">main_data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
-<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>                            <span class="n">purchase_record_column</span><span class="o">=</span><span class="s1">&#39;consumerid&#39;</span><span class="p">,</span>
-<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>                            <span class="n">choice_column</span><span class="o">=</span><span class="s1">&#39;purchase&#39;</span><span class="p">,</span>
-<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>                            <span class="n">item_name_column</span><span class="o">=</span><span class="s1">&#39;car&#39;</span><span class="p">,</span>
-<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>                            <span class="n">user_index_column</span><span class="o">=</span><span class="s1">&#39;consumerid&#39;</span><span class="p">,</span>
-<a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a>                            <span class="n">session_index_column</span><span class="o">=</span><span class="s1">&#39;consumerid&#39;</span><span class="p">,</span>
-<a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a>                            <span class="c1"># above are the same as before, but we update the following.</span>
-<a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a>                            <span class="n">user_observable_data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;gender_and_income&#39;</span><span class="p">:</span> <span class="n">gender_and_income</span><span class="p">},</span>
-<a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a>                            <span class="n">price_observable_data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;dealers&#39;</span><span class="p">:</span> <span class="n">dealers</span><span class="p">},</span>
-<a id="__codelineno-22-10" name="__codelineno-22-10" href="#__codelineno-22-10"></a>                            <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code>torch.Size([100, 1])
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>Creating choice dataset from stata format data-frames...
-Note: choice sets of different sizes found in different purchase records: {&#39;size 4&#39;: &#39;occurrence 505&#39;, &#39;size 3&#39;: &#39;occurrence 380&#39;}
-Finished Creating Choice Dataset.
+<p>This API generalizes to all other coefficients listed above such as <code>itemsession_obs[item]</code> and <code>itemsession_obs[user]</code>.</p>
+<p>One exception is the coefficients for inclusive values, (often denoted as <span class="arithmatex">\(\lambda\)</span>). Researchers can retrieve the coefficient of the inclusive value by using <code>get_coefficient('lambda')</code> without specifying the <code>level</code> argument (<code>get_coefficient</code> will disregard any <code>level</code> argument if the coefficient name is <code>lambda</code>). The returned value is a scalar if <code>shared_lambda</code> is <code>True</code>, and a 1D array of length <code>num_nests</code> if <code>shared_lambda</code> is <code>False</code>. In our case, the returned value is an array of length five (we have five nests in this model).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="n">nested_model</span><span class="o">.</span><span class="n">get_coefficient</span><span class="p">(</span><span class="s1">&#39;lambda&#39;</span><span class="p">)</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="n">data_3</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code>tensor([0.5000, 0.5000, 0.5000, 0.5000, 0.5000])
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>* purchase record index range: [1 2 3] ... [883 884 885]
-* Space of 4 items:
-                   0         1         2       3
-item name  American  European  Japanese  Korean
-* Number of purchase records/cases: 885.
-* Preview of main data frame:
-      consumerid       car  purchase  gender     income  dealers
-0              1  American         1       1  46.699997        9
-1              1  Japanese         0       1  46.699997       11
-2              1  European         0       1  46.699997        5
-3              1    Korean         0       1  46.699997        1
-4              2  American         1       1  26.100000       10
-...          ...       ...       ...     ...        ...      ...
-3155         884  Japanese         1       1  20.900000       10
-3156         884  European         0       1  20.900000        4
-3157         885  American         1       1  30.600000       10
-3158         885  Japanese         0       1  30.600000        5
-3159         885  European         0       1  30.600000        4
-
-[3160 rows x 6 columns]
-* Preview of ChoiceDataset:
-ChoiceDataset(label=[], item_index=[885], user_index=[885], session_index=[885], item_availability=[885, 4], user_gender_and_income=[885, 2], price_dealers=[885, 4, 1], device=cuda:0)
-</code></pre></div>
-<h2 id="method-3-mixing-method-1-and-method-2">Method 3: Mixing Method 1 and Method 2</h2>
-<p>The <code>EasyDataWrapper</code> also support supplying observables as a mixture of above methods. The following example supplies <code>gender</code> user observable as a data-frame but <code>income</code> and <code>dealers</code> as column names. </p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="n">data_4</span> <span class="o">=</span> <span class="n">EasyDatasetWrapper</span><span class="p">(</span><span class="n">main_data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
-<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>                            <span class="n">purchase_record_column</span><span class="o">=</span><span class="s1">&#39;consumerid&#39;</span><span class="p">,</span>
-<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>                            <span class="n">choice_column</span><span class="o">=</span><span class="s1">&#39;purchase&#39;</span><span class="p">,</span>
-<a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a>                            <span class="n">item_name_column</span><span class="o">=</span><span class="s1">&#39;car&#39;</span><span class="p">,</span>
-<a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a>                            <span class="n">user_index_column</span><span class="o">=</span><span class="s1">&#39;consumerid&#39;</span><span class="p">,</span>
-<a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a>                            <span class="n">session_index_column</span><span class="o">=</span><span class="s1">&#39;consumerid&#39;</span><span class="p">,</span>
-<a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a>                            <span class="c1"># above are the same as before, but we update the following.</span>
-<a id="__codelineno-24-8" name="__codelineno-24-8" href="#__codelineno-24-8"></a>                            <span class="n">user_observable_data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="n">gender</span><span class="p">},</span>
-<a id="__codelineno-24-9" name="__codelineno-24-9" href="#__codelineno-24-9"></a>                            <span class="n">user_observable_columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;income&#39;</span><span class="p">],</span>
-<a id="__codelineno-24-10" name="__codelineno-24-10" href="#__codelineno-24-10"></a>                            <span class="n">price_observable_columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;dealers&#39;</span><span class="p">],</span>
-<a id="__codelineno-24-11" name="__codelineno-24-11" href="#__codelineno-24-11"></a>                            <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>Creating choice dataset from stata format data-frames...
-Note: choice sets of different sizes found in different purchase records: {&#39;size 4&#39;: &#39;occurrence 505&#39;, &#39;size 3&#39;: &#39;occurrence 380&#39;}
-Finished Creating Choice Dataset.
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="n">data_4</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>* purchase record index range: [1 2 3] ... [883 884 885]
-* Space of 4 items:
-                   0         1         2       3
-item name  American  European  Japanese  Korean
-* Number of purchase records/cases: 885.
-* Preview of main data frame:
-      consumerid       car  purchase  gender     income  dealers
-0              1  American         1       1  46.699997        9
-1              1  Japanese         0       1  46.699997       11
-2              1  European         0       1  46.699997        5
-3              1    Korean         0       1  46.699997        1
-4              2  American         1       1  26.100000       10
-...          ...       ...       ...     ...        ...      ...
-3155         884  Japanese         1       1  20.900000       10
-3156         884  European         0       1  20.900000        4
-3157         885  American         1       1  30.600000       10
-3158         885  Japanese         0       1  30.600000        5
-3159         885  European         0       1  30.600000        4
-
-[3160 rows x 6 columns]
-* Preview of ChoiceDataset:
-ChoiceDataset(label=[], item_index=[885], user_index=[885], session_index=[885], item_availability=[885, 4], user_gender=[885, 1], user_income=[885, 1], price_dealers=[885, 4, 1], device=cuda:0)
-</code></pre></div>
-<h1 id="sanity-checks">Sanity Checks</h1>
-<p>Lastly, let's check choice datasets constructed via different methods are actually the same.</p>
-<p>The <code>==</code> method of choice datasets will compare the non-NAN entries of all tensors in datasets. </p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="nb">print</span><span class="p">(</span><span class="n">data_1</span><span class="o">.</span><span class="n">choice_dataset</span> <span class="o">==</span> <span class="n">data_2</span><span class="o">.</span><span class="n">choice_dataset</span><span class="p">)</span>
-<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="nb">print</span><span class="p">(</span><span class="n">data_1</span><span class="o">.</span><span class="n">choice_dataset</span> <span class="o">==</span> <span class="n">data_4</span><span class="o">.</span><span class="n">choice_dataset</span><span class="p">)</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>True
-True
-</code></pre></div>
-<p>For <code>data_3</code>, we have <code>income</code> and <code>gender</code> combined:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="n">data_3</span><span class="o">.</span><span class="n">choice_dataset</span><span class="o">.</span><span class="n">user_gender_and_income</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">data_1</span><span class="o">.</span><span class="n">choice_dataset</span><span class="o">.</span><span class="n">user_gender</span><span class="p">,</span> <span class="n">data_1</span><span class="o">.</span><span class="n">choice_dataset</span><span class="o">.</span><span class="n">user_income</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>tensor([[True, True],
-        [True, True],
-        [True, True],
-        ...,
-        [True, True],
-        [True, True],
-        [True, True]], device=&#39;cuda:0&#39;)
-</code></pre></div>
-<p>Now let's compare what's inside the data structure and our raw data.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="n">bought_raw</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;purchase&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">][</span><span class="s1">&#39;car&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
-<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a><span class="n">bought_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-<a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a><span class="n">encoder</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;American&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;European&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;Japanese&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;Korean&#39;</span><span class="p">}</span>
-<a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a><span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">data_1</span><span class="o">.</span><span class="n">choice_dataset</span><span class="o">.</span><span class="n">item_index</span><span class="p">:</span>
-<a id="__codelineno-28-5" name="__codelineno-28-5" href="#__codelineno-28-5"></a>    <span class="n">bought_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">encoder</span><span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">b</span><span class="p">)])</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="nb">all</span><span class="p">(</span><span class="n">bought_raw</span> <span class="o">==</span> <span class="n">bought_data</span><span class="p">)</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>True
-</code></pre></div>
-<p>Then, let's compare the income and gender variable contained in the dataset. </p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;consumerid&#39;</span><span class="p">)[</span><span class="s1">&#39;income&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">values</span>
-<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a><span class="n">Y</span> <span class="o">=</span> <span class="n">data_1</span><span class="o">.</span><span class="n">choice_dataset</span><span class="o">.</span><span class="n">user_income</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
-<a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a><span class="nb">all</span><span class="p">(</span><span class="n">X</span> <span class="o">==</span> <span class="n">Y</span><span class="p">)</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>True
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;consumerid&#39;</span><span class="p">)[</span><span class="s1">&#39;gender&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">values</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a><span class="n">Y</span> <span class="o">=</span> <span class="n">data_1</span><span class="o">.</span><span class="n">choice_dataset</span><span class="o">.</span><span class="n">user_gender</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
-<a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a><span class="nb">all</span><span class="p">(</span><span class="n">X</span> <span class="o">==</span> <span class="n">Y</span><span class="p">)</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>True
-</code></pre></div>
-<p>Lastly, let's compare the <code>price_dealer</code> variable. Since there are NAN-values in it for unavailable cars, we can't not use <code>all(X == Y)</code> to compare them. We will first fill NANs values with <code>-1</code> and then compare resulted data-frames.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="c1"># rearrange columns to align it with the internal encoding scheme of the data wrapper.</span>
-<a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a><span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="s1">&#39;consumerid&#39;</span><span class="p">,</span> <span class="s1">&#39;car&#39;</span><span class="p">,</span> <span class="s1">&#39;dealers&#39;</span><span class="p">)[[</span><span class="s1">&#39;American&#39;</span><span class="p">,</span> <span class="s1">&#39;European&#39;</span><span class="p">,</span> <span class="s1">&#39;Japanese&#39;</span><span class="p">,</span> <span class="s1">&#39;Korean&#39;</span><span class="p">]]</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a><span class="n">X</span>
-</code></pre></div>
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th>car</th>
-      <th>American</th>
-      <th>European</th>
-      <th>Japanese</th>
-      <th>Korean</th>
-    </tr>
-    <tr>
-      <th>consumerid</th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>1</th>
-      <td>9.0</td>
-      <td>5.0</td>
-      <td>11.0</td>
-      <td>1.0</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>10.0</td>
-      <td>2.0</td>
-      <td>7.0</td>
-      <td>1.0</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>8.0</td>
-      <td>2.0</td>
-      <td>6.0</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>5.0</td>
-      <td>3.0</td>
-      <td>4.0</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>8.0</td>
-      <td>3.0</td>
-      <td>3.0</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>881</th>
-      <td>8.0</td>
-      <td>2.0</td>
-      <td>10.0</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>882</th>
-      <td>8.0</td>
-      <td>6.0</td>
-      <td>8.0</td>
-      <td>1.0</td>
-    </tr>
-    <tr>
-      <th>883</th>
-      <td>9.0</td>
-      <td>5.0</td>
-      <td>8.0</td>
-      <td>1.0</td>
-    </tr>
-    <tr>
-      <th>884</th>
-      <td>12.0</td>
-      <td>4.0</td>
-      <td>10.0</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>885</th>
-      <td>10.0</td>
-      <td>4.0</td>
-      <td>5.0</td>
-      <td>NaN</td>
-    </tr>
-  </tbody>
-</table>
-<p>885 rows × 4 columns</p>
-</div>
-
-<div class="highlight"><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a><span class="n">Y</span> <span class="o">=</span> <span class="n">data_1</span><span class="o">.</span><span class="n">choice_dataset</span><span class="o">.</span><span class="n">price_dealers</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a><span class="n">Y</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>tensor([[ 9.,  5., 11.,  1.],
-        [10.,  2.,  7.,  1.],
-        [ 8.,  2.,  6., nan],
-        ...,
-        [ 9.,  5.,  8.,  1.],
-        [12.,  4., 10., nan],
-        [10.,  4.,  5., nan]], device=&#39;cuda:0&#39;)
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a><span class="nb">print</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>[[ True  True  True  True]
- [ True  True  True  True]
- [ True  True  True  True]
- ...
- [ True  True  True  True]
- [ True  True  True  True]
- [ True  True  True  True]]
-</code></pre></div>
-<p>This concludes our tutorial on building the dataset, if you wish more in-depth understanding of the data structure, please refer to the <em>Data Management Tutorial</em>.</p>
 
               
             </article>
@@ -1640,7 +713,7 @@ True
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href="../data_management/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Data Management" rel="prev">
+        <a href="../nested_logit_model_house_cooling/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Nested Logit Model" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -1649,20 +722,20 @@ True
               <span class="md-footer__direction">
                 Previous
               </span>
-              Data Management
+              Nested Logit Model
             </div>
           </div>
         </a>
       
       
         
-        <a href="../conditional_logit_model_mode_canada/" class="md-footer__link md-footer__link--next" aria-label="Next: Conditional Logit Model" rel="next">
+        <a href="../projects/" class="md-footer__link md-footer__link--next" aria-label="Next: Related Projects" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Conditional Logit Model
+              Related Projects
             </div>
           </div>
           <div class="md-footer__button md-icon">

@@ -3,7 +3,7 @@ The dataset object for management large scale consumer choice datasets.
 Please refer to the documentation and tutorials for more details on using `ChoiceDataset`.
 
 Author: Tianyu Du
-Update: Apr. 27, 2022
+Update: Jan. 2, 2023
 """
 import copy
 from typing import Dict, List, Optional, Tuple, Union
@@ -17,6 +17,7 @@ class ChoiceDataset(torch.utils.data.Dataset):
     def __init__(self,
                  item_index: torch.LongTensor,
                  num_items: int = None,
+                 num_users: int = None,
                  label: Optional[torch.LongTensor] = None,
                  user_index: Optional[torch.LongTensor] = None,
                  session_index: Optional[torch.LongTensor] = None,
@@ -41,6 +42,10 @@ class ChoiceDataset(torch.utils.data.Dataset):
                 (1) the item bought in this choice instance,
                 (2) or the item reviewed by the user. In the later case, we need the `label` tensor to specify the rating score.
                 NOTE: The support for second case is under-development, currently, we are only supporting binary label.
+
+            num_items (Optional[int]): the number of items in the dataset. If `None` is provided (default), the number of items will be inferred from the number of unique numbers in `item_index`.
+
+            num_users (Optional[int]): the number of users in the dataset. If `None` is provided (default), the number of users will be inferred from the number of unique numbers in `user_index`.
 
             label (Optional[torch.LongTensor], optional): a tensor of shape (batch_size) indicating the label for prediction in
                 each choice instance. While you want to predict the item bought, you can leave the `label` argument
@@ -83,15 +88,16 @@ class ChoiceDataset(torch.utils.data.Dataset):
             NOTE: we don't recommend using taste observables, because num_users * num_items is potentially large.
             5. price observables (those vary by session and item) must start with `price_` and have
                 shape (num_sessions, num_items, *)
+            6. itemsession observables starting with `itemsession_`, this is a more intuitive alias to the price
+                observable.
         """
         # ENHANCEMENT(Tianyu): add item_names for summary.
         super(ChoiceDataset, self).__init__()
         self.label = label
         self.item_index = item_index
-        if num_items is not None:
-            self.provided_num_items = num_items
-        else:
-            self.provided_num_items = None
+        self._num_items = num_items
+        self._num_users = num_users
+
         self.user_index = user_index
         self.session_index = session_index
 
@@ -187,8 +193,10 @@ class ChoiceDataset(torch.utils.data.Dataset):
         Returns:
             int: the number of users involved in this dataset.
         """
-        # query from user_index
-        if self.user_index is not None:
+        if self._num_users is not None:
+            return self._num_users
+        elif self.user_index is not None:
+            # infer from the number of unique items in  user_index.
             return len(torch.unique(self.user_index))
         else:
             return 1
@@ -206,11 +214,12 @@ class ChoiceDataset(torch.utils.data.Dataset):
         Returns:
             int: the number of items involved in this dataset.
         """
-        if self.provided_num_items is None:
+        if self._num_items is not None:
+            # return the _num_items provided in the constructor.
+            return self._num_items
+        else:
             # infer the number of items from item_index.
             return len(torch.unique(self.item_index))
-        else:
-            return self.provided_num_items
 
         # for key, val in self.__dict__.items():
         #     if torch.is_tensor(val):
@@ -352,8 +361,8 @@ class ChoiceDataset(torch.utils.data.Dataset):
         Returns:
             str: the string representation of the dataset.
         """
-        info = [
-            f'{key}={self._size_repr(item)}' for key, item in self.__dict__.items()]
+        # don't print shapes of internal attributes like _num_users and _num_items.
+        info = [f'{key}={self._size_repr(item)}' for key, item in self.__dict__.items() if not key.startswith('_')]
         return f"{self.__class__.__name__}({', '.join(info)}, device={self.device})"
 
     # ==================================================================================================================
@@ -377,7 +386,7 @@ class ChoiceDataset(torch.utils.data.Dataset):
 
     @staticmethod
     def _is_price_attribute(key: str) -> bool:
-        return key.startswith('price_')
+        return key.startswith('price_') or key.startswith('itemsession_')
 
     def _is_attribute(self, key: str) -> bool:
         return self._is_item_attribute(key) \

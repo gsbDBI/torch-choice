@@ -4,12 +4,9 @@ import sys
 import numpy as np
 import pandas as pd
 import torch
+torch.manual_seed(1234)
 from tqdm import tqdm
 tqdm.pandas()
-
-torch.manual_seed(1234)
-import torch_choice
-import torch_choice.utils
 from torch_choice.data import ChoiceDataset, utils
 from torch_choice.model import ConditionalLogitModel
 from torch_choice.utils.run_helper import run

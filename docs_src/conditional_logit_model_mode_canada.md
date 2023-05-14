@@ -214,7 +214,7 @@ print(item_index)
     2       air
     3       air
     4       air
-           ...
+           ... 
     2774    car
     2775    car
     2776    car
@@ -304,6 +304,9 @@ dataset = ChoiceDataset(item_index=item_index,
                         ).to(device)
 ```
 
+    No `session_index` is provided, assume each choice instance is in its own session.
+
+
 You can `print(dataset)` to check shapes of tensors contained in the `ChoiceDataset`.
 
 
@@ -345,7 +348,7 @@ Each of dictionary values tells the dimension of the corresponding observables, 
 For example, the `price_cost_freq_ovt` consists of three observables and we set the corresponding to three.
 
 Even the model can infer `num_param_dict['intercept'] = 1`, but we recommend the research to include it for completeness.
-
+   
 ### Number of items
 The `num_items` keyword informs the model how many alternatives users are choosing from.
 
@@ -381,18 +384,56 @@ print(model)
 
     ConditionalLogitModel(
       (coef_dict): ModuleDict(
-        (price_cost_freq_ovt): Coefficient(variation=constant, num_items=4, num_users=None, num_params=3, 3 trainable parameters in total).
-        (session_income): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total).
-        (price_ivt): Coefficient(variation=item-full, num_items=4, num_users=None, num_params=1, 4 trainable parameters in total).
-        (intercept): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total).
+        (price_cost_freq_ovt[constant]): Coefficient(variation=constant, num_items=4, num_users=None, num_params=3, 3 trainable parameters in total, device=cpu).
+        (session_income[item]): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cpu).
+        (price_ivt[item-full]): Coefficient(variation=item-full, num_items=4, num_users=None, num_params=1, 4 trainable parameters in total, device=cpu).
+        (intercept[item]): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cpu).
       )
     )
     Conditional logistic discrete choice model, expects input features:
+    
+    X[price_cost_freq_ovt[constant]] with 3 parameters, with constant level variation.
+    X[session_income[item]] with 1 parameters, with item level variation.
+    X[price_ivt[item-full]] with 1 parameters, with item-full level variation.
+    X[intercept[item]] with 1 parameters, with item level variation.
+    device=cpu
 
-    X[price_cost_freq_ovt] with 3 parameters, with constant level variation.
-    X[session_income] with 1 parameters, with item level variation.
-    X[price_ivt] with 1 parameters, with item-full level variation.
-    X[intercept] with 1 parameters, with item level variation.
+
+## Creating Model using Formula
+Alternatively, researchers can create the model using a `formula` like in R.
+
+The formula consists of a list of additive terms separated by `+` sign, and each term looks like `(variable_name|variation)`. Where `variable_name` is the name of the variable in the dataset, and `variation` is one of `constant`, `user`, `item`, `item-full`. Initializing the model using `formula` requires you to pass in the `ChoiceDataset` object as well so that the model can infer the dimension of each variable.
+
+These two ways of creating models lead to equivalent models.
+
+
+```python
+model = model = ConditionalLogitModel(
+    formula='(price_cost_freq_ovt|constant) + (session_income|item) + (price_ivt|item-full) + (intercept|item)',
+    dataset=dataset,
+    num_items=4)
+```
+
+
+```python
+print(model)
+```
+
+    ConditionalLogitModel(
+      (coef_dict): ModuleDict(
+        (price_cost_freq_ovt[constant]): Coefficient(variation=constant, num_items=4, num_users=None, num_params=3, 3 trainable parameters in total, device=cpu).
+        (session_income[item]): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cpu).
+        (price_ivt[item-full]): Coefficient(variation=item-full, num_items=4, num_users=None, num_params=1, 4 trainable parameters in total, device=cpu).
+        (intercept[item]): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cpu).
+      )
+    )
+    Conditional logistic discrete choice model, expects input features:
+    
+    X[price_cost_freq_ovt[constant]] with 3 parameters, with constant level variation.
+    X[session_income[item]] with 1 parameters, with item level variation.
+    X[price_ivt[item-full]] with 1 parameters, with item-full level variation.
+    X[intercept[item]] with 1 parameters, with item level variation.
+    device=cpu
 
 
 ## Train the Model
@@ -413,58 +454,59 @@ print('Time taken:', time() - start_time)
     ==================== received model ====================
     ConditionalLogitModel(
       (coef_dict): ModuleDict(
-        (price_cost_freq_ovt): Coefficient(variation=constant, num_items=4, num_users=None, num_params=3, 3 trainable parameters in total).
-        (session_income): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total).
-        (price_ivt): Coefficient(variation=item-full, num_items=4, num_users=None, num_params=1, 4 trainable parameters in total).
-        (intercept): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total).
+        (price_cost_freq_ovt[constant]): Coefficient(variation=constant, num_items=4, num_users=None, num_params=3, 3 trainable parameters in total, device=cpu).
+        (session_income[item]): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cpu).
+        (price_ivt[item-full]): Coefficient(variation=item-full, num_items=4, num_users=None, num_params=1, 4 trainable parameters in total, device=cpu).
+        (intercept[item]): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cpu).
       )
     )
     Conditional logistic discrete choice model, expects input features:
-
-    X[price_cost_freq_ovt] with 3 parameters, with constant level variation.
-    X[session_income] with 1 parameters, with item level variation.
-    X[price_ivt] with 1 parameters, with item-full level variation.
-    X[intercept] with 1 parameters, with item level variation.
+    
+    X[price_cost_freq_ovt[constant]] with 3 parameters, with constant level variation.
+    X[session_income[item]] with 1 parameters, with item level variation.
+    X[price_ivt[item-full]] with 1 parameters, with item-full level variation.
+    X[intercept[item]] with 1 parameters, with item level variation.
+    device=cpu
     ==================== received dataset ====================
     ChoiceDataset(label=[], item_index=[2779], user_index=[], session_index=[2779], item_availability=[], price_cost_freq_ovt=[2779, 4, 3], session_income=[2779, 1], price_ivt=[2779, 4, 1], device=cpu)
     ==================== training the model ====================
-    Epoch 5000: Log-likelihood=-1875.552490234375
-    Epoch 10000: Log-likelihood=-1892.94775390625
-    Epoch 15000: Log-likelihood=-1877.9156494140625
-    Epoch 20000: Log-likelihood=-1881.0845947265625
-    Epoch 25000: Log-likelihood=-1884.7335205078125
-    Epoch 30000: Log-likelihood=-1874.423828125
-    Epoch 35000: Log-likelihood=-1875.3016357421875
-    Epoch 40000: Log-likelihood=-1874.3779296875
-    Epoch 45000: Log-likelihood=-1875.703125
-    Epoch 50000: Log-likelihood=-1899.8175048828125
+    Epoch 5000: Log-likelihood=-1877.81640625
+    Epoch 10000: Log-likelihood=-1878.5775146484375
+    Epoch 15000: Log-likelihood=-1879.2830810546875
+    Epoch 20000: Log-likelihood=-1895.0306396484375
+    Epoch 25000: Log-likelihood=-1876.6690673828125
+    Epoch 30000: Log-likelihood=-1874.603759765625
+    Epoch 35000: Log-likelihood=-1877.6473388671875
+    Epoch 40000: Log-likelihood=-1891.16357421875
+    Epoch 45000: Log-likelihood=-1877.5592041015625
+    Epoch 50000: Log-likelihood=-1876.2728271484375
     ==================== model results ====================
     Training Epochs: 50000
-
+    
     Learning Rate: 0.01
-
+    
     Batch Size: 2779 out of 2779 observations in total
-
-    Final Log-likelihood: -1899.8175048828125
-
+    
+    Final Log-likelihood: -1876.2728271484375
+    
     Coefficients:
-
-    | Coefficient           |   Estimation |   Std. Err. |
-    |:----------------------|-------------:|------------:|
-    | price_cost_freq_ovt_0 |  -0.0342194  |  0.00731707 |
-    | price_cost_freq_ovt_1 |   0.092262   |  0.00520946 |
-    | price_cost_freq_ovt_2 |  -0.0439827  |  0.00342765 |
-    | session_income_0      |  -0.0901207  |  0.0205214  |
-    | session_income_1      |  -0.0272581  |  0.00385396 |
-    | session_income_2      |  -0.0390468  |  0.00428838 |
-    | price_ivt_0           |   0.0592097  |  0.0102933  |
-    | price_ivt_1           |  -0.00753696 |  0.00496264 |
-    | price_ivt_2           |  -0.00604297 |  0.00193414 |
-    | price_ivt_3           |  -0.00207518 |  0.00123286 |
-    | intercept_0           |   0.700786   |  1.39368    |
-    | intercept_1           |   1.85016    |  0.728283   |
-    | intercept_2           |   3.2782     |  0.648064   |
-    Time taken: 179.84411025047302
+    
+    | Coefficient                     |   Estimation |   Std. Err. |
+    |:--------------------------------|-------------:|------------:|
+    | price_cost_freq_ovt[constant]_0 |  -0.0334654  |  0.00716249 |
+    | price_cost_freq_ovt[constant]_1 |   0.0924185  |  0.00512754 |
+    | price_cost_freq_ovt[constant]_2 |  -0.0432329  |  0.0032801  |
+    | session_income[item]_0          |  -0.0892292  |  0.0188848  |
+    | session_income[item]_1          |  -0.0278481  |  0.00386248 |
+    | session_income[item]_2          |  -0.0383362  |  0.00414    |
+    | price_ivt[item-full]_0          |   0.0593935  |  0.0101313  |
+    | price_ivt[item-full]_1          |  -0.00697196 |  0.00456365 |
+    | price_ivt[item-full]_2          |  -0.00629515 |  0.0019084  |
+    | price_ivt[item-full]_3          |  -0.00164838 |  0.00119982 |
+    | intercept[item]_0               |   0.701135   |  1.30931    |
+    | intercept[item]_1               |   1.84954    |  0.714135   |
+    | intercept[item]_2               |   3.27894    |  0.631329   |
+    Time taken: 109.68721008300781
 
 
 ### Parameter Estimation from `R`
@@ -476,7 +518,7 @@ The `run()` method calculates the standard deviation using $\sqrt{\text{diag}(H^
 
 Names of coefficients are slightly different, one can use the following conversion table to compare estimations and standard deviations reported by both packages.
 
-| Coefficient Name in Python |  Estimation |   Std. Err. |  Coeffcient Name in R | R Estimation | R Std. Err. |
+<!-- | Coefficient Name in Python |  Estimation |   Std. Err. |  Coeffcient Name in R | R Estimation | R Std. Err. | 
 |:---------------------:|-------------:|------------:| :--------------: | ----------: | ------: |
 | price_cost_freq_ovt_0 |  -0.0342194  |  0.00731707 | cost             | -0.0333389  |0.0070955|
 | price_cost_freq_ovt_1 |   0.092262   |  0.00520946 | freq             |  0.0925297  |0.0050976|
@@ -490,7 +532,7 @@ Names of coefficients are slightly different, one can use the following conversi
 | price_ivt_3           |  -0.00207518 |  0.00123286 | ivt:train        | -0.0014504  |0.0011875|
 | intercept_0           |   0.700786   |  1.39368    | (Intercept):bus  |  0.6983381  |1.2802466|
 | intercept_1           |   1.85016    |  0.728283   | (Intercept):car  |  1.8441129  |0.7085089|
-| intercept_2           |   3.2782     |  0.648064   | (Intercept):train|  3.2741952  |0.6244152|
+| intercept_2           |   3.2782     |  0.648064   | (Intercept):train|  3.2741952  |0.6244152| -->
 
 ### R Output
 ```r
@@ -504,23 +546,23 @@ summary(ml.MC1)
 ```
 ```
 Call:
-mlogit(formula = choice ~ cost + freq + ovt | income | ivt, data = MC,
+mlogit(formula = choice ~ cost + freq + ovt | income | ivt, data = MC, 
     reflevel = "air", method = "nr")
 
 Frequencies of alternatives:choice
-      air     train       bus       car
-0.3738755 0.1666067 0.0035984 0.4559194
+      air     train       bus       car 
+0.3738755 0.1666067 0.0035984 0.4559194 
 
 nr method
-9 iterations, 0h:0m:0s
-g'(-H)^-1g = 0.00014
-successive function values within tolerance limits
+9 iterations, 0h:0m:0s 
+g'(-H)^-1g = 0.00014 
+successive function values within tolerance limits 
 
 Coefficients :
-                    Estimate Std. Error  z-value  Pr(>|z|)
+                    Estimate Std. Error  z-value  Pr(>|z|)    
 (Intercept):train  3.2741952  0.6244152   5.2436 1.575e-07 ***
-(Intercept):bus    0.6983381  1.2802466   0.5455 0.5854292
-(Intercept):car    1.8441129  0.7085089   2.6028 0.0092464 **
+(Intercept):bus    0.6983381  1.2802466   0.5455 0.5854292    
+(Intercept):car    1.8441129  0.7085089   2.6028 0.0092464 ** 
 cost              -0.0333389  0.0070955  -4.6986 2.620e-06 ***
 freq               0.0925297  0.0050976  18.1517 < 2.2e-16 ***
 ovt               -0.0430036  0.0032247 -13.3356 < 2.2e-16 ***
@@ -528,14 +570,14 @@ income:train      -0.0381466  0.0040831  -9.3426 < 2.2e-16 ***
 income:bus        -0.0890867  0.0183471  -4.8556 1.200e-06 ***
 income:car        -0.0279930  0.0038726  -7.2286 4.881e-13 ***
 ivt:air            0.0595097  0.0100727   5.9080 3.463e-09 ***
-ivt:train         -0.0014504  0.0011875  -1.2214 0.2219430
-ivt:bus           -0.0067835  0.0044334  -1.5301 0.1259938
+ivt:train         -0.0014504  0.0011875  -1.2214 0.2219430    
+ivt:bus           -0.0067835  0.0044334  -1.5301 0.1259938    
 ivt:car           -0.0064603  0.0018985  -3.4029 0.0006668 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Log-Likelihood: -1874.3
-McFadden R^2:  0.35443
+McFadden R^2:  0.35443 
 Likelihood ratio test : chisq = 2058.1 (p.value = < 2.22e-16)
 ```
 

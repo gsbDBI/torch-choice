@@ -1,7 +1,7 @@
 # Random Utility Model (RUM) Part II: Nested Logit Model
 Author: Tianyu Du
 
-The package implements the nested logit model as well, which allows researchers to model choices as a two-stage process: the user first picks a category of purchase and then picks the item from the chosen category that generates the most utility.
+The package implements the nested logit model as well, which allows researchers to model choices as a two-stage process: the user first picks a nest of purchase and then picks the item from the chosen nest that generates the most utility.
 
 Examples here are modified from [Exercise 2: Nested logit model by Kenneth Train and Yves Croissant](https://cran.r-project.org/web/packages/mlogit/vignettes/e2nlogit.html).
 
@@ -35,15 +35,15 @@ Note that the full installation cost of alternative gcc is ich.gcc+icca, and sim
 ## Nested Logit Model: Background
 The following code block provides an example initialization of the `NestedLogitModel` (please refer to examples below for details).
 ```python
-model = NestedLogitModel(category_to_item=category_to_item,
-                         category_coef_variation_dict={},
-                         category_num_param_dict={},
+model = NestedLogitModel(nest_to_item=nest_to_item,
+                         nest_coef_variation_dict={},
+                         nest_num_param_dict={},
                          item_coef_variation_dict={'price_obs': 'constant'},
                          item_num_param_dict={'price_obs': 7},
                          shared_lambda=True)
 ```
 
-The nested logit model decompose the utility of choosing item $i$ into the (1) item-specific values and (2) category specify values.  For simplicity, suppose item $i$  belongs to category $k \in \{1, \dots, K\}$: $i \in B_k$.
+The nested logit model decompose the utility of choosing item $i$ into the (1) item-specific values and (2) nest specify values.  For simplicity, suppose item $i$  belongs to nest $k \in \{1, \dots, K\}$: $i \in B_k$.
 
 $$
 U_{uit} = W_{ukt} + Y_{uit}
@@ -51,66 +51,68 @@ $$
 
 Where both $W$ and $Y$ are estimated using linear models from as in the conditional logit model.
 
-The log-likelihood for user $u$ to choose item $i$ at time/session $t$ decomposes into the item-level likelihood and category-level likelihood.
+The log-likelihood for user $u$ to choose item $i$ at time/session $t$ decomposes into the item-level likelihood and nest-level likelihood.
 
 $$
 \log P(i \mid u, t) = \log P(i \mid u, t, B_k) + \log P(k \mid u, t) \\
 = \log \left(\frac{\exp(Y_{uit}/\lambda_k)}{\sum_{j \in B_k} \exp(Y_{ujt}/\lambda_k)}\right) + \log \left( \frac{\exp(W_{ukt} + \lambda_k I_{ukt})}{\sum_{\ell=1}^K \exp(W_{u\ell t} + \lambda_\ell I_{u\ell t})}\right)
 $$
 
-The **inclusive value** of category $k$, $I_{ukt}$ is defined as $\log \sum_{j \in B_k} \exp(Y_{ujt}/\lambda_k)$, which is the *expected utility from choosing the best alternative from category $k$*.
+The **inclusive value** of nest $k$, $I_{ukt}$ is defined as $\log \sum_{j \in B_k} \exp(Y_{ujt}/\lambda_k)$, which is the *expected utility from choosing the best alternative from nest $k$*.
 
-The `category_to_item` keyword defines a dictionary of the mapping $k \mapsto B_k$, where keys of `category_to_item`  are integer $k$'s and  `category_to_item[k]`  is a list consisting of IDs of items in $B_k$.
+The `nest_to_item` keyword defines a dictionary of the mapping $k \mapsto B_k$, where keys of `nest_to_item`  are integer $k$'s and  `nest_to_item[k]`  is a list consisting of IDs of items in $B_k$.
 
-The `{category, item}_coef_variation_dict` provides specification to $W_{ukt}$ and $Y_{uit}$ respectively, `torch_choice` allows for empty category level models by providing an empty dictionary (in this case, $W_{ukt} = \epsilon_{ukt}$) since the inclusive value term $\lambda_k I_{ukt}$ will be used to model the choice over categories. However, by specifying an empty second stage model ($Y_{uit} = \epsilon_{uit}$), the nested logit model reduces to a conditional logit model of choices over categories. Hence, one should never use the `NestedLogitModel` class with an empty item-level model.
+The `{nest, item}_coef_variation_dict` provides specification to $W_{ukt}$ and $Y_{uit}$ respectively, `torch_choice` allows for empty nest level models by providing an empty dictionary (in this case, $W_{ukt} = \epsilon_{ukt}$) since the inclusive value term $\lambda_k I_{ukt}$ will be used to model the choice over nests. However, by specifying an empty second stage model ($Y_{uit} = \epsilon_{uit}$), the nested logit model reduces to a conditional logit model of choices over nests. Hence, one should never use the `NestedLogitModel` class with an empty item-level model.
 
-Similar to the conditional logit model, `{category, item}_num_param_dict` specify the dimension (number of observables to be multiplied with the coefficient) of coefficients. The above code initializes a simple model built upon item-time-specific observables $X_{it} \in \mathbb{R}^7$,
+Similar to the conditional logit model, `{nest, item}_num_param_dict` specify the dimension (number of observables to be multiplied with the coefficient) of coefficients. The above code initializes a simple model built upon item-time-specific observables $X_{it} \in \mathbb{R}^7$,
 
 $$
 Y_{uit} = \beta^\top X_{it} + \epsilon_{uit} \\
 W_{ukt} = \epsilon_{ukt}
 $$
 
-The research may wish to enfoce the *elasiticity* $\lambda_k$ to be constant across categories, setting `shared_lambda=True` enforces $\lambda_k = \lambda\ \forall k \in [K]$.
+The research may wish to enfoce the *elasiticity* $\lambda_k$ to be constant across nests, setting `shared_lambda=True` enforces $\lambda_k = \lambda\ \forall k \in [K]$.
 
 ## Load Essential Packages
 We firstly read essential packages for this tutorial.
 
 
 ```python
-import argparse
-
 import pandas as pd
 import torch
 
 from torch_choice.data import ChoiceDataset, JointDataset, utils
 from torch_choice.model.nested_logit_model import NestedLogitModel
 from torch_choice.utils.run_helper import run
+print(torch.__version__)
 ```
+
+    2.0.0
+
 
 We then select the appropriate device to run the model on, our package supports both CPU and GPU.
 
 
 ```python
-
 if torch.cuda.is_available():
     print(f'CUDA device used: {torch.cuda.get_device_name()}')
     DEVICE = 'cuda'
 else:
     print('Running tutorial on CPU')
-    DEVICE = 'cpu' 
+    DEVICE = 'cpu'
     
 ```
 
-    CUDA device used: NVIDIA GeForce RTX 3090
+    Running tutorial on CPU
 
 
 ## Load Datasets
 We firstly read the dataset for this tutorial, the `csv` file can be found at `./public_datasets/HC.csv`.
+Alternatively, we load the dataset directly from the Github website.
 
 
 ```python
-df = pd.read_csv('./public_datasets/HC.csv', index_col=0)
+df = pd.read_csv('https://raw.githubusercontent.com/gsbDBI/torch-choice/main/tutorials/public_datasets/HC.csv', index_col=0)
 df = df.reset_index(drop=True)
 df.head()
 ```
@@ -288,15 +290,15 @@ encoder
 
 
 
-### Category Level Dataset
-We firstly construct the category-level dataset, however, there is no observable that is constant within the same category, so we don't need to include any observable tensor to the `category_dataset`.
+### Nest Level Dataset
+We firstly construct the nest-level dataset, however, there is no observable that is constant within the same nest, so we don't need to include any observable tensor to the `nest_dataset`.
 
-All we need to do is adding the `item_index` (i.e., which item is chosen) to the dataset, so that `category_dataset` knows the total number of choices made.
+All we need to do is adding the `item_index` (i.e., which item is chosen) to the dataset, so that `nest_dataset` knows the total number of choices made.
 
 
 ```python
-# category feature: no category feature, all features are item-level.
-category_dataset = ChoiceDataset(item_index=item_index.clone()).to(DEVICE)
+# nest feature: no nest feature, all features are item-level.
+nest_dataset = ChoiceDataset(item_index=item_index.clone()).to(DEVICE)
 ```
 
     No `session_index` is provided, assume each choice instance is in its own session.
@@ -334,11 +336,11 @@ item_dataset = ChoiceDataset(item_index=item_index, price_obs=price_obs).to(DEVI
     No `session_index` is provided, assume each choice instance is in its own session.
 
 
-Finally, we chain the category-level and item-level dataset into a single `JointDataset`.
+Finally, we chain the nest-level and item-level dataset into a single `JointDataset`.
 
 
 ```python
-dataset = JointDataset(category=category_dataset, item=item_dataset)
+dataset = JointDataset(nest=nest_dataset, item=item_dataset)
 ```
 
 One can print the joint dataset to see its contents, and tensors contained in each of these sub-datasets.
@@ -349,37 +351,37 @@ print(dataset)
 ```
 
     JointDataset with 2 sub-datasets: (
-    	category: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], device=cuda:0)
-    	item: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cuda:0)
+    	nest: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], device=cpu)
+    	item: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cpu)
     )
 
 
 ## Examples
-There are multiple ways to group 7 items into categories, different classification will result in different utility functions and estimations (see the background of nested logit models).
+There are multiple ways to group 7 items into nests, different classification will result in different utility functions and estimations (see the background of nested logit models).
 
 We will demonstrate the usage of our package by presenting three different categorization schemes and corresponding model estimations.
 
 ### Example 1
-In the first example, the model is specified to have the *cooling alternatives* `{gcc, ecc, erc, hpc}` in one category and the *non-cooling alternatives* `{gc, ec, er}` in another category.
+In the first example, the model is specified to have the *cooling alternatives* `{gcc, ecc, erc, hpc}` in one nest and the *non-cooling alternatives* `{gc, ec, er}` in another nest.
 
-We create a `category_to_item` dictionary to inform the model our categorization scheme. The dictionary should have keys ranging from `0` to `number_of_categories - 1`, each integer corresponds to a category. The value of each key is a list of item IDs in the category, the encoding of item names should be exactly the same as in the construction of `item_index`.
+We create a `nest_to_item` dictionary to inform the model our categorization scheme. The dictionary should have keys ranging from `0` to `number_of_nests - 1`, each integer corresponds to a nest. The value of each key is a list of item IDs in the nest, the encoding of item names should be exactly the same as in the construction of `item_index`.
 
 
 ```python
-category_to_item = {0: ['gcc', 'ecc', 'erc', 'hpc'],
-                    1: ['gc', 'ec', 'er']}
+nest_to_item = {0: ['gcc', 'ecc', 'erc', 'hpc'],
+                1: ['gc', 'ec', 'er']}
 
 # encode items to integers.
-for k, v in category_to_item.items():
+for k, v in nest_to_item.items():
     v = [encoder[item] for item in v]
-    category_to_item[k] = sorted(v)
+    nest_to_item[k] = sorted(v)
 ```
 
-In this example, we have item `[1, 3, 5, 6]` in the first category (category `0`) and the rest of items in the second category (category `1`).
+In this example, we have item `[1, 3, 5, 6]` in the first nest (i.e., the nest with ID `0`) and the rest of items in the second nest (i.e., the nest with ID `1`).
 
 
 ```python
-print(category_to_item)
+print(nest_to_item)
 ```
 
     {0: [1, 3, 5, 6], 1: [0, 2, 4]}
@@ -387,9 +389,9 @@ print(category_to_item)
 
 Next, let's create the `NestedLogitModel` class!
 
-The first thing to put in is the `category_to_item` dictionary we just built.
+The first thing to put in is the `nest_to_item` dictionary we just built.
 
-For `category_coef_variation_dict`, `category_num_param_dict`, since we don't have any category-specific observables, we can simply put an empty dictionary there.
+For `nest_coef_variation_dict`, `nest_num_param_dict`, since we don't have any nest-specific observables, we can simply put an empty dictionary there.
 
 Coefficients for all observables are constant across items, and there are 7 observables in total.
 
@@ -397,11 +399,17 @@ As for `shared_lambda=True`, please refer to the background recap for nested log
 
 
 ```python
-model = NestedLogitModel(category_to_item=category_to_item,
-                         category_coef_variation_dict={},
-                         category_num_param_dict={},
+model = NestedLogitModel(nest_to_item=nest_to_item,
+                         nest_coef_variation_dict={},
+                         nest_num_param_dict={},
                          item_coef_variation_dict={'price_obs': 'constant'},
                          item_num_param_dict={'price_obs': 7},
+                         shared_lambda=True)
+
+model = NestedLogitModel(nest_to_item=nest_to_item,
+                         nest_formula='',
+                         item_formula='(price_obs|constant)',
+                         dataset=dataset,
                          shared_lambda=True)
 
 model = model.to(DEVICE)
@@ -415,9 +423,9 @@ print(model)
 ```
 
     NestedLogitModel(
-      (category_coef_dict): ModuleDict()
+      (nest_coef_dict): ModuleDict()
       (item_coef_dict): ModuleDict(
-        (price_obs): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total).
+        (price_obs[constant]): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
       )
     )
 
@@ -433,27 +441,27 @@ run(model, dataset, num_epochs=10000)
 
     ==================== received model ====================
     NestedLogitModel(
-      (category_coef_dict): ModuleDict()
+      (nest_coef_dict): ModuleDict()
       (item_coef_dict): ModuleDict(
-        (price_obs): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total).
+        (price_obs[constant]): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
       )
     )
     ==================== received dataset ====================
     JointDataset with 2 sub-datasets: (
-    	category: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], device=cuda:0)
-    	item: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cuda:0)
+    	nest: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], device=cpu)
+    	item: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cpu)
     )
     ==================== training the model ====================
-    Epoch 1000: Log-likelihood=-187.43597412109375
-    Epoch 2000: Log-likelihood=-179.69964599609375
-    Epoch 3000: Log-likelihood=-178.70831298828125
-    Epoch 4000: Log-likelihood=-178.28799438476562
-    Epoch 5000: Log-likelihood=-178.17779541015625
-    Epoch 6000: Log-likelihood=-178.13650512695312
-    Epoch 7000: Log-likelihood=-178.12576293945312
-    Epoch 8000: Log-likelihood=-178.14144897460938
-    Epoch 9000: Log-likelihood=-178.12478637695312
-    Epoch 10000: Log-likelihood=-178.13674926757812
+    Epoch 1000: Log-likelihood=-179.78282165527344
+    Epoch 2000: Log-likelihood=-178.6439666748047
+    Epoch 3000: Log-likelihood=-178.45376586914062
+    Epoch 4000: Log-likelihood=-178.30226135253906
+    Epoch 5000: Log-likelihood=-178.19009399414062
+    Epoch 6000: Log-likelihood=-178.1377716064453
+    Epoch 7000: Log-likelihood=-178.1256866455078
+    Epoch 8000: Log-likelihood=-178.124755859375
+    Epoch 9000: Log-likelihood=-178.12757873535156
+    Epoch 10000: Log-likelihood=-178.12527465820312
     ==================== model results ====================
     Training Epochs: 10000
     
@@ -461,29 +469,29 @@ run(model, dataset, num_epochs=10000)
     
     Batch Size: 250 out of 250 observations in total
     
-    Final Log-likelihood: -178.13674926757812
+    Final Log-likelihood: -178.12527465820312
     
     Coefficients:
     
-    | Coefficient      |   Estimation |   Std. Err. |
-    |:-----------------|-------------:|------------:|
-    | lambda_weight_0  |     0.585981 |   0.167168  |
-    | item_price_obs_0 |    -0.555577 |   0.145414  |
-    | item_price_obs_1 |    -0.85812  |   0.238405  |
-    | item_price_obs_2 |    -0.224599 |   0.111092  |
-    | item_price_obs_3 |    -1.08912  |   1.04131   |
-    | item_price_obs_4 |    -0.379067 |   0.101126  |
-    | item_price_obs_5 |     0.250203 |   0.0522721 |
-    | item_price_obs_6 |    -5.99917  |   4.85404   |
+    | Coefficient                |   Estimation |   Std. Err. |
+    |:---------------------------|-------------:|------------:|
+    | lambda_weight_0            |     0.585844 |    0.166706 |
+    | item_price_obs[constant]_0 |    -0.555026 |    0.144731 |
+    | item_price_obs[constant]_1 |    -0.858004 |    0.237756 |
+    | item_price_obs[constant]_2 |    -0.224923 |    0.110701 |
+    | item_price_obs[constant]_3 |    -1.08933  |    1.03791  |
+    | item_price_obs[constant]_4 |    -0.379122 |    0.100874 |
+    | item_price_obs[constant]_5 |     0.249721 |    0.051977 |
+    | item_price_obs[constant]_6 |    -5.99982  |    4.83646  |
 
 
 
 
 
     NestedLogitModel(
-      (category_coef_dict): ModuleDict()
+      (nest_coef_dict): ModuleDict()
       (item_coef_dict): ModuleDict(
-        (price_obs): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total).
+        (price_obs[constant]): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
       )
     )
 
@@ -538,86 +546,119 @@ Coefficient names reported are slightly different in `Python` and `R`, please us
 ```
 
 ### Example 2
-The second example is similar to the first one, but we change the way we group items into different categories.
+The second example is similar to the first one, but we change the way we group items into different nests.
 Re-estimate the model with the room alternatives in one nest and the central alternatives in another nest. (Note that a heat pump is a central system.)
 
 
 ```python
-category_to_item = {0: ['ec', 'ecc', 'gc', 'gcc', 'hpc'],
+nest_to_item = {0: ['ec', 'ecc', 'gc', 'gcc', 'hpc'],
                     1: ['er', 'erc']}
-for k, v in category_to_item.items():
+for k, v in nest_to_item.items():
     v = [encoder[item] for item in v]
-    category_to_item[k] = sorted(v)
+    nest_to_item[k] = sorted(v)
 
-model = NestedLogitModel(category_to_item=category_to_item,
-                            category_coef_variation_dict={},
-                            category_num_param_dict={},
-                            item_coef_variation_dict={'price_obs': 'constant'},
-                            item_num_param_dict={'price_obs': 7},
-                            shared_lambda=True
-                            )
+# these two initializations are equivalent.
+model = NestedLogitModel(nest_to_item=nest_to_item,
+                         nest_coef_variation_dict={},
+                         nest_num_param_dict={},
+                         item_coef_variation_dict={'price_obs': 'constant'},
+                         item_num_param_dict={'price_obs': 7},
+                         shared_lambda=True)
+print(model)
 
+model = NestedLogitModel(nest_to_item=nest_to_item,
+                         nest_formula='',
+                         item_formula='(price_obs|constant)',
+                         dataset=dataset,
+                         shared_lambda=True)
+print(model)
 model = model.to(DEVICE)
 ```
 
+    NestedLogitModel(
+      (nest_coef_dict): ModuleDict()
+      (item_coef_dict): ModuleDict(
+        (price_obs): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
+      )
+    )
+    NestedLogitModel(
+      (nest_coef_dict): ModuleDict()
+      (item_coef_dict): ModuleDict(
+        (price_obs[constant]): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
+      )
+    )
+
+
 
 ```python
-run(model, dataset, num_epochs=5000, learning_rate=0.3)
+run
+```
+
+
+
+
+    <function torch_choice.utils.run_helper.run(model, dataset, dataset_test=None, batch_size=-1, learning_rate=0.01, num_epochs=5000, report_frequency=None, compute_std=True, return_final_training_log_likelihood=False)>
+
+
+
+
+```python
+run(model, dataset, num_epochs=50000, learning_rate=0.3)
 ```
 
     ==================== received model ====================
     NestedLogitModel(
-      (category_coef_dict): ModuleDict()
+      (nest_coef_dict): ModuleDict()
       (item_coef_dict): ModuleDict(
-        (price_obs): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total).
+        (price_obs[constant]): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
       )
     )
     ==================== received dataset ====================
     JointDataset with 2 sub-datasets: (
-    	category: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], device=cuda:0)
-    	item: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cuda:0)
+    	nest: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], device=cpu)
+    	item: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cpu)
     )
     ==================== training the model ====================
-    Epoch 500: Log-likelihood=-193.73406982421875
-    Epoch 1000: Log-likelihood=-185.25933837890625
-    Epoch 1500: Log-likelihood=-183.55142211914062
-    Epoch 2000: Log-likelihood=-181.8164825439453
-    Epoch 2500: Log-likelihood=-180.4320526123047
-    Epoch 3000: Log-likelihood=-180.04095458984375
-    Epoch 3500: Log-likelihood=-180.7447509765625
-    Epoch 4000: Log-likelihood=-180.39688110351562
-    Epoch 4500: Log-likelihood=-180.27947998046875
-    Epoch 5000: Log-likelihood=-181.1483612060547
+    Epoch 5000: Log-likelihood=-180.560791015625
+    Epoch 10000: Log-likelihood=-180.80062866210938
+    Epoch 15000: Log-likelihood=-181.21275329589844
+    Epoch 20000: Log-likelihood=-180.3982696533203
+    Epoch 25000: Log-likelihood=-180.29925537109375
+    Epoch 30000: Log-likelihood=-182.28366088867188
+    Epoch 35000: Log-likelihood=-180.1341552734375
+    Epoch 40000: Log-likelihood=-182.2633514404297
+    Epoch 45000: Log-likelihood=-180.19305419921875
+    Epoch 50000: Log-likelihood=-180.68240356445312
     ==================== model results ====================
-    Training Epochs: 5000
+    Training Epochs: 50000
     
     Learning Rate: 0.3
     
     Batch Size: 250 out of 250 observations in total
     
-    Final Log-likelihood: -181.1483612060547
+    Final Log-likelihood: -180.68240356445312
     
     Coefficients:
     
-    | Coefficient      |   Estimation |   Std. Err. |
-    |:-----------------|-------------:|------------:|
-    | lambda_weight_0  |     1.61072  |    0.787735 |
-    | item_price_obs_0 |    -1.34719  |    0.631206 |
-    | item_price_obs_1 |    -2.16109  |    1.0451   |
-    | item_price_obs_2 |    -0.393868 |    0.255138 |
-    | item_price_obs_3 |    -2.53253  |    2.2719   |
-    | item_price_obs_4 |    -0.884873 |    0.379626 |
-    | item_price_obs_5 |     0.496491 |    0.248118 |
-    | item_price_obs_6 |   -15.6477   |    9.88054  |
+    | Coefficient                |   Estimation |   Std. Err. |
+    |:---------------------------|-------------:|------------:|
+    | lambda_weight_0            |     1.63154  |    0.678117 |
+    | item_price_obs[constant]_0 |    -1.34966  |    0.531558 |
+    | item_price_obs[constant]_1 |    -2.17924  |    0.894518 |
+    | item_price_obs[constant]_2 |    -0.412631 |    0.243317 |
+    | item_price_obs[constant]_3 |    -2.61227  |    2.06289  |
+    | item_price_obs[constant]_4 |    -0.885769 |    0.337734 |
+    | item_price_obs[constant]_5 |     0.49301  |    0.199931 |
+    | item_price_obs[constant]_6 |   -16.0524   |    9.32373  |
 
 
 
 
 
     NestedLogitModel(
-      (category_coef_dict): ModuleDict()
+      (nest_coef_dict): ModuleDict()
       (item_coef_dict): ModuleDict(
-        (price_obs): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total).
+        (price_obs[constant]): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
       )
     )
 
@@ -672,86 +713,91 @@ You can use the table for converting coefficient names reported by `Python` and 
 ```
 
 ### Example 3
-For the third example, we now group items into three categories. Specifically, we have items `gcc`, `ecc` and `erc` in the first category (category `0` in the `category_to_item` dictionary), `hpc` in a category (category `1`) alone, and items `gc`, `ec` and `er` in the last category (category `2`).
+For the third example, we now group items into three nests. Specifically, we have items `gcc`, `ecc` and `erc` in the first nest (nest `0` in the `nest_to_item` dictionary), `hpc` in a nest (nest `1`) alone, and items `gc`, `ec` and `er` in the last nest (nest `2`).
 
 
 ```python
-category_to_item = {0: ['gcc', 'ecc', 'erc'],
-                    1: ['hpc'],
-                    2: ['gc', 'ec', 'er']}
-for k, v in category_to_item.items():
+nest_to_item = {0: ['gcc', 'ecc', 'erc'],
+                1: ['hpc'],
+                2: ['gc', 'ec', 'er']}
+for k, v in nest_to_item.items():
     v = [encoder[item] for item in v]
-    category_to_item[k] = sorted(v)
+    nest_to_item[k] = sorted(v)
 
-model = NestedLogitModel(category_to_item=category_to_item,
-                         category_coef_variation_dict={},
-                         category_num_param_dict={},
+model = NestedLogitModel(nest_to_item=nest_to_item,
+                         nest_coef_variation_dict={},
+                         nest_num_param_dict={},
                          item_coef_variation_dict={'price_obs': 'constant'},
                          item_num_param_dict={'price_obs': 7},
-                         shared_lambda=True
-                         )
+                         shared_lambda=True)
+
+model = NestedLogitModel(nest_to_item=nest_to_item,
+                         nest_formula='',
+                         item_formula='(price_obs|constant)',
+                         dataset=dataset,
+                         shared_lambda=True)
 
 model = model.to(DEVICE)
 ```
 
 
 ```python
-run(model, dataset)
+run(model, dataset, num_epochs=50000, learning_rate=0.3)
 ```
 
     ==================== received model ====================
     NestedLogitModel(
-      (category_coef_dict): ModuleDict()
+      (nest_coef_dict): ModuleDict()
       (item_coef_dict): ModuleDict(
-        (price_obs): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total).
+        (price_obs[constant]): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
       )
     )
     ==================== received dataset ====================
     JointDataset with 2 sub-datasets: (
-    	category: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], device=cuda:0)
-    	item: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cuda:0)
+    	nest: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], device=cpu)
+    	item: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cpu)
     )
     ==================== training the model ====================
-    Epoch 500: Log-likelihood=-187.12100219726562
-    Epoch 1000: Log-likelihood=-182.98468017578125
-    Epoch 1500: Log-likelihood=-181.72171020507812
-    Epoch 2000: Log-likelihood=-181.3906707763672
-    Epoch 2500: Log-likelihood=-181.2037353515625
-    Epoch 3000: Log-likelihood=-181.0186767578125
-    Epoch 3500: Log-likelihood=-180.83331298828125
-    Epoch 4000: Log-likelihood=-180.6610107421875
-    Epoch 4500: Log-likelihood=-180.51480102539062
-    Epoch 5000: Log-likelihood=-180.40383911132812
+    Epoch 5000: Log-likelihood=-180.84153747558594
+    Epoch 10000: Log-likelihood=-182.17794799804688
+    Epoch 15000: Log-likelihood=-181.74029541015625
+    Epoch 20000: Log-likelihood=-182.3179931640625
+    Epoch 25000: Log-likelihood=-182.50352478027344
+    Epoch 30000: Log-likelihood=-181.481201171875
+    Epoch 35000: Log-likelihood=-181.8275604248047
+    Epoch 40000: Log-likelihood=-180.5753173828125
+    Epoch 45000: Log-likelihood=-182.4506072998047
+    Epoch 50000: Log-likelihood=-185.08358764648438
     ==================== model results ====================
-    Training Epochs: 5000
+    Training Epochs: 50000
     
-    Learning Rate: 0.01
+    Learning Rate: 0.3
     
     Batch Size: 250 out of 250 observations in total
     
-    Final Log-likelihood: -180.40383911132812
+    Final Log-likelihood: -185.08358764648438
     
     Coefficients:
     
-    | Coefficient      |   Estimation |   Std. Err. |
-    |:-----------------|-------------:|------------:|
-    | lambda_weight_0  |     0.939528 |   0.193704  |
-    | item_price_obs_0 |    -0.823672 |   0.0973065 |
-    | item_price_obs_1 |    -1.31387  |   0.182701  |
-    | item_price_obs_2 |    -0.305365 |   0.12726   |
-    | item_price_obs_3 |    -1.89104  |   1.14781   |
-    | item_price_obs_4 |    -0.559503 |   0.0734163 |
-    | item_price_obs_5 |     0.310081 |   0.0551569 |
-    | item_price_obs_6 |    -7.68508  |   5.09592   |
+    | Coefficient                |   Estimation |   Std. Err. |
+    |:---------------------------|-------------:|------------:|
+    | lambda_weight_0            |     0.949264 |   0.19245   |
+    | item_price_obs[constant]_0 |    -0.852556 |   0.100724  |
+    | item_price_obs[constant]_1 |    -1.35082  |   0.188374  |
+    | item_price_obs[constant]_2 |    -0.248292 |   0.14014   |
+    | item_price_obs[constant]_3 |    -1.41068  |   1.2839    |
+    | item_price_obs[constant]_4 |    -0.581716 |   0.0771356 |
+    | item_price_obs[constant]_5 |     0.336492 |   0.0656387 |
+    | item_price_obs[constant]_6 |   -10.5186   |   5.71641   |
 
 
 
 
 
     NestedLogitModel(
-      (category_coef_dict): ModuleDict()
+      (nest_coef_dict): ModuleDict()
       (item_coef_dict): ModuleDict(
-        (price_obs): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total).
+        (price_obs[constant]): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
       )
     )
 
