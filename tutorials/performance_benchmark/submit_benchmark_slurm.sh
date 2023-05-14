@@ -12,7 +12,7 @@
 
 ml R/4.2
 
-cd ~/Development/torch_choice/tutorials/performance_benchmark/
+cd /home/users/tianyudu/Development/torch-choice/tutorials/performance_benchmark
 Rscript run_mlogit_num_items.R
 Rscript run_mlogit_num_records.R
 Rscript run_mlogit_num_params.R
