@@ -1,0 +1,19 @@
+sample_size,time,formula,num_params
+200000,4.999903678894043,(user_latents|item) + (item_latents|constant),1
+200000,15.06425929069519,(user_latents|item) + (item_latents|constant),5
+200000,21.69298481941223,(user_latents|item) + (item_latents|constant),10
+200000,35.23317885398865,(user_latents|item) + (item_latents|constant),15
+200000,66.38767647743225,(user_latents|item) + (item_latents|constant),20
+200000,190.41093802452087,(user_latents|item) + (item_latents|constant),30
+200000,5.020509243011475,(user_latents|item),1
+200000,5.787231206893921,(user_latents|item),5
+200000,7.8430259227752686,(user_latents|item),10
+200000,11.36994457244873,(user_latents|item),15
+200000,27.470664978027344,(user_latents|item),20
+200000,43.483633041381836,(user_latents|item),30
+200000,5.501117944717407,(item_latents|constant),1
+200000,7.928305625915527,(item_latents|constant),5
+200000,10.286187171936035,(item_latents|constant),10
+200000,10.03601861000061,(item_latents|constant),15
+200000,12.929221630096436,(item_latents|constant),20
+200000,15.177661657333374,(item_latents|constant),30
