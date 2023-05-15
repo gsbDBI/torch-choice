@@ -1,6 +1,7 @@
-# torch-choice
+# Torch-Choice: A PyTorch Package for Large-Scale Choice Modelling with Python
 
 > Authors: Tianyu Du, Ayush Kanodia and Susan Athey; Contact: tianyudu@stanford.edu
+> [Link](https://arxiv.org/abs/2304.01906) to the paper on Arxiv.
 
 **Note on Installation**: This is a work in progress. We recommend installing the package from source to get the latest version and bug-fix patches.
 We are actively working on this package and will be adding more features and examples. Please feel free to reach out to us with any questions or suggestions.
