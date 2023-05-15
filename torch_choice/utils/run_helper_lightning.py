@@ -26,7 +26,8 @@ from torch_choice.utils.std import parameter_std
 class LightningModelWrapper(pl.LightningModule):
     def __init__(self,
                  model: Union [ConditionalLogitModel, NestedLogitModel],
-                 learning_rate: float):
+                 learning_rate: float,
+                 optimizer: str):
         """
         The pytorch-lightning model wrapper for conditional and nested logit model.
         Ideally, end users don't need to interact with this class. This wrapper will be called by the run() function.
@@ -34,6 +35,7 @@ class LightningModelWrapper(pl.LightningModule):
         super().__init__()
         self.model = model
         self.learning_rate = learning_rate
+        self.optimizer_class_string = optimizer
 
     def __str__(self) -> str:
         return str(self.model)
@@ -65,9 +67,7 @@ class LightningModelWrapper(pl.LightningModule):
             self.log('test_' + key, val, prog_bar=False, batch_size=len(batch))
 
     def configure_optimizers(self):
-        optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
-        return optimizer
-
+        return getattr(torch.optim, self.optimizer_class_string)(self.parameters(), lr=self.learning_rate)
 
 # def run_original(model, dataset, dataset_test=None, batch_size=-1, learning_rate=0.01, num_epochs=5000, report_frequency=None):
 #     """All in one script for the model training and result presentation."""
@@ -94,6 +94,7 @@ def run(model: Union [ConditionalLogitModel, NestedLogitModel],
         dataset_train: ChoiceDataset,
         dataset_val: Optional[ChoiceDataset]=None,
         dataset_test: Optional[ChoiceDataset]=None,
+        optimizer: str='adam',
         batch_size: int=-1,
         learning_rate: float=0.01,
         num_epochs: int=10,
@@ -122,7 +123,7 @@ def run(model: Union [ConditionalLogitModel, NestedLogitModel],
     # ==================================================================================================================
     # Setup the lightning wrapper.
     # ==================================================================================================================
-    lightning_model = LightningModelWrapper(model, learning_rate=learning_rate)
+    lightning_model = LightningModelWrapper(model, learning_rate=learning_rate, optimizer=optimizer)
     if device is None:
         # infer from the model device.
         device = model.device
