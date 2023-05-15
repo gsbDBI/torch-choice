@@ -15,7 +15,7 @@
     
     
       
-        <title>Materials for Torch-Choice Paper - Torch Choice</title>
+        <title>Replication Materials for the Torch-Choice Paper - Torch Choice</title>
       
     
     
@@ -63,7 +63,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#materials-for-torch-choice-paper" class="md-skip">
+        <a href="#replication-materials-for-the-torch-choice-paper" class="md-skip">
           Skip to content
         </a>
       
@@ -214,7 +214,7 @@ c167 -88 205 -287 78 -410 -65 -63 -104 -81 -177 -82 -69 0 -129 25 -184 77
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Materials for Torch-Choice Paper
+              Replication Materials for the Torch-Choice Paper
             
           </span>
         </div>
@@ -595,41 +595,6 @@ c167 -88 205 -287 78 -410 -65 -63 -104 -81 -177 -82 -69 0 -129 25 -184 77
     
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#the-car-choice-dataset-example" class="md-nav__link">
-    The Car Choice Dataset Example
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#performance-benchmark" class="md-nav__link">
-    Performance Benchmark
-  </a>
-  
-    <nav class="md-nav" aria-label="Performance Benchmark">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#simulation-setup-depreciated" class="md-nav__link">
-    Simulation Setup (Depreciated)
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -642,41 +607,28 @@ c167 -88 205 -287 78 -410 -65 -63 -104 -81 -177 -82 -69 0 -129 25 -184 77
                 
 
 
-<h1 id="materials-for-torch-choice-paper">Materials for Torch-Choice Paper</h1>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">import</span> <span class="nn">torch</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="kn">import</span> <span class="nn">torch_choice</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="kn">from</span> <span class="nn">torch_choice.data</span> <span class="kn">import</span> <span class="n">ChoiceDataset</span><span class="p">,</span> <span class="n">utils</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="kn">from</span> <span class="nn">torch_choice.model</span> <span class="kn">import</span> <span class="n">ConditionalLogitModel</span>
+<h1 id="replication-materials-for-the-torch-choice-paper">Replication Materials for the Torch-Choice Paper</h1>
+<blockquote>
+<p>Author: Tianyu Du</p>
+<p>Email: <code>tianyudu@stanford.edu</code></p>
+</blockquote>
+<p>This repository contains the replication materials for the paper "Torch-Choice: A Library for Choice Models in PyTorch". Due to the limited space in the main paper, we have omitted some codes and outputs in the paper. This repository contains the full version of codes mentioned in the paper.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span> <span class="nn">warnings</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="kn">import</span> <span class="nn">torch</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="kn">import</span> <span class="nn">torch_choice</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="kn">from</span> <span class="nn">torch_choice</span> <span class="kn">import</span> <span class="n">run</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="kn">from</span> <span class="nn">torch_choice.data</span> <span class="kn">import</span> <span class="n">ChoiceDataset</span><span class="p">,</span> <span class="n">JointDataset</span><span class="p">,</span> <span class="n">utils</span><span class="p">,</span> <span class="n">load_mode_canada_dataset</span><span class="p">,</span> <span class="n">load_house_cooling_dataset_v1</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="kn">from</span> <span class="nn">torch_choice.model</span> <span class="kn">import</span> <span class="n">ConditionalLogitModel</span><span class="p">,</span> <span class="n">NestedLogitModel</span>
 </code></pre></div>
-<h2 id="the-car-choice-dataset-example">The Car Choice Dataset Example</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">import</span> <span class="nn">torch</span> 
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="kn">import</span> <span class="nn">torch_choice</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="kn">import</span> <span class="nn">torch_choice.utils</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="kn">from</span> <span class="nn">torch_choice.utils.easy_data_wrapper</span> <span class="kn">import</span> <span class="n">EasyDatasetWrapper</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="kn">from</span> <span class="nn">torch_choice.utils.run_helper</span> <span class="kn">import</span> <span class="n">run</span>
-</code></pre></div>
-<h2 id="performance-benchmark">Performance Benchmark</h2>
-<p><strong>Copy the following description to the paper</strong>.
-We designed a simple performance benchmark based on the transportation choice dataset: we duplicates <span class="arithmatex">\(K\)</span> copies of the original dataset of 2779 observations and compare time taken by various implementations. We compared the time cost of only the estimation process, since there are ample possibilities for further optimizing the estimation process (e.g., tuning learning rates, early stopping), we could under-estimate performances here. However, we wish to highlight how K 
-The metric <span class="arithmatex">\(\frac{\text{log-likelihood}}{K}\)</span> is used to check that various optimizers converged to the same solution.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="err">!</span> <span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="s1">&#39;./benchmark_data&#39;</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">num_copies</span> <span class="o">=</span> <span class="mi">3</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;./public_datasets/ModeCanada.csv&#39;</span><span class="p">)</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">df_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">num_cases</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;case&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_copies</span><span class="p">):</span>
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="n">df_copy</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    <span class="n">df_copy</span><span class="p">[</span><span class="s1">&#39;case&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">num_cases</span> <span class="o">*</span> <span class="n">i</span>
-<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    <span class="n">df_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df_copy</span><span class="p">)</span>
-<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_list</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">df</span>
+<h1 id="data-structure">Data Structure</h1>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">car_choice</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;https://raw.githubusercontent.com/gsbDBI/torch-choice/main/tutorials/public_datasets/car_choice.csv&quot;</span><span class="p">)</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">car_choice</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </code></pre></div>
 <div>
 <style scoped>
@@ -696,18 +648,16 @@ The metric <span class="arithmatex">\(\frac{\text{log-likelihood}}{K}\)</span> i
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>Unnamed: 0</th>
-      <th>case</th>
-      <th>alt</th>
-      <th>choice</th>
-      <th>dist</th>
-      <th>cost</th>
-      <th>ivt</th>
-      <th>ovt</th>
-      <th>freq</th>
+      <th>record_id</th>
+      <th>session_id</th>
+      <th>consumer_id</th>
+      <th>car</th>
+      <th>purchase</th>
+      <th>gender</th>
       <th>income</th>
-      <th>urban</th>
-      <th>noalt</th>
+      <th>speed</th>
+      <th>discount</th>
+      <th>price</th>
     </tr>
   </thead>
   <tbody>
@@ -715,337 +665,517 @@ The metric <span class="arithmatex">\(\frac{\text{log-likelihood}}{K}\)</span> i
       <th>0</th>
       <td>1</td>
       <td>1</td>
-      <td>train</td>
-      <td>0</td>
-      <td>83</td>
-      <td>28.25</td>
-      <td>50</td>
-      <td>66</td>
-      <td>4</td>
-      <td>45</td>
-      <td>0</td>
-      <td>2</td>
+      <td>1</td>
+      <td>American</td>
+      <td>1</td>
+      <td>1</td>
+      <td>46.699997</td>
+      <td>10</td>
+      <td>0.94</td>
+      <td>90</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>2</td>
       <td>1</td>
-      <td>car</td>
       <td>1</td>
-      <td>83</td>
-      <td>15.77</td>
-      <td>61</td>
+      <td>1</td>
+      <td>Japanese</td>
       <td>0</td>
-      <td>0</td>
-      <td>45</td>
-      <td>0</td>
-      <td>2</td>
+      <td>1</td>
+      <td>46.699997</td>
+      <td>8</td>
+      <td>0.94</td>
+      <td>110</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>3</td>
-      <td>2</td>
-      <td>train</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>European</td>
       <td>0</td>
-      <td>83</td>
-      <td>28.25</td>
+      <td>1</td>
+      <td>46.699997</td>
+      <td>7</td>
+      <td>0.94</td>
       <td>50</td>
-      <td>66</td>
-      <td>4</td>
-      <td>25</td>
-      <td>0</td>
-      <td>2</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>4</td>
-      <td>2</td>
-      <td>car</td>
       <td>1</td>
-      <td>83</td>
-      <td>15.77</td>
-      <td>61</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Korean</td>
       <td>0</td>
-      <td>0</td>
-      <td>25</td>
-      <td>0</td>
-      <td>2</td>
+      <td>1</td>
+      <td>46.699997</td>
+      <td>8</td>
+      <td>0.94</td>
+      <td>10</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>5</td>
-      <td>3</td>
-      <td>train</td>
-      <td>0</td>
-      <td>83</td>
-      <td>28.25</td>
-      <td>50</td>
-      <td>66</td>
-      <td>4</td>
-      <td>70</td>
-      <td>0</td>
       <td>2</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>46555</th>
-      <td>15516</td>
-      <td>12970</td>
-      <td>car</td>
+      <td>2</td>
+      <td>2</td>
+      <td>American</td>
       <td>1</td>
-      <td>347</td>
-      <td>65.93</td>
-      <td>267</td>
-      <td>0</td>
-      <td>0</td>
-      <td>35</td>
-      <td>0</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <th>46556</th>
-      <td>15517</td>
-      <td>12971</td>
-      <td>train</td>
-      <td>0</td>
-      <td>323</td>
-      <td>60.60</td>
-      <td>193</td>
-      <td>200</td>
-      <td>3</td>
-      <td>45</td>
-      <td>0</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <th>46557</th>
-      <td>15518</td>
-      <td>12971</td>
-      <td>car</td>
       <td>1</td>
-      <td>323</td>
-      <td>61.37</td>
-      <td>278</td>
-      <td>0</td>
-      <td>0</td>
-      <td>45</td>
-      <td>0</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <th>46558</th>
-      <td>15519</td>
-      <td>12972</td>
-      <td>train</td>
-      <td>0</td>
-      <td>150</td>
-      <td>28.50</td>
-      <td>63</td>
-      <td>105</td>
-      <td>1</td>
-      <td>70</td>
-      <td>0</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <th>46559</th>
-      <td>15520</td>
-      <td>12972</td>
-      <td>car</td>
-      <td>1</td>
-      <td>150</td>
-      <td>28.50</td>
-      <td>134</td>
-      <td>0</td>
-      <td>0</td>
-      <td>70</td>
-      <td>0</td>
-      <td>2</td>
+      <td>26.100000</td>
+      <td>10</td>
+      <td>0.95</td>
+      <td>100</td>
     </tr>
   </tbody>
 </table>
-<p>46560 rows × 12 columns</p>
 </div>
 
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">def</span> <span class="nf">duplicate_mode_canada_datasets</span><span class="p">(</span><span class="n">num_copies</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;./public_datasets/ModeCanada.csv&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    <span class="n">df_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="n">num_cases</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;case&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_copies</span><span class="p">):</span>
-<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>        <span class="n">df_copy</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>        <span class="n">df_copy</span><span class="p">[</span><span class="s1">&#39;case&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">num_cases</span> <span class="o">*</span> <span class="n">i</span>
-<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>        <span class="n">df_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df_copy</span><span class="p">)</span>
-<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_list</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;noalt == 4&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>    <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;case&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>    <span class="n">item_index</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;choice&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;case&#39;</span><span class="p">)[</span><span class="s1">&#39;alt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>    <span class="n">item_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;air&#39;</span><span class="p">,</span> <span class="s1">&#39;bus&#39;</span><span class="p">,</span> <span class="s1">&#39;car&#39;</span><span class="p">,</span> <span class="s1">&#39;train&#39;</span><span class="p">]</span>
-<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>    <span class="n">num_items</span> <span class="o">=</span> <span class="mi">4</span>
-<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>    <span class="n">encoder</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">item_names</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_items</span><span class="p">)))</span>
-<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>    <span class="n">item_index</span> <span class="o">=</span> <span class="n">item_index</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">encoder</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
-<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>    <span class="n">item_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">item_index</span><span class="p">)</span>
-<a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>    <span class="n">price_cost_freq_ovt</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">pivot3d</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">dim0</span><span class="o">=</span><span class="s1">&#39;case&#39;</span><span class="p">,</span> <span class="n">dim1</span><span class="o">=</span><span class="s1">&#39;alt&#39;</span><span class="p">,</span>
-<a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a>                                        <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;cost&#39;</span><span class="p">,</span> <span class="s1">&#39;freq&#39;</span><span class="p">,</span> <span class="s1">&#39;ovt&#39;</span><span class="p">])</span>
-<a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a>    <span class="n">price_ivt</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">pivot3d</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">dim0</span><span class="o">=</span><span class="s1">&#39;case&#39;</span><span class="p">,</span> <span class="n">dim1</span><span class="o">=</span><span class="s1">&#39;alt&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s1">&#39;ivt&#39;</span><span class="p">)</span>
-<a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a>    <span class="n">session_income</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;case&#39;</span><span class="p">)[</span><span class="s1">&#39;income&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
-<a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a>    <span class="n">session_income</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">session_income</span><span class="o">.</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a>
-<a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a>    <span class="c1"># session_index = torch.arange(len(session_income))</span>
-<a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a>
-<a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a>    <span class="n">dataset</span> <span class="o">=</span> <span class="n">ChoiceDataset</span><span class="p">(</span>
-<a id="__codelineno-5-27" name="__codelineno-5-27" href="#__codelineno-5-27"></a>        <span class="c1"># item_index=item_index.repeat(num_copies),</span>
-<a id="__codelineno-5-28" name="__codelineno-5-28" href="#__codelineno-5-28"></a>        <span class="n">item_index</span><span class="o">=</span><span class="n">item_index</span><span class="p">,</span>
-<a id="__codelineno-5-29" name="__codelineno-5-29" href="#__codelineno-5-29"></a>        <span class="n">session_index</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">session_income</span><span class="p">)),</span>
-<a id="__codelineno-5-30" name="__codelineno-5-30" href="#__codelineno-5-30"></a>        <span class="n">price_cost_freq_ovt</span><span class="o">=</span><span class="n">price_cost_freq_ovt</span><span class="p">,</span>
-<a id="__codelineno-5-31" name="__codelineno-5-31" href="#__codelineno-5-31"></a>        <span class="n">session_income</span><span class="o">=</span><span class="n">session_income</span><span class="p">,</span>
-<a id="__codelineno-5-32" name="__codelineno-5-32" href="#__codelineno-5-32"></a>        <span class="n">price_ivt</span><span class="o">=</span><span class="n">price_ivt</span><span class="p">)</span>
-<a id="__codelineno-5-33" name="__codelineno-5-33" href="#__codelineno-5-33"></a>    <span class="k">return</span> <span class="n">df</span><span class="p">,</span> <span class="n">dataset</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+<h3 id="adding-observables-method-1-observables-derived-from-columns-of-the-main-dataset">Adding Observables, Method 1: Observables Derived from Columns of the Main Dataset</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">user_observable_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;gender&quot;</span><span class="p">,</span> <span class="s2">&quot;income&quot;</span><span class="p">]</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span> <span class="nn">torch_choice.utils.easy_data_wrapper</span> <span class="kn">import</span> <span class="n">EasyDatasetWrapper</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">data_wrapper_from_columns</span> <span class="o">=</span> <span class="n">EasyDatasetWrapper</span><span class="p">(</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">main_data</span><span class="o">=</span><span class="n">car_choice</span><span class="p">,</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">purchase_record_column</span><span class="o">=</span><span class="s1">&#39;record_id&#39;</span><span class="p">,</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">choice_column</span><span class="o">=</span><span class="s1">&#39;purchase&#39;</span><span class="p">,</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="n">item_name_column</span><span class="o">=</span><span class="s1">&#39;car&#39;</span><span class="p">,</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="n">user_index_column</span><span class="o">=</span><span class="s1">&#39;consumer_id&#39;</span><span class="p">,</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="n">session_index_column</span><span class="o">=</span><span class="s1">&#39;session_id&#39;</span><span class="p">,</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    <span class="n">user_observable_columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;gender&#39;</span><span class="p">,</span> <span class="s1">&#39;income&#39;</span><span class="p">],</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    <span class="n">item_observable_columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;speed&#39;</span><span class="p">],</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    <span class="n">session_observable_columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;discount&#39;</span><span class="p">],</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>    <span class="n">itemsession_observable_columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;price&#39;</span><span class="p">])</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="n">data_wrapper_from_columns</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">data_wrapper_from_columns</span><span class="o">.</span><span class="n">choice_dataset</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="c1"># ChoiceDataset(label=[], item_index=[885], provided_num_items=[], user_index=[885], session_index=[885], item_availability=[885, 4], item_speed=[4, 1], user_gender=[885, 1], user_income=[885, 1], session_discount=[885, 1], itemsession_price=[885, 4, 1], device=cpu)</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">df</span><span class="p">,</span> <span class="n">dataset</span> <span class="o">=</span> <span class="n">duplicate_mode_canada_datasets</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code>Creating choice dataset from stata format data-frames...
+Note: choice sets of different sizes found in different purchase records: {&#39;size 4&#39;: &#39;occurrence 505&#39;, &#39;size 3&#39;: &#39;occurrence 380&#39;}
+Finished Creating Choice Dataset.
+* purchase record index range: [1 2 3] ... [883 884 885]
+* Space of 4 items:
+                   0         1         2       3
+item name  American  European  Japanese  Korean
+* Number of purchase records/cases: 885.
+* Preview of main data frame:
+      record_id  session_id  consumer_id       car  purchase  gender  \
+0             1           1            1  American         1       1   
+1             1           1            1  Japanese         0       1   
+2             1           1            1  European         0       1   
+3             1           1            1    Korean         0       1   
+4             2           2            2  American         1       1   
+...         ...         ...          ...       ...       ...     ...   
+3155        884         884          884  Japanese         1       1   
+3156        884         884          884  European         0       1   
+3157        885         885          885  American         1       1   
+3158        885         885          885  Japanese         0       1   
+3159        885         885          885  European         0       1
+
+         income  speed  discount  price  
+0     46.699997     10      0.94     90  
+1     46.699997      8      0.94    110  
+2     46.699997      7      0.94     50  
+3     46.699997      8      0.94     10  
+4     26.100000     10      0.95    100  
+...         ...    ...       ...    ...  
+3155  20.900000      8      0.89    100  
+3156  20.900000      7      0.89     40  
+3157  30.600000     10      0.81    100  
+3158  30.600000      8      0.81     50  
+3159  30.600000      7      0.81     40
+
+[3160 rows x 10 columns]
+* Preview of ChoiceDataset:
+ChoiceDataset(label=[], item_index=[885], user_index=[885], session_index=[885], item_availability=[885, 4], item_speed=[4, 1], user_gender=[885, 1], user_income=[885, 1], session_discount=[885, 1], itemsession_price=[885, 4, 1], device=cpu)
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">performance_records</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="c1"># k_range = [1, 5, 10, 100, 1_000, 10_000]</span>
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">k_range</span> <span class="o">=</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">5_000</span><span class="p">]</span>
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="n">dataset_at_k</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">k_range</span><span class="p">):</span>
-<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>    <span class="n">df</span><span class="p">,</span> <span class="n">dataset</span> <span class="o">=</span> <span class="n">duplicate_mode_canada_datasets</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>    <span class="n">dataset_at_k</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
-<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>    <span class="c1"># df.to_csv(f&#39;./benchmark_data/mode_canada_{k}.csv&#39;, index=False)</span>
+<h3 id="adding-observables-method-2-added-as-separated-dataframes">Adding Observables, Method 2: Added as Separated DataFrames</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># create dataframes for gender and income. The dataframe for user-specific observable needs to have the `consumer_id` column.</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">gender</span> <span class="o">=</span> <span class="n">car_choice</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;consumer_id&#39;</span><span class="p">)[</span><span class="s1">&#39;gender&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">income</span> <span class="o">=</span> <span class="n">car_choice</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;consumer_id&#39;</span><span class="p">)[</span><span class="s1">&#39;income&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># alternatively, put gender and income in the same dataframe.</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">gender_and_income</span> <span class="o">=</span> <span class="n">car_choice</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;consumer_id&#39;</span><span class="p">)[[</span><span class="s1">&#39;gender&#39;</span><span class="p">,</span> <span class="s1">&#39;income&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># speed as item observable, the dataframe requires a `car` column.</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="n">speed</span> <span class="o">=</span> <span class="n">car_choice</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;car&#39;</span><span class="p">)[</span><span class="s1">&#39;speed&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="c1"># discount as session observable. the dataframe requires a `session_id` column.</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="n">discount</span> <span class="o">=</span> <span class="n">car_choice</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;session_id&#39;</span><span class="p">)[</span><span class="s1">&#39;discount&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="c1"># create the price as itemsession observable, the dataframe requires both `car` and `session_id` columns.</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="n">price</span> <span class="o">=</span> <span class="n">car_choice</span><span class="p">[[</span><span class="s1">&#39;car&#39;</span><span class="p">,</span> <span class="s1">&#39;session_id&#39;</span><span class="p">,</span> <span class="s1">&#39;price&#39;</span><span class="p">]]</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="c1"># fill in NANs for (session, item) pairs that the item was not available in that session.</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="n">price</span> <span class="o">=</span> <span class="n">price</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="s1">&#39;car&#39;</span><span class="p">,</span> <span class="s1">&#39;session_id&#39;</span><span class="p">,</span> <span class="s1">&#39;price&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">melt</span><span class="p">(</span><span class="n">ignore_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>100%|██████████| 3/3 [03:08&lt;00:00, 62.69s/it]
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">data_wrapper_from_dataframes</span> <span class="o">=</span> <span class="n">EasyDatasetWrapper</span><span class="p">(</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="n">main_data</span><span class="o">=</span><span class="n">car_choice</span><span class="p">,</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="n">purchase_record_column</span><span class="o">=</span><span class="s1">&#39;record_id&#39;</span><span class="p">,</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="n">choice_column</span><span class="o">=</span><span class="s1">&#39;purchase&#39;</span><span class="p">,</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="n">item_name_column</span><span class="o">=</span><span class="s1">&#39;car&#39;</span><span class="p">,</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="n">user_index_column</span><span class="o">=</span><span class="s1">&#39;consumer_id&#39;</span><span class="p">,</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>    <span class="n">session_index_column</span><span class="o">=</span><span class="s1">&#39;session_id&#39;</span><span class="p">,</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>    <span class="n">user_observable_data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="n">gender</span><span class="p">,</span> <span class="s1">&#39;income&#39;</span><span class="p">:</span> <span class="n">income</span><span class="p">},</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>    <span class="c1"># alternatively, supply gender and income as a single dataframe.</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>    <span class="c1"># user_observable_data={&#39;gender_and_income&#39;: gender_and_income},</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>    <span class="n">item_observable_data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;speed&#39;</span><span class="p">:</span> <span class="n">speed</span><span class="p">},</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>    <span class="n">session_observable_data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;discount&#39;</span><span class="p">:</span> <span class="n">discount</span><span class="p">},</span>
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>    <span class="n">itemsession_observable_data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;price&#39;</span><span class="p">:</span> <span class="n">price</span><span class="p">})</span>
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="c1"># the second method creates exactly the same ChoiceDataset as the previous method.</span>
+<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="k">assert</span> <span class="n">data_wrapper_from_dataframes</span><span class="o">.</span><span class="n">choice_dataset</span> <span class="o">==</span> <span class="n">data_wrapper_from_columns</span><span class="o">.</span><span class="n">choice_dataset</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">k_range</span><span class="p">:</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    <span class="c1"># run for 3 times.</span>
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>        <span class="n">dataset</span> <span class="o">=</span> <span class="n">duplicate_mode_canada_datasets</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>        <span class="n">model</span> <span class="o">=</span> <span class="n">model</span> <span class="o">=</span> <span class="n">ConditionalLogitModel</span><span class="p">(</span>
-<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>            <span class="n">formula</span><span class="o">=</span><span class="s1">&#39;(price_cost_freq_ovt|constant) + (session_income|item) + (price_ivt|item-full) + (intercept|item)&#39;</span><span class="p">,</span>
-<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>            <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
-<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>            <span class="n">num_items</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>        <span class="c1"># only time the model estimation.</span>
-<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
-<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>        <span class="n">model</span><span class="p">,</span> <span class="n">ll</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.03</span> <span class="p">,</span> <span class="n">num_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">compute_std</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_final_training_log_likelihood</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>        <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
-<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>        <span class="n">performance_records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">ll</span><span class="o">=</span><span class="n">ll</span><span class="p">))</span>
+<div class="highlight"><pre><span></span><code>Creating choice dataset from stata format data-frames...
+Note: choice sets of different sizes found in different purchase records: {&#39;size 4&#39;: &#39;occurrence 505&#39;, &#39;size 3&#39;: &#39;occurrence 380&#39;}
+Finished Creating Choice Dataset.
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>==================== received model ====================
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">data_wrapper_mixed</span> <span class="o">=</span> <span class="n">EasyDatasetWrapper</span><span class="p">(</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="n">main_data</span><span class="o">=</span><span class="n">car_choice</span><span class="p">,</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    <span class="n">purchase_record_column</span><span class="o">=</span><span class="s1">&#39;record_id&#39;</span><span class="p">,</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="n">choice_column</span><span class="o">=</span><span class="s1">&#39;purchase&#39;</span><span class="p">,</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    <span class="n">item_name_column</span><span class="o">=</span><span class="s1">&#39;car&#39;</span><span class="p">,</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    <span class="n">user_index_column</span><span class="o">=</span><span class="s1">&#39;consumer_id&#39;</span><span class="p">,</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    <span class="n">session_index_column</span><span class="o">=</span><span class="s1">&#39;session_id&#39;</span><span class="p">,</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="n">user_observable_data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="n">gender</span><span class="p">,</span> <span class="s1">&#39;income&#39;</span><span class="p">:</span> <span class="n">income</span><span class="p">},</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    <span class="n">item_observable_data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;speed&#39;</span><span class="p">:</span> <span class="n">speed</span><span class="p">},</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>    <span class="n">session_observable_data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;discount&#39;</span><span class="p">:</span> <span class="n">discount</span><span class="p">},</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>    <span class="n">itemsession_observable_columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;price&#39;</span><span class="p">])</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="c1"># these methods create exactly the same choice dataset.</span>
+<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="k">assert</span> <span class="n">data_wrapper_mixed</span><span class="o">.</span><span class="n">choice_dataset</span> <span class="o">==</span> <span class="n">data_wrapper_from_columns</span><span class="o">.</span><span class="n">choice_dataset</span> <span class="o">==</span> <span class="n">data_wrapper_from_dataframes</span><span class="o">.</span><span class="n">choice_dataset</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>Creating choice dataset from stata format data-frames...
+Note: choice sets of different sizes found in different purchase records: {&#39;size 4&#39;: &#39;occurrence 505&#39;, &#39;size 3&#39;: &#39;occurrence 380&#39;}
+Finished Creating Choice Dataset.
+</code></pre></div>
+<h2 id="constructing-a-choice-dataset-method-2-building-from-tensors">Constructing a Choice Dataset, Method 2: Building from Tensors</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">N</span> <span class="o">=</span> <span class="mi">10_000</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">num_users</span> <span class="o">=</span> <span class="mi">10</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">num_items</span> <span class="o">=</span> <span class="mi">4</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">num_sessions</span> <span class="o">=</span> <span class="mi">500</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="n">user_obs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">num_users</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="n">item_obs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">num_items</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="n">session_obs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">num_sessions</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="n">itemsession_obs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">num_sessions</span><span class="p">,</span> <span class="n">num_items</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="n">item_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">num_items</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">N</span><span class="p">))</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="n">user_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">num_users</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">N</span><span class="p">))</span>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="n">session_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">num_sessions</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">N</span><span class="p">))</span>
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="n">item_availability</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">num_sessions</span><span class="p">,</span> <span class="n">num_items</span><span class="p">)</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>
+<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">ChoiceDataset</span><span class="p">(</span>
+<a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>    <span class="c1"># required:</span>
+<a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a>    <span class="n">item_index</span><span class="o">=</span><span class="n">item_index</span><span class="p">,</span>
+<a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a>    <span class="c1"># optional:</span>
+<a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a>    <span class="n">user_index</span><span class="o">=</span><span class="n">user_index</span><span class="p">,</span> <span class="n">session_index</span><span class="o">=</span><span class="n">session_index</span><span class="p">,</span> <span class="n">item_availability</span><span class="o">=</span><span class="n">item_availability</span><span class="p">,</span>
+<a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a>    <span class="c1"># observable tensors are supplied as keyword arguments with special prefixes.</span>
+<a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a>    <span class="n">user_obs</span><span class="o">=</span><span class="n">user_obs</span><span class="p">,</span> <span class="n">item_obs</span><span class="o">=</span><span class="n">item_obs</span><span class="p">,</span> <span class="n">session_obs</span><span class="o">=</span><span class="n">session_obs</span><span class="p">,</span> <span class="n">itemsession_obs</span><span class="o">=</span><span class="n">itemsession_obs</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>ChoiceDataset(label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], itemsession_obs=[500, 4, 12], device=cpu)
+</code></pre></div>
+<h2 id="functionalities-of-the-choice-dataset">Functionalities of the Choice Dataset</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">num_users</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="c1"># dataset.num_users=10</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">num_items</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1"># dataset.num_items=4</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">num_sessions</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="c1"># dataset.num_sessions=500</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="c1"># len(dataset)=10000</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>dataset.num_users=10
+dataset.num_items=4
+dataset.num_sessions=500
+len(dataset)=10000
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># clone</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">item_index</span><span class="p">[:</span><span class="mi">10</span><span class="p">])</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="c1"># tensor([2, 2, 3, 1, 3, 2, 2, 1, 0, 1])</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="n">dataset_cloned</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="c1"># modify the cloned dataset.</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="n">dataset_cloned</span><span class="o">.</span><span class="n">item_index</span> <span class="o">=</span> <span class="mi">99</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">num_sessions</span><span class="p">)</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset_cloned</span><span class="o">.</span><span class="n">item_index</span><span class="p">[:</span><span class="mi">10</span><span class="p">])</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="c1"># the cloned dataset is changed.</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="c1"># tensor([99., 99., 99., 99., 99., 99., 99., 99., 99., 99.])</span>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">item_index</span><span class="p">[:</span><span class="mi">10</span><span class="p">])</span>
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="c1"># the original dataset does not change.</span>
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="c1"># tensor([2, 2, 3, 1, 3, 2, 2, 1, 0, 1])</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>tensor([1, 2, 0, 0, 3, 0, 3, 1, 0, 2])
+tensor([99., 99., 99., 99., 99., 99., 99., 99., 99., 99.])
+tensor([1, 2, 0, 0, 3, 0, 3, 1, 0, 2])
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># move to device</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">device</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="c1"># dataset.device=cpu</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">device</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="c1"># dataset.device=cpu</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">user_index</span><span class="o">.</span><span class="n">device</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="c1"># dataset.user_index.device=cpu</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">session_index</span><span class="o">.</span><span class="n">device</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="c1"># dataset.session_index.device=cpu</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;cuda&#39;</span><span class="p">)</span>
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a>
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">device</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
+<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="c1"># dataset.device=cuda:0</span>
+<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">item_index</span><span class="o">.</span><span class="n">device</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
+<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="c1"># dataset.item_index.device=cuda:0</span>
+<a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">user_index</span><span class="o">.</span><span class="n">device</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
+<a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a><span class="c1"># dataset.user_index.device=cuda:0</span>
+<a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">session_index</span><span class="o">.</span><span class="n">device</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
+<a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a><span class="c1"># dataset.session_index.device=cuda:0</span>
+<a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a>
+<a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a><span class="n">dataset</span><span class="o">.</span><span class="n">_check_device_consistency</span><span class="p">()</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>dataset.device=cpu
+dataset.device=cpu
+dataset.user_index.device=cpu
+dataset.session_index.device=cpu
+dataset.device=cuda:0
+dataset.item_index.device=cuda:0
+dataset.user_index.device=cuda:0
+dataset.session_index.device=cuda:0
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">def</span> <span class="nf">print_dict_shape</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>        <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dict.</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">.shape=</span><span class="si">{</span><span class="n">val</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="n">print_dict_shape</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">x_dict</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>dict.user_obs.shape=torch.Size([10000, 4, 128])
+dict.item_obs.shape=torch.Size([10000, 4, 64])
+dict.session_obs.shape=torch.Size([10000, 4, 10])
+dict.itemsession_obs.shape=torch.Size([10000, 4, 12])
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># __getitem__ to get batch.</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="c1"># pick 5 random sessions as the mini-batch.</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="n">indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="nb">print</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="c1"># tensor([1118,  976, 1956,  290, 8283])</span>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="n">subset</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="c1"># ChoiceDataset(label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], price_obs=[500, 4, 12], device=cpu)</span>
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="nb">print</span><span class="p">(</span><span class="n">subset</span><span class="p">)</span>
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="c1"># ChoiceDataset(label=[], item_index=[5], user_index=[5], session_index=[5], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], price_obs=[500, 4, 12], device=cpu)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>tensor([1865, 6236, 4548, 5486, 1771])
+ChoiceDataset(label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], itemsession_obs=[500, 4, 12], device=cpu)
+ChoiceDataset(label=[], item_index=[5], user_index=[5], session_index=[5], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], itemsession_obs=[500, 4, 12], device=cpu)
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nb">print</span><span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">item_index</span><span class="p">)</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="c1"># tensor([0, 1, 0, 0, 0])</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">item_index</span><span class="p">[</span><span class="n">indices</span><span class="p">])</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="c1"># tensor([0, 1, 0, 0, 0])</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="n">subset</span><span class="o">.</span><span class="n">item_index</span> <span class="o">+=</span> <span class="mi">1</span>  <span class="c1"># modifying the batch does not change the original dataset.</span>
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>
+<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="nb">print</span><span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">item_index</span><span class="p">)</span>
+<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="c1"># tensor([1, 2, 1, 1, 1])</span>
+<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">item_index</span><span class="p">[</span><span class="n">indices</span><span class="p">])</span>
+<a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="c1"># tensor([0, 1, 0, 0, 0])</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>tensor([1, 1, 2, 2, 2])
+tensor([1, 1, 2, 2, 2])
+tensor([2, 2, 3, 3, 3])
+tensor([1, 1, 2, 2, 2])
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="nb">print</span><span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">item_obs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="c1"># tensor(-1.5811)</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">item_obs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="c1"># tensor(-1.5811)</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="n">subset</span><span class="o">.</span><span class="n">item_obs</span> <span class="o">+=</span> <span class="mi">1</span>
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="nb">print</span><span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">item_obs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="c1"># tensor(-0.5811)</span>
+<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">item_obs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a><span class="c1"># tensor(-1.5811)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>tensor(-0.6857)
+tensor(-0.6857)
+tensor(0.3143)
+tensor(-0.6857)
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="nb">print</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">item_index</span><span class="p">))</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="c1"># 140339656298640</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="nb">print</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">item_index</span><span class="p">[</span><span class="n">indices</span><span class="p">]))</span>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="c1"># 140339656150528</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="c1"># these two are different objects in memory.</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>139766186199856
+139766186203856
+</code></pre></div>
+<h2 id="chaining-multiple-datasets-with-jointdataset">Chaining Multiple Datasets with JointDataset</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="n">item_level_dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="n">nest_level_dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="n">joint_dataset</span> <span class="o">=</span> <span class="n">JointDataset</span><span class="p">(</span>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>    <span class="n">item</span><span class="o">=</span><span class="n">item_level_dataset</span><span class="p">,</span>
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>    <span class="n">nest</span><span class="o">=</span><span class="n">nest_level_dataset</span><span class="p">)</span>
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="nb">print</span><span class="p">(</span><span class="n">joint_dataset</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>JointDataset with 2 sub-datasets: (
+    item: ChoiceDataset(label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], itemsession_obs=[500, 4, 12], device=cpu)
+    nest: ChoiceDataset(label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], itemsession_obs=[500, 4, 12], device=cpu)
+)
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="kn">from</span> <span class="nn">torch.utils.data.sampler</span> <span class="kn">import</span> <span class="n">BatchSampler</span><span class="p">,</span> <span class="n">SequentialSampler</span><span class="p">,</span> <span class="n">RandomSampler</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="n">shuffle</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># for demonstration purpose.</span>
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="n">batch_size</span> <span class="o">=</span> <span class="mi">32</span>
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="c1"># Create sampler.</span>
+<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="n">sampler</span> <span class="o">=</span> <span class="n">BatchSampler</span><span class="p">(</span>
+<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>    <span class="n">RandomSampler</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span> <span class="k">if</span> <span class="n">shuffle</span> <span class="k">else</span> <span class="n">SequentialSampler</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span>
+<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>    <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+<a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>    <span class="n">drop_last</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a>
+<a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a><span class="n">dataloader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span>
+<a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a>                                         <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span>
+<a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a>                                         <span class="n">collate_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+<a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a>                                         <span class="n">pin_memory</span><span class="o">=</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">device</span> <span class="o">==</span> <span class="s1">&#39;cpu&#39;</span><span class="p">))</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">item_obs</span><span class="o">.</span><span class="n">shape</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="c1"># item_obs.shape=torch.Size([4, 64])</span>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="n">item_obs_all</span> <span class="o">=</span> <span class="n">item_obs</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_items</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="n">item_obs_all</span> <span class="o">=</span> <span class="n">item_obs_all</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="n">item_index_all</span> <span class="o">=</span> <span class="n">item_index</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">item_obs_all</span><span class="o">.</span><span class="n">shape</span><span class="si">=:}</span><span class="s1">&#39;</span><span class="p">)</span>
+<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="c1"># item_obs_all.shape=torch.Size([10000, 4, 64])</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>item_obs.shape=torch.Size([4, 64])
+item_obs_all.shape=torch.Size([10000, 4, 64])
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dataloader</span><span class="p">):</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>    <span class="n">first</span><span class="p">,</span> <span class="n">last</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="n">batch_size</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">batch_size</span><span class="p">)</span>
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>    <span class="n">idx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">)</span>
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>    <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">item_obs_all</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">==</span> <span class="n">batch</span><span class="o">.</span><span class="n">x_dict</span><span class="p">[</span><span class="s1">&#39;item_obs&#39;</span><span class="p">])</span>
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>    <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">item_index_all</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">==</span> <span class="n">batch</span><span class="o">.</span><span class="n">item_index</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="n">batch</span><span class="o">.</span><span class="n">x_dict</span><span class="p">[</span><span class="s1">&#39;item_obs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="c1"># torch.Size([16, 4, 64])</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>torch.Size([16, 4, 64])
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="n">print_dict_shape</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">x_dict</span><span class="p">)</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="c1"># dict.user_obs.shape=torch.Size([10000, 4, 128])</span>
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="c1"># dict.item_obs.shape=torch.Size([10000, 4, 64])</span>
+<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="c1"># dict.session_obs.shape=torch.Size([10000, 4, 10])</span>
+<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="c1"># dict.price_obs.shape=torch.Size([10000, 4, 12])</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>dict.user_obs.shape=torch.Size([10000, 4, 128])
+dict.item_obs.shape=torch.Size([10000, 4, 64])
+dict.session_obs.shape=torch.Size([10000, 4, 10])
+dict.itemsession_obs.shape=torch.Size([10000, 4, 12])
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="n">dataset</span><span class="o">.</span><span class="fm">__len__</span><span class="p">()</span>
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="c1"># 10000</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>10000
+</code></pre></div>
+<h1 id="conditional-logit-model">Conditional Logit Model</h1>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">load_mode_canada_dataset</span><span class="p">()</span> 
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>No `session_index` is provided, assume each choice instance is in its own session.
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="n">dataset</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>ChoiceDataset(label=[], item_index=[2779], user_index=[], session_index=[2779], item_availability=[], itemsession_cost_freq_ovt=[2779, 4, 3], session_income=[2779, 1], itemsession_ivt=[2779, 4, 1], device=cpu)
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="n">model</span> <span class="o">=</span> <span class="n">ConditionalLogitModel</span><span class="p">(</span>
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>    <span class="n">formula</span><span class="o">=</span><span class="s1">&#39;(itemsession_cost_freq_ovt|constant) + (session_income|item) + (itemsession_ivt|item-full) + (intercept|item)&#39;</span><span class="p">,</span>
+<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a>    <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+<a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a>    <span class="n">num_items</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="n">model</span> <span class="o">=</span> <span class="n">ConditionalLogitModel</span><span class="p">(</span>
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>    <span class="n">coef_variation_dict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;itemsession_cost_freq_ovt&#39;</span><span class="p">:</span> <span class="s1">&#39;constant&#39;</span><span class="p">,</span>
+<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>                         <span class="s1">&#39;session_income&#39;</span><span class="p">:</span> <span class="s1">&#39;item&#39;</span><span class="p">,</span>
+<a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a>                         <span class="s1">&#39;itemsession_ivt&#39;</span><span class="p">:</span> <span class="s1">&#39;item-full&#39;</span><span class="p">,</span>
+<a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a>                         <span class="s1">&#39;intercept&#39;</span><span class="p">:</span> <span class="s1">&#39;item&#39;</span><span class="p">},</span>
+<a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a>    <span class="n">num_param_dict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;itemsession_cost_freq_ovt&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+<a id="__codelineno-26-7" name="__codelineno-26-7" href="#__codelineno-26-7"></a>                    <span class="s1">&#39;session_income&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-26-8" name="__codelineno-26-8" href="#__codelineno-26-8"></a>                    <span class="s1">&#39;itemsession_ivt&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-26-9" name="__codelineno-26-9" href="#__codelineno-26-9"></a>                    <span class="s1">&#39;intercept&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+<a id="__codelineno-26-10" name="__codelineno-26-10" href="#__codelineno-26-10"></a>    <span class="n">num_items</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="n">model</span> <span class="o">=</span> <span class="n">ConditionalLogitModel</span><span class="p">(</span>
+<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>    <span class="n">coef_variation_dict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;itemsession_cost_freq_ovt&#39;</span><span class="p">:</span> <span class="s1">&#39;constant&#39;</span><span class="p">,</span>
+<a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a>                         <span class="s1">&#39;session_income&#39;</span><span class="p">:</span> <span class="s1">&#39;item&#39;</span><span class="p">,</span>
+<a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a>                         <span class="s1">&#39;itemsession_ivt&#39;</span><span class="p">:</span> <span class="s1">&#39;item-full&#39;</span><span class="p">,</span>
+<a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a>                         <span class="s1">&#39;intercept&#39;</span><span class="p">:</span> <span class="s1">&#39;item&#39;</span><span class="p">},</span>
+<a id="__codelineno-27-6" name="__codelineno-27-6" href="#__codelineno-27-6"></a>    <span class="n">num_param_dict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;itemsession_cost_freq_ovt&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+<a id="__codelineno-27-7" name="__codelineno-27-7" href="#__codelineno-27-7"></a>                    <span class="s1">&#39;session_income&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-27-8" name="__codelineno-27-8" href="#__codelineno-27-8"></a>                    <span class="s1">&#39;itemsession_ivt&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-27-9" name="__codelineno-27-9" href="#__codelineno-27-9"></a>                    <span class="s1">&#39;intercept&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+<a id="__codelineno-27-10" name="__codelineno-27-10" href="#__codelineno-27-10"></a>    <span class="n">num_items</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+<a id="__codelineno-27-11" name="__codelineno-27-11" href="#__codelineno-27-11"></a>    <span class="n">regularization</span><span class="o">=</span><span class="s2">&quot;L1&quot;</span><span class="p">,</span> <span class="n">regularization_weight</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="kn">from</span> <span class="nn">torch_choice</span> <span class="kn">import</span> <span class="n">run</span>
+<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a><span class="n">run</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">num_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">model_optimizer</span><span class="o">=</span><span class="s2">&quot;LBFGS&quot;</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>GPU available: True (cuda), used: False
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+
+  | Name  | Type                  | Params
+------------------------------------------------
+0 | model | ConditionalLogitModel | 13    
+------------------------------------------------
+13        Trainable params
+0         Non-trainable params
+13        Total params
+0.000     Total estimated model params size (MB)
+
+
+==================== model received ====================
 ConditionalLogitModel(
   (coef_dict): ModuleDict(
-    (price_cost_freq_ovt): Coefficient(variation=constant, num_items=4, num_users=None, num_params=3, 3 trainable parameters in total, device=cpu).
-    (session_income): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cpu).
-    (price_ivt): Coefficient(variation=item-full, num_items=4, num_users=None, num_params=1, 4 trainable parameters in total, device=cpu).
-    (intercept): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cpu).
+    (itemsession_cost_freq_ovt[constant]): Coefficient(variation=constant, num_items=4, num_users=None, num_params=3, 3 trainable parameters in total, device=cpu).
+    (session_income[item]): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cpu).
+    (itemsession_ivt[item-full]): Coefficient(variation=item-full, num_items=4, num_users=None, num_params=1, 4 trainable parameters in total, device=cpu).
+    (intercept[item]): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cpu).
   )
 )
 Conditional logistic discrete choice model, expects input features:
 
-X[price_cost_freq_ovt] with 3 parameters, with constant level variation.
-X[session_income] with 1 parameters, with item level variation.
-X[price_ivt] with 1 parameters, with item-full level variation.
-X[intercept] with 1 parameters, with item level variation.
+X[itemsession_cost_freq_ovt[constant]] with 3 parameters, with constant level variation.
+X[session_income[item]] with 1 parameters, with item level variation.
+X[itemsession_ivt[item-full]] with 1 parameters, with item-full level variation.
+X[intercept[item]] with 1 parameters, with item level variation.
 device=cpu
-==================== received dataset ====================
-ChoiceDataset(label=[], item_index=[27790], provided_num_items=[], user_index=[], session_index=[27790], item_availability=[], price_cost_freq_ovt=[2779, 4, 3], session_income=[2779, 1], price_ivt=[2779, 4, 1], device=cpu)
-==================== training the model ====================
-Epoch 100: Log-likelihood=-44074.7265625
-Epoch 200: Log-likelihood=-29754.7890625
-Epoch 300: Log-likelihood=-23659.138671875
-Epoch 400: Log-likelihood=-21073.43359375
-Epoch 500: Log-likelihood=-18857.978515625
-Epoch 600: Log-likelihood=-18838.84375
-Epoch 700: Log-likelihood=-18827.517578125
-Epoch 800: Log-likelihood=-18819.5078125
-Epoch 900: Log-likelihood=-18813.14453125
-Epoch 1000: Log-likelihood=-18807.544921875
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">performance_records</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>[]
-</code></pre></div>
-<h3 id="simulation-setup-depreciated">Simulation Setup (Depreciated)</h3>
-<p>Example utility construction:
-$$
-U_{uis} = \lambda_i + \beta_u^\top \bm{x}<em>\text{item}^{(i)} + \gamma^\top \bm{x}</em>\text{session}^{(s)} + \epsilon
-$$</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">num_items</span> <span class="o">=</span> <span class="mi">10</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">num_users</span> <span class="o">=</span> <span class="mi">5</span>
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">num_sessions</span> <span class="o">=</span> <span class="mi">1</span>
-<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="n">N</span> <span class="o">=</span> <span class="mi">50000</span>
-<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="c1"># generate a random user ui.</span>
-<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="n">user_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">num_users</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">N</span><span class="p">))</span>
-<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="c1"># construct users.</span>
-<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="c1"># item_index = torch.LongTensor(np.random.choice(num_items, size=N))</span>
-<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="c1"># construct sessions.</span>
-<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="n">session_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">num_sessions</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">N</span><span class="p">))</span>
-<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="n">rational_prob</span> <span class="o">=</span> <span class="mf">0.99</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>Running cells with &#39;Python 3.9.15 (&#39;python-dev&#39;)&#39; requires ipykernel package.
+==================== data set received ====================
+[Train dataset] ChoiceDataset(label=[], item_index=[2779], user_index=[], session_index=[2779], item_availability=[], itemsession_cost_freq_ovt=[2779, 4, 3], session_income=[2779, 1], itemsession_ivt=[2779, 4, 1], device=cuda:0)
+[Validation dataset] None
+[Test dataset] None
 
 
-Run the following command to install &#39;ipykernel&#39; into the Python environment.
+
+Training: 0it [00:00, ?it/s]
 
 
-Command: &#39;conda install -n python-dev ipykernel --update-deps --force-reinstall&#39;
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">user_obs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_users</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">item_obs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_items</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="n">session_obs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_sessions</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="c1"># price_obs = torch.randn(num_sessions, num_items, 12)</span>
-<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="n">item_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">num_items</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">N</span><span class="p">))</span>
-<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="n">user_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">num_users</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">N</span><span class="p">))</span>
-<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="n">session_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">num_sessions</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">N</span><span class="p">))</span>
-<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="n">item_availability</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">num_sessions</span><span class="p">,</span> <span class="n">num_items</span><span class="p">)</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">lambda_item</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_items</span><span class="p">)</span> <span class="o">*</span> <span class="mi">10</span>
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="n">lambda_item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="n">beta_user</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_users</span><span class="p">,</span> <span class="n">item_obs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="mi">10</span>
-<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="n">gamma_constant</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">session_obs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="mi">10</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">item_index</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>
-<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)):</span>
-<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>    <span class="n">u</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">user_index</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="n">session_index</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
-<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">rational_prob</span><span class="p">:</span>
-<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>        <span class="c1"># (num_items, 1)</span>
-<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>        <span class="c1"># utilities = lambda_item + (beta_user[u].view(1, -1).expand(num_items, -1) * item_obs).sum(dim=-1) + (gamma_constant.view(1, -1).expand(num_items, -1) * session_obs[s].view(1, -1).expand(num_items, -1)).sum(dim=-1)</span>
-<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>        <span class="n">utilities</span> <span class="o">=</span> <span class="n">lambda_item</span>
-<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>        <span class="n">p</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">utilities</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>        <span class="n">item_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">num_items</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">))</span>
-<a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>        <span class="c1"># item_index.append(int(np.argmax(utilities)))</span>
-<a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>    <span class="k">else</span><span class="p">:</span>
-<a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a>        <span class="n">item_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">num_items</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)))</span>
-<a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a><span class="n">item_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">item_index</span><span class="p">)</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>100%|██████████| 50000/50000 [00:00&lt;00:00, 64854.88it/s]
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;item_index&#39;</span><span class="p">:</span> <span class="n">item_index</span><span class="p">,</span> <span class="s1">&#39;user_index&#39;</span><span class="p">:</span> <span class="n">user_index</span><span class="p">,</span> <span class="s1">&#39;session_index&#39;</span><span class="p">:</span> <span class="n">session_index</span><span class="p">})</span>
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;./benchmark_data/choice_data.csv&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">ChoiceDataset</span><span class="p">(</span><span class="n">item_index</span><span class="o">=</span><span class="n">item_index</span><span class="p">,</span> <span class="n">user_index</span><span class="o">=</span><span class="n">user_index</span><span class="p">,</span> <span class="n">session_index</span><span class="o">=</span><span class="n">session_index</span><span class="p">,</span> <span class="n">item_obs</span><span class="o">=</span><span class="n">item_obs</span><span class="p">,</span> <span class="n">user_obs</span><span class="o">=</span><span class="n">user_obs</span><span class="p">,</span> <span class="n">session_obs</span><span class="o">=</span><span class="n">session_obs</span><span class="p">,</span> <span class="n">num_items</span><span class="o">=</span><span class="n">num_items</span><span class="p">)</span>
-<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="n">dataset</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>ChoiceDataset(label=[], item_index=[50000], provided_num_items=[1], user_index=[50000], session_index=[50000], item_availability=[], item_obs=[10, 3], user_obs=[5, 3], session_obs=[1, 3], device=cpu)
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># model = ConditionalLogitModel(formula=&#39;(1|item-full) + (item_obs|user) + (session_obs|constant)&#39;, dataset=dataset, num_items=num_items, num_users=num_users)</span>
-<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="n">model</span> <span class="o">=</span> <span class="n">ConditionalLogitModel</span><span class="p">(</span><span class="n">formula</span><span class="o">=</span><span class="s1">&#39;(1|item)&#39;</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span> <span class="n">num_items</span><span class="o">=</span><span class="n">num_items</span><span class="p">,</span> <span class="n">num_users</span><span class="o">=</span><span class="n">num_users</span><span class="p">)</span>
-<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">model</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">item_index</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()))</span>
-<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="n">model</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>0.00134
+`Trainer.fit` stopped: `max_epochs=1000` reached.
+
+
+Time taken for training: 23.79274034500122
+Skip testing, no test dataset is provided.
+==================== model results ====================
+Log-likelihood: [Training] -1874.63623046875, [Validation] N/A, [Test] N/A
+
+| Coefficient                           |   Estimation |   Std. Err. |       z-value |    Pr(&gt;|z|) | Significance   |
+|:--------------------------------------|-------------:|------------:|--------------:|------------:|:---------------|
+| itemsession_cost_freq_ovt[constant]_0 | -0.0372827   |  0.00709507 |  -5.25473     | 1.48243e-07 | ***            |
+| itemsession_cost_freq_ovt[constant]_1 |  0.0934419   |  0.00509598 |  18.3364      | 0           | ***            |
+| itemsession_cost_freq_ovt[constant]_2 | -0.0427658   |  0.00322177 | -13.274       | 0           | ***            |
+| session_income[item]_0                | -0.0862181   |  0.0183006  |  -4.71123     | 2.46226e-06 | ***            |
+| session_income[item]_1                | -0.0269176   |  0.00384876 |  -6.99383     | 2.67497e-12 | ***            |
+| session_income[item]_2                | -0.0370536   |  0.0040631  |  -9.11952     | 0           | ***            |
+| itemsession_ivt[item-full]_0          |  0.0593798   |  0.0100866  |   5.88698     | 3.93307e-09 | ***            |
+| itemsession_ivt[item-full]_1          | -0.00634217  |  0.0042797  |  -1.48192     | 0.138361    |                |
+| itemsession_ivt[item-full]_2          | -0.00583443  |  0.00189438 |  -3.07986     | 0.00207095  | **             |
+| itemsession_ivt[item-full]_3          | -0.00137758  |  0.00118694 |  -1.16061     | 0.245801    |                |
+| intercept[item]_0                     | -1.91536e-07 |  1.26821    |  -1.51029e-07 | 1           |                |
+| intercept[item]_1                     |  1.32858     |  0.703745   |   1.88787     | 0.0590437   |                |
+| intercept[item]_2                     |  2.82011     |  0.618218   |   4.56167     | 5.07483e-06 | ***            |
+Significance codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 
 
 
@@ -1053,98 +1183,34 @@ Command: &#39;conda install -n python-dev ipykernel --update-deps --force-reinst
 
 ConditionalLogitModel(
   (coef_dict): ModuleDict(
-    (intercept): Coefficient(variation=item, num_items=10, num_users=5, num_params=1, 9 trainable parameters in total, device=cpu).
+    (itemsession_cost_freq_ovt[constant]): Coefficient(variation=constant, num_items=4, num_users=None, num_params=3, 3 trainable parameters in total, device=cpu).
+    (session_income[item]): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cpu).
+    (itemsession_ivt[item-full]): Coefficient(variation=item-full, num_items=4, num_users=None, num_params=1, 4 trainable parameters in total, device=cpu).
+    (intercept[item]): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cpu).
   )
 )
 Conditional logistic discrete choice model, expects input features:
 
-X[intercept] with 1 parameters, with item level variation.
+X[itemsession_cost_freq_ovt[constant]] with 3 parameters, with constant level variation.
+X[session_income[item]] with 1 parameters, with item level variation.
+X[itemsession_ivt[item-full]] with 1 parameters, with item-full level variation.
+X[intercept[item]] with 1 parameters, with item level variation.
 device=cpu
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="n">model</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.3</span> <span class="p">,</span> <span class="n">num_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">compute_std</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">model</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">item_index</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="err">!</span> <span class="n">tensorboard</span> <span class="o">--</span><span class="n">logdir</span> <span class="o">./</span><span class="n">lightning_logs</span> <span class="o">--</span><span class="n">port</span> <span class="mi">6006</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>==================== received model ====================
-ConditionalLogitModel(
-  (coef_dict): ModuleDict(
-    (intercept): Coefficient(variation=item, num_items=10, num_users=5, num_params=1, 9 trainable parameters in total, device=cpu).
-  )
-)
-Conditional logistic discrete choice model, expects input features:
-
-X[intercept] with 1 parameters, with item level variation.
-device=cpu
-==================== received dataset ====================
-ChoiceDataset(label=[], item_index=[50000], provided_num_items=[1], user_index=[50000], session_index=[50000], item_availability=[], item_obs=[10, 3], user_obs=[5, 3], session_obs=[1, 3], device=cpu)
-==================== training the model ====================
-Epoch 100: Log-likelihood=-81310.9375
-Epoch 200: Log-likelihood=-81305.359375
-Epoch 300: Log-likelihood=-81305.2421875
-Epoch 400: Log-likelihood=-81305.2265625
-Epoch 500: Log-likelihood=-81305.234375
-Epoch 600: Log-likelihood=-81305.2265625
-Epoch 700: Log-likelihood=-81308.171875
-Epoch 800: Log-likelihood=-81305.2265625
-Epoch 900: Log-likelihood=-81339.671875
-Epoch 1000: Log-likelihood=-81305.234375
-
-
-
-
-
-0.40572
+<div class="highlight"><pre><span></span><code>2023-05-14 21:27:08.325570: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX512F AVX512_VNNI
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2023-05-14 21:27:08.389919: I tensorflow/core/util/port.cc:104] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2023-05-14 21:27:09.137097: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:981] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-05-14 21:27:09.184401: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:981] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-05-14 21:27:09.185605: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:981] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+Serving TensorBoard on localhost; to expose to the network, use a proxy or pass --bind_all
+TensorBoard 2.11.0 at http://localhost:6006/ (Press CTRL+C to quit)
+^C
 </code></pre></div>
-<h1 id="verify-parameter">Verify Parameter</h1>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="n">beta_user</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>tensor([[4.7301, 6.1908, 7.1181],
-        [3.4178, 8.8197, 4.9632],
-        [4.9116, 4.5997, 0.7213],
-        [8.3757, 0.5155, 4.8729],
-        [8.5097, 6.4045, 2.3534]])
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="n">model</span><span class="o">.</span><span class="n">coef_dict</span><span class="p">[</span><span class="s1">&#39;item_obs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">coef</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>---------------------------------------------------------------------------
-
-KeyError                                  Traceback (most recent call last)
-
-/var/folders/r3/rj0t5xcj557855yt3xr0qwnh0000gn/T/ipykernel_79509/1385705425.py in &lt;module&gt;
-----&gt; 1 model.coef_dict[&#39;item_obs&#39;].coef
-
-
-~/miniforge3/envs/ml/lib/python3.9/site-packages/torch/nn/modules/container.py in __getitem__(self, key)
-    324     @_copy_to_script_wrapper
-    325     def __getitem__(self, key: str) -&gt; Module:
---&gt; 326         return self._modules[key]
-    327 
-    328     def __setitem__(self, key: str, module: Module) -&gt; None:
-
-
-KeyError: &#39;item_obs&#39;
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="n">lambda_item</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>tensor([0.0000, 6.0579, 0.8783, 7.2887, 6.3035, 1.2217, 4.7925, 6.6317, 4.6998,
-        5.0522])
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="n">model</span><span class="o">.</span><span class="n">coef_dict</span><span class="p">[</span><span class="s1">&#39;intercept&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">coef</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>tensor([ 3.1896, -1.4328,  4.4139,  3.4304, -1.5620,  1.9348,  3.7506,  1.8674,
-         2.2129], grad_fn=&lt;SqueezeBackward0&gt;)
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="n">gamma_constant</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>tensor([1.1350, 8.2167, 7.8468])
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="n">model</span><span class="o">.</span><span class="n">coef_dict</span><span class="p">[</span><span class="s1">&#39;session_obs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">coef</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>tensor([-1.0625, -2.9416, -0.7111], grad_fn=&lt;SqueezeBackward0&gt;)
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">model</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">item_index</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>0.40572
-</code></pre></div>
+<h1 id="nested-logit-model">Nested Logit Model</h1>
+<p>The code demo for nested logit models in the paper was abstract, please refer to the nested-logit model tutorial for executable code.</p>
 
               
             </article>

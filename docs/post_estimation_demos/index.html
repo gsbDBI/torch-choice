@@ -893,7 +893,7 @@ JointDataset with 2 sub-datasets: (
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>torch.Size([100, 1])
 </code></pre></div>
-<p>Similarly, by changing to <code>level='item'</code>, the researcher can obtain the coefficient of user-specific fixed effect in the item level model, which is a also vector with <code>num_users</code> elements.</p>
+<p>Similarly, by changing to <code>level='item'</code>, the researcher can obtain the coefficient of user-specific fixed effect in the item level model, which is also a vector with <code>num_users</code> elements.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="n">nested_model</span><span class="o">.</span><span class="n">get_coefficient</span><span class="p">(</span><span class="s1">&#39;intercept[user]&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s1">&#39;item&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>torch.Size([100, 1])

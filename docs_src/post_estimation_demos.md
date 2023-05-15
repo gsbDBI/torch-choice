@@ -359,7 +359,7 @@ nested_model.get_coefficient('intercept[user]', level='nest').shape
 
 
 
-Similarly, by changing to `level='item'`, the researcher can obtain the coefficient of user-specific fixed effect in the item level model, which is a also vector with `num_users` elements.
+Similarly, by changing to `level='item'`, the researcher can obtain the coefficient of user-specific fixed effect in the item level model, which is also a vector with `num_users` elements.
 
 
 ```python

@@ -1,55 +1,33 @@
-# Materials for Torch-Choice Paper
+# Replication Materials for the Torch-Choice Paper
+
+> Author: Tianyu Du
+> 
+> Email: `tianyudu@stanford.edu`
+
+This repository contains the replication materials for the paper "Torch-Choice: A Library for Choice Models in PyTorch". Due to the limited space in the main paper, we have omitted some codes and outputs in the paper. This repository contains the full version of codes mentioned in the paper.
 
 
 ```python
+import warnings
+warnings.filterwarnings("ignore")
+
 from time import time
 import numpy as np
+import pandas as pd
 import torch
 import torch_choice
+from torch_choice import run
 from tqdm import tqdm
-from typing import List
-from torch_choice.data import ChoiceDataset, utils
-from torch_choice.model import ConditionalLogitModel
+from torch_choice.data import ChoiceDataset, JointDataset, utils, load_mode_canada_dataset, load_house_cooling_dataset_v1
+from torch_choice.model import ConditionalLogitModel, NestedLogitModel
 ```
 
-## The Car Choice Dataset Example
+# Data Structure
 
 
 ```python
-import pandas as pd
-import torch 
-import torch_choice
-import torch_choice.utils
-from torch_choice.utils.easy_data_wrapper import EasyDatasetWrapper
-from torch_choice.utils.run_helper import run
-```
-
-## Performance Benchmark
-**Copy the following description to the paper**.
-We designed a simple performance benchmark based on the transportation choice dataset: we duplicates $K$ copies of the original dataset of 2779 observations and compare time taken by various implementations. We compared the time cost of only the estimation process, since there are ample possibilities for further optimizing the estimation process (e.g., tuning learning rates, early stopping), we could under-estimate performances here. However, we wish to highlight how K 
-The metric $\frac{\text{log-likelihood}}{K}$ is used to check that various optimizers converged to the same solution.
-
-
-```python
-! mkdir -p './benchmark_data'
-```
-
-
-```python
-num_copies = 3
-df = pd.read_csv('./public_datasets/ModeCanada.csv')
-df_list = list()
-num_cases = df['case'].max()
-for i in range(num_copies):
-    df_copy = df.copy()
-    df_copy['case'] += num_cases * i
-    df_list.append(df_copy)
-df = pd.concat(df_list, ignore_index=True)
-```
-
-
-```python
-df
+car_choice = pd.read_csv("https://raw.githubusercontent.com/gsbDBI/torch-choice/main/tutorials/public_datasets/car_choice.csv")
+car_choice.head()
 ```
 
 
@@ -73,18 +51,16 @@ df
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>Unnamed: 0</th>
-      <th>case</th>
-      <th>alt</th>
-      <th>choice</th>
-      <th>dist</th>
-      <th>cost</th>
-      <th>ivt</th>
-      <th>ovt</th>
-      <th>freq</th>
+      <th>record_id</th>
+      <th>session_id</th>
+      <th>consumer_id</th>
+      <th>car</th>
+      <th>purchase</th>
+      <th>gender</th>
       <th>income</th>
-      <th>urban</th>
-      <th>noalt</th>
+      <th>speed</th>
+      <th>discount</th>
+      <th>price</th>
     </tr>
   </thead>
   <tbody>
@@ -92,391 +68,637 @@ df
       <th>0</th>
       <td>1</td>
       <td>1</td>
-      <td>train</td>
-      <td>0</td>
-      <td>83</td>
-      <td>28.25</td>
-      <td>50</td>
-      <td>66</td>
-      <td>4</td>
-      <td>45</td>
-      <td>0</td>
-      <td>2</td>
+      <td>1</td>
+      <td>American</td>
+      <td>1</td>
+      <td>1</td>
+      <td>46.699997</td>
+      <td>10</td>
+      <td>0.94</td>
+      <td>90</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>2</td>
       <td>1</td>
-      <td>car</td>
       <td>1</td>
-      <td>83</td>
-      <td>15.77</td>
-      <td>61</td>
+      <td>1</td>
+      <td>Japanese</td>
       <td>0</td>
-      <td>0</td>
-      <td>45</td>
-      <td>0</td>
-      <td>2</td>
+      <td>1</td>
+      <td>46.699997</td>
+      <td>8</td>
+      <td>0.94</td>
+      <td>110</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>3</td>
-      <td>2</td>
-      <td>train</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>European</td>
       <td>0</td>
-      <td>83</td>
-      <td>28.25</td>
+      <td>1</td>
+      <td>46.699997</td>
+      <td>7</td>
+      <td>0.94</td>
       <td>50</td>
-      <td>66</td>
-      <td>4</td>
-      <td>25</td>
-      <td>0</td>
-      <td>2</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>4</td>
-      <td>2</td>
-      <td>car</td>
       <td>1</td>
-      <td>83</td>
-      <td>15.77</td>
-      <td>61</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Korean</td>
       <td>0</td>
-      <td>0</td>
-      <td>25</td>
-      <td>0</td>
-      <td>2</td>
+      <td>1</td>
+      <td>46.699997</td>
+      <td>8</td>
+      <td>0.94</td>
+      <td>10</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>5</td>
-      <td>3</td>
-      <td>train</td>
-      <td>0</td>
-      <td>83</td>
-      <td>28.25</td>
-      <td>50</td>
-      <td>66</td>
-      <td>4</td>
-      <td>70</td>
-      <td>0</td>
       <td>2</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>46555</th>
-      <td>15516</td>
-      <td>12970</td>
-      <td>car</td>
+      <td>2</td>
+      <td>2</td>
+      <td>American</td>
       <td>1</td>
-      <td>347</td>
-      <td>65.93</td>
-      <td>267</td>
-      <td>0</td>
-      <td>0</td>
-      <td>35</td>
-      <td>0</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <th>46556</th>
-      <td>15517</td>
-      <td>12971</td>
-      <td>train</td>
-      <td>0</td>
-      <td>323</td>
-      <td>60.60</td>
-      <td>193</td>
-      <td>200</td>
-      <td>3</td>
-      <td>45</td>
-      <td>0</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <th>46557</th>
-      <td>15518</td>
-      <td>12971</td>
-      <td>car</td>
       <td>1</td>
-      <td>323</td>
-      <td>61.37</td>
-      <td>278</td>
-      <td>0</td>
-      <td>0</td>
-      <td>45</td>
-      <td>0</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <th>46558</th>
-      <td>15519</td>
-      <td>12972</td>
-      <td>train</td>
-      <td>0</td>
-      <td>150</td>
-      <td>28.50</td>
-      <td>63</td>
-      <td>105</td>
-      <td>1</td>
-      <td>70</td>
-      <td>0</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <th>46559</th>
-      <td>15520</td>
-      <td>12972</td>
-      <td>car</td>
-      <td>1</td>
-      <td>150</td>
-      <td>28.50</td>
-      <td>134</td>
-      <td>0</td>
-      <td>0</td>
-      <td>70</td>
-      <td>0</td>
-      <td>2</td>
+      <td>26.100000</td>
+      <td>10</td>
+      <td>0.95</td>
+      <td>100</td>
     </tr>
   </tbody>
 </table>
-<p>46560 rows × 12 columns</p>
 </div>
 
 
 
+### Adding Observables, Method 1: Observables Derived from Columns of the Main Dataset
+
 
 ```python
-def duplicate_mode_canada_datasets(num_copies: int):
-    df = pd.read_csv('./public_datasets/ModeCanada.csv', index_col=0)
-    df_list = list()
-    num_cases = df['case'].max()
-    for i in range(num_copies):
-        df_copy = df.copy()
-        df_copy['case'] += num_cases * i
-        df_list.append(df_copy)
-    df = pd.concat(df_list, ignore_index=True)
-    df = df.query('noalt == 4').reset_index(drop=True)
-    df.sort_values(by='case', inplace=True)
-    item_index = df[df['choice'] == 1].sort_values(by='case')['alt'].reset_index(drop=True)
-    item_names = ['air', 'bus', 'car', 'train']
-    num_items = 4
-    encoder = dict(zip(item_names, range(num_items)))
-    item_index = item_index.map(lambda x: encoder[x])
-    item_index = torch.LongTensor(item_index)
-    price_cost_freq_ovt = utils.pivot3d(df, dim0='case', dim1='alt',
-                                        values=['cost', 'freq', 'ovt'])
-    price_ivt = utils.pivot3d(df, dim0='case', dim1='alt', values='ivt')
-    session_income = df.groupby('case')['income'].first()
-    session_income = torch.Tensor(session_income.values).view(-1, 1)
+user_observable_columns=["gender", "income"]
+from torch_choice.utils.easy_data_wrapper import EasyDatasetWrapper
+data_wrapper_from_columns = EasyDatasetWrapper(
+    main_data=car_choice,
+    purchase_record_column='record_id',
+    choice_column='purchase',
+    item_name_column='car',
+    user_index_column='consumer_id',
+    session_index_column='session_id',
+    user_observable_columns=['gender', 'income'],
+    item_observable_columns=['speed'],
+    session_observable_columns=['discount'],
+    itemsession_observable_columns=['price'])
 
-    # session_index = torch.arange(len(session_income))
+data_wrapper_from_columns.summary()
+dataset = data_wrapper_from_columns.choice_dataset
+# ChoiceDataset(label=[], item_index=[885], provided_num_items=[], user_index=[885], session_index=[885], item_availability=[885, 4], item_speed=[4, 1], user_gender=[885, 1], user_income=[885, 1], session_discount=[885, 1], itemsession_price=[885, 4, 1], device=cpu)
+```
+
+    Creating choice dataset from stata format data-frames...
+    Note: choice sets of different sizes found in different purchase records: {'size 4': 'occurrence 505', 'size 3': 'occurrence 380'}
+    Finished Creating Choice Dataset.
+    * purchase record index range: [1 2 3] ... [883 884 885]
+    * Space of 4 items:
+                       0         1         2       3
+    item name  American  European  Japanese  Korean
+    * Number of purchase records/cases: 885.
+    * Preview of main data frame:
+          record_id  session_id  consumer_id       car  purchase  gender  \
+    0             1           1            1  American         1       1   
+    1             1           1            1  Japanese         0       1   
+    2             1           1            1  European         0       1   
+    3             1           1            1    Korean         0       1   
+    4             2           2            2  American         1       1   
+    ...         ...         ...          ...       ...       ...     ...   
+    3155        884         884          884  Japanese         1       1   
+    3156        884         884          884  European         0       1   
+    3157        885         885          885  American         1       1   
+    3158        885         885          885  Japanese         0       1   
+    3159        885         885          885  European         0       1   
     
-    dataset = ChoiceDataset(
-        # item_index=item_index.repeat(num_copies),
-        item_index=item_index,
-        session_index=torch.arange(len(session_income)),
-        price_cost_freq_ovt=price_cost_freq_ovt,
-        session_income=session_income,
-        price_ivt=price_ivt)
-    return df, dataset.clone()
-```
-
-
-```python
-df, dataset = duplicate_mode_canada_datasets(10)
-```
-
-
-```python
-performance_records = list()
-# k_range = [1, 5, 10, 100, 1_000, 10_000]
-k_range = [50, 500, 5_000]
-dataset_at_k = dict()
-for k in tqdm(k_range):
-    df, dataset = duplicate_mode_canada_datasets(k)
-    dataset_at_k[k] = dataset.clone()
-    # df.to_csv(f'./benchmark_data/mode_canada_{k}.csv', index=False)
-```
-
-    100%|██████████| 3/3 [03:08<00:00, 62.69s/it]
-
-
-
-```python
-for k in k_range:
-    # run for 3 times.
-    for _ in range(3):
-        dataset = duplicate_mode_canada_datasets(k)
-        model = model = ConditionalLogitModel(
-            formula='(price_cost_freq_ovt|constant) + (session_income|item) + (price_ivt|item-full) + (intercept|item)',
-            dataset=dataset,
-            num_items=4)
-        # only time the model estimation.
-        start_time = time()
-        model, ll = run(model, dataset, batch_size=-1, learning_rate=0.03 , num_epochs=1000, compute_std=True, return_final_training_log_likelihood=True)
-        end_time = time()
-        performance_records.append(dict(k=k, time=end_time - start_time, ll=ll))
-```
-
-    ==================== received model ====================
-    ConditionalLogitModel(
-      (coef_dict): ModuleDict(
-        (price_cost_freq_ovt): Coefficient(variation=constant, num_items=4, num_users=None, num_params=3, 3 trainable parameters in total, device=cpu).
-        (session_income): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cpu).
-        (price_ivt): Coefficient(variation=item-full, num_items=4, num_users=None, num_params=1, 4 trainable parameters in total, device=cpu).
-        (intercept): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cpu).
-      )
-    )
-    Conditional logistic discrete choice model, expects input features:
+             income  speed  discount  price  
+    0     46.699997     10      0.94     90  
+    1     46.699997      8      0.94    110  
+    2     46.699997      7      0.94     50  
+    3     46.699997      8      0.94     10  
+    4     26.100000     10      0.95    100  
+    ...         ...    ...       ...    ...  
+    3155  20.900000      8      0.89    100  
+    3156  20.900000      7      0.89     40  
+    3157  30.600000     10      0.81    100  
+    3158  30.600000      8      0.81     50  
+    3159  30.600000      7      0.81     40  
     
-    X[price_cost_freq_ovt] with 3 parameters, with constant level variation.
-    X[session_income] with 1 parameters, with item level variation.
-    X[price_ivt] with 1 parameters, with item-full level variation.
-    X[intercept] with 1 parameters, with item level variation.
-    device=cpu
-    ==================== received dataset ====================
-    ChoiceDataset(label=[], item_index=[27790], provided_num_items=[], user_index=[], session_index=[27790], item_availability=[], price_cost_freq_ovt=[2779, 4, 3], session_income=[2779, 1], price_ivt=[2779, 4, 1], device=cpu)
-    ==================== training the model ====================
-    Epoch 100: Log-likelihood=-44074.7265625
-    Epoch 200: Log-likelihood=-29754.7890625
-    Epoch 300: Log-likelihood=-23659.138671875
-    Epoch 400: Log-likelihood=-21073.43359375
-    Epoch 500: Log-likelihood=-18857.978515625
-    Epoch 600: Log-likelihood=-18838.84375
-    Epoch 700: Log-likelihood=-18827.517578125
-    Epoch 800: Log-likelihood=-18819.5078125
-    Epoch 900: Log-likelihood=-18813.14453125
-    Epoch 1000: Log-likelihood=-18807.544921875
+    [3160 rows x 10 columns]
+    * Preview of ChoiceDataset:
+    ChoiceDataset(label=[], item_index=[885], user_index=[885], session_index=[885], item_availability=[885, 4], item_speed=[4, 1], user_gender=[885, 1], user_income=[885, 1], session_discount=[885, 1], itemsession_price=[885, 4, 1], device=cpu)
 
+
+### Adding Observables, Method 2: Added as Separated DataFrames
 
 
 ```python
-performance_records
+# create dataframes for gender and income. The dataframe for user-specific observable needs to have the `consumer_id` column.
+gender = car_choice.groupby('consumer_id')['gender'].first().reset_index()
+income = car_choice.groupby('consumer_id')['income'].first().reset_index()
+# alternatively, put gender and income in the same dataframe.
+gender_and_income = car_choice.groupby('consumer_id')[['gender', 'income']].first().reset_index()
+# speed as item observable, the dataframe requires a `car` column.
+speed = car_choice.groupby('car')['speed'].first().reset_index()
+# discount as session observable. the dataframe requires a `session_id` column.
+discount = car_choice.groupby('session_id')['discount'].first().reset_index()
+# create the price as itemsession observable, the dataframe requires both `car` and `session_id` columns.
+price = car_choice[['car', 'session_id', 'price']]
+# fill in NANs for (session, item) pairs that the item was not available in that session.
+price = price.pivot('car', 'session_id', 'price').melt(ignore_index=False).reset_index()
 ```
 
 
-
-
-    []
-
-
-
-### Simulation Setup (Depreciated)
-Example utility construction:
-$$
-U_{uis} = \lambda_i + \beta_u^\top \bm{x}_\text{item}^{(i)} + \gamma^\top \bm{x}_\text{session}^{(s)} + \epsilon
-$$
-
-
 ```python
-num_items = 10
-num_users = 5
-num_sessions = 1
-N = 50000
-# generate a random user ui.
-user_index = torch.LongTensor(np.random.choice(num_users, size=N))
-# construct users.
-# item_index = torch.LongTensor(np.random.choice(num_items, size=N))
-# construct sessions.
-session_index = torch.LongTensor(np.random.choice(num_sessions, size=N))
-rational_prob = 0.99
+data_wrapper_from_dataframes = EasyDatasetWrapper(
+    main_data=car_choice,
+    purchase_record_column='record_id',
+    choice_column='purchase',
+    item_name_column='car',
+    user_index_column='consumer_id',
+    session_index_column='session_id',
+    user_observable_data={'gender': gender, 'income': income},
+    # alternatively, supply gender and income as a single dataframe.
+    # user_observable_data={'gender_and_income': gender_and_income},
+    item_observable_data={'speed': speed},
+    session_observable_data={'discount': discount},
+    itemsession_observable_data={'price': price})
+
+# the second method creates exactly the same ChoiceDataset as the previous method.
+assert data_wrapper_from_dataframes.choice_dataset == data_wrapper_from_columns.choice_dataset
 ```
 
-
-    Running cells with 'Python 3.9.15 ('python-dev')' requires ipykernel package.
-
-
-    Run the following command to install 'ipykernel' into the Python environment. 
-
-
-    Command: 'conda install -n python-dev ipykernel --update-deps --force-reinstall'
+    Creating choice dataset from stata format data-frames...
+    Note: choice sets of different sizes found in different purchase records: {'size 4': 'occurrence 505', 'size 3': 'occurrence 380'}
+    Finished Creating Choice Dataset.
 
 
 
 ```python
-user_obs = torch.rand(num_users, 3)
-item_obs = torch.rand(num_items, 3)
-session_obs = torch.rand(num_sessions, 3)
-# price_obs = torch.randn(num_sessions, num_items, 12)
+data_wrapper_mixed = EasyDatasetWrapper(
+    main_data=car_choice,
+    purchase_record_column='record_id',
+    choice_column='purchase',
+    item_name_column='car',
+    user_index_column='consumer_id',
+    session_index_column='session_id',
+    user_observable_data={'gender': gender, 'income': income},
+    item_observable_data={'speed': speed},
+    session_observable_data={'discount': discount},
+    itemsession_observable_columns=['price'])
+
+# these methods create exactly the same choice dataset.
+assert data_wrapper_mixed.choice_dataset == data_wrapper_from_columns.choice_dataset == data_wrapper_from_dataframes.choice_dataset
+```
+
+    Creating choice dataset from stata format data-frames...
+    Note: choice sets of different sizes found in different purchase records: {'size 4': 'occurrence 505', 'size 3': 'occurrence 380'}
+    Finished Creating Choice Dataset.
+
+
+## Constructing a Choice Dataset, Method 2: Building from Tensors
+
+
+```python
+N = 10_000
+num_users = 10
+num_items = 4
+num_sessions = 500
+
+
+user_obs = torch.randn(num_users, 128)
+item_obs = torch.randn(num_items, 64)
+session_obs = torch.randn(num_sessions, 10)
+itemsession_obs = torch.randn(num_sessions, num_items, 12)
 item_index = torch.LongTensor(np.random.choice(num_items, size=N))
 user_index = torch.LongTensor(np.random.choice(num_users, size=N))
 session_index = torch.LongTensor(np.random.choice(num_sessions, size=N))
 item_availability = torch.ones(num_sessions, num_items).bool()
+
+dataset = ChoiceDataset(
+    # required:
+    item_index=item_index,
+    # optional:
+    user_index=user_index, session_index=session_index, item_availability=item_availability,
+    # observable tensors are supplied as keyword arguments with special prefixes.
+    user_obs=user_obs, item_obs=item_obs, session_obs=session_obs, itemsession_obs=itemsession_obs)
 ```
 
 
 ```python
-lambda_item = torch.rand(num_items) * 10
-lambda_item[0] = 0
-beta_user = torch.rand(num_users, item_obs.shape[-1]) * 10
-gamma_constant = torch.rand(session_obs.shape[-1]) * 10
+print(dataset)
+```
+
+    ChoiceDataset(label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], itemsession_obs=[500, 4, 12], device=cpu)
+
+
+## Functionalities of the Choice Dataset
+
+
+```python
+print(f'{dataset.num_users=:}')
+# dataset.num_users=10
+print(f'{dataset.num_items=:}')
+# dataset.num_items=4
+print(f'{dataset.num_sessions=:}')
+# dataset.num_sessions=500
+print(f'{len(dataset)=:}')
+# len(dataset)=10000
+```
+
+    dataset.num_users=10
+    dataset.num_items=4
+    dataset.num_sessions=500
+    len(dataset)=10000
+
+
+
+```python
+# clone
+print(dataset.item_index[:10])
+# tensor([2, 2, 3, 1, 3, 2, 2, 1, 0, 1])
+dataset_cloned = dataset.clone()
+# modify the cloned dataset.
+dataset_cloned.item_index = 99 * torch.ones(num_sessions)
+print(dataset_cloned.item_index[:10])
+# the cloned dataset is changed.
+# tensor([99., 99., 99., 99., 99., 99., 99., 99., 99., 99.])
+print(dataset.item_index[:10])
+# the original dataset does not change.
+# tensor([2, 2, 3, 1, 3, 2, 2, 1, 0, 1])
+```
+
+    tensor([1, 2, 0, 0, 3, 0, 3, 1, 0, 2])
+    tensor([99., 99., 99., 99., 99., 99., 99., 99., 99., 99.])
+    tensor([1, 2, 0, 0, 3, 0, 3, 1, 0, 2])
+
+
+
+```python
+# move to device
+print(f'{dataset.device=:}')
+# dataset.device=cpu
+print(f'{dataset.device=:}')
+# dataset.device=cpu
+print(f'{dataset.user_index.device=:}')
+# dataset.user_index.device=cpu
+print(f'{dataset.session_index.device=:}')
+# dataset.session_index.device=cpu
+
+dataset = dataset.to('cuda')
+
+print(f'{dataset.device=:}')
+# dataset.device=cuda:0
+print(f'{dataset.item_index.device=:}')
+# dataset.item_index.device=cuda:0
+print(f'{dataset.user_index.device=:}')
+# dataset.user_index.device=cuda:0
+print(f'{dataset.session_index.device=:}')
+# dataset.session_index.device=cuda:0
+
+dataset._check_device_consistency()
+```
+
+    dataset.device=cpu
+    dataset.device=cpu
+    dataset.user_index.device=cpu
+    dataset.session_index.device=cpu
+    dataset.device=cuda:0
+    dataset.item_index.device=cuda:0
+    dataset.user_index.device=cuda:0
+    dataset.session_index.device=cuda:0
+
+
+
+```python
+def print_dict_shape(d):
+    for key, val in d.items():
+        if torch.is_tensor(val):
+            print(f'dict.{key}.shape={val.shape}')
+print_dict_shape(dataset.x_dict)
+```
+
+    dict.user_obs.shape=torch.Size([10000, 4, 128])
+    dict.item_obs.shape=torch.Size([10000, 4, 64])
+    dict.session_obs.shape=torch.Size([10000, 4, 10])
+    dict.itemsession_obs.shape=torch.Size([10000, 4, 12])
+
+
+
+```python
+# __getitem__ to get batch.
+# pick 5 random sessions as the mini-batch.
+dataset = dataset.to('cpu')
+indices = torch.Tensor(np.random.choice(len(dataset), size=5, replace=False)).long()
+print(indices)
+# tensor([1118,  976, 1956,  290, 8283])
+subset = dataset[indices]
+print(dataset)
+# ChoiceDataset(label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], price_obs=[500, 4, 12], device=cpu)
+print(subset)
+# ChoiceDataset(label=[], item_index=[5], user_index=[5], session_index=[5], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], price_obs=[500, 4, 12], device=cpu)
+```
+
+    tensor([1865, 6236, 4548, 5486, 1771])
+    ChoiceDataset(label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], itemsession_obs=[500, 4, 12], device=cpu)
+    ChoiceDataset(label=[], item_index=[5], user_index=[5], session_index=[5], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], itemsession_obs=[500, 4, 12], device=cpu)
+
+
+
+```python
+print(subset.item_index)
+# tensor([0, 1, 0, 0, 0])
+print(dataset.item_index[indices])
+# tensor([0, 1, 0, 0, 0])
+
+subset.item_index += 1  # modifying the batch does not change the original dataset.
+
+print(subset.item_index)
+# tensor([1, 2, 1, 1, 1])
+print(dataset.item_index[indices])
+# tensor([0, 1, 0, 0, 0])
+```
+
+    tensor([1, 1, 2, 2, 2])
+    tensor([1, 1, 2, 2, 2])
+    tensor([2, 2, 3, 3, 3])
+    tensor([1, 1, 2, 2, 2])
+
+
+
+```python
+print(subset.item_obs[0, 0])
+# tensor(-1.5811)
+print(dataset.item_obs[0, 0])
+# tensor(-1.5811)
+
+subset.item_obs += 1
+print(subset.item_obs[0, 0])
+# tensor(-0.5811)
+print(dataset.item_obs[0, 0])
+# tensor(-1.5811)
+```
+
+    tensor(-0.6857)
+    tensor(-0.6857)
+    tensor(0.3143)
+    tensor(-0.6857)
+
+
+
+```python
+print(id(subset.item_index))
+# 140339656298640
+print(id(dataset.item_index[indices]))
+# 140339656150528
+# these two are different objects in memory.
+```
+
+    139766186199856
+    139766186203856
+
+
+## Chaining Multiple Datasets with JointDataset
+
+
+```python
+item_level_dataset = dataset.clone()
+nest_level_dataset = dataset.clone()
+joint_dataset = JointDataset(
+    item=item_level_dataset,
+    nest=nest_level_dataset)
+
+print(joint_dataset)
+```
+
+    JointDataset with 2 sub-datasets: (
+    	item: ChoiceDataset(label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], itemsession_obs=[500, 4, 12], device=cpu)
+    	nest: ChoiceDataset(label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], itemsession_obs=[500, 4, 12], device=cpu)
+    )
+
+
+
+```python
+from torch.utils.data.sampler import BatchSampler, SequentialSampler, RandomSampler
+shuffle = False  # for demonstration purpose.
+batch_size = 32
+
+# Create sampler.
+sampler = BatchSampler(
+    RandomSampler(dataset) if shuffle else SequentialSampler(dataset),
+    batch_size=batch_size,
+    drop_last=False)
+
+dataloader = torch.utils.data.DataLoader(dataset,
+                                         sampler=sampler,
+                                         collate_fn=lambda x: x[0],
+                                         pin_memory=(dataset.device == 'cpu'))
 ```
 
 
 ```python
-item_index = list()
-
-for n in tqdm(range(N)):
-    u, s = user_index[n], session_index[n]
-    if np.random.rand() <= rational_prob:
-        # (num_items, 1)
-        # utilities = lambda_item + (beta_user[u].view(1, -1).expand(num_items, -1) * item_obs).sum(dim=-1) + (gamma_constant.view(1, -1).expand(num_items, -1) * session_obs[s].view(1, -1).expand(num_items, -1)).sum(dim=-1)
-        utilities = lambda_item
-        p = torch.nn.functional.softmax(utilities, dim=0).detach().numpy()
-        item_index.append(np.random.choice(num_items, p=p))
-        # item_index.append(int(np.argmax(utilities)))
-    else:
-        item_index.append(int(np.random.choice(num_items, size=1)))
-item_index = torch.LongTensor(item_index)
+print(f'{item_obs.shape=:}')
+# item_obs.shape=torch.Size([4, 64])
+item_obs_all = item_obs.view(1, num_items, -1).expand(len(dataset), -1, -1)
+item_obs_all = item_obs_all.to(dataset.device)
+item_index_all = item_index.to(dataset.device)
+print(f'{item_obs_all.shape=:}')
+# item_obs_all.shape=torch.Size([10000, 4, 64])
 ```
 
-    100%|██████████| 50000/50000 [00:00<00:00, 64854.88it/s]
+    item_obs.shape=torch.Size([4, 64])
+    item_obs_all.shape=torch.Size([10000, 4, 64])
 
 
 
 ```python
-df = pd.DataFrame(data={'item_index': item_index, 'user_index': user_index, 'session_index': session_index})
-df.to_csv('./benchmark_data/choice_data.csv', index=False)
+for i, batch in enumerate(dataloader):
+    first, last = i * batch_size, min(len(dataset), (i + 1) * batch_size)
+    idx = torch.arange(first, last)
+    assert torch.all(item_obs_all[idx, :, :] == batch.x_dict['item_obs'])
+    assert torch.all(item_index_all[idx] == batch.item_index)
 ```
 
 
 ```python
-dataset = ChoiceDataset(item_index=item_index, user_index=user_index, session_index=session_index, item_obs=item_obs, user_obs=user_obs, session_obs=session_obs, num_items=num_items)
+batch.x_dict['item_obs'].shape
+# torch.Size([16, 4, 64])
+```
+
+
+
+
+    torch.Size([16, 4, 64])
+
+
+
+
+```python
+print_dict_shape(dataset.x_dict)
+# dict.user_obs.shape=torch.Size([10000, 4, 128])
+# dict.item_obs.shape=torch.Size([10000, 4, 64])
+# dict.session_obs.shape=torch.Size([10000, 4, 10])
+# dict.price_obs.shape=torch.Size([10000, 4, 12])
+```
+
+    dict.user_obs.shape=torch.Size([10000, 4, 128])
+    dict.item_obs.shape=torch.Size([10000, 4, 64])
+    dict.session_obs.shape=torch.Size([10000, 4, 10])
+    dict.itemsession_obs.shape=torch.Size([10000, 4, 12])
+
+
+
+```python
+dataset.__len__()
+# 10000
+```
+
+
+
+
+    10000
+
+
+
+# Conditional Logit Model
+
+
+```python
+dataset = load_mode_canada_dataset() 
+```
+
+    No `session_index` is provided, assume each choice instance is in its own session.
+
+
+
+```python
 dataset
 ```
 
 
 
 
-    ChoiceDataset(label=[], item_index=[50000], provided_num_items=[1], user_index=[50000], session_index=[50000], item_availability=[], item_obs=[10, 3], user_obs=[5, 3], session_obs=[1, 3], device=cpu)
+    ChoiceDataset(label=[], item_index=[2779], user_index=[], session_index=[2779], item_availability=[], itemsession_cost_freq_ovt=[2779, 4, 3], session_income=[2779, 1], itemsession_ivt=[2779, 4, 1], device=cpu)
 
 
 
 
 ```python
-# model = ConditionalLogitModel(formula='(1|item-full) + (item_obs|user) + (session_obs|constant)', dataset=dataset, num_items=num_items, num_users=num_users)
-model = ConditionalLogitModel(formula='(1|item)', dataset=dataset, num_items=num_items, num_users=num_users)
-print(np.mean((model(dataset).argmax(dim=1) == item_index).float().numpy()))
-model
+model = ConditionalLogitModel(
+    formula='(itemsession_cost_freq_ovt|constant) + (session_income|item) + (itemsession_ivt|item-full) + (intercept|item)',
+    dataset=dataset,
+    num_items=4)
 ```
 
-    0.00134
+
+```python
+model = ConditionalLogitModel(
+    coef_variation_dict={'itemsession_cost_freq_ovt': 'constant',
+                         'session_income': 'item',
+                         'itemsession_ivt': 'item-full',
+                         'intercept': 'item'},
+    num_param_dict={'itemsession_cost_freq_ovt': 3,
+                    'session_income': 1,
+                    'itemsession_ivt': 1,
+                    'intercept': 1},
+    num_items=4)
+```
+
+
+```python
+model = ConditionalLogitModel(
+    coef_variation_dict={'itemsession_cost_freq_ovt': 'constant',
+                         'session_income': 'item',
+                         'itemsession_ivt': 'item-full',
+                         'intercept': 'item'},
+    num_param_dict={'itemsession_cost_freq_ovt': 3,
+                    'session_income': 1,
+                    'itemsession_ivt': 1,
+                    'intercept': 1},
+    num_items=4,
+    regularization="L1", regularization_weight=0.5)
+```
+
+
+```python
+from torch_choice import run
+run(model, dataset, batch_size=-1, learning_rate=0.01, num_epochs=1000, model_optimizer="LBFGS")
+```
+
+    GPU available: True (cuda), used: False
+    TPU available: False, using: 0 TPU cores
+    IPU available: False, using: 0 IPUs
+    HPU available: False, using: 0 HPUs
+    
+      | Name  | Type                  | Params
+    ------------------------------------------------
+    0 | model | ConditionalLogitModel | 13    
+    ------------------------------------------------
+    13        Trainable params
+    0         Non-trainable params
+    13        Total params
+    0.000     Total estimated model params size (MB)
+
+
+    ==================== model received ====================
+    ConditionalLogitModel(
+      (coef_dict): ModuleDict(
+        (itemsession_cost_freq_ovt[constant]): Coefficient(variation=constant, num_items=4, num_users=None, num_params=3, 3 trainable parameters in total, device=cpu).
+        (session_income[item]): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cpu).
+        (itemsession_ivt[item-full]): Coefficient(variation=item-full, num_items=4, num_users=None, num_params=1, 4 trainable parameters in total, device=cpu).
+        (intercept[item]): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cpu).
+      )
+    )
+    Conditional logistic discrete choice model, expects input features:
+    
+    X[itemsession_cost_freq_ovt[constant]] with 3 parameters, with constant level variation.
+    X[session_income[item]] with 1 parameters, with item level variation.
+    X[itemsession_ivt[item-full]] with 1 parameters, with item-full level variation.
+    X[intercept[item]] with 1 parameters, with item level variation.
+    device=cpu
+    ==================== data set received ====================
+    [Train dataset] ChoiceDataset(label=[], item_index=[2779], user_index=[], session_index=[2779], item_availability=[], itemsession_cost_freq_ovt=[2779, 4, 3], session_income=[2779, 1], itemsession_ivt=[2779, 4, 1], device=cuda:0)
+    [Validation dataset] None
+    [Test dataset] None
+
+
+
+    Training: 0it [00:00, ?it/s]
+
+
+    `Trainer.fit` stopped: `max_epochs=1000` reached.
+
+
+    Time taken for training: 23.79274034500122
+    Skip testing, no test dataset is provided.
+    ==================== model results ====================
+    Log-likelihood: [Training] -1874.63623046875, [Validation] N/A, [Test] N/A
+    
+    | Coefficient                           |   Estimation |   Std. Err. |       z-value |    Pr(>|z|) | Significance   |
+    |:--------------------------------------|-------------:|------------:|--------------:|------------:|:---------------|
+    | itemsession_cost_freq_ovt[constant]_0 | -0.0372827   |  0.00709507 |  -5.25473     | 1.48243e-07 | ***            |
+    | itemsession_cost_freq_ovt[constant]_1 |  0.0934419   |  0.00509598 |  18.3364      | 0           | ***            |
+    | itemsession_cost_freq_ovt[constant]_2 | -0.0427658   |  0.00322177 | -13.274       | 0           | ***            |
+    | session_income[item]_0                | -0.0862181   |  0.0183006  |  -4.71123     | 2.46226e-06 | ***            |
+    | session_income[item]_1                | -0.0269176   |  0.00384876 |  -6.99383     | 2.67497e-12 | ***            |
+    | session_income[item]_2                | -0.0370536   |  0.0040631  |  -9.11952     | 0           | ***            |
+    | itemsession_ivt[item-full]_0          |  0.0593798   |  0.0100866  |   5.88698     | 3.93307e-09 | ***            |
+    | itemsession_ivt[item-full]_1          | -0.00634217  |  0.0042797  |  -1.48192     | 0.138361    |                |
+    | itemsession_ivt[item-full]_2          | -0.00583443  |  0.00189438 |  -3.07986     | 0.00207095  | **             |
+    | itemsession_ivt[item-full]_3          | -0.00137758  |  0.00118694 |  -1.16061     | 0.245801    |                |
+    | intercept[item]_0                     | -1.91536e-07 |  1.26821    |  -1.51029e-07 | 1           |                |
+    | intercept[item]_1                     |  1.32858     |  0.703745   |   1.88787     | 0.0590437   |                |
+    | intercept[item]_2                     |  2.82011     |  0.618218   |   4.56167     | 5.07483e-06 | ***            |
+    Significance codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 
 
@@ -484,157 +706,39 @@ model
 
     ConditionalLogitModel(
       (coef_dict): ModuleDict(
-        (intercept): Coefficient(variation=item, num_items=10, num_users=5, num_params=1, 9 trainable parameters in total, device=cpu).
+        (itemsession_cost_freq_ovt[constant]): Coefficient(variation=constant, num_items=4, num_users=None, num_params=3, 3 trainable parameters in total, device=cpu).
+        (session_income[item]): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cpu).
+        (itemsession_ivt[item-full]): Coefficient(variation=item-full, num_items=4, num_users=None, num_params=1, 4 trainable parameters in total, device=cpu).
+        (intercept[item]): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cpu).
       )
     )
     Conditional logistic discrete choice model, expects input features:
     
-    X[intercept] with 1 parameters, with item level variation.
+    X[itemsession_cost_freq_ovt[constant]] with 3 parameters, with constant level variation.
+    X[session_income[item]] with 1 parameters, with item level variation.
+    X[itemsession_ivt[item-full]] with 1 parameters, with item-full level variation.
+    X[intercept[item]] with 1 parameters, with item level variation.
     device=cpu
 
 
 
 
 ```python
-model = run(model, dataset, batch_size=-1, learning_rate=0.3 , num_epochs=1000, compute_std=False)
-np.mean((model(dataset).argmax(dim=1) == item_index).float().numpy())
+! tensorboard --logdir ./lightning_logs --port 6006
 ```
 
-    ==================== received model ====================
-    ConditionalLogitModel(
-      (coef_dict): ModuleDict(
-        (intercept): Coefficient(variation=item, num_items=10, num_users=5, num_params=1, 9 trainable parameters in total, device=cpu).
-      )
-    )
-    Conditional logistic discrete choice model, expects input features:
-    
-    X[intercept] with 1 parameters, with item level variation.
-    device=cpu
-    ==================== received dataset ====================
-    ChoiceDataset(label=[], item_index=[50000], provided_num_items=[1], user_index=[50000], session_index=[50000], item_availability=[], item_obs=[10, 3], user_obs=[5, 3], session_obs=[1, 3], device=cpu)
-    ==================== training the model ====================
-    Epoch 100: Log-likelihood=-81310.9375
-    Epoch 200: Log-likelihood=-81305.359375
-    Epoch 300: Log-likelihood=-81305.2421875
-    Epoch 400: Log-likelihood=-81305.2265625
-    Epoch 500: Log-likelihood=-81305.234375
-    Epoch 600: Log-likelihood=-81305.2265625
-    Epoch 700: Log-likelihood=-81308.171875
-    Epoch 800: Log-likelihood=-81305.2265625
-    Epoch 900: Log-likelihood=-81339.671875
-    Epoch 1000: Log-likelihood=-81305.234375
-
-
-
-
-
-    0.40572
-
-
-
-# Verify Parameter
-
-
-```python
-beta_user
-```
-
-
-
-
-    tensor([[4.7301, 6.1908, 7.1181],
-            [3.4178, 8.8197, 4.9632],
-            [4.9116, 4.5997, 0.7213],
-            [8.3757, 0.5155, 4.8729],
-            [8.5097, 6.4045, 2.3534]])
-
-
-
-
-```python
-model.coef_dict['item_obs'].coef
-```
-
-
-    ---------------------------------------------------------------------------
-
-    KeyError                                  Traceback (most recent call last)
-
-    /var/folders/r3/rj0t5xcj557855yt3xr0qwnh0000gn/T/ipykernel_79509/1385705425.py in <module>
-    ----> 1 model.coef_dict['item_obs'].coef
-    
-
-    ~/miniforge3/envs/ml/lib/python3.9/site-packages/torch/nn/modules/container.py in __getitem__(self, key)
-        324     @_copy_to_script_wrapper
-        325     def __getitem__(self, key: str) -> Module:
-    --> 326         return self._modules[key]
-        327 
-        328     def __setitem__(self, key: str, module: Module) -> None:
-
-
-    KeyError: 'item_obs'
-
-
-
-```python
-lambda_item
-```
-
-
-
-
-    tensor([0.0000, 6.0579, 0.8783, 7.2887, 6.3035, 1.2217, 4.7925, 6.6317, 4.6998,
-            5.0522])
-
-
-
-
-```python
-model.coef_dict['intercept'].coef.squeeze()
-```
-
-
-
-
-    tensor([ 3.1896, -1.4328,  4.4139,  3.4304, -1.5620,  1.9348,  3.7506,  1.8674,
-             2.2129], grad_fn=<SqueezeBackward0>)
-
-
-
-
-```python
-gamma_constant
-```
-
-
-
-
-    tensor([1.1350, 8.2167, 7.8468])
-
-
-
-
-```python
-model.coef_dict['session_obs'].coef.squeeze()
-```
-
-
-
-
-    tensor([-1.0625, -2.9416, -0.7111], grad_fn=<SqueezeBackward0>)
-
-
-
-
-```python
-np.mean((model(dataset).argmax(dim=1) == item_index).float().numpy())
-```
-
-
-
-
-    0.40572
-
-
+    2023-05-14 21:27:08.325570: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX512F AVX512_VNNI
+    To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+    2023-05-14 21:27:08.389919: I tensorflow/core/util/port.cc:104] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+    2023-05-14 21:27:09.137097: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:981] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+    2023-05-14 21:27:09.184401: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:981] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+    2023-05-14 21:27:09.185605: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:981] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+    Serving TensorBoard on localhost; to expose to the network, use a proxy or pass --bind_all
+    TensorBoard 2.11.0 at http://localhost:6006/ (Press CTRL+C to quit)
+    ^C
+
+
+# Nested Logit Model
+The code demo for nested logit models in the paper was abstract, please refer to the nested-logit model tutorial for executable code.
 
 
