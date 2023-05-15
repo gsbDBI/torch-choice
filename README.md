@@ -64,15 +64,16 @@ this is equivalent to the functional form described in the previous section
 ```python
 # load package.
 import torch_choice
+device = "cpu"  # choose "cuda" if using GPU, choose "mps" if using Apple Silicon.
 # load data.
-dataset = torch_choice.data.load_mode_canada_dataset().to("cuda")
+dataset = torch_choice.data.load_mode_canada_dataset().to(device)
 # define the conditional logit model.
 model = torch_choice.model.ConditionalLogitModel(
     formula='(itemsession_cost_freq_ovt|constant) + (session_income|item) + (itemsession_ivt|item-full) + (intercept|item)',
     dataset=dataset,
-    num_items=4).to("cuda")
+    num_items=4).to(device)
 # fit the conditional logit model.
-torch_choice.run(model, dataset, num_epochs=500, learning_rate=0.001, batch_size=-1, model_optimizer="LBFGS")
+torch_choice.run(model, dataset, num_epochs=500, learning_rate=0.003, batch_size=-1, model_optimizer="LBFGS", model_optimizer=device)
 ```
 
 ## Mode Canada with R
