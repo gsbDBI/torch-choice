@@ -65,14 +65,14 @@ this is equivalent to the functional form described in the previous section
 # load package.
 import torch_choice
 # load data.
-dataset = torch_choice.data.load_mode_canada_dataset()
+dataset = torch_choice.data.load_mode_canada_dataset().to("cuda")
 # define the conditional logit model.
 model = torch_choice.model.ConditionalLogitModel(
     formula='(itemsession_cost_freq_ovt|constant) + (session_income|item) + (itemsession_ivt|item-full) + (intercept|item)',
     dataset=dataset,
-    num_items=4)
+    num_items=4).to("cuda")
 # fit the conditional logit model.
-torch_choice.run(model, data.choice_dataset, num_epochs=500, learning_rate=0.01, batch_size=-1, model_optimizer="LBFGS")
+torch_choice.run(model, dataset, num_epochs=500, learning_rate=0.001, batch_size=-1, model_optimizer="LBFGS")
 ```
 
 ## Mode Canada with R
