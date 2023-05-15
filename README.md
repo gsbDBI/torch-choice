@@ -68,7 +68,7 @@ import torch_choice
 dataset = torch_choice.data.load_mode_canada_dataset()
 # define the conditional logit model.
 model = torch_choice.model.ConditionalLogitModel(
-    formula='(price_cost_freq_ovt|constant) + (session_income|item) + (price_ivt|item-full) + (intercept|item)',
+    formula='(itemsession_cost_freq_ovt|constant) + (session_income|item) + (itemsession_ivt|item-full) + (intercept|item)',
     dataset=dataset,
     num_items=4)
 # fit the conditional logit model.
