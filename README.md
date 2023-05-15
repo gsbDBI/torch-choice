@@ -40,7 +40,7 @@ Simply run `pip install torch-choice` to install the package. This will install 
 For those wish to leverage the latest feature, you can install `torch-choice` from Github source.
 
 1. Clone the repository to your local machine or server.
-2. Install required dependencies using: `pip3 install -r requirements.txt`. Please make sure to install the correct version of PyTorch compatible with your CUDA driver.
+2. Install required dependencies in `requirements.txt`. Please make sure to install the correct version of PyTorch compatible with your CUDA driver. PyTorch needs to be installed before installing PyTorch Lightning.
 3. Run `python3 setup.py install`.
 4. Check installation by running `python3 -c 'import torch_choice; print(torch_choice.__version__)'`.
 
