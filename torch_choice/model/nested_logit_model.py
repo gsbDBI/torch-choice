@@ -197,7 +197,7 @@ class NestedLogitModel(nn.Module):
             this wrapper forward() method for a cleaner API, as forward() only requires a single batch argument.
             For more details about the forward passing, please refer to the _forward() method.
 
-        # TODO: the ConditionaLogitModel returns predicted utility, the NestedLogitModel behaves the same?
+        # TODO: the ConditionalLogitModel returns predicted utility, the NestedLogitModel behaves the same?
 
         Args:
             batch (ChoiceDataset): a ChoiceDataset object containing the data batch.
