@@ -16,16 +16,20 @@ Let's first import essential Python packages.
 
 ```python
 from time import time
-import numpy as np
 import pandas as pd
 import torch
-import torch.nn.functional as F
 
 from torch_choice.data import ChoiceDataset, utils
 from torch_choice.model import ConditionalLogitModel
 
-from torch_choice.utils.run_helper import run
+from torch_choice import run
 ```
+
+    /Users/tianyudu/miniforge3/envs/dev/lib/python3.9/site-packages/torchvision/io/image.py:13: UserWarning: Failed to load image Python extension: dlopen(/Users/tianyudu/miniforge3/envs/dev/lib/python3.9/site-packages/torchvision/image.so, 0x0006): Symbol not found: __ZN2at4_ops19empty_memory_format4callEN3c108ArrayRefIxEENS2_8optionalINS2_10ScalarTypeEEENS5_INS2_6LayoutEEENS5_INS2_6DeviceEEENS5_IbEENS5_INS2_12MemoryFormatEEE
+      Referenced from: <B3E58761-2785-34C6-A89B-F37110C88A05> /Users/tianyudu/miniforge3/envs/dev/lib/python3.9/site-packages/torchvision/image.so
+      Expected in:     <AE6DCE26-A528-35ED-BB3D-88890D27E6B9> /Users/tianyudu/miniforge3/envs/dev/lib/python3.9/site-packages/torch/lib/libtorch_cpu.dylib
+      warn(f"Failed to load image Python extension: {e}")
+
 
 This tutorial will run both with and without graphic processing unit (GPU). However, our package is *much* faster with GPU.
 
@@ -445,13 +449,16 @@ We provide an easy-to-use model runner for both `ConditionalLogitModel` and `Nes
 The `run()` mehtod supports mini-batch updating as well, for small datasets like the one we are dealing right now, we can use `batch_size = -1` to conduct full-batch gradient update.
 
 
+Here we use the LBFGS optimizer since we are working on a small dataset with only 2,779 choice records and 13 coefficients to be estimated. For larger datasets and larger models, we recommend using the Adam optimizer instead.
+
+
 ```python
 start_time = time()
-run(model, dataset, num_epochs=50000, learning_rate=0.01, batch_size=-1)
+run(model, dataset, num_epochs=500, learning_rate=0.01, model_optimizer="LBFGS", batch_size=-1)
 print('Time taken:', time() - start_time)
 ```
 
-    ==================== received model ====================
+    ==================== model received ====================
     ConditionalLogitModel(
       (coef_dict): ModuleDict(
         (price_cost_freq_ovt[constant]): Coefficient(variation=constant, num_items=4, num_users=None, num_params=3, 3 trainable parameters in total, device=cpu).
@@ -467,46 +474,63 @@ print('Time taken:', time() - start_time)
     X[price_ivt[item-full]] with 1 parameters, with item-full level variation.
     X[intercept[item]] with 1 parameters, with item level variation.
     device=cpu
-    ==================== received dataset ====================
-    ChoiceDataset(label=[], item_index=[2779], user_index=[], session_index=[2779], item_availability=[], price_cost_freq_ovt=[2779, 4, 3], session_income=[2779, 1], price_ivt=[2779, 4, 1], device=cpu)
-    ==================== training the model ====================
-    Epoch 5000: Log-likelihood=-1877.81640625
-    Epoch 10000: Log-likelihood=-1878.5775146484375
-    Epoch 15000: Log-likelihood=-1879.2830810546875
-    Epoch 20000: Log-likelihood=-1895.0306396484375
-    Epoch 25000: Log-likelihood=-1876.6690673828125
-    Epoch 30000: Log-likelihood=-1874.603759765625
-    Epoch 35000: Log-likelihood=-1877.6473388671875
-    Epoch 40000: Log-likelihood=-1891.16357421875
-    Epoch 45000: Log-likelihood=-1877.5592041015625
-    Epoch 50000: Log-likelihood=-1876.2728271484375
+    ==================== data set received ====================
+    [Train dataset] ChoiceDataset(label=[], item_index=[2779], user_index=[], session_index=[2779], item_availability=[], price_cost_freq_ovt=[2779, 4, 3], session_income=[2779, 1], price_ivt=[2779, 4, 1], device=cpu)
+    [Validation dataset] None
+    [Test dataset] None
+
+
+    GPU available: True (mps), used: False
+    TPU available: False, using: 0 TPU cores
+    IPU available: False, using: 0 IPUs
+    HPU available: False, using: 0 HPUs
+    /Users/tianyudu/miniforge3/envs/dev/lib/python3.9/site-packages/pytorch_lightning/trainer/setup.py:201: UserWarning: MPS available but not used. Set `accelerator` and `devices` using `Trainer(accelerator='mps', devices=1)`.
+      rank_zero_warn(
+    /Users/tianyudu/miniforge3/envs/dev/lib/python3.9/site-packages/pytorch_lightning/trainer/configuration_validator.py:108: PossibleUserWarning: You defined a `validation_step` but have no `val_dataloader`. Skipping val loop.
+      rank_zero_warn(
+    
+      | Name  | Type                  | Params
+    ------------------------------------------------
+    0 | model | ConditionalLogitModel | 13    
+    ------------------------------------------------
+    13        Trainable params
+    0         Non-trainable params
+    13        Total params
+    0.000     Total estimated model params size (MB)
+    /Users/tianyudu/miniforge3/envs/dev/lib/python3.9/site-packages/pytorch_lightning/trainer/connectors/data_connector.py:224: PossibleUserWarning: The dataloader, train_dataloader, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 10 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+      rank_zero_warn(
+    /Users/tianyudu/miniforge3/envs/dev/lib/python3.9/site-packages/pytorch_lightning/trainer/trainer.py:1609: PossibleUserWarning: The number of training batches (1) is smaller than the logging interval Trainer(log_every_n_steps=5). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
+      rank_zero_warn(
+
+
+    Epoch 499: 100%|██████████| 1/1 [00:00<00:00, 76.72it/s, loss=1.87e+03, v_num=32] 
+
+    `Trainer.fit` stopped: `max_epochs=500` reached.
+
+
+    Epoch 499: 100%|██████████| 1/1 [00:00<00:00, 69.67it/s, loss=1.87e+03, v_num=32]
+    Time taken for training: 11.521849155426025
+    Skip testing, no test dataset is provided.
     ==================== model results ====================
-    Training Epochs: 50000
+    Log-likelihood: [Training] -1874.3427734375, [Validation] N/A, [Test] N/A
     
-    Learning Rate: 0.01
-    
-    Batch Size: 2779 out of 2779 observations in total
-    
-    Final Log-likelihood: -1876.2728271484375
-    
-    Coefficients:
-    
-    | Coefficient                     |   Estimation |   Std. Err. |
-    |:--------------------------------|-------------:|------------:|
-    | price_cost_freq_ovt[constant]_0 |  -0.0334654  |  0.00716249 |
-    | price_cost_freq_ovt[constant]_1 |   0.0924185  |  0.00512754 |
-    | price_cost_freq_ovt[constant]_2 |  -0.0432329  |  0.0032801  |
-    | session_income[item]_0          |  -0.0892292  |  0.0188848  |
-    | session_income[item]_1          |  -0.0278481  |  0.00386248 |
-    | session_income[item]_2          |  -0.0383362  |  0.00414    |
-    | price_ivt[item-full]_0          |   0.0593935  |  0.0101313  |
-    | price_ivt[item-full]_1          |  -0.00697196 |  0.00456365 |
-    | price_ivt[item-full]_2          |  -0.00629515 |  0.0019084  |
-    | price_ivt[item-full]_3          |  -0.00164838 |  0.00119982 |
-    | intercept[item]_0               |   0.701135   |  1.30931    |
-    | intercept[item]_1               |   1.84954    |  0.714135   |
-    | intercept[item]_2               |   3.27894    |  0.631329   |
-    Time taken: 109.68721008300781
+    | Coefficient                     |   Estimation |   Std. Err. |    z-value |    Pr(>|z|) | Significance   |
+    |:--------------------------------|-------------:|------------:|-----------:|------------:|:---------------|
+    | price_cost_freq_ovt[constant]_0 |  -0.0333421  |  0.00709556 |  -4.69901  | 2.61425e-06 | ***            |
+    | price_cost_freq_ovt[constant]_1 |   0.0925304  |  0.00509757 |  18.1518   | 0           | ***            |
+    | price_cost_freq_ovt[constant]_2 |  -0.0430032  |  0.00322472 | -13.3355   | 0           | ***            |
+    | session_income[item]_0          |  -0.0890796  |  0.0183469  |  -4.8553   | 1.20205e-06 | ***            |
+    | session_income[item]_1          |  -0.0279925  |  0.00387254 |  -7.22846  | 4.88498e-13 | ***            |
+    | session_income[item]_2          |  -0.038146   |  0.00408307 |  -9.34248  | 0           | ***            |
+    | price_ivt[item-full]_0          |   0.0595089  |  0.0100727  |   5.90794  | 3.46418e-09 | ***            |
+    | price_ivt[item-full]_1          |  -0.00678188 |  0.00443289 |  -1.5299   | 0.126042    |                |
+    | price_ivt[item-full]_2          |  -0.00645982 |  0.00189848 |  -3.40262  | 0.000667424 | ***            |
+    | price_ivt[item-full]_3          |  -0.00145029 |  0.00118748 |  -1.22132  | 0.221965    |                |
+    | intercept[item]_0               |   0.697311   |  1.28022    |   0.544681 | 0.585973    |                |
+    | intercept[item]_1               |   1.8437     |  0.708514   |   2.6022   | 0.0092627   | **             |
+    | intercept[item]_2               |   3.27381    |  0.624416   |   5.24299  | 1.57999e-07 | ***            |
+    Significance codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    Time taken: 11.617464065551758
 
 
 ### Parameter Estimation from `R`

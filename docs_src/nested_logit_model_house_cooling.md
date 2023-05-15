@@ -78,12 +78,16 @@ We firstly read essential packages for this tutorial.
 
 
 ```python
+# ignore warnings for nicer outputs.
+import warnings
+warnings.filterwarnings("ignore")
+
 import pandas as pd
 import torch
 
 from torch_choice.data import ChoiceDataset, JointDataset, utils
 from torch_choice.model.nested_logit_model import NestedLogitModel
-from torch_choice.utils.run_helper import run
+from torch_choice import run
 print(torch.__version__)
 ```
 
@@ -435,54 +439,66 @@ hessian of negative log-likelihood with respect to model parameters. This leads 
 results compared with R implementation.
 
 
+Here we use the LBFGS optimizer since we are working on a small dataset and 8 coefficients to be estimated. For larger datasets and larger models, we recommend using the Adam optimizer instead.
+
+
 ```python
-run(model, dataset, num_epochs=10000)
+run(model, dataset, num_epochs=1000, model_optimizer="LBFGS")
 ```
 
-    ==================== received model ====================
+    ==================== model received ====================
     NestedLogitModel(
       (nest_coef_dict): ModuleDict()
       (item_coef_dict): ModuleDict(
         (price_obs[constant]): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
       )
     )
-    ==================== received dataset ====================
-    JointDataset with 2 sub-datasets: (
+    ==================== data set received ====================
+    [Train dataset] JointDataset with 2 sub-datasets: (
     	nest: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], device=cpu)
     	item: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cpu)
     )
-    ==================== training the model ====================
-    Epoch 1000: Log-likelihood=-179.78282165527344
-    Epoch 2000: Log-likelihood=-178.6439666748047
-    Epoch 3000: Log-likelihood=-178.45376586914062
-    Epoch 4000: Log-likelihood=-178.30226135253906
-    Epoch 5000: Log-likelihood=-178.19009399414062
-    Epoch 6000: Log-likelihood=-178.1377716064453
-    Epoch 7000: Log-likelihood=-178.1256866455078
-    Epoch 8000: Log-likelihood=-178.124755859375
-    Epoch 9000: Log-likelihood=-178.12757873535156
-    Epoch 10000: Log-likelihood=-178.12527465820312
+    [Validation dataset] None
+    [Test dataset] None
+
+
+    GPU available: True (mps), used: False
+    TPU available: False, using: 0 TPU cores
+    IPU available: False, using: 0 IPUs
+    HPU available: False, using: 0 HPUs
+    
+      | Name  | Type             | Params
+    -------------------------------------------
+    0 | model | NestedLogitModel | 8     
+    -------------------------------------------
+    8         Trainable params
+    0         Non-trainable params
+    8         Total params
+    0.000     Total estimated model params size (MB)
+
+
+    Epoch 999: 100%|██████████| 1/1 [00:00<00:00, 136.14it/s, loss=178, v_num=29]
+
+    `Trainer.fit` stopped: `max_epochs=1000` reached.
+
+
+    Epoch 999: 100%|██████████| 1/1 [00:00<00:00, 121.79it/s, loss=178, v_num=29]
+    Time taken for training: 13.282686233520508
+    Skip testing, no test dataset is provided.
     ==================== model results ====================
-    Training Epochs: 10000
+    Log-likelihood: [Training] -178.124755859375, [Validation] N/A, [Test] N/A
     
-    Learning Rate: 0.01
-    
-    Batch Size: 250 out of 250 observations in total
-    
-    Final Log-likelihood: -178.12527465820312
-    
-    Coefficients:
-    
-    | Coefficient                |   Estimation |   Std. Err. |
-    |:---------------------------|-------------:|------------:|
-    | lambda_weight_0            |     0.585844 |    0.166706 |
-    | item_price_obs[constant]_0 |    -0.555026 |    0.144731 |
-    | item_price_obs[constant]_1 |    -0.858004 |    0.237756 |
-    | item_price_obs[constant]_2 |    -0.224923 |    0.110701 |
-    | item_price_obs[constant]_3 |    -1.08933  |    1.03791  |
-    | item_price_obs[constant]_4 |    -0.379122 |    0.100874 |
-    | item_price_obs[constant]_5 |     0.249721 |    0.051977 |
-    | item_price_obs[constant]_6 |    -5.99982  |    4.83646  |
+    | Coefficient                |   Estimation |   Std. Err. |   z-value |    Pr(>|z|) | Significance   |
+    |:---------------------------|-------------:|------------:|----------:|------------:|:---------------|
+    | lambda_weight_0            |     0.585898 |   0.166624  |   3.51628 | 0.000437634 | ***            |
+    | item_price_obs[constant]_0 |    -0.554846 |   0.144515  |  -3.83936 | 0.000123357 | ***            |
+    | item_price_obs[constant]_1 |    -0.857842 |   0.237496  |  -3.61203 | 0.000303804 | ***            |
+    | item_price_obs[constant]_2 |    -0.225084 |   0.110576  |  -2.03556 | 0.0417943   | *              |
+    | item_price_obs[constant]_3 |    -1.08945  |   1.03675   |  -1.05084 | 0.293332    |                |
+    | item_price_obs[constant]_4 |    -0.37895  |   0.100705  |  -3.76299 | 0.000167895 | ***            |
+    | item_price_obs[constant]_5 |     0.249572 |   0.0518543 |   4.81295 | 1.4872e-06  | ***            |
+    | item_price_obs[constant]_6 |    -5.99973  |   4.82952   |  -1.2423  | 0.214124    |                |
+    Significance codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 
 
@@ -591,65 +607,62 @@ model = model.to(DEVICE)
 
 
 ```python
-run
+run(model, dataset, num_epochs=1000, model_optimizer="LBFGS", learning_rate=0.3)
 ```
 
-
-
-
-    <function torch_choice.utils.run_helper.run(model, dataset, dataset_test=None, batch_size=-1, learning_rate=0.01, num_epochs=5000, report_frequency=None, compute_std=True, return_final_training_log_likelihood=False)>
-
-
-
-
-```python
-run(model, dataset, num_epochs=50000, learning_rate=0.3)
-```
-
-    ==================== received model ====================
+    ==================== model received ====================
     NestedLogitModel(
       (nest_coef_dict): ModuleDict()
       (item_coef_dict): ModuleDict(
         (price_obs[constant]): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
       )
     )
-    ==================== received dataset ====================
-    JointDataset with 2 sub-datasets: (
+    ==================== data set received ====================
+    [Train dataset] JointDataset with 2 sub-datasets: (
     	nest: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], device=cpu)
     	item: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cpu)
     )
-    ==================== training the model ====================
-    Epoch 5000: Log-likelihood=-180.560791015625
-    Epoch 10000: Log-likelihood=-180.80062866210938
-    Epoch 15000: Log-likelihood=-181.21275329589844
-    Epoch 20000: Log-likelihood=-180.3982696533203
-    Epoch 25000: Log-likelihood=-180.29925537109375
-    Epoch 30000: Log-likelihood=-182.28366088867188
-    Epoch 35000: Log-likelihood=-180.1341552734375
-    Epoch 40000: Log-likelihood=-182.2633514404297
-    Epoch 45000: Log-likelihood=-180.19305419921875
-    Epoch 50000: Log-likelihood=-180.68240356445312
+    [Validation dataset] None
+    [Test dataset] None
+
+
+    GPU available: True (mps), used: False
+    TPU available: False, using: 0 TPU cores
+    IPU available: False, using: 0 IPUs
+    HPU available: False, using: 0 HPUs
+    
+      | Name  | Type             | Params
+    -------------------------------------------
+    0 | model | NestedLogitModel | 8     
+    -------------------------------------------
+    8         Trainable params
+    0         Non-trainable params
+    8         Total params
+    0.000     Total estimated model params size (MB)
+
+
+    Epoch 999: 100%|██████████| 1/1 [00:00<00:00, 116.29it/s, loss=180, v_num=30]
+
+    `Trainer.fit` stopped: `max_epochs=1000` reached.
+
+
+    Epoch 999: 100%|██████████| 1/1 [00:00<00:00, 107.92it/s, loss=180, v_num=30]
+    Time taken for training: 7.460475206375122
+    Skip testing, no test dataset is provided.
     ==================== model results ====================
-    Training Epochs: 50000
+    Log-likelihood: [Training] -180.02308654785156, [Validation] N/A, [Test] N/A
     
-    Learning Rate: 0.3
-    
-    Batch Size: 250 out of 250 observations in total
-    
-    Final Log-likelihood: -180.68240356445312
-    
-    Coefficients:
-    
-    | Coefficient                |   Estimation |   Std. Err. |
-    |:---------------------------|-------------:|------------:|
-    | lambda_weight_0            |     1.63154  |    0.678117 |
-    | item_price_obs[constant]_0 |    -1.34966  |    0.531558 |
-    | item_price_obs[constant]_1 |    -2.17924  |    0.894518 |
-    | item_price_obs[constant]_2 |    -0.412631 |    0.243317 |
-    | item_price_obs[constant]_3 |    -2.61227  |    2.06289  |
-    | item_price_obs[constant]_4 |    -0.885769 |    0.337734 |
-    | item_price_obs[constant]_5 |     0.49301  |    0.199931 |
-    | item_price_obs[constant]_6 |   -16.0524   |    9.32373  |
+    | Coefficient                |   Estimation |   Std. Err. |   z-value |   Pr(>|z|) | Significance   |
+    |:---------------------------|-------------:|------------:|----------:|-----------:|:---------------|
+    | lambda_weight_0            |     1.3621   |    0.55502  |   2.45415 | 0.0141217  | *              |
+    | item_price_obs[constant]_0 |    -1.13826  |    0.444239 |  -2.56226 | 0.0103993  | *              |
+    | item_price_obs[constant]_1 |    -1.82546  |    0.738092 |  -2.47321 | 0.0133906  | *              |
+    | item_price_obs[constant]_2 |    -0.337469 |    0.20258  |  -1.66585 | 0.0957429  |                |
+    | item_price_obs[constant]_3 |    -2.06347  |    1.76159  |  -1.17136 | 0.241453   |                |
+    | item_price_obs[constant]_4 |    -0.757264 |    0.278476 |  -2.71931 | 0.00654181 | **             |
+    | item_price_obs[constant]_5 |     0.416903 |    0.170012 |   2.4522  | 0.0141987  | *              |
+    | item_price_obs[constant]_6 |   -13.8256   |    8.09395  |  -1.70814 | 0.0876098  |                |
+    Significance codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 
 
@@ -742,53 +755,62 @@ model = model.to(DEVICE)
 
 
 ```python
-run(model, dataset, num_epochs=50000, learning_rate=0.3)
+run(model, dataset, num_epochs=1000, model_optimizer="LBFGS", learning_rate=0.3)
 ```
 
-    ==================== received model ====================
+    ==================== model received ====================
     NestedLogitModel(
       (nest_coef_dict): ModuleDict()
       (item_coef_dict): ModuleDict(
         (price_obs[constant]): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cpu).
       )
     )
-    ==================== received dataset ====================
-    JointDataset with 2 sub-datasets: (
+    ==================== data set received ====================
+    [Train dataset] JointDataset with 2 sub-datasets: (
     	nest: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], device=cpu)
     	item: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cpu)
     )
-    ==================== training the model ====================
-    Epoch 5000: Log-likelihood=-180.84153747558594
-    Epoch 10000: Log-likelihood=-182.17794799804688
-    Epoch 15000: Log-likelihood=-181.74029541015625
-    Epoch 20000: Log-likelihood=-182.3179931640625
-    Epoch 25000: Log-likelihood=-182.50352478027344
-    Epoch 30000: Log-likelihood=-181.481201171875
-    Epoch 35000: Log-likelihood=-181.8275604248047
-    Epoch 40000: Log-likelihood=-180.5753173828125
-    Epoch 45000: Log-likelihood=-182.4506072998047
-    Epoch 50000: Log-likelihood=-185.08358764648438
+    [Validation dataset] None
+    [Test dataset] None
+
+
+    GPU available: True (mps), used: False
+    TPU available: False, using: 0 TPU cores
+    IPU available: False, using: 0 IPUs
+    HPU available: False, using: 0 HPUs
+    
+      | Name  | Type             | Params
+    -------------------------------------------
+    0 | model | NestedLogitModel | 8     
+    -------------------------------------------
+    8         Trainable params
+    0         Non-trainable params
+    8         Total params
+    0.000     Total estimated model params size (MB)
+
+
+    Epoch 999: 100%|██████████| 1/1 [00:00<00:00, 142.92it/s, loss=180, v_num=31]
+
+    `Trainer.fit` stopped: `max_epochs=1000` reached.
+
+
+    Epoch 999: 100%|██████████| 1/1 [00:00<00:00, 126.62it/s, loss=180, v_num=31]
+    Time taken for training: 7.50447416305542
+    Skip testing, no test dataset is provided.
     ==================== model results ====================
-    Training Epochs: 50000
+    Log-likelihood: [Training] -180.26324462890625, [Validation] N/A, [Test] N/A
     
-    Learning Rate: 0.3
-    
-    Batch Size: 250 out of 250 observations in total
-    
-    Final Log-likelihood: -185.08358764648438
-    
-    Coefficients:
-    
-    | Coefficient                |   Estimation |   Std. Err. |
-    |:---------------------------|-------------:|------------:|
-    | lambda_weight_0            |     0.949264 |   0.19245   |
-    | item_price_obs[constant]_0 |    -0.852556 |   0.100724  |
-    | item_price_obs[constant]_1 |    -1.35082  |   0.188374  |
-    | item_price_obs[constant]_2 |    -0.248292 |   0.14014   |
-    | item_price_obs[constant]_3 |    -1.41068  |   1.2839    |
-    | item_price_obs[constant]_4 |    -0.581716 |   0.0771356 |
-    | item_price_obs[constant]_5 |     0.336492 |   0.0656387 |
-    | item_price_obs[constant]_6 |   -10.5186   |   5.71641   |
+    | Coefficient                |   Estimation |   Std. Err. |   z-value |    Pr(>|z|) | Significance   |
+    |:---------------------------|-------------:|------------:|----------:|------------:|:---------------|
+    | lambda_weight_0            |     0.956541 |   0.197062  |   4.854   | 1.20994e-06 | ***            |
+    | item_price_obs[constant]_0 |    -0.838394 |   0.099096  |  -8.46042 | 0           | ***            |
+    | item_price_obs[constant]_1 |    -1.3316   |   0.184895  |  -7.2019  | 5.93747e-13 | ***            |
+    | item_price_obs[constant]_2 |    -0.25613  |   0.1263    |  -2.02795 | 0.0425655   | *              |
+    | item_price_obs[constant]_3 |    -1.40566  |   1.14467   |  -1.22801 | 0.219443    |                |
+    | item_price_obs[constant]_4 |    -0.571352 |   0.0750316 |  -7.61482 | 2.64233e-14 | ***            |
+    | item_price_obs[constant]_5 |     0.311357 |   0.0550892 |   5.65187 | 1.58715e-08 | ***            |
+    | item_price_obs[constant]_6 |   -10.4134   |   5.19301   |  -2.00528 | 0.0449335   | *              |
+    Significance codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 
 

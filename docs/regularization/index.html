@@ -1,0 +1,1187 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://gsbdbi.github.io/torch-choice/regularization/">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.13">
+    
+    
+      
+        <title>Regularization: $L_1$ and $L_2$ - Torch Choice</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.e411adfe.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.cc9b2e1e.min.css">
+        
+      
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#regularization-l_1-and-l_2" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Torch Choice" class="md-header__button md-logo" aria-label="Torch Choice" data-md-component="logo">
+      
+  
+  <?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+ "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+ width="500.000000pt" height="500.000000pt" viewBox="0 0 500.000000 500.000000"
+ preserveAspectRatio="xMidYMid meet">
+
+<g transform="translate(0.000000,500.000000) scale(0.100000,-0.100000)"
+fill="#000000" stroke="none">
+<path d="M3039 4192 c-24 -15 -53 -32 -64 -38 -16 -9 -19 -19 -15 -55 2 -24 4
+-60 4 -79 l1 -35 -83 -3 c-81 -3 -83 -3 -102 -35 -23 -38 -35 -87 -23 -96 4
+-3 30 -32 56 -63 47 -55 48 -57 28 -70 -12 -7 -21 -20 -21 -28 0 -8 -18 -28
+-40 -43 -45 -32 -47 -43 -21 -106 22 -53 34 -59 127 -60 86 -1 87 -4 78 -105
+l-6 -71 62 -33 c35 -17 69 -32 77 -32 8 0 38 23 67 50 66 62 92 65 150 13 22
+-20 43 -40 44 -45 2 -4 -38 -8 -88 -8 -106 0 -151 -19 -174 -73 -7 -18 -25
+-38 -39 -46 -23 -12 -34 -11 -93 5 -78 22 -87 37 -82 129 l3 60 -42 3 c-41 3
+-42 4 -58 55 -24 74 -91 196 -120 219 -28 22 -32 50 -10 68 31 26 18 64 -37
+111 -58 49 -122 89 -142 89 -7 0 -28 -10 -47 -23 l-34 -23 -65 22 c-63 20 -65
+22 -68 57 -2 19 -10 41 -18 48 -9 8 -57 14 -122 17 -119 5 -137 -3 -144 -63
+-3 -26 -9 -31 -66 -47 l-62 -19 -27 26 c-38 35 -74 32 -147 -12 -94 -56 -96
+-59 -96 -122 -1 -74 -15 -93 -72 -90 -54 3 -59 0 -106 -64 -46 -62 -52 -76
+-61 -144 -7 -51 -7 -52 26 -70 18 -9 33 -19 33 -21 0 -2 -9 -35 -21 -73 -18
+-60 -26 -71 -53 -83 -55 -23 -61 -37 -46 -119 24 -133 24 -144 0 -174 -74 -93
+-173 -235 -200 -284 -25 -47 -30 -68 -30 -122 0 -59 3 -69 27 -92 16 -15 45
+-35 66 -46 21 -11 40 -28 43 -37 3 -9 12 -31 21 -49 13 -27 14 -37 3 -62 -15
+-38 -6 -67 24 -75 23 -6 24 -10 28 -118 4 -138 25 -191 97 -243 66 -49 144
+-65 306 -65 l135 0 0 -126 c0 -119 -1 -125 -19 -119 -21 6 -19 14 -97 -355
+-47 -221 -52 -277 -28 -287 16 -6 97 1 319 27 220 26 482 49 513 45 21 -2 91
+-9 157 -15 66 -6 201 -21 300 -33 202 -23 231 -25 247 -9 8 8 3 55 -21 174
+-18 90 -39 197 -47 238 -8 41 -22 105 -30 143 -15 64 -18 67 -45 67 l-29 0 0
+134 c0 127 1 134 23 149 12 8 42 33 66 56 34 31 50 39 68 35 13 -4 30 -1 38 6
+11 9 32 11 69 6 30 -3 74 -3 98 0 39 5 46 11 60 43 38 86 104 116 161 71 14
+-11 28 -20 32 -20 21 0 225 190 225 210 0 6 -9 29 -21 51 -14 28 -18 50 -14
+70 7 32 50 89 67 89 5 0 23 9 39 21 l29 20 0 137 c0 153 -8 181 -55 197 -45
+15 -54 23 -70 63 -14 33 -14 40 7 100 l23 63 -100 95 c-55 52 -111 98 -124
+101 -14 3 -35 -1 -51 -11 -16 -9 -42 -16 -59 -16 -26 0 -36 9 -71 59 -22 33
+-40 64 -40 70 0 5 20 17 45 26 72 28 81 44 66 116 -16 80 -8 89 75 89 56 0 68
+4 95 28 23 21 32 39 36 72 5 44 4 46 -46 88 -28 24 -51 52 -51 62 0 11 23 42
+50 69 56 56 63 85 30 138 -23 38 -66 52 -137 46 -30 -3 -53 -1 -57 5 -4 6 -1
+42 5 79 13 75 20 64 -71 123 -25 16 -53 30 -64 30 -10 0 -40 -22 -66 -50 -39
+-41 -54 -50 -83 -50 -28 0 -43 9 -83 50 -27 28 -56 50 -65 50 -8 0 -35 -12
+-60 -28z m83 -129 c38 -37 40 -38 121 -39 l82 -1 37 39 c54 56 68 51 68 -22 0
+-109 37 -147 146 -152 l69 -3 -52 -49 c-51 -48 -53 -52 -53 -103 0 -56 5 -64
+70 -115 19 -15 32 -29 29 -32 -3 -3 -36 -8 -72 -11 -76 -5 -97 -16 -122 -58
+-14 -24 -16 -43 -11 -97 8 -86 -5 -93 -58 -33 l-38 43 -92 0 -92 0 -39 -40
+c-21 -22 -45 -40 -52 -40 -16 0 -17 32 -3 80 9 31 6 40 -24 86 l-35 52 -70 4
+c-38 2 -74 7 -78 12 -8 7 16 30 71 69 23 16 26 25 26 77 0 58 -1 59 -50 102
+-27 24 -50 46 -50 51 0 4 29 7 64 7 83 0 91 4 128 57 28 42 30 48 19 83 -24
+81 -1 93 61 33z m-957 -243 c12 -37 33 -51 105 -71 25 -7 71 -26 104 -43 55
+-29 59 -30 70 -13 30 49 29 49 66 19 34 -29 34 -29 17 -55 -23 -35 -22 -40 16
+-78 46 -47 101 -144 133 -236 32 -93 50 -116 80 -109 17 5 23 0 28 -17 12 -45
+7 -56 -33 -68 -38 -11 -39 -12 -59 -96 -29 -115 -89 -236 -151 -303 -28 -30
+-51 -57 -51 -60 0 -4 7 -15 15 -26 21 -27 19 -39 -10 -58 -24 -16 -27 -15 -54
+5 l-30 22 -48 -20 c-47 -20 -85 -30 -191 -54 -58 -12 -82 -36 -82 -82 0 -27
+-2 -28 -42 -25 -43 3 -43 3 -46 44 -4 52 -20 66 -102 88 -36 10 -88 31 -116
+47 -61 34 -71 35 -99 9 l-21 -20 -24 25 c-20 21 -21 28 -11 53 14 34 4 67 -29
+97 -24 21 -74 124 -85 173 -9 43 -38 66 -74 59 -25 -5 -31 -2 -42 24 -13 33
+-3 49 32 49 28 0 37 22 53 125 8 55 21 115 29 134 19 44 12 67 -24 80 -33 12
+-36 26 -10 60 17 22 21 23 51 12 37 -13 34 -14 127 76 50 49 53 55 53 102 0
+46 3 52 30 66 29 15 31 15 39 -8 13 -32 37 -40 71 -23 16 7 70 24 121 37 90
+22 92 23 107 61 14 35 19 39 45 36 25 -2 33 -10 42 -38z m1193 -739 c23 -55
+63 -83 140 -96 33 -5 52 -2 88 15 l46 23 46 -46 45 -45 -26 -32 c-31 -37 -32
+-46 -11 -97 61 -144 74 -165 114 -181 l40 -17 0 -66 c0 -62 -2 -67 -23 -73
+-49 -12 -105 -96 -138 -204 -11 -38 -10 -43 15 -73 l27 -32 -47 -48 -47 -48
+-38 25 c-46 29 -90 30 -144 5 -47 -22 -79 -55 -92 -96 -9 -29 -13 -30 -71 -33
+l-61 -3 -10 39 c-13 48 -34 68 -100 93 -64 24 -89 24 -121 -1 -34 -27 -45 -25
+-101 15 l-48 36 25 37 c33 47 28 76 -28 190 -38 76 -47 88 -73 92 -27 5 -30 9
+-33 45 -6 64 6 98 40 120 35 22 50 46 92 149 33 77 29 118 -12 124 -29 4 -28
+16 3 36 14 9 34 34 45 56 l20 40 40 -21 c95 -50 238 -1 254 87 l7 34 58 0 58
+0 21 -49z m-1922 -218 c3 -10 10 -25 15 -33 35 -55 38 -75 21 -124 l-17 -47
+65 -62 c116 -111 142 -123 187 -87 22 17 28 18 56 6 99 -42 107 -49 119 -93
+16 -66 33 -73 171 -73 l118 0 23 53 c23 50 26 53 77 66 30 8 60 16 66 18 7 3
+21 -9 30 -26 26 -45 55 -40 156 28 l87 60 0 -69 c0 -47 6 -78 17 -99 20 -34
+57 -54 84 -46 14 5 19 1 19 -14 0 -11 5 -31 11 -45 10 -20 8 -33 -10 -70 -11
+-25 -21 -49 -21 -53 0 -9 -106 -109 -198 -184 l-72 -61 -101 89 c-125 109
+-123 107 -142 100 -23 -9 -48 -52 -41 -70 3 -9 45 -51 92 -93 48 -43 91 -83
+95 -90 8 -15 8 -15 -96 -101 -82 -68 -101 -99 -84 -134 19 -37 57 -36 100 3
+40 37 114 101 166 144 19 16 73 63 120 105 47 42 97 84 110 95 13 10 44 36 68
+57 46 39 55 39 88 2 6 -7 35 -30 65 -53 l54 -41 22 20 c33 31 94 36 118 10 14
+-15 17 -26 10 -40 -8 -18 -107 -101 -149 -126 -15 -9 -16 -32 -15 -212 1 -199
+0 -202 -22 -217 -13 -9 -66 -52 -118 -96 -214 -179 -305 -252 -332 -266 -33
+-17 -16 -28 -179 105 -98 80 -135 111 -220 185 -20 17 -60 51 -88 75 l-51 43
+0 183 c0 157 -2 184 -16 196 -13 10 -66 15 -203 19 -173 5 -189 7 -235 30 -75
+37 -85 58 -90 175 -3 90 -37 247 -63 287 -3 6 -7 24 -8 40 -3 37 -38 74 -95
+102 -45 22 -45 22 -43 70 3 41 11 58 60 122 32 42 72 96 90 122 72 105 94 132
+109 132 8 0 17 -8 20 -17z m1314 -43 c0 -17 -27 -77 -38 -84 -19 -12 -19 32 0
+63 20 31 38 41 38 21z m-846 -1553 c47 -41 68 -59 116 -97 76 -59 81 -64 134
+-111 28 -26 62 -56 76 -67 l25 -20 -45 -6 c-112 -14 -234 -26 -338 -32 l-113
+-7 5 24 c3 13 10 53 16 89 18 104 40 212 51 248 12 36 9 37 73 -21z m1135
+-148 c18 -99 31 -182 28 -185 -4 -4 -214 12 -267 20 -8 2 -49 6 -91 10 -42 5
+-81 11 -88 15 -10 7 174 163 314 268 24 17 46 37 50 42 3 6 9 11 14 11 4 0 22
+-81 40 -181z"/>
+<path d="M3180 3892 c-81 -36 -130 -127 -110 -204 22 -78 100 -138 182 -138
+38 0 99 23 97 38 -1 20 -64 55 -102 57 -28 2 -46 9 -59 25 -32 39 -33 67 -4
+105 25 32 31 35 81 35 34 0 55 5 58 13 2 6 7 10 10 7 4 -3 0 -18 -7 -32 -8
+-15 -10 -31 -5 -39 5 -8 7 -21 4 -29 -11 -41 -14 -91 -5 -85 5 3 8 0 5 -7 -3
+-7 5 -19 17 -27 20 -12 24 -11 45 15 61 77 27 223 -62 260 -35 14 -118 18
+-145 6z m167 -244 c-3 -7 -5 -2 -5 12 0 14 2 19 5 13 2 -7 2 -19 0 -25z"/>
+<path d="M1913 3682 c-82 -29 -123 -49 -160 -79 -113 -96 -169 -183 -194 -301
+-23 -109 -23 -165 0 -273 28 -135 83 -219 211 -320 117 -93 318 -126 476 -79
+38 12 80 26 94 33 70 33 200 160 236 229 95 184 77 449 -42 605 -51 67 -159
+149 -230 176 -159 59 -238 61 -391 9z m288 -83 c111 -35 229 -128 283 -223 92
+-161 65 -364 -68 -518 -22 -26 -45 -48 -50 -48 -6 0 -19 -9 -30 -19 -29 -27
+-114 -59 -192 -71 -105 -17 -201 9 -326 88 -63 39 -137 156 -164 257 -57 213
+91 459 319 531 52 16 182 18 228 3z"/>
+<path d="M2057 3373 c-19 -5 -44 -51 -102 -185 -21 -49 -41 -88 -45 -88 -8 0
+-17 25 -65 169 -26 78 -57 107 -98 92 -22 -9 -27 -17 -27 -46 0 -19 9 -61 19
+-92 10 -32 36 -111 56 -175 44 -141 69 -182 111 -186 38 -4 45 4 88 105 48
+113 88 193 96 193 4 0 14 -17 23 -37 52 -125 101 -230 114 -245 9 -10 28 -18
+43 -18 50 0 68 35 159 312 22 70 41 135 41 145 0 28 -20 43 -56 43 -35 0 -50
+-14 -64 -57 -5 -15 -24 -71 -43 -123 l-35 -94 -35 74 c-19 41 -44 97 -56 125
+-37 83 -65 103 -124 88z"/>
+<path d="M3185 2891 c-118 -33 -200 -113 -243 -235 -20 -59 -23 -82 -18 -138
+11 -117 71 -219 171 -288 80 -55 247 -65 338 -21 68 33 142 105 173 169 36 75
+45 204 20 280 -40 119 -140 208 -263 236 -87 19 -102 19 -178 -3z m200 -112
+c167 -88 205 -287 78 -410 -65 -63 -104 -81 -177 -82 -69 0 -129 25 -184 77
+-133 124 -85 345 90 421 51 22 146 19 193 -6z"/>
+</g>
+</svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Torch Choice
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Regularization: $L_1$ and $L_2$
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Torch Choice" class="md-nav__button md-logo" aria-label="Torch Choice" data-md-component="logo">
+      
+  
+  <?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+ "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+ width="500.000000pt" height="500.000000pt" viewBox="0 0 500.000000 500.000000"
+ preserveAspectRatio="xMidYMid meet">
+
+<g transform="translate(0.000000,500.000000) scale(0.100000,-0.100000)"
+fill="#000000" stroke="none">
+<path d="M3039 4192 c-24 -15 -53 -32 -64 -38 -16 -9 -19 -19 -15 -55 2 -24 4
+-60 4 -79 l1 -35 -83 -3 c-81 -3 -83 -3 -102 -35 -23 -38 -35 -87 -23 -96 4
+-3 30 -32 56 -63 47 -55 48 -57 28 -70 -12 -7 -21 -20 -21 -28 0 -8 -18 -28
+-40 -43 -45 -32 -47 -43 -21 -106 22 -53 34 -59 127 -60 86 -1 87 -4 78 -105
+l-6 -71 62 -33 c35 -17 69 -32 77 -32 8 0 38 23 67 50 66 62 92 65 150 13 22
+-20 43 -40 44 -45 2 -4 -38 -8 -88 -8 -106 0 -151 -19 -174 -73 -7 -18 -25
+-38 -39 -46 -23 -12 -34 -11 -93 5 -78 22 -87 37 -82 129 l3 60 -42 3 c-41 3
+-42 4 -58 55 -24 74 -91 196 -120 219 -28 22 -32 50 -10 68 31 26 18 64 -37
+111 -58 49 -122 89 -142 89 -7 0 -28 -10 -47 -23 l-34 -23 -65 22 c-63 20 -65
+22 -68 57 -2 19 -10 41 -18 48 -9 8 -57 14 -122 17 -119 5 -137 -3 -144 -63
+-3 -26 -9 -31 -66 -47 l-62 -19 -27 26 c-38 35 -74 32 -147 -12 -94 -56 -96
+-59 -96 -122 -1 -74 -15 -93 -72 -90 -54 3 -59 0 -106 -64 -46 -62 -52 -76
+-61 -144 -7 -51 -7 -52 26 -70 18 -9 33 -19 33 -21 0 -2 -9 -35 -21 -73 -18
+-60 -26 -71 -53 -83 -55 -23 -61 -37 -46 -119 24 -133 24 -144 0 -174 -74 -93
+-173 -235 -200 -284 -25 -47 -30 -68 -30 -122 0 -59 3 -69 27 -92 16 -15 45
+-35 66 -46 21 -11 40 -28 43 -37 3 -9 12 -31 21 -49 13 -27 14 -37 3 -62 -15
+-38 -6 -67 24 -75 23 -6 24 -10 28 -118 4 -138 25 -191 97 -243 66 -49 144
+-65 306 -65 l135 0 0 -126 c0 -119 -1 -125 -19 -119 -21 6 -19 14 -97 -355
+-47 -221 -52 -277 -28 -287 16 -6 97 1 319 27 220 26 482 49 513 45 21 -2 91
+-9 157 -15 66 -6 201 -21 300 -33 202 -23 231 -25 247 -9 8 8 3 55 -21 174
+-18 90 -39 197 -47 238 -8 41 -22 105 -30 143 -15 64 -18 67 -45 67 l-29 0 0
+134 c0 127 1 134 23 149 12 8 42 33 66 56 34 31 50 39 68 35 13 -4 30 -1 38 6
+11 9 32 11 69 6 30 -3 74 -3 98 0 39 5 46 11 60 43 38 86 104 116 161 71 14
+-11 28 -20 32 -20 21 0 225 190 225 210 0 6 -9 29 -21 51 -14 28 -18 50 -14
+70 7 32 50 89 67 89 5 0 23 9 39 21 l29 20 0 137 c0 153 -8 181 -55 197 -45
+15 -54 23 -70 63 -14 33 -14 40 7 100 l23 63 -100 95 c-55 52 -111 98 -124
+101 -14 3 -35 -1 -51 -11 -16 -9 -42 -16 -59 -16 -26 0 -36 9 -71 59 -22 33
+-40 64 -40 70 0 5 20 17 45 26 72 28 81 44 66 116 -16 80 -8 89 75 89 56 0 68
+4 95 28 23 21 32 39 36 72 5 44 4 46 -46 88 -28 24 -51 52 -51 62 0 11 23 42
+50 69 56 56 63 85 30 138 -23 38 -66 52 -137 46 -30 -3 -53 -1 -57 5 -4 6 -1
+42 5 79 13 75 20 64 -71 123 -25 16 -53 30 -64 30 -10 0 -40 -22 -66 -50 -39
+-41 -54 -50 -83 -50 -28 0 -43 9 -83 50 -27 28 -56 50 -65 50 -8 0 -35 -12
+-60 -28z m83 -129 c38 -37 40 -38 121 -39 l82 -1 37 39 c54 56 68 51 68 -22 0
+-109 37 -147 146 -152 l69 -3 -52 -49 c-51 -48 -53 -52 -53 -103 0 -56 5 -64
+70 -115 19 -15 32 -29 29 -32 -3 -3 -36 -8 -72 -11 -76 -5 -97 -16 -122 -58
+-14 -24 -16 -43 -11 -97 8 -86 -5 -93 -58 -33 l-38 43 -92 0 -92 0 -39 -40
+c-21 -22 -45 -40 -52 -40 -16 0 -17 32 -3 80 9 31 6 40 -24 86 l-35 52 -70 4
+c-38 2 -74 7 -78 12 -8 7 16 30 71 69 23 16 26 25 26 77 0 58 -1 59 -50 102
+-27 24 -50 46 -50 51 0 4 29 7 64 7 83 0 91 4 128 57 28 42 30 48 19 83 -24
+81 -1 93 61 33z m-957 -243 c12 -37 33 -51 105 -71 25 -7 71 -26 104 -43 55
+-29 59 -30 70 -13 30 49 29 49 66 19 34 -29 34 -29 17 -55 -23 -35 -22 -40 16
+-78 46 -47 101 -144 133 -236 32 -93 50 -116 80 -109 17 5 23 0 28 -17 12 -45
+7 -56 -33 -68 -38 -11 -39 -12 -59 -96 -29 -115 -89 -236 -151 -303 -28 -30
+-51 -57 -51 -60 0 -4 7 -15 15 -26 21 -27 19 -39 -10 -58 -24 -16 -27 -15 -54
+5 l-30 22 -48 -20 c-47 -20 -85 -30 -191 -54 -58 -12 -82 -36 -82 -82 0 -27
+-2 -28 -42 -25 -43 3 -43 3 -46 44 -4 52 -20 66 -102 88 -36 10 -88 31 -116
+47 -61 34 -71 35 -99 9 l-21 -20 -24 25 c-20 21 -21 28 -11 53 14 34 4 67 -29
+97 -24 21 -74 124 -85 173 -9 43 -38 66 -74 59 -25 -5 -31 -2 -42 24 -13 33
+-3 49 32 49 28 0 37 22 53 125 8 55 21 115 29 134 19 44 12 67 -24 80 -33 12
+-36 26 -10 60 17 22 21 23 51 12 37 -13 34 -14 127 76 50 49 53 55 53 102 0
+46 3 52 30 66 29 15 31 15 39 -8 13 -32 37 -40 71 -23 16 7 70 24 121 37 90
+22 92 23 107 61 14 35 19 39 45 36 25 -2 33 -10 42 -38z m1193 -739 c23 -55
+63 -83 140 -96 33 -5 52 -2 88 15 l46 23 46 -46 45 -45 -26 -32 c-31 -37 -32
+-46 -11 -97 61 -144 74 -165 114 -181 l40 -17 0 -66 c0 -62 -2 -67 -23 -73
+-49 -12 -105 -96 -138 -204 -11 -38 -10 -43 15 -73 l27 -32 -47 -48 -47 -48
+-38 25 c-46 29 -90 30 -144 5 -47 -22 -79 -55 -92 -96 -9 -29 -13 -30 -71 -33
+l-61 -3 -10 39 c-13 48 -34 68 -100 93 -64 24 -89 24 -121 -1 -34 -27 -45 -25
+-101 15 l-48 36 25 37 c33 47 28 76 -28 190 -38 76 -47 88 -73 92 -27 5 -30 9
+-33 45 -6 64 6 98 40 120 35 22 50 46 92 149 33 77 29 118 -12 124 -29 4 -28
+16 3 36 14 9 34 34 45 56 l20 40 40 -21 c95 -50 238 -1 254 87 l7 34 58 0 58
+0 21 -49z m-1922 -218 c3 -10 10 -25 15 -33 35 -55 38 -75 21 -124 l-17 -47
+65 -62 c116 -111 142 -123 187 -87 22 17 28 18 56 6 99 -42 107 -49 119 -93
+16 -66 33 -73 171 -73 l118 0 23 53 c23 50 26 53 77 66 30 8 60 16 66 18 7 3
+21 -9 30 -26 26 -45 55 -40 156 28 l87 60 0 -69 c0 -47 6 -78 17 -99 20 -34
+57 -54 84 -46 14 5 19 1 19 -14 0 -11 5 -31 11 -45 10 -20 8 -33 -10 -70 -11
+-25 -21 -49 -21 -53 0 -9 -106 -109 -198 -184 l-72 -61 -101 89 c-125 109
+-123 107 -142 100 -23 -9 -48 -52 -41 -70 3 -9 45 -51 92 -93 48 -43 91 -83
+95 -90 8 -15 8 -15 -96 -101 -82 -68 -101 -99 -84 -134 19 -37 57 -36 100 3
+40 37 114 101 166 144 19 16 73 63 120 105 47 42 97 84 110 95 13 10 44 36 68
+57 46 39 55 39 88 2 6 -7 35 -30 65 -53 l54 -41 22 20 c33 31 94 36 118 10 14
+-15 17 -26 10 -40 -8 -18 -107 -101 -149 -126 -15 -9 -16 -32 -15 -212 1 -199
+0 -202 -22 -217 -13 -9 -66 -52 -118 -96 -214 -179 -305 -252 -332 -266 -33
+-17 -16 -28 -179 105 -98 80 -135 111 -220 185 -20 17 -60 51 -88 75 l-51 43
+0 183 c0 157 -2 184 -16 196 -13 10 -66 15 -203 19 -173 5 -189 7 -235 30 -75
+37 -85 58 -90 175 -3 90 -37 247 -63 287 -3 6 -7 24 -8 40 -3 37 -38 74 -95
+102 -45 22 -45 22 -43 70 3 41 11 58 60 122 32 42 72 96 90 122 72 105 94 132
+109 132 8 0 17 -8 20 -17z m1314 -43 c0 -17 -27 -77 -38 -84 -19 -12 -19 32 0
+63 20 31 38 41 38 21z m-846 -1553 c47 -41 68 -59 116 -97 76 -59 81 -64 134
+-111 28 -26 62 -56 76 -67 l25 -20 -45 -6 c-112 -14 -234 -26 -338 -32 l-113
+-7 5 24 c3 13 10 53 16 89 18 104 40 212 51 248 12 36 9 37 73 -21z m1135
+-148 c18 -99 31 -182 28 -185 -4 -4 -214 12 -267 20 -8 2 -49 6 -91 10 -42 5
+-81 11 -88 15 -10 7 174 163 314 268 24 17 46 37 50 42 3 6 9 11 14 11 4 0 22
+-81 40 -181z"/>
+<path d="M3180 3892 c-81 -36 -130 -127 -110 -204 22 -78 100 -138 182 -138
+38 0 99 23 97 38 -1 20 -64 55 -102 57 -28 2 -46 9 -59 25 -32 39 -33 67 -4
+105 25 32 31 35 81 35 34 0 55 5 58 13 2 6 7 10 10 7 4 -3 0 -18 -7 -32 -8
+-15 -10 -31 -5 -39 5 -8 7 -21 4 -29 -11 -41 -14 -91 -5 -85 5 3 8 0 5 -7 -3
+-7 5 -19 17 -27 20 -12 24 -11 45 15 61 77 27 223 -62 260 -35 14 -118 18
+-145 6z m167 -244 c-3 -7 -5 -2 -5 12 0 14 2 19 5 13 2 -7 2 -19 0 -25z"/>
+<path d="M1913 3682 c-82 -29 -123 -49 -160 -79 -113 -96 -169 -183 -194 -301
+-23 -109 -23 -165 0 -273 28 -135 83 -219 211 -320 117 -93 318 -126 476 -79
+38 12 80 26 94 33 70 33 200 160 236 229 95 184 77 449 -42 605 -51 67 -159
+149 -230 176 -159 59 -238 61 -391 9z m288 -83 c111 -35 229 -128 283 -223 92
+-161 65 -364 -68 -518 -22 -26 -45 -48 -50 -48 -6 0 -19 -9 -30 -19 -29 -27
+-114 -59 -192 -71 -105 -17 -201 9 -326 88 -63 39 -137 156 -164 257 -57 213
+91 459 319 531 52 16 182 18 228 3z"/>
+<path d="M2057 3373 c-19 -5 -44 -51 -102 -185 -21 -49 -41 -88 -45 -88 -8 0
+-17 25 -65 169 -26 78 -57 107 -98 92 -22 -9 -27 -17 -27 -46 0 -19 9 -61 19
+-92 10 -32 36 -111 56 -175 44 -141 69 -182 111 -186 38 -4 45 4 88 105 48
+113 88 193 96 193 4 0 14 -17 23 -37 52 -125 101 -230 114 -245 9 -10 28 -18
+43 -18 50 0 68 35 159 312 22 70 41 135 41 145 0 28 -20 43 -56 43 -35 0 -50
+-14 -64 -57 -5 -15 -24 -71 -43 -123 l-35 -94 -35 74 c-19 41 -44 97 -56 125
+-37 83 -65 103 -124 88z"/>
+<path d="M3185 2891 c-118 -33 -200 -113 -243 -235 -20 -59 -23 -82 -18 -138
+11 -117 71 -219 171 -288 80 -55 247 -65 338 -21 68 33 142 105 173 169 36 75
+45 204 20 280 -40 119 -140 208 -263 236 -87 19 -102 19 -178 -3z m200 -112
+c167 -88 205 -287 78 -410 -65 -63 -104 -81 -177 -82 -69 0 -129 25 -184 77
+-133 124 -85 345 90 421 51 22 146 19 193 -6z"/>
+</g>
+</svg>
+
+    </a>
+    Torch Choice
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/" class="md-nav__link">
+        Installation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../intro/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../data_management/" class="md-nav__link">
+        Data Management
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../easy_data_management/" class="md-nav__link">
+        Easy Data Management and Stata Users
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../conditional_logit_model_mode_canada/" class="md-nav__link">
+        Conditional Logit Model
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nested_logit_model_house_cooling/" class="md-nav__link">
+        Nested Logit Model
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../post_estimation_demos/" class="md-nav__link">
+        Post Estimation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../projects/" class="md-nav__link">
+        Related Projects
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../test/" class="md-nav__link">
+        Compatibility Tests
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api_torch_choice/" class="md-nav__link">
+        API Reference Torch-Choice
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#conditional-logit-model" class="md-nav__link">
+    Conditional Logit Model
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#on-nested-logit-model" class="md-nav__link">
+    On Nested Logit Model
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+
+
+<h1 id="regularization-l_1-and-l_2">Regularization: <span class="arithmatex">\(L_1\)</span> and <span class="arithmatex">\(L_2\)</span></h1>
+<p>Author: Tianyu Du
+Date: Sept. 28, 2022</p>
+<p>Also known as <strong>weight decay</strong> or <strong>penalized regression</strong>. Adding the regularization loss term would shrink coefficient magnitudes and better prevent over-fitting.</p>
+<p>Specifically, we add the <span class="arithmatex">\(L_1\)</span> or <span class="arithmatex">\(L_2\)</span> norm of coefficients to the loss (negative log-likelihood) function.</p>
+<div class="arithmatex">\[
+\text{Loss} = \text{NegativeLogLikelihood} + \alpha \sum_{c \in \text{model coefficients}} ||c||_p \quad p \in \{1, 2\}
+\]</div>
+<p>Readers can adjust the <span class="arithmatex">\(\alpha\)</span> weight to control the strength of regularization.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">import</span> <span class="nn">torch</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="kn">from</span> <span class="nn">torch_choice.data</span> <span class="kn">import</span> <span class="n">ChoiceDataset</span><span class="p">,</span> <span class="n">JointDataset</span><span class="p">,</span> <span class="n">utils</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="kn">from</span> <span class="nn">torch_choice.model.nested_logit_model</span> <span class="kn">import</span> <span class="n">NestedLogitModel</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="kn">from</span> <span class="nn">torch_choice.model</span> <span class="kn">import</span> <span class="n">ConditionalLogitModel</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="kn">from</span> <span class="nn">torch_choice.utils.run_helper</span> <span class="kn">import</span> <span class="n">run</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;CUDA device used: </span><span class="si">{</span><span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">get_device_name</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="n">device</span> <span class="o">=</span> <span class="s1">&#39;cuda&#39;</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Running tutorial on CPU.&#39;</span><span class="p">)</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="n">device</span> <span class="o">=</span> <span class="s1">&#39;cpu&#39;</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>CUDA device used: NVIDIA GeForce RTX 3090
+</code></pre></div>
+<h2 id="conditional-logit-model">Conditional Logit Model</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;./public_datasets/ModeCanada.csv&#39;</span><span class="p">)</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;noalt == 4&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;case&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">item_index</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;choice&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;case&#39;</span><span class="p">)[</span><span class="s1">&#39;alt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">item_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;air&#39;</span><span class="p">,</span> <span class="s1">&#39;bus&#39;</span><span class="p">,</span> <span class="s1">&#39;car&#39;</span><span class="p">,</span> <span class="s1">&#39;train&#39;</span><span class="p">]</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">num_items</span> <span class="o">=</span> <span class="mi">4</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="n">encoder</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">item_names</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_items</span><span class="p">)))</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="n">item_index</span> <span class="o">=</span> <span class="n">item_index</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">encoder</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="n">item_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">item_index</span><span class="p">)</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="n">price_cost_freq_ovt</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">pivot3d</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">dim0</span><span class="o">=</span><span class="s1">&#39;case&#39;</span><span class="p">,</span> <span class="n">dim1</span><span class="o">=</span><span class="s1">&#39;alt&#39;</span><span class="p">,</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>                                    <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;cost&#39;</span><span class="p">,</span> <span class="s1">&#39;freq&#39;</span><span class="p">,</span> <span class="s1">&#39;ovt&#39;</span><span class="p">])</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="n">price_ivt</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">pivot3d</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">dim0</span><span class="o">=</span><span class="s1">&#39;case&#39;</span><span class="p">,</span> <span class="n">dim1</span><span class="o">=</span><span class="s1">&#39;alt&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s1">&#39;ivt&#39;</span><span class="p">)</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="n">session_income</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;case&#39;</span><span class="p">)[</span><span class="s1">&#39;income&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="n">session_income</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">session_income</span><span class="o">.</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">ChoiceDataset</span><span class="p">(</span><span class="n">item_index</span><span class="o">=</span><span class="n">item_index</span><span class="p">,</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>                        <span class="n">price_cost_freq_ovt</span><span class="o">=</span><span class="n">price_cost_freq_ovt</span><span class="p">,</span>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>                        <span class="n">session_income</span><span class="o">=</span><span class="n">session_income</span><span class="p">,</span>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>                        <span class="n">price_ivt</span><span class="o">=</span><span class="n">price_ivt</span>
+<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>                        <span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>No `session_index` is provided, assume each choice instance is in its own session.
+ChoiceDataset(label=[], item_index=[2779], user_index=[], session_index=[2779], item_availability=[], price_cost_freq_ovt=[2779, 4, 3], session_income=[2779, 1], price_ivt=[2779, 4, 1], device=cuda:0)
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># shuffle the dataset.</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">shuffle_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">train_index</span> <span class="o">=</span> <span class="n">shuffle_index</span><span class="p">[:</span><span class="nb">int</span><span class="p">(</span><span class="mf">0.7</span> <span class="o">*</span> <span class="n">N</span><span class="p">)]</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="n">test_index</span> <span class="o">=</span> <span class="n">shuffle_index</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="mf">0.7</span> <span class="o">*</span> <span class="n">N</span><span class="p">):]</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="c1"># splits of dataset.</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="n">dataset_train</span><span class="p">,</span> <span class="n">dataset_test</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="n">train_index</span><span class="p">],</span> <span class="n">dataset</span><span class="p">[</span><span class="n">test_index</span><span class="p">]</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">conditional_logit_common_arguments</span> <span class="o">=</span> <span class="p">{</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="s2">&quot;coef_variation_dict&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;price_cost_freq_ovt&#39;</span><span class="p">:</span> <span class="s1">&#39;constant&#39;</span><span class="p">,</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>                            <span class="s1">&#39;session_income&#39;</span><span class="p">:</span> <span class="s1">&#39;item&#39;</span><span class="p">,</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>                            <span class="s1">&#39;price_ivt&#39;</span><span class="p">:</span> <span class="s1">&#39;item-full&#39;</span><span class="p">,</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>                            <span class="s1">&#39;intercept&#39;</span><span class="p">:</span> <span class="s1">&#39;item&#39;</span><span class="p">},</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="s2">&quot;num_param_dict&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;price_cost_freq_ovt&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>                       <span class="s1">&#39;session_income&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>                       <span class="s1">&#39;price_ivt&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>                       <span class="s1">&#39;intercept&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>    <span class="s2">&quot;num_items&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">def</span> <span class="nf">train_conditional_logit_model</span><span class="p">(</span><span class="n">regularization</span><span class="p">,</span> <span class="n">regularization_weight</span><span class="p">):</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="n">model</span> <span class="o">=</span> <span class="n">ConditionalLogitModel</span><span class="p">(</span><span class="o">**</span><span class="n">conditional_logit_common_arguments</span><span class="p">,</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>                                <span class="n">regularization</span><span class="o">=</span><span class="n">regularization</span><span class="p">,</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>                                <span class="n">regularization_weight</span><span class="o">=</span><span class="n">regularization_weight</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    <span class="n">run</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataset_train</span><span class="p">,</span> <span class="n">dataset_test</span><span class="o">=</span><span class="n">dataset_test</span><span class="p">,</span> <span class="n">num_epochs</span><span class="o">=</span><span class="mi">50000</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.003</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    <span class="c1"># report total model weight</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Total weight L2 norm:&#39;</span><span class="p">,</span> <span class="nb">sum</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">()]))</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">train_conditional_logit_model</span><span class="p">(</span><span class="n">regularization</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">regularization_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>==================== received model ====================
+ConditionalLogitModel(
+  (coef_dict): ModuleDict(
+    (price_cost_freq_ovt): Coefficient(variation=constant, num_items=4, num_users=None, num_params=3, 3 trainable parameters in total, device=cuda:0).
+    (session_income): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cuda:0).
+    (price_ivt): Coefficient(variation=item-full, num_items=4, num_users=None, num_params=1, 4 trainable parameters in total, device=cuda:0).
+    (intercept): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cuda:0).
+  )
+)
+Conditional logistic discrete choice model, expects input features:
+
+X[price_cost_freq_ovt] with 3 parameters, with constant level variation.
+X[session_income] with 1 parameters, with item level variation.
+X[price_ivt] with 1 parameters, with item-full level variation.
+X[intercept] with 1 parameters, with item level variation.
+device=cuda:0
+==================== received dataset ====================
+ChoiceDataset(label=[], item_index=[1945], user_index=[], session_index=[1945], item_availability=[], price_cost_freq_ovt=[2779, 4, 3], session_income=[2779, 1], price_ivt=[2779, 4, 1], device=cuda:0)
+==================== training the model ====================
+Epoch 5000: Log-likelihood=-1322.9208984375
+Epoch 10000: Log-likelihood=-1322.427490234375
+Epoch 15000: Log-likelihood=-1322.361572265625
+Epoch 20000: Log-likelihood=-1322.354736328125
+Epoch 25000: Log-likelihood=-1322.4718017578125
+Epoch 30000: Log-likelihood=-1331.5247802734375
+Epoch 35000: Log-likelihood=-1322.3544921875
+Epoch 40000: Log-likelihood=-1322.421142578125
+Epoch 45000: Log-likelihood=-1322.3602294921875
+Epoch 50000: Log-likelihood=-1322.495849609375
+Test set log-likelihood:  -554.70849609375
+==================== model results ====================
+Training Epochs: 50000
+
+Learning Rate: 0.003
+
+Batch Size: 1945 out of 1945 observations in total
+
+Final Log-likelihood: -1322.495849609375
+
+Coefficients:
+
+| Coefficient           |   Estimation |   Std. Err. |
+|:----------------------|-------------:|------------:|
+| price_cost_freq_ovt_0 |  -0.0308257  |  0.00839731 |
+| price_cost_freq_ovt_1 |   0.0945616  |  0.00598799 |
+| price_cost_freq_ovt_2 |  -0.0397223  |  0.00373588 |
+| session_income_0      |  -0.0716898  |  0.0195864  |
+| session_income_1      |  -0.0273578  |  0.00459898 |
+| session_income_2      |  -0.038647   |  0.00484347 |
+| price_ivt_0           |   0.0564822  |  0.0117201  |
+| price_ivt_1           |  -0.00936753 |  0.00582746 |
+| price_ivt_2           |  -0.00678837 |  0.00222236 |
+| price_ivt_3           |  -0.00175041 |  0.00139018 |
+| intercept_0           |   0.899362   |  1.53674    |
+| intercept_1           |   2.24992    |  0.848803   |
+| intercept_2           |   3.50811    |  0.747974   |
+Total weight L2 norm: tensor(2.6599, device=&#39;cuda:0&#39;, grad_fn=&lt;AddBackward0&gt;)
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">train_conditional_logit_model</span><span class="p">(</span><span class="n">regularization</span><span class="o">=</span><span class="s1">&#39;L1&#39;</span><span class="p">,</span> <span class="n">regularization_weight</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>==================== received model ====================
+ConditionalLogitModel(
+  (coef_dict): ModuleDict(
+    (price_cost_freq_ovt): Coefficient(variation=constant, num_items=4, num_users=None, num_params=3, 3 trainable parameters in total, device=cuda:0).
+    (session_income): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cuda:0).
+    (price_ivt): Coefficient(variation=item-full, num_items=4, num_users=None, num_params=1, 4 trainable parameters in total, device=cuda:0).
+    (intercept): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cuda:0).
+  )
+)
+Conditional logistic discrete choice model, expects input features:
+
+X[price_cost_freq_ovt] with 3 parameters, with constant level variation.
+X[session_income] with 1 parameters, with item level variation.
+X[price_ivt] with 1 parameters, with item-full level variation.
+X[intercept] with 1 parameters, with item level variation.
+device=cuda:0
+==================== received dataset ====================
+ChoiceDataset(label=[], item_index=[1945], user_index=[], session_index=[1945], item_availability=[], price_cost_freq_ovt=[2779, 4, 3], session_income=[2779, 1], price_ivt=[2779, 4, 1], device=cuda:0)
+==================== training the model ====================
+Epoch 5000: Log-likelihood=-1327.5283203125
+Epoch 10000: Log-likelihood=-1327.5472412109375
+Epoch 15000: Log-likelihood=-1327.5458984375
+Epoch 20000: Log-likelihood=-1327.5452880859375
+Epoch 25000: Log-likelihood=-1327.54931640625
+Epoch 30000: Log-likelihood=-1327.9013671875
+Epoch 35000: Log-likelihood=-1327.5465087890625
+Epoch 40000: Log-likelihood=-1327.6224365234375
+Epoch 45000: Log-likelihood=-1327.5556640625
+Epoch 50000: Log-likelihood=-1333.43359375
+Test set log-likelihood:  -556.6971435546875
+==================== model results ====================
+Training Epochs: 50000
+
+Learning Rate: 0.003
+
+Batch Size: 1945 out of 1945 observations in total
+
+Final Log-likelihood: -1333.43359375
+
+Coefficients:
+
+| Coefficient           |   Estimation |   Std. Err. |
+|:----------------------|-------------:|------------:|
+| price_cost_freq_ovt_0 | -0.0485882   |  0.0084985  |
+| price_cost_freq_ovt_1 |  0.0963804   |  0.00600474 |
+| price_cost_freq_ovt_2 | -0.0381796   |  0.00383793 |
+| session_income_0      | -0.0766308   |  0.0208468  |
+| session_income_1      | -0.0225714   |  0.00444105 |
+| session_income_2      | -0.0326763   |  0.00488883 |
+| price_ivt_0           |  0.0531795   |  0.0118078  |
+| price_ivt_1           | -0.0166434   |  0.0080002  |
+| price_ivt_2           | -0.00397061  |  0.00221348 |
+| price_ivt_3           | -0.00189491  |  0.00140921 |
+| intercept_0           |  0.000167495 |  1.69499    |
+| intercept_1           |  0.000309494 |  0.833982   |
+| intercept_2           |  1.2901      |  0.729501   |
+Total weight L2 norm: tensor(1.3817, device=&#39;cuda:0&#39;, grad_fn=&lt;AddBackward0&gt;)
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">train_conditional_logit_model</span><span class="p">(</span><span class="n">regularization</span><span class="o">=</span><span class="s1">&#39;L2&#39;</span><span class="p">,</span> <span class="n">regularization_weight</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>==================== received model ====================
+ConditionalLogitModel(
+  (coef_dict): ModuleDict(
+    (price_cost_freq_ovt): Coefficient(variation=constant, num_items=4, num_users=None, num_params=3, 3 trainable parameters in total, device=cuda:0).
+    (session_income): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cuda:0).
+    (price_ivt): Coefficient(variation=item-full, num_items=4, num_users=None, num_params=1, 4 trainable parameters in total, device=cuda:0).
+    (intercept): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cuda:0).
+  )
+)
+Conditional logistic discrete choice model, expects input features:
+
+X[price_cost_freq_ovt] with 3 parameters, with constant level variation.
+X[session_income] with 1 parameters, with item level variation.
+X[price_ivt] with 1 parameters, with item-full level variation.
+X[intercept] with 1 parameters, with item level variation.
+device=cuda:0
+==================== received dataset ====================
+ChoiceDataset(label=[], item_index=[1945], user_index=[], session_index=[1945], item_availability=[], price_cost_freq_ovt=[2779, 4, 3], session_income=[2779, 1], price_ivt=[2779, 4, 1], device=cuda:0)
+==================== training the model ====================
+Epoch 5000: Log-likelihood=-1327.98876953125
+Epoch 10000: Log-likelihood=-1327.377197265625
+Epoch 15000: Log-likelihood=-1327.3466796875
+Epoch 20000: Log-likelihood=-1327.345458984375
+Epoch 25000: Log-likelihood=-1327.433349609375
+Epoch 30000: Log-likelihood=-1327.3453369140625
+Epoch 35000: Log-likelihood=-1327.34521484375
+Epoch 40000: Log-likelihood=-1327.3885498046875
+Epoch 45000: Log-likelihood=-1327.3486328125
+Epoch 50000: Log-likelihood=-1327.34765625
+Test set log-likelihood:  -555.1453857421875
+==================== model results ====================
+Training Epochs: 50000
+
+Learning Rate: 0.003
+
+Batch Size: 1945 out of 1945 observations in total
+
+Final Log-likelihood: -1327.34765625
+
+Coefficients:
+
+| Coefficient           |   Estimation |   Std. Err. |
+|:----------------------|-------------:|------------:|
+| price_cost_freq_ovt_0 |  -0.0482729  |  0.0083645  |
+| price_cost_freq_ovt_1 |   0.0967298  |  0.00595309 |
+| price_cost_freq_ovt_2 |  -0.0376925  |  0.0037188  |
+| session_income_0      |  -0.0749973  |  0.019634   |
+| session_income_1      |  -0.0231255  |  0.00446823 |
+| session_income_2      |  -0.032398   |  0.00475483 |
+| price_ivt_0           |   0.0534635  |  0.0117147  |
+| price_ivt_1           |  -0.0153539  |  0.00731768 |
+| price_ivt_2           |  -0.00426721 |  0.00219745 |
+| price_ivt_3           |  -0.00154632 |  0.00138443 |
+| intercept_0           |  -0.201299   |  1.60544    |
+| intercept_1           |   0.00875631 |  0.823289   |
+| intercept_2           |   1.29872    |  0.715818   |
+Total weight L2 norm: tensor(1.5968, device=&#39;cuda:0&#39;, grad_fn=&lt;AddBackward0&gt;)
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">train_conditional_logit_model</span><span class="p">(</span><span class="n">regularization</span><span class="o">=</span><span class="s1">&#39;L1&#39;</span><span class="p">,</span> <span class="n">regularization_weight</span><span class="o">=</span><span class="mf">1E5</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>==================== received model ====================
+ConditionalLogitModel(
+  (coef_dict): ModuleDict(
+    (price_cost_freq_ovt): Coefficient(variation=constant, num_items=4, num_users=None, num_params=3, 3 trainable parameters in total, device=cuda:0).
+    (session_income): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cuda:0).
+    (price_ivt): Coefficient(variation=item-full, num_items=4, num_users=None, num_params=1, 4 trainable parameters in total, device=cuda:0).
+    (intercept): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cuda:0).
+  )
+)
+Conditional logistic discrete choice model, expects input features:
+
+X[price_cost_freq_ovt] with 3 parameters, with constant level variation.
+X[session_income] with 1 parameters, with item level variation.
+X[price_ivt] with 1 parameters, with item-full level variation.
+X[intercept] with 1 parameters, with item level variation.
+device=cuda:0
+==================== received dataset ====================
+ChoiceDataset(label=[], item_index=[1945], user_index=[], session_index=[1945], item_availability=[], price_cost_freq_ovt=[2779, 4, 3], session_income=[2779, 1], price_ivt=[2779, 4, 1], device=cuda:0)
+==================== training the model ====================
+Epoch 5000: Log-likelihood=-2680.06005859375
+Epoch 10000: Log-likelihood=-2431.19091796875
+Epoch 15000: Log-likelihood=-2651.45849609375
+Epoch 20000: Log-likelihood=-2578.85107421875
+Epoch 25000: Log-likelihood=-2525.41650390625
+Epoch 30000: Log-likelihood=-2554.415283203125
+Epoch 35000: Log-likelihood=-2570.41845703125
+Epoch 40000: Log-likelihood=-2658.0556640625
+Epoch 45000: Log-likelihood=-2560.906005859375
+Epoch 50000: Log-likelihood=-2677.46826171875
+Test set log-likelihood:  -1136.294921875
+==================== model results ====================
+Training Epochs: 50000
+
+Learning Rate: 0.003
+
+Batch Size: 1945 out of 1945 observations in total
+
+Final Log-likelihood: -2677.46826171875
+
+Coefficients:
+
+| Coefficient           |   Estimation |   Std. Err. |
+|:----------------------|-------------:|------------:|
+| price_cost_freq_ovt_0 |  0.000446639 | 0.00574829  |
+| price_cost_freq_ovt_1 | -0.000407603 | 0.00415769  |
+| price_cost_freq_ovt_2 |  0.000226522 | 0.0021607   |
+| session_income_0      | -4.7971e-05  | 0.00383794  |
+| session_income_1      |  0.00117954  | 0.00375016  |
+| session_income_2      |  0.00041626  | 0.00359678  |
+| price_ivt_0           | -0.000192594 | 0.00875022  |
+| price_ivt_1           | -0.000618745 | 0.000871537 |
+| price_ivt_2           | -0.000398202 | 0.00165723  |
+| price_ivt_3           |  0.000407054 | 0.00104901  |
+| intercept_0           | -0.000648632 | 0.567814    |
+| intercept_1           | -0.000525868 | 0.580968    |
+| intercept_2           | -0.000405973 | 0.505175    |
+Total weight L2 norm: tensor(1.3426, device=&#39;cuda:0&#39;, grad_fn=&lt;AddBackward0&gt;)
+</code></pre></div>
+<h2 id="on-nested-logit-model">On Nested Logit Model</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;./public_datasets/HC.csv&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="c1"># what was actually chosen.</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="n">item_index</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;depvar&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;idx.id1&#39;</span><span class="p">)[</span><span class="s1">&#39;idx.id2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="n">item_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ec&#39;</span><span class="p">,</span> <span class="s1">&#39;ecc&#39;</span><span class="p">,</span> <span class="s1">&#39;er&#39;</span><span class="p">,</span> <span class="s1">&#39;erc&#39;</span><span class="p">,</span> <span class="s1">&#39;gc&#39;</span><span class="p">,</span> <span class="s1">&#39;gcc&#39;</span><span class="p">,</span> <span class="s1">&#39;hpc&#39;</span><span class="p">]</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="n">num_items</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;idx.id2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="c1"># cardinal encoder.</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="n">encoder</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">item_names</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_items</span><span class="p">)))</span>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="n">item_index</span> <span class="o">=</span> <span class="n">item_index</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">encoder</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="n">item_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">item_index</span><span class="p">)</span>
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a>
+<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="c1"># category feature: no category feature, all features are item-level.</span>
+<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="n">category_dataset</span> <span class="o">=</span> <span class="n">ChoiceDataset</span><span class="p">(</span><span class="n">item_index</span><span class="o">=</span><span class="n">item_index</span><span class="o">.</span><span class="n">clone</span><span class="p">())</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a>
+<a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a><span class="c1"># item feature.</span>
+<a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a><span class="n">item_feat_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ich&#39;</span><span class="p">,</span> <span class="s1">&#39;och&#39;</span><span class="p">,</span> <span class="s1">&#39;icca&#39;</span><span class="p">,</span> <span class="s1">&#39;occa&#39;</span><span class="p">,</span> <span class="s1">&#39;inc.room&#39;</span><span class="p">,</span> <span class="s1">&#39;inc.cooling&#39;</span><span class="p">,</span> <span class="s1">&#39;int.cooling&#39;</span><span class="p">]</span>
+<a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a><span class="n">price_obs</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">pivot3d</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">dim0</span><span class="o">=</span><span class="s1">&#39;idx.id1&#39;</span><span class="p">,</span> <span class="n">dim1</span><span class="o">=</span><span class="s1">&#39;idx.id2&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">item_feat_cols</span><span class="p">)</span>
+<a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a>
+<a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a><span class="n">item_dataset</span> <span class="o">=</span> <span class="n">ChoiceDataset</span><span class="p">(</span><span class="n">item_index</span><span class="o">=</span><span class="n">item_index</span><span class="p">,</span> <span class="n">price_obs</span><span class="o">=</span><span class="n">price_obs</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a>
+<a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">JointDataset</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="n">category_dataset</span><span class="p">,</span> <span class="n">item</span><span class="o">=</span><span class="n">item_dataset</span><span class="p">)</span>
+<a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a>
+<a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a><span class="n">category_to_item</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;gcc&#39;</span><span class="p">,</span> <span class="s1">&#39;ecc&#39;</span><span class="p">,</span> <span class="s1">&#39;erc&#39;</span><span class="p">,</span> <span class="s1">&#39;hpc&#39;</span><span class="p">],</span>
+<a id="__codelineno-10-26" name="__codelineno-10-26" href="#__codelineno-10-26"></a>                    <span class="mi">1</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;gc&#39;</span><span class="p">,</span> <span class="s1">&#39;ec&#39;</span><span class="p">,</span> <span class="s1">&#39;er&#39;</span><span class="p">]}</span>
+<a id="__codelineno-10-27" name="__codelineno-10-27" href="#__codelineno-10-27"></a>
+<a id="__codelineno-10-28" name="__codelineno-10-28" href="#__codelineno-10-28"></a><span class="c1"># encode items to integers.</span>
+<a id="__codelineno-10-29" name="__codelineno-10-29" href="#__codelineno-10-29"></a><span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">category_to_item</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<a id="__codelineno-10-30" name="__codelineno-10-30" href="#__codelineno-10-30"></a>    <span class="n">v</span> <span class="o">=</span> <span class="p">[</span><span class="n">encoder</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">v</span><span class="p">]</span>
+<a id="__codelineno-10-31" name="__codelineno-10-31" href="#__codelineno-10-31"></a>    <span class="n">category_to_item</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>No `session_index` is provided, assume each choice instance is in its own session.
+No `session_index` is provided, assume each choice instance is in its own session.
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">def</span> <span class="nf">train_nested_logit_model</span><span class="p">(</span><span class="n">regularization</span><span class="p">,</span> <span class="n">regularization_weight</span><span class="p">):</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>    <span class="n">model</span> <span class="o">=</span> <span class="n">NestedLogitModel</span><span class="p">(</span><span class="n">category_to_item</span><span class="o">=</span><span class="n">category_to_item</span><span class="p">,</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>                         <span class="n">category_coef_variation_dict</span><span class="o">=</span><span class="p">{},</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>                         <span class="n">category_num_param_dict</span><span class="o">=</span><span class="p">{},</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>                         <span class="n">item_coef_variation_dict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;price_obs&#39;</span><span class="p">:</span> <span class="s1">&#39;constant&#39;</span><span class="p">},</span>
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>                         <span class="n">item_num_param_dict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;price_obs&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">},</span>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>                         <span class="n">regularization</span><span class="o">=</span><span class="n">regularization</span><span class="p">,</span>
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>                         <span class="n">regularization_weight</span><span class="o">=</span><span class="n">regularization_weight</span><span class="p">,</span>
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>                         <span class="n">shared_lambda</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>    <span class="n">run</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">num_epochs</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">train_nested_logit_model</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>==================== received model ====================
+NestedLogitModel(
+  (category_coef_dict): ModuleDict()
+  (item_coef_dict): ModuleDict(
+    (price_obs): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cuda:0).
+  )
+)
+==================== received dataset ====================
+JointDataset with 2 sub-datasets: (
+    category: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], device=cuda:0)
+    item: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cuda:0)
+)
+==================== training the model ====================
+Epoch 1000: Log-likelihood=-226.63345336914062
+Epoch 2000: Log-likelihood=-189.08030700683594
+Epoch 3000: Log-likelihood=-181.08639526367188
+Epoch 4000: Log-likelihood=-179.11544799804688
+Epoch 5000: Log-likelihood=-178.78994750976562
+Epoch 6000: Log-likelihood=-178.64102172851562
+Epoch 7000: Log-likelihood=-178.50711059570312
+Epoch 8000: Log-likelihood=-178.36279296875
+Epoch 9000: Log-likelihood=-178.23562622070312
+Epoch 10000: Log-likelihood=-178.15724182128906
+==================== model results ====================
+Training Epochs: 10000
+
+Learning Rate: 0.01
+
+Batch Size: 250 out of 250 observations in total
+
+Final Log-likelihood: -178.15724182128906
+
+Coefficients:
+
+| Coefficient      |   Estimation |   Std. Err. |
+|:-----------------|-------------:|------------:|
+| lambda_weight_0  |     0.569814 |   0.163447  |
+| item_price_obs_0 |    -0.5397   |   0.141929  |
+| item_price_obs_1 |    -0.834805 |   0.233345  |
+| item_price_obs_2 |    -0.242956 |   0.110592  |
+| item_price_obs_3 |    -1.27541  |   1.03548   |
+| item_price_obs_4 |    -0.368249 |   0.0986935 |
+| item_price_obs_5 |     0.247266 |   0.0513082 |
+| item_price_obs_6 |    -4.78207  |   4.7152    |
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">train_nested_logit_model</span><span class="p">(</span><span class="s2">&quot;L1&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>==================== received model ====================
+NestedLogitModel(
+  (category_coef_dict): ModuleDict()
+  (item_coef_dict): ModuleDict(
+    (price_obs): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cuda:0).
+  )
+)
+==================== received dataset ====================
+JointDataset with 2 sub-datasets: (
+    category: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], device=cuda:0)
+    item: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cuda:0)
+)
+==================== training the model ====================
+Epoch 1000: Log-likelihood=-186.81593322753906
+Epoch 2000: Log-likelihood=-187.0428924560547
+Epoch 3000: Log-likelihood=-188.46871948242188
+Epoch 4000: Log-likelihood=-187.3245849609375
+Epoch 5000: Log-likelihood=-187.10488891601562
+Epoch 6000: Log-likelihood=-187.18087768554688
+Epoch 7000: Log-likelihood=-187.34005737304688
+Epoch 8000: Log-likelihood=-187.11846923828125
+Epoch 9000: Log-likelihood=-187.3697509765625
+Epoch 10000: Log-likelihood=-187.0865478515625
+==================== model results ====================
+Training Epochs: 10000
+
+Learning Rate: 0.01
+
+Batch Size: 250 out of 250 observations in total
+
+Final Log-likelihood: -187.0865478515625
+
+Coefficients:
+
+| Coefficient      |   Estimation |   Std. Err. |
+|:-----------------|-------------:|------------:|
+| lambda_weight_0  |  0.0530321   |   0.0531535 |
+| item_price_obs_0 | -0.0512223   |   0.0514528 |
+| item_price_obs_1 | -0.0779116   |   0.078385  |
+| item_price_obs_2 | -0.187379    |   0.087971  |
+| item_price_obs_3 | -0.00119437  |   0.863954  |
+| item_price_obs_4 | -0.0346545   |   0.0350824 |
+| item_price_obs_5 |  0.183375    |   0.034789  |
+| item_price_obs_6 |  0.000892786 |   3.57438   |
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">train_nested_logit_model</span><span class="p">(</span><span class="s2">&quot;L2&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>==================== received model ====================
+NestedLogitModel(
+  (category_coef_dict): ModuleDict()
+  (item_coef_dict): ModuleDict(
+    (price_obs): Coefficient(variation=constant, num_items=7, num_users=None, num_params=7, 7 trainable parameters in total, device=cuda:0).
+  )
+)
+==================== received dataset ====================
+JointDataset with 2 sub-datasets: (
+    category: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], device=cuda:0)
+    item: ChoiceDataset(label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cuda:0)
+)
+==================== training the model ====================
+Epoch 1000: Log-likelihood=-219.621826171875
+Epoch 2000: Log-likelihood=-200.87660217285156
+Epoch 3000: Log-likelihood=-192.0721435546875
+Epoch 4000: Log-likelihood=-183.12820434570312
+Epoch 5000: Log-likelihood=-182.87225341796875
+Epoch 6000: Log-likelihood=-183.52407836914062
+Epoch 7000: Log-likelihood=-183.50723266601562
+Epoch 8000: Log-likelihood=-183.5075225830078
+Epoch 9000: Log-likelihood=-183.50465393066406
+Epoch 10000: Log-likelihood=-183.5073699951172
+==================== model results ====================
+Training Epochs: 10000
+
+Learning Rate: 0.01
+
+Batch Size: 250 out of 250 observations in total
+
+Final Log-likelihood: -183.5073699951172
+
+Coefficients:
+
+| Coefficient      |   Estimation |   Std. Err. |
+|:-----------------|-------------:|------------:|
+| lambda_weight_0  |    0.181474  |   0.108225  |
+| item_price_obs_0 |   -0.174871  |   0.102564  |
+| item_price_obs_1 |   -0.265047  |   0.156401  |
+| item_price_obs_2 |   -0.258935  |   0.0949367 |
+| item_price_obs_3 |   -0.151668  |   0.898396  |
+| item_price_obs_4 |   -0.118241  |   0.0697575 |
+| item_price_obs_5 |    0.193267  |   0.0380327 |
+| item_price_obs_6 |   -0.0374295 |   3.90292   |
+</code></pre></div>
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.ed9748b7.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
