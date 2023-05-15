@@ -645,7 +645,7 @@ data_1.summary()
     
     [3160 rows x 6 columns]
     * Preview of ChoiceDataset:
-    ChoiceDataset(label=[], item_index=[885], user_index=[885], session_index=[885], item_availability=[885, 4], user_gender=[885, 1], user_income=[885, 1], price_dealers=[885, 4, 1], device=cuda:0)
+    ChoiceDataset(label=[], item_index=[885], provided_num_items=[], user_index=[885], session_index=[885], item_availability=[885, 4], user_gender=[885, 1], user_income=[885, 1], itemsession_dealers=[885, 4, 1], device=cpu)
 
 
 You can access the `ChoiceDataset` object constructed by calling the `data.choice_dataset` object. 
@@ -658,7 +658,7 @@ data_1.choice_dataset
 
 
 
-    ChoiceDataset(label=[], item_index=[885], user_index=[885], session_index=[885], item_availability=[885, 4], user_gender=[885, 1], user_income=[885, 1], price_dealers=[885, 4, 1], device=cuda:0)
+    ChoiceDataset(label=[], item_index=[885], provided_num_items=[], user_index=[885], session_index=[885], item_availability=[885, 4], user_gender=[885, 1], user_income=[885, 1], itemsession_dealers=[885, 4, 1], device=cpu)
 
 
 
@@ -1058,7 +1058,7 @@ data_2.summary()
     
     [3160 rows x 6 columns]
     * Preview of ChoiceDataset:
-    ChoiceDataset(label=[], item_index=[885], user_index=[885], session_index=[885], item_availability=[885, 4], user_gender=[885, 1], user_income=[885, 1], price_dealers=[885, 4, 1], device=cuda:0)
+    ChoiceDataset(label=[], item_index=[885], provided_num_items=[], user_index=[885], session_index=[885], item_availability=[885, 4], user_gender=[885, 1], user_income=[885, 1], itemsession_dealers=[885, 4, 1], device=cpu)
 
 
 Alternatively, we can supply user income and gender as a single dataframe, instead of `user_gender` and `user_income` tensors, now the constructed `ChoiceDataset` contains a single `user_gender_and_income` tensor with shape (885, 2) encompassing both income and gender of users.
@@ -1108,7 +1108,7 @@ data_3.summary()
     
     [3160 rows x 6 columns]
     * Preview of ChoiceDataset:
-    ChoiceDataset(label=[], item_index=[885], user_index=[885], session_index=[885], item_availability=[885, 4], user_gender_and_income=[885, 2], price_dealers=[885, 4, 1], device=cuda:0)
+    ChoiceDataset(label=[], item_index=[885], provided_num_items=[], user_index=[885], session_index=[885], item_availability=[885, 4], user_gender_and_income=[885, 2], itemsession_dealers=[885, 4, 1], device=cpu)
 
 
 ## Method 3: Mixing Method 1 and Method 2
@@ -1160,7 +1160,7 @@ data_4.summary()
     
     [3160 rows x 6 columns]
     * Preview of ChoiceDataset:
-    ChoiceDataset(label=[], item_index=[885], user_index=[885], session_index=[885], item_availability=[885, 4], user_gender=[885, 1], user_income=[885, 1], price_dealers=[885, 4, 1], device=cuda:0)
+    ChoiceDataset(label=[], item_index=[885], provided_num_items=[], user_index=[885], session_index=[885], item_availability=[885, 4], user_gender=[885, 1], user_income=[885, 1], itemsession_dealers=[885, 4, 1], device=cpu)
 
 
 # Sanity Checks
@@ -1194,7 +1194,7 @@ data_3.choice_dataset.user_gender_and_income == torch.cat([data_1.choice_dataset
             ...,
             [True, True],
             [True, True],
-            [True, True]], device='cuda:0')
+            [True, True]])
 
 
 
@@ -1389,7 +1389,7 @@ X
 
 
 ```python
-Y = data_1.choice_dataset.price_dealers.squeeze(dim=-1)
+Y = data_1.choice_dataset.itemsession_dealers.squeeze(dim=-1)
 ```
 
 
@@ -1406,7 +1406,7 @@ Y
             ...,
             [ 9.,  5.,  8.,  1.],
             [12.,  4., 10., nan],
-            [10.,  4.,  5., nan]], device='cuda:0')
+            [10.,  4.,  5., nan]])
 
 
 

@@ -11,10 +11,11 @@ from copy import deepcopy
 from typing import Optional, Union
 
 import pandas as pd
+import pytorch_lightning as pl
 import torch
 import torch.nn.functional as F
-import pytorch_lightning as pl
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
+from scipy.stats import norm
 
 from torch_choice.data import ChoiceDataset
 from torch_choice.data.utils import create_data_loader
@@ -26,7 +27,8 @@ from torch_choice.utils.std import parameter_std
 class LightningModelWrapper(pl.LightningModule):
     def __init__(self,
                  model: Union [ConditionalLogitModel, NestedLogitModel],
-                 learning_rate: float):
+                 learning_rate: float,
+                 model_optimizer: str):
         """
         The pytorch-lightning model wrapper for conditional and nested logit model.
         Ideally, end users don't need to interact with this class. This wrapper will be called by the run() function.
@@ -34,6 +36,7 @@ class LightningModelWrapper(pl.LightningModule):
         super().__init__()
         self.model = model
         self.learning_rate = learning_rate
+        self.optimizer_class_string = model_optimizer
 
     def __str__(self) -> str:
         return str(self.model)
@@ -65,25 +68,7 @@ class LightningModelWrapper(pl.LightningModule):
             self.log('test_' + key, val, prog_bar=False, batch_size=len(batch))
 
     def configure_optimizers(self):
-        optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
-        return optimizer
-
-
-# def run_original(model, dataset, dataset_test=None, batch_size=-1, learning_rate=0.01, num_epochs=5000, report_frequency=None):
-#     """All in one script for the model training and result presentation."""
-#     if report_frequency is None:
-#         report_frequency = (num_epochs // 10)
-
-#     assert isinstance(model, ConditionalLogitModel) or isinstance(model, NestedLogitModel), \
-#         f'A model of type {type(model)} is not supported by this runner.'
-#     model = deepcopy(model)  # do not modify the model outside.
-#     trained_model = deepcopy(model)  # create another copy for returning.
-#     print('=' * 20, 'received model', '=' * 20)
-#     print(model)
-#     print('=' * 20, 'received dataset', '=' * 20)
-#     print(dataset)
-#     print('=' * 20, 'training the model', '=' * 20)
-
+        return getattr(torch.optim, self.optimizer_class_string)(self.parameters(), lr=self.learning_rate)
 
 def section_print(input_text):
     """Helper function for printing"""
@@ -94,6 +79,7 @@ def run(model: Union [ConditionalLogitModel, NestedLogitModel],
         dataset_train: ChoiceDataset,
         dataset_val: Optional[ChoiceDataset]=None,
         dataset_test: Optional[ChoiceDataset]=None,
+        model_optimizer: str='Adam',
         batch_size: int=-1,
         learning_rate: float=0.01,
         num_epochs: int=10,
@@ -122,10 +108,12 @@ def run(model: Union [ConditionalLogitModel, NestedLogitModel],
     # ==================================================================================================================
     # Setup the lightning wrapper.
     # ==================================================================================================================
-    lightning_model = LightningModelWrapper(model, learning_rate=learning_rate)
+    lightning_model = LightningModelWrapper(model,
+                                            learning_rate=learning_rate,
+                                            model_optimizer=model_optimizer)
     if device is None:
         # infer from the model device.
-        device = model.device
+        device = str(model.device)
     # the cloned model will be used for standard error calculation later.
     model_clone = deepcopy(model)
     section_print('model received')
@@ -159,7 +147,8 @@ def run(model: Union [ConditionalLogitModel, NestedLogitModel],
     # if the validation dataset is provided, do early stopping.
     callbacks = [EarlyStopping(monitor="val_ll", mode="max", patience=10, min_delta=0.001)] if val_dataloader is not None else []
 
-    trainer = pl.Trainer(gpus=1 if ('cuda' in str(model.device)) else 0,  # use GPU if the model is currently on the GPU.
+    trainer = pl.Trainer(accelerator="cuda" if "cuda" in device else device,  # note: "cuda:0" is not a accelerator name.
+                         devices="auto",
                          max_epochs=num_epochs,
                          check_val_every_n_epoch=num_epochs // 100,
                          log_every_n_steps=num_epochs // 100,
@@ -173,7 +162,9 @@ def run(model: Union [ConditionalLogitModel, NestedLogitModel],
     else:
         print('Skip testing, no test dataset is provided.')
 
-    # ====== get the standard error of the model ====== #
+    # ==================================================================================================================
+    # Construct standard error, z-value, and p-value of coefficients.
+    # ==================================================================================================================
     # current methods of computing standard deviation will corrupt the model, load weights into another model for returning.
     state_dict = deepcopy(lightning_model.model.state_dict())
     model_clone.load_state_dict(state_dict)
@@ -207,23 +198,39 @@ def run(model: Union [ConditionalLogitModel, NestedLogitModel],
                            'Estimation': float(mean[i]),
                            'Std. Err.': float(std[i])})
     report = pd.DataFrame(report).set_index('Coefficient')
-    # print(f'Training Epochs: {num_epochs}\n')
-    # print(f'Learning Rate: {learning_rate}\n')
-    # print(f'Batch Size: {batch_size if batch_size != -1 else len(dataset_list[0])} out of {len(dataset_list[0])} observations in total in test set\n')
 
+    # Compute z-value
+    report['z-value'] = report['Estimation'] / report['Std. Err.']
+
+    # Compute p-value (two tails).
+    report['Pr(>|z|)'] = (1 - norm.cdf(abs(report['z-value']))) * 2
+
+    # Compute significance stars
+    report['Significance'] = ''
+    report.loc[report['Pr(>|z|)'] < 0.001, 'Significance'] = '***'
+    report.loc[(report['Pr(>|z|)'] >= 0.001) & (report['Pr(>|z|)'] < 0.01), 'Significance'] = '**'
+    report.loc[(report['Pr(>|z|)'] >= 0.01) & (report['Pr(>|z|)'] < 0.05), 'Significance'] = '*'
+
+    # Compute log-likelihood on the final model on all splits of datasets.
     lightning_model.model.to(device)
-    train_ll = - lightning_model.model.negative_log_likelihood(dataset_train, dataset_train.item_index).detach().item()
+    is_nested = isinstance(lightning_model.model, NestedLogitModel)
+
+    train_ll = - lightning_model.model.negative_log_likelihood(dataset_train.datasets if is_nested else dataset_train,
+                                                               dataset_train.item_index).detach().item()
 
     if dataset_val is not None:
-        val_ll = - lightning_model.model.negative_log_likelihood(dataset_val, dataset_val.item_index).detach().item()
+        val_ll = - lightning_model.model.negative_log_likelihood(dataset_val.datasets if is_nested else dataset_val,
+                                                                 dataset_val.item_index).detach().item()
     else:
         val_ll = 'N/A'
 
     if dataset_test is not None:
-        test_ll = - lightning_model.model.negative_log_likelihood(dataset_test, dataset_test.item_index).detach().item()
+        test_ll = - lightning_model.model.negative_log_likelihood(dataset_test.datasets if is_nested else dataset_test,
+                                                                  dataset_test.item_index).detach().item()
     else:
         test_ll = 'N/A'
-    print(f'Final Log-likelihood: [Training] {train_ll}, [Validation] {val_ll}, [Test] {test_ll}\n')
-    print('Coefficients:\n')
+
+    print(f'Log-likelihood: [Training] {train_ll}, [Validation] {val_ll}, [Test] {test_ll}\n')
     print(report.to_markdown())
+    print("Significance codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1")
     return model

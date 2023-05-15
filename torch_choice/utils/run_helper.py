@@ -90,7 +90,7 @@ def run(model, dataset, dataset_test=None, batch_size=-1, learning_rate=0.01, nu
         print('Test set log-likelihood: ', test_ll)
 
     # final training log-likelihood.
-    ll = - model.negative_log_likelihood(dataset, dataset.item_index).detach().item() # * len(batch)
+    ll = - model.negative_log_likelihood(dataset if isinstance(model, ConditionalLogitModel) else dataset.datasets, dataset.item_index).detach().item() # * len(batch)
 
     if not compute_std:
         if return_final_training_log_likelihood:

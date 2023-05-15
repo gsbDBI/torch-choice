@@ -99,3 +99,20 @@ class JointDataset(torch.utils.data.Dataset):
         for d in self.datasets.values():
             d = d.to(device)
         return self
+
+    def clone(self) -> "JointDataset":
+        """Returns a copy of the dataset.
+
+        Returns:
+            JointDataset: a copy of the dataset.
+        """
+        return JointDataset(**{name: d.clone() for (name, d) in self.datasets.items()})
+
+    @property
+    def item_index(self) -> torch.LongTensor:
+        """Returns the current index of each dataset.
+
+        Returns:
+            torch.LongTensor: the indices of items chosen.
+        """
+        return self.datasets["item"].item_index

@@ -20,7 +20,7 @@ theme:
     name: material
     custom_dir: docs_src/overrides
     icon:
-        logo: stanford/stanford
+        logo: dalle/dalle
 
 plugins:
     - search
