@@ -30,7 +30,7 @@ Overall, the `torch-choice` package offers the following features:
 
 
 ## Installation
-We offer two ways to install the package. This is a work in progress. We recommend installing the package from source to get the latest version and bug-fix patches.
+We offer two ways to install the package. This is a work in progress. **We recommend installing the package from source to get the latest version and bug-fix patches**.
 We are actively working on this package and will be adding more features and examples. Please feel free to reach out to us with any questions or suggestions.
 
 ### Installation from Pip
