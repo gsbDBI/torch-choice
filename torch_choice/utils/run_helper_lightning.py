@@ -147,7 +147,7 @@ def run(model: Union [ConditionalLogitModel, NestedLogitModel],
     # if the validation dataset is provided, do early stopping.
     callbacks = [EarlyStopping(monitor="val_ll", mode="max", patience=10, min_delta=0.001)] if val_dataloader is not None else []
 
-    trainer = pl.Trainer(accelerator=device,  # use GPU if the model is currently on the GPU.
+    trainer = pl.Trainer(accelerator="cuda" if "cuda" in device else device,  # note: "cuda:0" is not a accelerator name.
                          devices="auto",
                          max_epochs=num_epochs,
                          check_val_every_n_epoch=num_epochs // 100,
