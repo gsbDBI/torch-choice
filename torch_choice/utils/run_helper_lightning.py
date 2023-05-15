@@ -113,7 +113,7 @@ def run(model: Union [ConditionalLogitModel, NestedLogitModel],
                                             model_optimizer=model_optimizer)
     if device is None:
         # infer from the model device.
-        device = model.device
+        device = str(model.device)
     # the cloned model will be used for standard error calculation later.
     model_clone = deepcopy(model)
     section_print('model received')
@@ -213,15 +213,20 @@ def run(model: Union [ConditionalLogitModel, NestedLogitModel],
 
     # Compute log-likelihood on the final model on all splits of datasets.
     lightning_model.model.to(device)
-    train_ll = - lightning_model.model.negative_log_likelihood(dataset_train, dataset_train.item_index).detach().item()
+    is_nested = isinstance(lightning_model.model, NestedLogitModel)
+
+    train_ll = - lightning_model.model.negative_log_likelihood(dataset_train.datasets if is_nested else dataset_train,
+                                                               dataset_train.item_index).detach().item()
 
     if dataset_val is not None:
-        val_ll = - lightning_model.model.negative_log_likelihood(dataset_val, dataset_val.item_index).detach().item()
+        val_ll = - lightning_model.model.negative_log_likelihood(dataset_val.datasets if is_nested else dataset_val,
+                                                                 dataset_val.item_index).detach().item()
     else:
         val_ll = 'N/A'
 
     if dataset_test is not None:
-        test_ll = - lightning_model.model.negative_log_likelihood(dataset_test, dataset_test.item_index).detach().item()
+        test_ll = - lightning_model.model.negative_log_likelihood(dataset_test.datasets if is_nested else dataset_test,
+                                                                  dataset_test.item_index).detach().item()
     else:
         test_ll = 'N/A'
 
