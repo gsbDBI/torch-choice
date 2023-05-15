@@ -56,11 +56,6 @@ $$
 U_{uis} = \alpha_i + \beta_i \text{income}_s + \gamma \text{cost} + \delta \text{freq} + \eta \text{ovt} + \iota_i \text{ivt} + \varepsilon
 $$
 
-this is equivalent to the functional form described in the previous section
-
-###  Mode Canada with Torch-Choice
-
-
 ```python
 # load package.
 import torch_choice
@@ -73,30 +68,85 @@ model = torch_choice.model.ConditionalLogitModel(
     dataset=dataset,
     num_items=4).to(device)
 # fit the conditional logit model.
-torch_choice.run(model, dataset, num_epochs=500, learning_rate=0.003, batch_size=-1, model_optimizer="LBFGS", model_optimizer=device)
+torch_choice.run(model, dataset, num_epochs=500, learning_rate=0.003, batch_size=-1, model_optimizer="LBFGS", device=device)
+
+# model report.
+"""
+  | Name  | Type                  | Params
+------------------------------------------------
+0 | model | ConditionalLogitModel | 13
+------------------------------------------------
+13        Trainable params
+0         Non-trainable params
+13        Total params
+0.000     Total estimated model params size (MB)
+Epoch 499: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 50.89it/s, loss=1.87e+03, v_num=3]
+`Trainer.fit` stopped: `max_epochs=500` reached.
+Epoch 499: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 50.06it/s, loss=1.87e+03, v_num=3]
+Time taken for training: 17.461677074432373
+Skip testing, no test dataset is provided.
+==================== model results ====================
+Log-likelihood: [Training] -1874.3455810546875, [Validation] N/A, [Test] N/A
+
+| Coefficient                           |   Estimation |   Std. Err. |    z-value |    Pr(>|z|) | Significance   |
+|:--------------------------------------|-------------:|------------:|-----------:|------------:|:---------------|
+| itemsession_cost_freq_ovt[constant]_0 |  -0.0336983  |  0.00709653 |  -4.74856  | 2.0487e-06  | ***            |
+| itemsession_cost_freq_ovt[constant]_1 |   0.0926308  |  0.00509798 |  18.1701   | 0           | ***            |
+| itemsession_cost_freq_ovt[constant]_2 |  -0.0430381  |  0.00322568 | -13.3423   | 0           | ***            |
+| session_income[item]_0                |  -0.0890566  |  0.0183376  |  -4.8565   | 1.19479e-06 | ***            |
+| session_income[item]_1                |  -0.0278864  |  0.00387063 |  -7.20461  | 5.82201e-13 | ***            |
+| session_income[item]_2                |  -0.0380771  |  0.00408164 |  -9.32887  | 0           | ***            |
+| itemsession_ivt[item-full]_0          |   0.0594989  |  0.0100751  |   5.90553  | 3.51515e-09 | ***            |
+| itemsession_ivt[item-full]_1          |  -0.00684573 |  0.00444405 |  -1.54043  | 0.123457    |                |
+| itemsession_ivt[item-full]_2          |  -0.006402   |  0.00189828 |  -3.37252  | 0.000744844 | ***            |
+| itemsession_ivt[item-full]_3          |  -0.00144797 |  0.00118764 |  -1.2192   | 0.22277     |                |
+| intercept[item]_0                     |   0.664312   |  1.28022    |   0.518904 | 0.603828    |                |
+| intercept[item]_1                     |   1.79165    |  0.708119   |   2.53015  | 0.0114015   | *              |
+| intercept[item]_2                     |   3.23494    |  0.623899   |   5.18504  | 2.15971e-07 | ***            |
+Significance codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+ConditionalLogitModel(
+  (coef_dict): ModuleDict(
+    (itemsession_cost_freq_ovt[constant]): Coefficient(variation=constant, num_items=4, num_users=None, num_params=3, 3 trainable parameters in total, device=cpu).
+    (session_income[item]): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cpu).
+    (itemsession_ivt[item-full]): Coefficient(variation=item-full, num_items=4, num_users=None, num_params=1, 4 trainable parameters in total, device=cpu).
+    (intercept[item]): Coefficient(variation=item, num_items=4, num_users=None, num_params=1, 3 trainable parameters in total, device=cpu).
+  )
+)
+Conditional logistic discrete choice model, expects input features:
+
+X[itemsession_cost_freq_ovt[constant]] with 3 parameters, with constant level variation.
+X[session_income[item]] with 1 parameters, with item level variation.
+X[itemsession_ivt[item-full]] with 1 parameters, with item-full level variation.
+X[intercept[item]] with 1 parameters, with item level variation.
+device=cpu
+"""
 ```
+
 
 ## Mode Canada with R
-
 We include the R code for the ModeCanada example as well.
-```{r}
-# load packages.
-library("mlogit")
+<details>
+    <summary> R code </summary>
+    
+    ```{r}
+    # load packages.
+    library("mlogit")
 
-# load data.
-ModeCanada <- read.csv('https://raw.githubusercontent.com/gsbDBI/torch-choice/main/tutorials/public_datasets/ModeCanada.csv?token=GHSAT0AAAAAABRGHCCSNNQARRMU63W7P7F4YWYP5HA')
-ModeCanada <- select(ModeCanada, -X)
-ModeCanada$alt <- as.factor(ModeCanada$alt)
+    # load data.
+    ModeCanada <- read.csv('https://raw.githubusercontent.com/gsbDBI/torch-choice/main/tutorials/public_datasets/ModeCanada.csv?token=GHSAT0AAAAAABRGHCCSNNQARRMU63W7P7F4YWYP5HA')
+    ModeCanada <- select(ModeCanada, -X)
+    ModeCanada$alt <- as.factor(ModeCanada$alt)
 
-# format data.
-MC <- dfidx(ModeCanada, subset = noalt == 4)
+    # format data.
+    MC <- dfidx(ModeCanada, subset = noalt == 4)
 
-# fit the data.
-ml.MC1 <- mlogit(choice ~ cost + freq + ovt | income | ivt, MC, reflevel='air')
-summary(ml.MC1)
-```
+    # fit the data.
+    ml.MC1 <- mlogit(choice ~ cost + freq + ovt | income | ivt, MC, reflevel='air')
+    summary(ml.MC1)
+    ```
+</details>
 
-
+<!-- 
 ## Logistic Regression and Choice Models
 
 [Logistic Regression](https://en.wikipedia.org/wiki/Logistic_regression) models the probability that user $u$ chooses item $i$ in session $s$ by the logistic function
@@ -147,7 +197,7 @@ This is also described as a conditional logit model in Econometrics. We note the
 Then,
 - $X^{itemsession: (cost, freq, ovt)}_{it}$ is a matrix of size (I x S) x (3); it has three entries for each item-session, and is like a price; its coefficient $\beta^{1}$ has constant variation and is of size (1) x (3).
 - $X^{session: income}_{it}$ is a matrix which is of size (S) x (1); it has one entry for each session, and it denotes income of the user making the choice in the session. In this case, it is equivalent to $X^{usersession: income}_{it}$ since we observe a user making a decision only once; its coefficient $\beta^2_i$ has item level variation and is of size (I) x (1)
-- $X_{it}^{itemsession:ivt}$ is a matrix of size (I x S) x (1); this has one entry for each item-session; it is the price; its coefficent $\beta^3_i$ has item level variation and is of size (I) x (3)
+- $X_{it}^{itemsession:ivt}$ is a matrix of size (I x S) x (1); this has one entry for each item-session; it is the price; its coefficent $\beta^3_i$ has item level variation and is of size (I) x (3) -->
 <!-- 
 2. MNIST classification [(Upcoming Detailed Tutorial)]()
 
