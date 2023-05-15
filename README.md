@@ -69,9 +69,8 @@ model = torch_choice.model.ConditionalLogitModel(
     num_items=4).to(device)
 # fit the conditional logit model.
 torch_choice.run(model, dataset, num_epochs=500, learning_rate=0.003, batch_size=-1, model_optimizer="LBFGS", device=device)
-
-# model report.
-"""
+```
+```
   | Name  | Type                  | Params
 ------------------------------------------------
 0 | model | ConditionalLogitModel | 13
@@ -119,7 +118,6 @@ X[session_income[item]] with 1 parameters, with item level variation.
 X[itemsession_ivt[item-full]] with 1 parameters, with item-full level variation.
 X[intercept[item]] with 1 parameters, with item level variation.
 device=cpu
-"""
 ```
 
 
