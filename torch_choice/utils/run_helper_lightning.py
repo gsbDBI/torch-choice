@@ -85,6 +85,7 @@ def run(model: Union [ConditionalLogitModel, NestedLogitModel],
         num_epochs: int=10,
         num_workers: int=0,
         device: Optional[str]=None,
+        report_std: bool=True,
         **kwargs) -> Union[ConditionalLogitModel, NestedLogitModel]:
     """_summary_
 
@@ -99,6 +100,7 @@ def run(model: Union [ConditionalLogitModel, NestedLogitModel],
         num_workers (int, optional): number of parallel workers for data loading. Defaults to 0.
         device (Optional[str], optional): the device that trains the model, if None is specified, the function will
             use the current device of the provided model. Defaults to None.
+        report_std (bool, optional): whether to report standard error for the estimated parameters. Defaults to True.
         **kwargs: other keyword arguments for the pytorch lightning trainer, this is for users with experience in
             pytorch lightning and wish to customize the training process.
 
@@ -150,17 +152,20 @@ def run(model: Union [ConditionalLogitModel, NestedLogitModel],
     trainer = pl.Trainer(accelerator="cuda" if "cuda" in device else device,  # note: "cuda:0" is not a accelerator name.
                          devices="auto",
                          max_epochs=num_epochs,
-                         check_val_every_n_epoch=min(num_epochs // 100, 1),
-                         log_every_n_steps=min(num_epochs // 100, 1),
+                         check_val_every_n_epoch=max(num_epochs // 100, 1),
+                         log_every_n_steps=max(num_epochs // 100, 1),
                          callbacks=callbacks,
                          **kwargs)
     start_time = time.time()
-    trainer.fit(lightning_model, train_dataloaders=train_dataloader, val_dataloaders=val_dataloader)
+    trainer.fit(lightning_model, train_dataloader, val_dataloader)
     print(f'Time taken for training: {time.time() - start_time}')
     if test_dataloader is not None:
-        trainer.test(lightning_model, test_dataloaders=test_dataloader)
+        trainer.test(lightning_model, test_dataloader)
     else:
         print('Skip testing, no test dataset is provided.')
+
+    if not report_std:
+        return model
 
     # ==================================================================================================================
     # Construct standard error, z-value, and p-value of coefficients.
