@@ -143,3 +143,11 @@ tutorials/benchmark_data/R_performances.csv
 tutorials/performance_benchmark/benchmark_data/
 
 *lightning_logs/
+tutorials/mnist/data/MNIST/raw/t10k-images-idx3-ubyte
+tutorials/mnist/data/MNIST/raw/t10k-images-idx3-ubyte.gz
+tutorials/mnist/data/MNIST/raw/t10k-labels-idx1-ubyte
+tutorials/mnist/data/MNIST/raw/t10k-labels-idx1-ubyte.gz
+tutorials/mnist/data/MNIST/raw/train-images-idx3-ubyte
+tutorials/mnist/data/MNIST/raw/train-images-idx3-ubyte.gz
+tutorials/mnist/data/MNIST/raw/train-labels-idx1-ubyte
+tutorials/mnist/data/MNIST/raw/train-labels-idx1-ubyte.gz
