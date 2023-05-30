@@ -150,8 +150,8 @@ def run(model: Union [ConditionalLogitModel, NestedLogitModel],
     trainer = pl.Trainer(accelerator="cuda" if "cuda" in device else device,  # note: "cuda:0" is not a accelerator name.
                          devices="auto",
                          max_epochs=num_epochs,
-                         check_val_every_n_epoch=num_epochs // 100,
-                         log_every_n_steps=num_epochs // 100,
+                         check_val_every_n_epoch=min(num_epochs // 100, 1),
+                         log_every_n_steps=min(num_epochs // 100, 1),
                          callbacks=callbacks,
                          **kwargs)
     start_time = time.time()
