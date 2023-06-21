@@ -15,7 +15,7 @@ setup(
     description="A Pytorch Backend Library for Choice Modelling",
     long_description=README,
     long_description_content_type="text/markdown",
-    url="",
+    url="https://github.com/gsbDBI/torch-choice/blob/main/setup.py",
     author="Tianyu Du",
     author_email="tianyudu@stanford.edu",
     license="MIT",
@@ -28,6 +28,15 @@ setup(
     packages=setuptools.find_packages(),
     include_package_data=True,
     # install_requires=["torch"],
+    install_requires=[
+        "numpy>=1.22",
+        "termcolor==1.1.0",
+        "scikit-learn",
+        "pandas==1.4.3",
+        "tabulate==0.8.10",
+        "torch==1.12.0",
+        "pytorch-lightning==1.6.3",
+    ]
     # entry_points={
     #     "console_scripts": [
     #         "realpython=.__main__:main",
