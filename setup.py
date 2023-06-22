@@ -15,7 +15,7 @@ setup(
     description="A Pytorch Backend Library for Choice Modelling",
     long_description=README,
     long_description_content_type="text/markdown",
-    url="https://github.com/gsbDBI/torch-choice/blob/main/setup.py",
+    url="https://gsbdbi.github.io/torch-choice/",
     author="Tianyu Du",
     author_email="tianyudu@stanford.edu",
     license="MIT",
