@@ -16,7 +16,7 @@ setup(
     long_description=README,
     long_description_content_type="text/markdown",
     url="https://gsbdbi.github.io/torch-choice/",
-    author="Tianyu Du",
+    author="Tianyu Du, Ayush Kanodia, and Susan Athey",
     author_email="tianyudu@stanford.edu",
     license="MIT",
     classifiers=[
