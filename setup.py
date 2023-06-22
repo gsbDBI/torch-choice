@@ -30,12 +30,12 @@ setup(
     # install_requires=["torch"],
     install_requires=[
         "numpy>=1.22",
-        "termcolor==1.1.0",
+        "termcolor>=1.1.0",
         "scikit-learn",
-        "pandas==1.4.3",
-        "tabulate==0.8.10",
-        "torch==1.12.0",
-        "pytorch-lightning==1.6.3",
+        "pandas>=1.4.3",
+        "tabulate>=0.8.10",
+        "torch>=1.12.0",
+        "pytorch-lightning>=1.6.3",
     ]
     # entry_points={
     #     "console_scripts": [

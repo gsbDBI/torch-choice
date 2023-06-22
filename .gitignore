@@ -151,3 +151,5 @@ tutorials/mnist/data/MNIST/raw/train-images-idx3-ubyte
 tutorials/mnist/data/MNIST/raw/train-images-idx3-ubyte.gz
 tutorials/mnist/data/MNIST/raw/train-labels-idx1-ubyte
 tutorials/mnist/data/MNIST/raw/train-labels-idx1-ubyte.gz
+
+.history/
