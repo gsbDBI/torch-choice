@@ -28,15 +28,20 @@ class EasyDatasetWrapper():
                  # Option 1: feed in data-frames of observables.
                  user_observable_data: Optional[Dict[str, pd.DataFrame]] = None,
                  item_observable_data: Optional[Dict[str, pd.DataFrame]] = None,
+                 useritem_observable_data: Optional[Dict[str, pd.DataFrame]] = None,
                  session_observable_data: Optional[Dict[str, pd.DataFrame]] = None,
                  price_observable_data: Optional[Dict[str, pd.DataFrame]] = None,
                  itemsession_observable_data: Optional[Dict[str, pd.DataFrame]] = None,
+                 useritemsession_observable_data: Optional[Dict[str, pd.DataFrame]] = None,
                  # Option 2: derive observables from columns of main_data.
                  user_observable_columns: Optional[List[str]] = None,
                  item_observable_columns: Optional[List[str]] = None,
+                 useritem_observable_columns: Optional[List[str]] = None,
                  session_observable_columns: Optional[List[str]] = None,
                  price_observable_columns: Optional[List[str]] = None,
                  itemsession_observable_columns: Optional[List[str]] = None,
+                 useritemsession_observable_columns: Optional[List[str]] = None,
+                 # Misc.
                  device: str = 'cpu'):
         """The initialization method of EasyDatasetWrapper.
 
@@ -88,6 +93,9 @@ class EasyDatasetWrapper():
         Raises:
             ValueError: _description_
         """
+        if (useritem_observable_data is not None) or (useritemsession_observable_data is not None) or (useritem_observable_columns is not None) or (useritemsession_observable_columns is not None):
+            raise NotImplementedError("The user-item and user-item-session observables are not yet supported in easy data wrapper. Please construct ChoiceDataset objects directly with tensors using the ChoiceDataset class to include these observables.")
+
         # read in data.
         self.main_data = main_data
         self.purchase_record_column = purchase_record_column
