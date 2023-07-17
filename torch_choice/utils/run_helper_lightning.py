@@ -200,8 +200,9 @@ def run(model: Union [ConditionalLogitModel, NestedLogitModel],
         coef_name = coef_name.replace('coef_dict.', '').replace('.coef', '')
         for i in range(mean.size):
             report.append({'Coefficient': coef_name + f'_{i}',
-                           'Estimation': float(mean[i]),
-                           'Std. Err.': float(std[i])})
+                           'Estimation': float(mean.reshape(-1,)[i]),
+                           'Std. Err.': float(std.reshape(-1,)[i])
+                           })
     report = pd.DataFrame(report).set_index('Coefficient')
 
     # Compute z-value

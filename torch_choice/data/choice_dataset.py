@@ -377,26 +377,32 @@ class ChoiceDataset(torch.utils.data.Dataset):
         return key.startswith('user_') and (key != 'user_index')
 
     @staticmethod
-    def _is_session_attribute(key: str) -> bool:
-        return key.startswith('session_') and (key != 'session_index')
+    def _is_useritem_attribute(key: str) -> bool:
+        return key.startswith('useritem_')
 
     @staticmethod
-    def _is_taste_attribute(key: str) -> bool:
-        return key.startswith('taste_')
+    def _is_session_attribute(key: str) -> bool:
+        return key.startswith('session_') and (key != 'session_index')
 
     @staticmethod
     def _is_price_attribute(key: str) -> bool:
         return key.startswith('price_') or key.startswith('itemsession_')
 
+    @staticmethod
+    def _is_usersessionitem_attribute(key: str) -> bool:
+        return key.startswith('usersessionitem_')
+
     def _is_attribute(self, key: str) -> bool:
         return self._is_item_attribute(key) \
             or self._is_user_attribute(key) \
+            or self._is_useritem_attribute(key) \
             or self._is_session_attribute(key) \
-            or self._is_taste_attribute(key) \
-            or self._is_price_attribute(key)
+            or self._is_price_attribute(key) \
+            or self._is_usersessionitem_attribute(key)
+
 
     def _expand_tensor(self, key: str, val: torch.Tensor) -> torch.Tensor:
-        """Expands attribute tensor to (num_sessions, num_items, num_params) shape for prediction tasks, this method
+        """Expands attribute tensor to (len(self), num_items, num_params) shape for prediction tasks, this method
         won't reshape the tensor at all if the `key` (i.e., name of the tensor) suggests its not an attribute of any kind.
 
         Args:
@@ -408,11 +414,12 @@ class ChoiceDataset(torch.utils.data.Dataset):
             torch.Tensor: the reshaped tensor with shape (num_sessions, num_items, num_params).
         """
         if not self._is_attribute(key):
-            print(f'Warning: the input key {key} is not an attribute of the dataset, will NOT modify the provided tensor.')
-            # don't expand non-attribute tensors, if any.
-            return val
+            # this is a sanity check.
+            raise ValueError(f'Warning: the input key {key} is not an attribute of the dataset, will NOT modify the provided tensor.')
 
-        num_params = val.shape[-1]
+        num_params = val.shape[-1]  # the number of parameters/coefficients/observables.
+
+        # convert attribute tensors to (len(self), num_items, num_params) shape.
         if self._is_user_attribute(key):
             # user_attribute (num_users, *)
             out = val[self.user_index, :].view(
@@ -421,16 +428,25 @@ class ChoiceDataset(torch.utils.data.Dataset):
             # item_attribute (num_items, *)
             out = val.view(1, self.num_items, num_params).expand(
                 len(self), -1, -1)
+        elif self._is_useritem_attribute(key):
+            # useritem_attribute (num_users, num_items, *)
+            out = val[self.user_index, :, :]
         elif self._is_session_attribute(key):
             # session_attribute (num_sessions, *)
             out = val[self.session_index, :].view(
                 len(self), 1, num_params).expand(-1, self.num_items, -1)
-        elif self._is_taste_attribute(key):
-            # taste_attribute (num_users, num_items, *)
-            out = val[self.user_index, :, :]
+        # elif self._is_taste_attribute(key):
+        #     # taste_attribute (num_users, num_items, *)
+        #     out = val[self.user_index, :, :]
         elif self._is_price_attribute(key):
             # price_attribute (num_sessions, num_items, *)
             out = val[self.session_index, :, :]
+        elif self._is_usersessionitem_attribute(key):
+            # usersessionitem_attribute has shape (num_users, num_sessions, num_items, *)
+            out = val[self.user_index, self.session_index, :, :]  # (len(self), num_items, *)
+
+        else:
+            raise ValueError(f'Warning: the input key {key} is not an attribute of the dataset, will NOT modify the provided tensor.')
 
         assert out.shape == (len(self), self.num_items, num_params)
         return out
@@ -481,7 +497,7 @@ class ChoiceDataset(torch.utils.data.Dataset):
             if self._is_attribute(key) and torch.is_tensor(item):
                 summary.append("Observable Tensor '{}' with shape {}".format(key, item.shape))
                 # price attributes are 3-dimensional tensors, ignore  for cleanness here.
-                if not self._is_price_attribute(key):
+                if (not self._is_price_attribute(key)) and (not self._is_usersessionitem_attribute(key)) and (not self._is_useritem_attribute(key)):
                     summary.append(str(pd.DataFrame(item.to('cpu').float().numpy()).describe()))
         print('\n'.join(summary) + f"\ndevice={self.device}")
         return None
