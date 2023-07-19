@@ -1,4 +1,0 @@
-"time","formula","num_items","seed"
-745.082,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",200,1
-24.442,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",200,1
-692.514,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",200,1
