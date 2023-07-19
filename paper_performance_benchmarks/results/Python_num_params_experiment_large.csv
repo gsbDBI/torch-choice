@@ -1,0 +1,91 @@
+sample_size,time,formula,num_params,seed
+200000,6.348325490951538,(user_latents|item) + (item_latents|constant),1,0
+200000,10.874632596969604,(user_latents|item) + (item_latents|constant),5,0
+200000,27.721940517425537,(user_latents|item) + (item_latents|constant),10,0
+200000,32.694525957107544,(user_latents|item) + (item_latents|constant),15,0
+200000,70.79435896873474,(user_latents|item) + (item_latents|constant),20,0
+200000,153.81217241287231,(user_latents|item) + (item_latents|constant),30,0
+200000,4.652190208435059,(user_latents|item),1,0
+200000,5.500622272491455,(user_latents|item),5,0
+200000,7.653600215911865,(user_latents|item),10,0
+200000,11.400735139846802,(user_latents|item),15,0
+200000,27.769723653793335,(user_latents|item),20,0
+200000,42.88262581825256,(user_latents|item),30,0
+200000,6.032888889312744,(item_latents|constant),1,0
+200000,8.480765342712402,(item_latents|constant),5,0
+200000,10.264222860336304,(item_latents|constant),10,0
+200000,11.665935277938843,(item_latents|constant),15,0
+200000,13.41685175895691,(item_latents|constant),20,0
+200000,17.164014101028442,(item_latents|constant),30,0
+200000,6.580509185791016,(user_latents|item) + (item_latents|constant),1,1
+200000,8.656208276748657,(user_latents|item) + (item_latents|constant),5,1
+200000,25.718788146972656,(user_latents|item) + (item_latents|constant),10,1
+200000,28.7802095413208,(user_latents|item) + (item_latents|constant),15,1
+200000,74.57539868354797,(user_latents|item) + (item_latents|constant),20,1
+200000,146.73708081245422,(user_latents|item) + (item_latents|constant),30,1
+200000,4.1286866664886475,(user_latents|item),1,1
+200000,5.748210430145264,(user_latents|item),5,1
+200000,7.665193319320679,(user_latents|item),10,1
+200000,11.471692085266113,(user_latents|item),15,1
+200000,27.38118886947632,(user_latents|item),20,1
+200000,43.55731153488159,(user_latents|item),30,1
+200000,6.1048548221588135,(item_latents|constant),1,1
+200000,6.97232985496521,(item_latents|constant),5,1
+200000,19.453283309936523,(item_latents|constant),10,1
+200000,10.185135841369629,(item_latents|constant),15,1
+200000,13.496821880340576,(item_latents|constant),20,1
+200000,16.69181227684021,(item_latents|constant),30,1
+200000,4.6118128299713135,(user_latents|item) + (item_latents|constant),1,2
+200000,16.125683546066284,(user_latents|item) + (item_latents|constant),5,2
+200000,20.703128576278687,(user_latents|item) + (item_latents|constant),10,2
+200000,31.179582595825195,(user_latents|item) + (item_latents|constant),15,2
+200000,74.67129039764404,(user_latents|item) + (item_latents|constant),20,2
+200000,153.3741912841797,(user_latents|item) + (item_latents|constant),30,2
+200000,4.673241853713989,(user_latents|item),1,2
+200000,5.567122936248779,(user_latents|item),5,2
+200000,7.649523973464966,(user_latents|item),10,2
+200000,11.8507080078125,(user_latents|item),15,2
+200000,27.416789054870605,(user_latents|item),20,2
+200000,43.69198989868164,(user_latents|item),30,2
+200000,4.545845031738281,(item_latents|constant),1,2
+200000,13.753983497619629,(item_latents|constant),5,2
+200000,9.909171104431152,(item_latents|constant),10,2
+200000,12.82103705406189,(item_latents|constant),15,2
+200000,11.732313632965088,(item_latents|constant),20,2
+200000,16.532675743103027,(item_latents|constant),30,2
+200000,4.281858205795288,(user_latents|item) + (item_latents|constant),1,3
+200000,7.91142201423645,(user_latents|item) + (item_latents|constant),5,3
+200000,14.640942096710205,(user_latents|item) + (item_latents|constant),10,3
+200000,40.74071979522705,(user_latents|item) + (item_latents|constant),15,3
+200000,71.12323188781738,(user_latents|item) + (item_latents|constant),20,3
+200000,148.80002188682556,(user_latents|item) + (item_latents|constant),30,3
+200000,4.417444944381714,(user_latents|item),1,3
+200000,5.749629020690918,(user_latents|item),5,3
+200000,7.605029344558716,(user_latents|item),10,3
+200000,11.531362771987915,(user_latents|item),15,3
+200000,27.461872100830078,(user_latents|item),20,3
+200000,43.5996572971344,(user_latents|item),30,3
+200000,4.5549235343933105,(item_latents|constant),1,3
+200000,7.950017213821411,(item_latents|constant),5,3
+200000,8.588079929351807,(item_latents|constant),10,3
+200000,14.354187965393066,(item_latents|constant),15,3
+200000,13.070991039276123,(item_latents|constant),20,3
+200000,19.861336708068848,(item_latents|constant),30,3
+200000,6.935011386871338,(user_latents|item) + (item_latents|constant),1,4
+200000,12.575724363327026,(user_latents|item) + (item_latents|constant),5,4
+200000,22.95981740951538,(user_latents|item) + (item_latents|constant),10,4
+200000,26.73315167427063,(user_latents|item) + (item_latents|constant),15,4
+200000,61.725743770599365,(user_latents|item) + (item_latents|constant),20,4
+200000,156.25108098983765,(user_latents|item) + (item_latents|constant),30,4
+200000,4.410165548324585,(user_latents|item),1,4
+200000,5.732834100723267,(user_latents|item),5,4
+200000,7.633872747421265,(user_latents|item),10,4
+200000,12.410984992980957,(user_latents|item),15,4
+200000,27.94035267829895,(user_latents|item),20,4
+200000,43.158385276794434,(user_latents|item),30,4
+200000,4.5848963260650635,(item_latents|constant),1,4
+200000,5.7724714279174805,(item_latents|constant),5,4
+200000,8.190017700195312,(item_latents|constant),10,4
+200000,10.395559310913086,(item_latents|constant),15,4
+200000,12.061452150344849,(item_latents|constant),20,4
+200000,20.742390394210815,(item_latents|constant),30,4

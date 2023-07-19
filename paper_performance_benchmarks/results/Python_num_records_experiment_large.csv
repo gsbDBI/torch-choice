@@ -1,0 +1,166 @@
+sample_size,time,formula,seed
+1000,0.22163844108581543,(user_latents|item) + (item_latents|constant),0
+2000,0.3367323875427246,(user_latents|item) + (item_latents|constant),0
+3000,0.7324519157409668,(user_latents|item) + (item_latents|constant),0
+5000,1.200404167175293,(user_latents|item) + (item_latents|constant),0
+7000,2.636481761932373,(user_latents|item) + (item_latents|constant),0
+10000,5.784046173095703,(user_latents|item) + (item_latents|constant),0
+30000,18.398301124572754,(user_latents|item) + (item_latents|constant),0
+50000,45.44100284576416,(user_latents|item) + (item_latents|constant),0
+70000,72.75456857681274,(user_latents|item) + (item_latents|constant),0
+100000,173.00425148010254,(user_latents|item) + (item_latents|constant),0
+200000,148.9475793838501,(user_latents|item) + (item_latents|constant),0
+1000,0.12441873550415039,(user_latents|item),0
+2000,0.17229700088500977,(user_latents|item),0
+3000,0.23045873641967773,(user_latents|item),0
+5000,0.34078145027160645,(user_latents|item),0
+7000,0.4996347427368164,(user_latents|item),0
+10000,2.781675338745117,(user_latents|item),0
+30000,6.924805641174316,(user_latents|item),0
+50000,16.213151693344116,(user_latents|item),0
+70000,26.5401771068573,(user_latents|item),0
+100000,66.84699249267578,(user_latents|item),0
+200000,42.86139392852783,(user_latents|item),0
+1000,0.22390222549438477,(item_latents|constant),0
+2000,0.3538970947265625,(item_latents|constant),0
+3000,0.38900327682495117,(item_latents|constant),0
+5000,0.44898295402526855,(item_latents|constant),0
+7000,0.6909055709838867,(item_latents|constant),0
+10000,1.0321502685546875,(item_latents|constant),0
+30000,2.8099520206451416,(item_latents|constant),0
+50000,5.862147808074951,(item_latents|constant),0
+70000,6.056609153747559,(item_latents|constant),0
+100000,8.317524671554565,(item_latents|constant),0
+200000,21.100680589675903,(item_latents|constant),0
+1000,0.3064608573913574,(user_latents|item) + (item_latents|constant),1
+2000,0.40550947189331055,(user_latents|item) + (item_latents|constant),1
+3000,1.20206618309021,(user_latents|item) + (item_latents|constant),1
+5000,2.4082539081573486,(user_latents|item) + (item_latents|constant),1
+7000,2.491760015487671,(user_latents|item) + (item_latents|constant),1
+10000,7.973736763000488,(user_latents|item) + (item_latents|constant),1
+30000,18.761091709136963,(user_latents|item) + (item_latents|constant),1
+50000,40.297690868377686,(user_latents|item) + (item_latents|constant),1
+70000,69.9441089630127,(user_latents|item) + (item_latents|constant),1
+100000,177.1367814540863,(user_latents|item) + (item_latents|constant),1
+200000,134.84054708480835,(user_latents|item) + (item_latents|constant),1
+1000,0.1203153133392334,(user_latents|item),1
+2000,0.17143678665161133,(user_latents|item),1
+3000,0.2297518253326416,(user_latents|item),1
+5000,0.3420729637145996,(user_latents|item),1
+7000,0.5065255165100098,(user_latents|item),1
+10000,2.7876105308532715,(user_latents|item),1
+30000,6.908670663833618,(user_latents|item),1
+50000,16.703840732574463,(user_latents|item),1
+70000,26.180660247802734,(user_latents|item),1
+100000,67.34126138687134,(user_latents|item),1
+200000,43.41687083244324,(user_latents|item),1
+1000,0.19057583808898926,(item_latents|constant),1
+2000,0.3553657531738281,(item_latents|constant),1
+3000,0.3147585391998291,(item_latents|constant),1
+5000,0.5136773586273193,(item_latents|constant),1
+7000,0.6545155048370361,(item_latents|constant),1
+10000,1.1386730670928955,(item_latents|constant),1
+30000,2.358433485031128,(item_latents|constant),1
+50000,5.115617275238037,(item_latents|constant),1
+70000,7.611112356185913,(item_latents|constant),1
+100000,7.80600905418396,(item_latents|constant),1
+200000,16.821075439453125,(item_latents|constant),1
+1000,0.22278618812561035,(user_latents|item) + (item_latents|constant),2
+2000,1.1455984115600586,(user_latents|item) + (item_latents|constant),2
+3000,0.824446439743042,(user_latents|item) + (item_latents|constant),2
+5000,5.005424499511719,(user_latents|item) + (item_latents|constant),2
+7000,2.792666435241699,(user_latents|item) + (item_latents|constant),2
+10000,5.7742602825164795,(user_latents|item) + (item_latents|constant),2
+30000,19.654486179351807,(user_latents|item) + (item_latents|constant),2
+50000,43.25793790817261,(user_latents|item) + (item_latents|constant),2
+70000,72.19825339317322,(user_latents|item) + (item_latents|constant),2
+100000,169.28467559814453,(user_latents|item) + (item_latents|constant),2
+200000,153.78599429130554,(user_latents|item) + (item_latents|constant),2
+1000,0.12279701232910156,(user_latents|item),2
+2000,0.1745927333831787,(user_latents|item),2
+3000,0.2312607765197754,(user_latents|item),2
+5000,0.34336209297180176,(user_latents|item),2
+7000,0.5071561336517334,(user_latents|item),2
+10000,2.7837064266204834,(user_latents|item),2
+30000,6.918043851852417,(user_latents|item),2
+50000,15.911408185958862,(user_latents|item),2
+70000,26.065839529037476,(user_latents|item),2
+100000,65.92046046257019,(user_latents|item),2
+200000,43.973973751068115,(user_latents|item),2
+1000,0.21250081062316895,(item_latents|constant),2
+2000,0.29126906394958496,(item_latents|constant),2
+3000,0.3351309299468994,(item_latents|constant),2
+5000,0.5887255668640137,(item_latents|constant),2
+7000,0.6596171855926514,(item_latents|constant),2
+10000,0.9763579368591309,(item_latents|constant),2
+30000,2.421113967895508,(item_latents|constant),2
+50000,5.9528968334198,(item_latents|constant),2
+70000,6.05993390083313,(item_latents|constant),2
+100000,8.868531942367554,(item_latents|constant),2
+200000,18.492992162704468,(item_latents|constant),2
+1000,0.22899222373962402,(user_latents|item) + (item_latents|constant),3
+2000,0.32646870613098145,(user_latents|item) + (item_latents|constant),3
+3000,0.45110034942626953,(user_latents|item) + (item_latents|constant),3
+5000,1.2828755378723145,(user_latents|item) + (item_latents|constant),3
+7000,2.655811071395874,(user_latents|item) + (item_latents|constant),3
+10000,5.8836565017700195,(user_latents|item) + (item_latents|constant),3
+30000,17.338112354278564,(user_latents|item) + (item_latents|constant),3
+50000,44.91103553771973,(user_latents|item) + (item_latents|constant),3
+70000,68.33802461624146,(user_latents|item) + (item_latents|constant),3
+100000,174.87922620773315,(user_latents|item) + (item_latents|constant),3
+200000,155.13593649864197,(user_latents|item) + (item_latents|constant),3
+1000,0.12276577949523926,(user_latents|item),3
+2000,0.17055249214172363,(user_latents|item),3
+3000,0.229705810546875,(user_latents|item),3
+5000,0.3410227298736572,(user_latents|item),3
+7000,0.504204273223877,(user_latents|item),3
+10000,2.78832745552063,(user_latents|item),3
+30000,6.914539337158203,(user_latents|item),3
+50000,16.827805280685425,(user_latents|item),3
+70000,26.49643588066101,(user_latents|item),3
+100000,65.7038893699646,(user_latents|item),3
+200000,43.506675004959106,(user_latents|item),3
+1000,0.18492770195007324,(item_latents|constant),3
+2000,0.28510189056396484,(item_latents|constant),3
+3000,0.3461611270904541,(item_latents|constant),3
+5000,0.4968528747558594,(item_latents|constant),3
+7000,0.7135629653930664,(item_latents|constant),3
+10000,0.9823193550109863,(item_latents|constant),3
+30000,2.6568496227264404,(item_latents|constant),3
+50000,6.1005542278289795,(item_latents|constant),3
+70000,6.9700353145599365,(item_latents|constant),3
+100000,8.725857734680176,(item_latents|constant),3
+200000,16.96439027786255,(item_latents|constant),3
+1000,0.2085270881652832,(user_latents|item) + (item_latents|constant),4
+2000,0.32613611221313477,(user_latents|item) + (item_latents|constant),4
+3000,0.44233059883117676,(user_latents|item) + (item_latents|constant),4
+5000,4.442172527313232,(user_latents|item) + (item_latents|constant),4
+7000,2.082763433456421,(user_latents|item) + (item_latents|constant),4
+10000,4.826510190963745,(user_latents|item) + (item_latents|constant),4
+30000,17.189180374145508,(user_latents|item) + (item_latents|constant),4
+50000,55.900222301483154,(user_latents|item) + (item_latents|constant),4
+70000,80.74533033370972,(user_latents|item) + (item_latents|constant),4
+100000,174.50780773162842,(user_latents|item) + (item_latents|constant),4
+200000,156.69822239875793,(user_latents|item) + (item_latents|constant),4
+1000,0.12136387825012207,(user_latents|item),4
+2000,0.17075467109680176,(user_latents|item),4
+3000,0.22680926322937012,(user_latents|item),4
+5000,0.33763742446899414,(user_latents|item),4
+7000,0.49694252014160156,(user_latents|item),4
+10000,2.7533671855926514,(user_latents|item),4
+30000,6.853497743606567,(user_latents|item),4
+50000,16.886306047439575,(user_latents|item),4
+70000,26.299275398254395,(user_latents|item),4
+100000,65.49187159538269,(user_latents|item),4
+200000,43.68534564971924,(user_latents|item),4
+1000,0.1978740692138672,(item_latents|constant),4
+2000,0.2608664035797119,(item_latents|constant),4
+3000,0.35120630264282227,(item_latents|constant),4
+5000,0.5228538513183594,(item_latents|constant),4
+7000,0.7424941062927246,(item_latents|constant),4
+10000,1.0476078987121582,(item_latents|constant),4
+30000,2.435145139694214,(item_latents|constant),4
+50000,4.432231187820435,(item_latents|constant),4
+70000,6.554454565048218,(item_latents|constant),4
+100000,8.199977397918701,(item_latents|constant),4
+200000,17.368509769439697,(item_latents|constant),4
