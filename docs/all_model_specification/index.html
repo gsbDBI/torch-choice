@@ -1,0 +1,2080 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://gsbdbi.github.io/torch-choice/all_model_specification/">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.13">
+    
+    
+      
+        <title>All model specification - Torch Choice</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.e411adfe.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.cc9b2e1e.min.css">
+        
+      
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#creating-choicedataset-object" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Torch Choice" class="md-header__button md-logo" aria-label="Torch Choice" data-md-component="logo">
+      
+  
+  <?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+ "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+ width="500.000000pt" height="500.000000pt" viewBox="0 0 500.000000 500.000000"
+ preserveAspectRatio="xMidYMid meet">
+
+<g transform="translate(0.000000,500.000000) scale(0.100000,-0.100000)"
+fill="#000000" stroke="none">
+<path d="M3039 4192 c-24 -15 -53 -32 -64 -38 -16 -9 -19 -19 -15 -55 2 -24 4
+-60 4 -79 l1 -35 -83 -3 c-81 -3 -83 -3 -102 -35 -23 -38 -35 -87 -23 -96 4
+-3 30 -32 56 -63 47 -55 48 -57 28 -70 -12 -7 -21 -20 -21 -28 0 -8 -18 -28
+-40 -43 -45 -32 -47 -43 -21 -106 22 -53 34 -59 127 -60 86 -1 87 -4 78 -105
+l-6 -71 62 -33 c35 -17 69 -32 77 -32 8 0 38 23 67 50 66 62 92 65 150 13 22
+-20 43 -40 44 -45 2 -4 -38 -8 -88 -8 -106 0 -151 -19 -174 -73 -7 -18 -25
+-38 -39 -46 -23 -12 -34 -11 -93 5 -78 22 -87 37 -82 129 l3 60 -42 3 c-41 3
+-42 4 -58 55 -24 74 -91 196 -120 219 -28 22 -32 50 -10 68 31 26 18 64 -37
+111 -58 49 -122 89 -142 89 -7 0 -28 -10 -47 -23 l-34 -23 -65 22 c-63 20 -65
+22 -68 57 -2 19 -10 41 -18 48 -9 8 -57 14 -122 17 -119 5 -137 -3 -144 -63
+-3 -26 -9 -31 -66 -47 l-62 -19 -27 26 c-38 35 -74 32 -147 -12 -94 -56 -96
+-59 -96 -122 -1 -74 -15 -93 -72 -90 -54 3 -59 0 -106 -64 -46 -62 -52 -76
+-61 -144 -7 -51 -7 -52 26 -70 18 -9 33 -19 33 -21 0 -2 -9 -35 -21 -73 -18
+-60 -26 -71 -53 -83 -55 -23 -61 -37 -46 -119 24 -133 24 -144 0 -174 -74 -93
+-173 -235 -200 -284 -25 -47 -30 -68 -30 -122 0 -59 3 -69 27 -92 16 -15 45
+-35 66 -46 21 -11 40 -28 43 -37 3 -9 12 -31 21 -49 13 -27 14 -37 3 -62 -15
+-38 -6 -67 24 -75 23 -6 24 -10 28 -118 4 -138 25 -191 97 -243 66 -49 144
+-65 306 -65 l135 0 0 -126 c0 -119 -1 -125 -19 -119 -21 6 -19 14 -97 -355
+-47 -221 -52 -277 -28 -287 16 -6 97 1 319 27 220 26 482 49 513 45 21 -2 91
+-9 157 -15 66 -6 201 -21 300 -33 202 -23 231 -25 247 -9 8 8 3 55 -21 174
+-18 90 -39 197 -47 238 -8 41 -22 105 -30 143 -15 64 -18 67 -45 67 l-29 0 0
+134 c0 127 1 134 23 149 12 8 42 33 66 56 34 31 50 39 68 35 13 -4 30 -1 38 6
+11 9 32 11 69 6 30 -3 74 -3 98 0 39 5 46 11 60 43 38 86 104 116 161 71 14
+-11 28 -20 32 -20 21 0 225 190 225 210 0 6 -9 29 -21 51 -14 28 -18 50 -14
+70 7 32 50 89 67 89 5 0 23 9 39 21 l29 20 0 137 c0 153 -8 181 -55 197 -45
+15 -54 23 -70 63 -14 33 -14 40 7 100 l23 63 -100 95 c-55 52 -111 98 -124
+101 -14 3 -35 -1 -51 -11 -16 -9 -42 -16 -59 -16 -26 0 -36 9 -71 59 -22 33
+-40 64 -40 70 0 5 20 17 45 26 72 28 81 44 66 116 -16 80 -8 89 75 89 56 0 68
+4 95 28 23 21 32 39 36 72 5 44 4 46 -46 88 -28 24 -51 52 -51 62 0 11 23 42
+50 69 56 56 63 85 30 138 -23 38 -66 52 -137 46 -30 -3 -53 -1 -57 5 -4 6 -1
+42 5 79 13 75 20 64 -71 123 -25 16 -53 30 -64 30 -10 0 -40 -22 -66 -50 -39
+-41 -54 -50 -83 -50 -28 0 -43 9 -83 50 -27 28 -56 50 -65 50 -8 0 -35 -12
+-60 -28z m83 -129 c38 -37 40 -38 121 -39 l82 -1 37 39 c54 56 68 51 68 -22 0
+-109 37 -147 146 -152 l69 -3 -52 -49 c-51 -48 -53 -52 -53 -103 0 -56 5 -64
+70 -115 19 -15 32 -29 29 -32 -3 -3 -36 -8 -72 -11 -76 -5 -97 -16 -122 -58
+-14 -24 -16 -43 -11 -97 8 -86 -5 -93 -58 -33 l-38 43 -92 0 -92 0 -39 -40
+c-21 -22 -45 -40 -52 -40 -16 0 -17 32 -3 80 9 31 6 40 -24 86 l-35 52 -70 4
+c-38 2 -74 7 -78 12 -8 7 16 30 71 69 23 16 26 25 26 77 0 58 -1 59 -50 102
+-27 24 -50 46 -50 51 0 4 29 7 64 7 83 0 91 4 128 57 28 42 30 48 19 83 -24
+81 -1 93 61 33z m-957 -243 c12 -37 33 -51 105 -71 25 -7 71 -26 104 -43 55
+-29 59 -30 70 -13 30 49 29 49 66 19 34 -29 34 -29 17 -55 -23 -35 -22 -40 16
+-78 46 -47 101 -144 133 -236 32 -93 50 -116 80 -109 17 5 23 0 28 -17 12 -45
+7 -56 -33 -68 -38 -11 -39 -12 -59 -96 -29 -115 -89 -236 -151 -303 -28 -30
+-51 -57 -51 -60 0 -4 7 -15 15 -26 21 -27 19 -39 -10 -58 -24 -16 -27 -15 -54
+5 l-30 22 -48 -20 c-47 -20 -85 -30 -191 -54 -58 -12 -82 -36 -82 -82 0 -27
+-2 -28 -42 -25 -43 3 -43 3 -46 44 -4 52 -20 66 -102 88 -36 10 -88 31 -116
+47 -61 34 -71 35 -99 9 l-21 -20 -24 25 c-20 21 -21 28 -11 53 14 34 4 67 -29
+97 -24 21 -74 124 -85 173 -9 43 -38 66 -74 59 -25 -5 -31 -2 -42 24 -13 33
+-3 49 32 49 28 0 37 22 53 125 8 55 21 115 29 134 19 44 12 67 -24 80 -33 12
+-36 26 -10 60 17 22 21 23 51 12 37 -13 34 -14 127 76 50 49 53 55 53 102 0
+46 3 52 30 66 29 15 31 15 39 -8 13 -32 37 -40 71 -23 16 7 70 24 121 37 90
+22 92 23 107 61 14 35 19 39 45 36 25 -2 33 -10 42 -38z m1193 -739 c23 -55
+63 -83 140 -96 33 -5 52 -2 88 15 l46 23 46 -46 45 -45 -26 -32 c-31 -37 -32
+-46 -11 -97 61 -144 74 -165 114 -181 l40 -17 0 -66 c0 -62 -2 -67 -23 -73
+-49 -12 -105 -96 -138 -204 -11 -38 -10 -43 15 -73 l27 -32 -47 -48 -47 -48
+-38 25 c-46 29 -90 30 -144 5 -47 -22 -79 -55 -92 -96 -9 -29 -13 -30 -71 -33
+l-61 -3 -10 39 c-13 48 -34 68 -100 93 -64 24 -89 24 -121 -1 -34 -27 -45 -25
+-101 15 l-48 36 25 37 c33 47 28 76 -28 190 -38 76 -47 88 -73 92 -27 5 -30 9
+-33 45 -6 64 6 98 40 120 35 22 50 46 92 149 33 77 29 118 -12 124 -29 4 -28
+16 3 36 14 9 34 34 45 56 l20 40 40 -21 c95 -50 238 -1 254 87 l7 34 58 0 58
+0 21 -49z m-1922 -218 c3 -10 10 -25 15 -33 35 -55 38 -75 21 -124 l-17 -47
+65 -62 c116 -111 142 -123 187 -87 22 17 28 18 56 6 99 -42 107 -49 119 -93
+16 -66 33 -73 171 -73 l118 0 23 53 c23 50 26 53 77 66 30 8 60 16 66 18 7 3
+21 -9 30 -26 26 -45 55 -40 156 28 l87 60 0 -69 c0 -47 6 -78 17 -99 20 -34
+57 -54 84 -46 14 5 19 1 19 -14 0 -11 5 -31 11 -45 10 -20 8 -33 -10 -70 -11
+-25 -21 -49 -21 -53 0 -9 -106 -109 -198 -184 l-72 -61 -101 89 c-125 109
+-123 107 -142 100 -23 -9 -48 -52 -41 -70 3 -9 45 -51 92 -93 48 -43 91 -83
+95 -90 8 -15 8 -15 -96 -101 -82 -68 -101 -99 -84 -134 19 -37 57 -36 100 3
+40 37 114 101 166 144 19 16 73 63 120 105 47 42 97 84 110 95 13 10 44 36 68
+57 46 39 55 39 88 2 6 -7 35 -30 65 -53 l54 -41 22 20 c33 31 94 36 118 10 14
+-15 17 -26 10 -40 -8 -18 -107 -101 -149 -126 -15 -9 -16 -32 -15 -212 1 -199
+0 -202 -22 -217 -13 -9 -66 -52 -118 -96 -214 -179 -305 -252 -332 -266 -33
+-17 -16 -28 -179 105 -98 80 -135 111 -220 185 -20 17 -60 51 -88 75 l-51 43
+0 183 c0 157 -2 184 -16 196 -13 10 -66 15 -203 19 -173 5 -189 7 -235 30 -75
+37 -85 58 -90 175 -3 90 -37 247 -63 287 -3 6 -7 24 -8 40 -3 37 -38 74 -95
+102 -45 22 -45 22 -43 70 3 41 11 58 60 122 32 42 72 96 90 122 72 105 94 132
+109 132 8 0 17 -8 20 -17z m1314 -43 c0 -17 -27 -77 -38 -84 -19 -12 -19 32 0
+63 20 31 38 41 38 21z m-846 -1553 c47 -41 68 -59 116 -97 76 -59 81 -64 134
+-111 28 -26 62 -56 76 -67 l25 -20 -45 -6 c-112 -14 -234 -26 -338 -32 l-113
+-7 5 24 c3 13 10 53 16 89 18 104 40 212 51 248 12 36 9 37 73 -21z m1135
+-148 c18 -99 31 -182 28 -185 -4 -4 -214 12 -267 20 -8 2 -49 6 -91 10 -42 5
+-81 11 -88 15 -10 7 174 163 314 268 24 17 46 37 50 42 3 6 9 11 14 11 4 0 22
+-81 40 -181z"/>
+<path d="M3180 3892 c-81 -36 -130 -127 -110 -204 22 -78 100 -138 182 -138
+38 0 99 23 97 38 -1 20 -64 55 -102 57 -28 2 -46 9 -59 25 -32 39 -33 67 -4
+105 25 32 31 35 81 35 34 0 55 5 58 13 2 6 7 10 10 7 4 -3 0 -18 -7 -32 -8
+-15 -10 -31 -5 -39 5 -8 7 -21 4 -29 -11 -41 -14 -91 -5 -85 5 3 8 0 5 -7 -3
+-7 5 -19 17 -27 20 -12 24 -11 45 15 61 77 27 223 -62 260 -35 14 -118 18
+-145 6z m167 -244 c-3 -7 -5 -2 -5 12 0 14 2 19 5 13 2 -7 2 -19 0 -25z"/>
+<path d="M1913 3682 c-82 -29 -123 -49 -160 -79 -113 -96 -169 -183 -194 -301
+-23 -109 -23 -165 0 -273 28 -135 83 -219 211 -320 117 -93 318 -126 476 -79
+38 12 80 26 94 33 70 33 200 160 236 229 95 184 77 449 -42 605 -51 67 -159
+149 -230 176 -159 59 -238 61 -391 9z m288 -83 c111 -35 229 -128 283 -223 92
+-161 65 -364 -68 -518 -22 -26 -45 -48 -50 -48 -6 0 -19 -9 -30 -19 -29 -27
+-114 -59 -192 -71 -105 -17 -201 9 -326 88 -63 39 -137 156 -164 257 -57 213
+91 459 319 531 52 16 182 18 228 3z"/>
+<path d="M2057 3373 c-19 -5 -44 -51 -102 -185 -21 -49 -41 -88 -45 -88 -8 0
+-17 25 -65 169 -26 78 -57 107 -98 92 -22 -9 -27 -17 -27 -46 0 -19 9 -61 19
+-92 10 -32 36 -111 56 -175 44 -141 69 -182 111 -186 38 -4 45 4 88 105 48
+113 88 193 96 193 4 0 14 -17 23 -37 52 -125 101 -230 114 -245 9 -10 28 -18
+43 -18 50 0 68 35 159 312 22 70 41 135 41 145 0 28 -20 43 -56 43 -35 0 -50
+-14 -64 -57 -5 -15 -24 -71 -43 -123 l-35 -94 -35 74 c-19 41 -44 97 -56 125
+-37 83 -65 103 -124 88z"/>
+<path d="M3185 2891 c-118 -33 -200 -113 -243 -235 -20 -59 -23 -82 -18 -138
+11 -117 71 -219 171 -288 80 -55 247 -65 338 -21 68 33 142 105 173 169 36 75
+45 204 20 280 -40 119 -140 208 -263 236 -87 19 -102 19 -178 -3z m200 -112
+c167 -88 205 -287 78 -410 -65 -63 -104 -81 -177 -82 -69 0 -129 25 -184 77
+-133 124 -85 345 90 421 51 22 146 19 193 -6z"/>
+</g>
+</svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Torch Choice
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              All model specification
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Torch Choice" class="md-nav__button md-logo" aria-label="Torch Choice" data-md-component="logo">
+      
+  
+  <?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+ "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+ width="500.000000pt" height="500.000000pt" viewBox="0 0 500.000000 500.000000"
+ preserveAspectRatio="xMidYMid meet">
+
+<g transform="translate(0.000000,500.000000) scale(0.100000,-0.100000)"
+fill="#000000" stroke="none">
+<path d="M3039 4192 c-24 -15 -53 -32 -64 -38 -16 -9 -19 -19 -15 -55 2 -24 4
+-60 4 -79 l1 -35 -83 -3 c-81 -3 -83 -3 -102 -35 -23 -38 -35 -87 -23 -96 4
+-3 30 -32 56 -63 47 -55 48 -57 28 -70 -12 -7 -21 -20 -21 -28 0 -8 -18 -28
+-40 -43 -45 -32 -47 -43 -21 -106 22 -53 34 -59 127 -60 86 -1 87 -4 78 -105
+l-6 -71 62 -33 c35 -17 69 -32 77 -32 8 0 38 23 67 50 66 62 92 65 150 13 22
+-20 43 -40 44 -45 2 -4 -38 -8 -88 -8 -106 0 -151 -19 -174 -73 -7 -18 -25
+-38 -39 -46 -23 -12 -34 -11 -93 5 -78 22 -87 37 -82 129 l3 60 -42 3 c-41 3
+-42 4 -58 55 -24 74 -91 196 -120 219 -28 22 -32 50 -10 68 31 26 18 64 -37
+111 -58 49 -122 89 -142 89 -7 0 -28 -10 -47 -23 l-34 -23 -65 22 c-63 20 -65
+22 -68 57 -2 19 -10 41 -18 48 -9 8 -57 14 -122 17 -119 5 -137 -3 -144 -63
+-3 -26 -9 -31 -66 -47 l-62 -19 -27 26 c-38 35 -74 32 -147 -12 -94 -56 -96
+-59 -96 -122 -1 -74 -15 -93 -72 -90 -54 3 -59 0 -106 -64 -46 -62 -52 -76
+-61 -144 -7 -51 -7 -52 26 -70 18 -9 33 -19 33 -21 0 -2 -9 -35 -21 -73 -18
+-60 -26 -71 -53 -83 -55 -23 -61 -37 -46 -119 24 -133 24 -144 0 -174 -74 -93
+-173 -235 -200 -284 -25 -47 -30 -68 -30 -122 0 -59 3 -69 27 -92 16 -15 45
+-35 66 -46 21 -11 40 -28 43 -37 3 -9 12 -31 21 -49 13 -27 14 -37 3 -62 -15
+-38 -6 -67 24 -75 23 -6 24 -10 28 -118 4 -138 25 -191 97 -243 66 -49 144
+-65 306 -65 l135 0 0 -126 c0 -119 -1 -125 -19 -119 -21 6 -19 14 -97 -355
+-47 -221 -52 -277 -28 -287 16 -6 97 1 319 27 220 26 482 49 513 45 21 -2 91
+-9 157 -15 66 -6 201 -21 300 -33 202 -23 231 -25 247 -9 8 8 3 55 -21 174
+-18 90 -39 197 -47 238 -8 41 -22 105 -30 143 -15 64 -18 67 -45 67 l-29 0 0
+134 c0 127 1 134 23 149 12 8 42 33 66 56 34 31 50 39 68 35 13 -4 30 -1 38 6
+11 9 32 11 69 6 30 -3 74 -3 98 0 39 5 46 11 60 43 38 86 104 116 161 71 14
+-11 28 -20 32 -20 21 0 225 190 225 210 0 6 -9 29 -21 51 -14 28 -18 50 -14
+70 7 32 50 89 67 89 5 0 23 9 39 21 l29 20 0 137 c0 153 -8 181 -55 197 -45
+15 -54 23 -70 63 -14 33 -14 40 7 100 l23 63 -100 95 c-55 52 -111 98 -124
+101 -14 3 -35 -1 -51 -11 -16 -9 -42 -16 -59 -16 -26 0 -36 9 -71 59 -22 33
+-40 64 -40 70 0 5 20 17 45 26 72 28 81 44 66 116 -16 80 -8 89 75 89 56 0 68
+4 95 28 23 21 32 39 36 72 5 44 4 46 -46 88 -28 24 -51 52 -51 62 0 11 23 42
+50 69 56 56 63 85 30 138 -23 38 -66 52 -137 46 -30 -3 -53 -1 -57 5 -4 6 -1
+42 5 79 13 75 20 64 -71 123 -25 16 -53 30 -64 30 -10 0 -40 -22 -66 -50 -39
+-41 -54 -50 -83 -50 -28 0 -43 9 -83 50 -27 28 -56 50 -65 50 -8 0 -35 -12
+-60 -28z m83 -129 c38 -37 40 -38 121 -39 l82 -1 37 39 c54 56 68 51 68 -22 0
+-109 37 -147 146 -152 l69 -3 -52 -49 c-51 -48 -53 -52 -53 -103 0 -56 5 -64
+70 -115 19 -15 32 -29 29 -32 -3 -3 -36 -8 -72 -11 -76 -5 -97 -16 -122 -58
+-14 -24 -16 -43 -11 -97 8 -86 -5 -93 -58 -33 l-38 43 -92 0 -92 0 -39 -40
+c-21 -22 -45 -40 -52 -40 -16 0 -17 32 -3 80 9 31 6 40 -24 86 l-35 52 -70 4
+c-38 2 -74 7 -78 12 -8 7 16 30 71 69 23 16 26 25 26 77 0 58 -1 59 -50 102
+-27 24 -50 46 -50 51 0 4 29 7 64 7 83 0 91 4 128 57 28 42 30 48 19 83 -24
+81 -1 93 61 33z m-957 -243 c12 -37 33 -51 105 -71 25 -7 71 -26 104 -43 55
+-29 59 -30 70 -13 30 49 29 49 66 19 34 -29 34 -29 17 -55 -23 -35 -22 -40 16
+-78 46 -47 101 -144 133 -236 32 -93 50 -116 80 -109 17 5 23 0 28 -17 12 -45
+7 -56 -33 -68 -38 -11 -39 -12 -59 -96 -29 -115 -89 -236 -151 -303 -28 -30
+-51 -57 -51 -60 0 -4 7 -15 15 -26 21 -27 19 -39 -10 -58 -24 -16 -27 -15 -54
+5 l-30 22 -48 -20 c-47 -20 -85 -30 -191 -54 -58 -12 -82 -36 -82 -82 0 -27
+-2 -28 -42 -25 -43 3 -43 3 -46 44 -4 52 -20 66 -102 88 -36 10 -88 31 -116
+47 -61 34 -71 35 -99 9 l-21 -20 -24 25 c-20 21 -21 28 -11 53 14 34 4 67 -29
+97 -24 21 -74 124 -85 173 -9 43 -38 66 -74 59 -25 -5 -31 -2 -42 24 -13 33
+-3 49 32 49 28 0 37 22 53 125 8 55 21 115 29 134 19 44 12 67 -24 80 -33 12
+-36 26 -10 60 17 22 21 23 51 12 37 -13 34 -14 127 76 50 49 53 55 53 102 0
+46 3 52 30 66 29 15 31 15 39 -8 13 -32 37 -40 71 -23 16 7 70 24 121 37 90
+22 92 23 107 61 14 35 19 39 45 36 25 -2 33 -10 42 -38z m1193 -739 c23 -55
+63 -83 140 -96 33 -5 52 -2 88 15 l46 23 46 -46 45 -45 -26 -32 c-31 -37 -32
+-46 -11 -97 61 -144 74 -165 114 -181 l40 -17 0 -66 c0 -62 -2 -67 -23 -73
+-49 -12 -105 -96 -138 -204 -11 -38 -10 -43 15 -73 l27 -32 -47 -48 -47 -48
+-38 25 c-46 29 -90 30 -144 5 -47 -22 -79 -55 -92 -96 -9 -29 -13 -30 -71 -33
+l-61 -3 -10 39 c-13 48 -34 68 -100 93 -64 24 -89 24 -121 -1 -34 -27 -45 -25
+-101 15 l-48 36 25 37 c33 47 28 76 -28 190 -38 76 -47 88 -73 92 -27 5 -30 9
+-33 45 -6 64 6 98 40 120 35 22 50 46 92 149 33 77 29 118 -12 124 -29 4 -28
+16 3 36 14 9 34 34 45 56 l20 40 40 -21 c95 -50 238 -1 254 87 l7 34 58 0 58
+0 21 -49z m-1922 -218 c3 -10 10 -25 15 -33 35 -55 38 -75 21 -124 l-17 -47
+65 -62 c116 -111 142 -123 187 -87 22 17 28 18 56 6 99 -42 107 -49 119 -93
+16 -66 33 -73 171 -73 l118 0 23 53 c23 50 26 53 77 66 30 8 60 16 66 18 7 3
+21 -9 30 -26 26 -45 55 -40 156 28 l87 60 0 -69 c0 -47 6 -78 17 -99 20 -34
+57 -54 84 -46 14 5 19 1 19 -14 0 -11 5 -31 11 -45 10 -20 8 -33 -10 -70 -11
+-25 -21 -49 -21 -53 0 -9 -106 -109 -198 -184 l-72 -61 -101 89 c-125 109
+-123 107 -142 100 -23 -9 -48 -52 -41 -70 3 -9 45 -51 92 -93 48 -43 91 -83
+95 -90 8 -15 8 -15 -96 -101 -82 -68 -101 -99 -84 -134 19 -37 57 -36 100 3
+40 37 114 101 166 144 19 16 73 63 120 105 47 42 97 84 110 95 13 10 44 36 68
+57 46 39 55 39 88 2 6 -7 35 -30 65 -53 l54 -41 22 20 c33 31 94 36 118 10 14
+-15 17 -26 10 -40 -8 -18 -107 -101 -149 -126 -15 -9 -16 -32 -15 -212 1 -199
+0 -202 -22 -217 -13 -9 -66 -52 -118 -96 -214 -179 -305 -252 -332 -266 -33
+-17 -16 -28 -179 105 -98 80 -135 111 -220 185 -20 17 -60 51 -88 75 l-51 43
+0 183 c0 157 -2 184 -16 196 -13 10 -66 15 -203 19 -173 5 -189 7 -235 30 -75
+37 -85 58 -90 175 -3 90 -37 247 -63 287 -3 6 -7 24 -8 40 -3 37 -38 74 -95
+102 -45 22 -45 22 -43 70 3 41 11 58 60 122 32 42 72 96 90 122 72 105 94 132
+109 132 8 0 17 -8 20 -17z m1314 -43 c0 -17 -27 -77 -38 -84 -19 -12 -19 32 0
+63 20 31 38 41 38 21z m-846 -1553 c47 -41 68 -59 116 -97 76 -59 81 -64 134
+-111 28 -26 62 -56 76 -67 l25 -20 -45 -6 c-112 -14 -234 -26 -338 -32 l-113
+-7 5 24 c3 13 10 53 16 89 18 104 40 212 51 248 12 36 9 37 73 -21z m1135
+-148 c18 -99 31 -182 28 -185 -4 -4 -214 12 -267 20 -8 2 -49 6 -91 10 -42 5
+-81 11 -88 15 -10 7 174 163 314 268 24 17 46 37 50 42 3 6 9 11 14 11 4 0 22
+-81 40 -181z"/>
+<path d="M3180 3892 c-81 -36 -130 -127 -110 -204 22 -78 100 -138 182 -138
+38 0 99 23 97 38 -1 20 -64 55 -102 57 -28 2 -46 9 -59 25 -32 39 -33 67 -4
+105 25 32 31 35 81 35 34 0 55 5 58 13 2 6 7 10 10 7 4 -3 0 -18 -7 -32 -8
+-15 -10 -31 -5 -39 5 -8 7 -21 4 -29 -11 -41 -14 -91 -5 -85 5 3 8 0 5 -7 -3
+-7 5 -19 17 -27 20 -12 24 -11 45 15 61 77 27 223 -62 260 -35 14 -118 18
+-145 6z m167 -244 c-3 -7 -5 -2 -5 12 0 14 2 19 5 13 2 -7 2 -19 0 -25z"/>
+<path d="M1913 3682 c-82 -29 -123 -49 -160 -79 -113 -96 -169 -183 -194 -301
+-23 -109 -23 -165 0 -273 28 -135 83 -219 211 -320 117 -93 318 -126 476 -79
+38 12 80 26 94 33 70 33 200 160 236 229 95 184 77 449 -42 605 -51 67 -159
+149 -230 176 -159 59 -238 61 -391 9z m288 -83 c111 -35 229 -128 283 -223 92
+-161 65 -364 -68 -518 -22 -26 -45 -48 -50 -48 -6 0 -19 -9 -30 -19 -29 -27
+-114 -59 -192 -71 -105 -17 -201 9 -326 88 -63 39 -137 156 -164 257 -57 213
+91 459 319 531 52 16 182 18 228 3z"/>
+<path d="M2057 3373 c-19 -5 -44 -51 -102 -185 -21 -49 -41 -88 -45 -88 -8 0
+-17 25 -65 169 -26 78 -57 107 -98 92 -22 -9 -27 -17 -27 -46 0 -19 9 -61 19
+-92 10 -32 36 -111 56 -175 44 -141 69 -182 111 -186 38 -4 45 4 88 105 48
+113 88 193 96 193 4 0 14 -17 23 -37 52 -125 101 -230 114 -245 9 -10 28 -18
+43 -18 50 0 68 35 159 312 22 70 41 135 41 145 0 28 -20 43 -56 43 -35 0 -50
+-14 -64 -57 -5 -15 -24 -71 -43 -123 l-35 -94 -35 74 c-19 41 -44 97 -56 125
+-37 83 -65 103 -124 88z"/>
+<path d="M3185 2891 c-118 -33 -200 -113 -243 -235 -20 -59 -23 -82 -18 -138
+11 -117 71 -219 171 -288 80 -55 247 -65 338 -21 68 33 142 105 173 169 36 75
+45 204 20 280 -40 119 -140 208 -263 236 -87 19 -102 19 -178 -3z m200 -112
+c167 -88 205 -287 78 -410 -65 -63 -104 -81 -177 -82 -69 0 -129 25 -184 77
+-133 124 -85 345 90 421 51 22 146 19 193 -6z"/>
+</g>
+</svg>
+
+    </a>
+    Torch Choice
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/" class="md-nav__link">
+        Installation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../intro/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../data_management/" class="md-nav__link">
+        Data Management
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../easy_data_management/" class="md-nav__link">
+        Easy Data Management and Stata Users
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../conditional_logit_model_mode_canada/" class="md-nav__link">
+        Conditional Logit Model
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nested_logit_model_house_cooling/" class="md-nav__link">
+        Nested Logit Model
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../post_estimation_demos/" class="md-nav__link">
+        Post Estimation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../coefficient_initialization/" class="md-nav__link">
+        Coefficient Initialization
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../projects/" class="md-nav__link">
+        Related Projects
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../test/" class="md-nav__link">
+        Compatibility Tests
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api_torch_choice/" class="md-nav__link">
+        API Reference Torch-Choice
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#creating-choicedataset-object" class="md-nav__link">
+    Creating  ChoiceDataset Object
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating  ChoiceDataset Object">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-2-initialize-the-choicedataset" class="md-nav__link">
+    Step 2: Initialize the ChoiceDataset.
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-you-can-do-with-the-choicedataset" class="md-nav__link">
+    What you can do with the ChoiceDataset?
+  </a>
+  
+    <nav class="md-nav" aria-label="What you can do with the ChoiceDataset?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#printdataset-and-dataset__str__" class="md-nav__link">
+    print(dataset) and dataset.__str__
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#confirm-correctness-using-the-x_dict-method" class="md-nav__link">
+    Confirm Correctness using the x_dict Method
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#build-a-clm-model" class="md-nav__link">
+    Build a CLM Model
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+
+
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># import required dependencies.</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="kn">import</span> <span class="nn">torch</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="kn">from</span> <span class="nn">torch_choice.data</span> <span class="kn">import</span> <span class="n">ChoiceDataset</span><span class="p">,</span> <span class="n">JointDataset</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>/Users/tianyudu/miniforge3/envs/dev/lib/python3.9/site-packages/torchvision/io/image.py:13: UserWarning: Failed to load image Python extension: dlopen(/Users/tianyudu/miniforge3/envs/dev/lib/python3.9/site-packages/torchvision/image.so, 0x0006): Symbol not found: __ZN2at4_ops19empty_memory_format4callEN3c108ArrayRefIxEENS2_8optionalINS2_10ScalarTypeEEENS5_INS2_6LayoutEEENS5_INS2_6DeviceEEENS5_IbEENS5_INS2_12MemoryFormatEEE
+  Referenced from: &lt;B3E58761-2785-34C6-A89B-F37110C88A05&gt; /Users/tianyudu/miniforge3/envs/dev/lib/python3.9/site-packages/torchvision/image.so
+  Expected in:     &lt;AE6DCE26-A528-35ED-BB3D-88890D27E6B9&gt; /Users/tianyudu/miniforge3/envs/dev/lib/python3.9/site-packages/torch/lib/libtorch_cpu.dylib
+  warn(f&quot;Failed to load image Python extension: {e}&quot;)
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># let&#39;s get a helper</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">def</span> <span class="nf">print_dict_shape</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>        <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dict.</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">.shape=</span><span class="si">{</span><span class="n">val</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="creating-choicedataset-object">Creating  <code>ChoiceDataset</code> Object</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Feel free to modify it as you want.</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">num_users</span> <span class="o">=</span> <span class="mi">10</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">num_items</span> <span class="o">=</span> <span class="mi">4</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">num_sessions</span> <span class="o">=</span> <span class="mi">500</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">length_of_dataset</span> <span class="o">=</span> <span class="mi">10000</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># create observables/features, the number of parameters are arbitrarily chosen.</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="c1"># generate 128 features for each user, e.g., race, gender.</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">user_obs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">num_users</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># generate 64 features for each user, e.g., quality.</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">item_obs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">num_items</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># generate 32 features for each user item pair.</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="n">useritem_obs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">num_users</span><span class="p">,</span> <span class="n">num_items</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="c1"># generate 10 features for each session, e.g., weekday indicator. </span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="n">session_obs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">num_sessions</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="c1"># generate 12 features for each session user pair, e.g., the budget of that user at the shopping day.</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="n">price_obs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">num_sessions</span><span class="p">,</span> <span class="n">num_items</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="c1"># generate 16 useritemsession observable.</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="n">usersessionitem_obs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">num_users</span><span class="p">,</span> <span class="n">num_sessions</span><span class="p">,</span> <span class="n">num_items</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+</code></pre></div>
+<p>We then generate random observable tensors for users, items, sessions and price observables, the size of observables of each type (i.e., the last dimension in the shape) is arbitrarily chosen.</p>
+<p><strong>Notes on Encodings</strong> Since we will be using PyTorch to train our model, we represent their identities with <em>consecutive</em> integer values instead of the raw human-readable names of items (e.g., Dell 24-inch LCD monitor). Similarly, you would need to encode user indices and session indices as well.
+Raw item names can be encoded easily with <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html">sklearn.preprocessing.LabelEncoder</a> (The <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OrdinalEncoder.html">sklearn.preprocessing.OrdinalEncoder</a> works as well).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">item_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">num_items</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">length_of_dataset</span><span class="p">))</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">user_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">num_users</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">length_of_dataset</span><span class="p">))</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">session_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">num_sessions</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">length_of_dataset</span><span class="p">))</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># assume all items are available in all sessions.</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">item_availability</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">num_sessions</span><span class="p">,</span> <span class="n">num_items</span><span class="p">)</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="step-2-initialize-the-choicedataset">Step 2: Initialize the <code>ChoiceDataset</code>.</h3>
+<p>You can construct a choice set using the following code, which manage all information for you.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">ChoiceDataset</span><span class="p">(</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="c1"># pre-specified keywords of __init__</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    <span class="n">item_index</span><span class="o">=</span><span class="n">item_index</span><span class="p">,</span>  <span class="c1"># required.</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="c1"># optional:</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    <span class="n">user_index</span><span class="o">=</span><span class="n">user_index</span><span class="p">,</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    <span class="n">session_index</span><span class="o">=</span><span class="n">session_index</span><span class="p">,</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    <span class="n">item_availability</span><span class="o">=</span><span class="n">item_availability</span><span class="p">,</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="n">user_obs</span><span class="o">=</span><span class="n">user_obs</span><span class="p">,</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    <span class="n">item_obs</span><span class="o">=</span><span class="n">item_obs</span><span class="p">,</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>    <span class="n">useritem_obs</span><span class="o">=</span><span class="n">useritem_obs</span><span class="p">,</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>    <span class="n">session_obs</span><span class="o">=</span><span class="n">session_obs</span><span class="p">,</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>    <span class="n">price_obs</span><span class="o">=</span><span class="n">price_obs</span><span class="p">,</span>
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>    <span class="n">usersessionitem_obs</span><span class="o">=</span><span class="n">usersessionitem_obs</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="what-you-can-do-with-the-choicedataset">What you can do with the <code>ChoiceDataset</code>?</h2>
+<h3 id="printdataset-and-dataset__str__"><code>print(dataset)</code> and <code>dataset.__str__</code></h3>
+<p>The command <code>print(dataset)</code> will provide a quick overview of shapes of tensors included in the object as well as where the dataset is located (i.e., host memory or GPU memory).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>ChoiceDataset(label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], useritem_obs=[10, 4, 32], session_obs=[500, 10], price_obs=[500, 4, 12], usersessionitem_obs=[10, 500, 4, 16], device=cpu)
+</code></pre></div>
+<h1 id="confirm-correctness-using-the-x_dict-method">Confirm Correctness using the <code>x_dict</code> Method</h1>
+<p>The port between <code>ChoiceDataset</code> and model classes is a method called <code>x_dict</code> in the dataset. The <code>x_dict</code> method compiles all information in the dataset into a dictionary, with observable names as keys, and all values of this dictionary are tensors with shape <code>(length_of_dataset, num_items, *. The</code>*` denotes the number of corresponding observables and could be different for different observable tensors.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">print_dict_shape</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">x_dict</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>dict.user_obs.shape=torch.Size([10000, 4, 128])
+dict.item_obs.shape=torch.Size([10000, 4, 64])
+dict.useritem_obs.shape=torch.Size([10000, 4, 32])
+dict.session_obs.shape=torch.Size([10000, 4, 10])
+dict.price_obs.shape=torch.Size([10000, 4, 12])
+dict.usersessionitem_obs.shape=torch.Size([10000, 4, 16])
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># check the `x_dict` indeed have what we are expecting, test 10 random records.</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">length_of_dataset</span><span class="p">,</span> <span class="mi">10</span><span class="p">)):</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>    <span class="n">u</span> <span class="o">=</span> <span class="n">user_index</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>    <span class="n">s</span> <span class="o">=</span> <span class="n">session_index</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_items</span><span class="p">):</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">128</span><span class="p">):</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>            <span class="n">expected</span> <span class="o">=</span> <span class="n">user_obs</span><span class="p">[</span><span class="n">u</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>            <span class="n">got</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">x_dict</span><span class="p">[</span><span class="s2">&quot;user_obs&quot;</span><span class="p">][</span><span class="n">n</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>            <span class="k">assert</span> <span class="n">expected</span> <span class="o">==</span> <span class="n">got</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>
+<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">64</span><span class="p">):</span>
+<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>            <span class="n">expected</span> <span class="o">=</span> <span class="n">item_obs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span>
+<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>            <span class="n">got</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">x_dict</span><span class="p">[</span><span class="s2">&quot;item_obs&quot;</span><span class="p">][</span><span class="n">n</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span>
+<a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a>            <span class="k">assert</span> <span class="n">expected</span> <span class="o">==</span> <span class="n">got</span>
+<a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a>
+<a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a>        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">32</span><span class="p">):</span>
+<a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a>            <span class="n">expected</span> <span class="o">=</span> <span class="n">useritem_obs</span><span class="p">[</span><span class="n">u</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span>
+<a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a>            <span class="n">got</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">x_dict</span><span class="p">[</span><span class="s2">&quot;useritem_obs&quot;</span><span class="p">][</span><span class="n">n</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span>
+<a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a>            <span class="k">assert</span> <span class="n">expected</span> <span class="o">==</span> <span class="n">got</span>
+<a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a>
+<a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a>        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+<a id="__codelineno-8-23" name="__codelineno-8-23" href="#__codelineno-8-23"></a>            <span class="n">expected</span> <span class="o">=</span> <span class="n">session_obs</span><span class="p">[</span><span class="n">s</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span>
+<a id="__codelineno-8-24" name="__codelineno-8-24" href="#__codelineno-8-24"></a>            <span class="n">got</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">x_dict</span><span class="p">[</span><span class="s2">&quot;session_obs&quot;</span><span class="p">][</span><span class="n">n</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span>
+<a id="__codelineno-8-25" name="__codelineno-8-25" href="#__codelineno-8-25"></a>            <span class="k">assert</span> <span class="n">expected</span> <span class="o">==</span> <span class="n">got</span>
+<a id="__codelineno-8-26" name="__codelineno-8-26" href="#__codelineno-8-26"></a>
+<a id="__codelineno-8-27" name="__codelineno-8-27" href="#__codelineno-8-27"></a>
+<a id="__codelineno-8-28" name="__codelineno-8-28" href="#__codelineno-8-28"></a>        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">):</span>
+<a id="__codelineno-8-29" name="__codelineno-8-29" href="#__codelineno-8-29"></a>            <span class="n">expected</span> <span class="o">=</span> <span class="n">price_obs</span><span class="p">[</span><span class="n">s</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span>
+<a id="__codelineno-8-30" name="__codelineno-8-30" href="#__codelineno-8-30"></a>            <span class="n">got</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">x_dict</span><span class="p">[</span><span class="s2">&quot;price_obs&quot;</span><span class="p">][</span><span class="n">n</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span>
+<a id="__codelineno-8-31" name="__codelineno-8-31" href="#__codelineno-8-31"></a>            <span class="k">assert</span> <span class="n">expected</span> <span class="o">==</span> <span class="n">got</span>
+<a id="__codelineno-8-32" name="__codelineno-8-32" href="#__codelineno-8-32"></a>
+<a id="__codelineno-8-33" name="__codelineno-8-33" href="#__codelineno-8-33"></a>        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">):</span>
+<a id="__codelineno-8-34" name="__codelineno-8-34" href="#__codelineno-8-34"></a>            <span class="n">expected</span> <span class="o">=</span> <span class="n">usersessionitem_obs</span><span class="p">[</span><span class="n">u</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span>
+<a id="__codelineno-8-35" name="__codelineno-8-35" href="#__codelineno-8-35"></a>            <span class="n">got</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">x_dict</span><span class="p">[</span><span class="s2">&quot;usersessionitem_obs&quot;</span><span class="p">][</span><span class="n">n</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span>
+<a id="__codelineno-8-36" name="__codelineno-8-36" href="#__codelineno-8-36"></a>            <span class="k">assert</span> <span class="n">expected</span> <span class="o">==</span> <span class="n">got</span>
+<a id="__codelineno-8-37" name="__codelineno-8-37" href="#__codelineno-8-37"></a>
+<a id="__codelineno-8-38" name="__codelineno-8-38" href="#__codelineno-8-38"></a><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;all good!&quot;</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>100%|██████████| 10/10 [00:17&lt;00:00,  1.74s/it]
+
+all good!
+</code></pre></div>
+<h1 id="build-a-clm-model">Build a CLM Model</h1>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="kn">from</span> <span class="nn">torch_choice.model</span> <span class="kn">import</span> <span class="n">ConditionalLogitModel</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="kn">from</span> <span class="nn">torch_choice</span> <span class="kn">import</span> <span class="n">run</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">model</span> <span class="o">=</span> <span class="n">model</span> <span class="o">=</span> <span class="n">ConditionalLogitModel</span><span class="p">(</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>    <span class="n">formula</span><span class="o">=</span><span class="s1">&#39;(user_obs|item) + (item_obs|user) + (useritem_obs|constant) + (session_obs|item) + (price_obs|constant) + (usersessionitem_obs|constant) + (intercept|item)&#39;</span><span class="p">,</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>    <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>    <span class="n">num_users</span><span class="o">=</span><span class="n">num_users</span><span class="p">,</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>    <span class="n">num_items</span><span class="o">=</span><span class="n">num_items</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">model</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>ConditionalLogitModel(
+  (coef_dict): ModuleDict(
+    (user_obs[item]): Coefficient(variation=item, num_items=4, num_users=10, num_params=128, 384 trainable parameters in total, device=cpu).
+    (item_obs[user]): Coefficient(variation=user, num_items=4, num_users=10, num_params=64, 640 trainable parameters in total, device=cpu).
+    (useritem_obs[constant]): Coefficient(variation=constant, num_items=4, num_users=10, num_params=32, 32 trainable parameters in total, device=cpu).
+    (session_obs[item]): Coefficient(variation=item, num_items=4, num_users=10, num_params=10, 30 trainable parameters in total, device=cpu).
+    (price_obs[constant]): Coefficient(variation=constant, num_items=4, num_users=10, num_params=12, 12 trainable parameters in total, device=cpu).
+    (usersessionitem_obs[constant]): Coefficient(variation=constant, num_items=4, num_users=10, num_params=16, 16 trainable parameters in total, device=cpu).
+    (intercept[item]): Coefficient(variation=item, num_items=4, num_users=10, num_params=1, 3 trainable parameters in total, device=cpu).
+  )
+)
+Conditional logistic discrete choice model, expects input features:
+
+X[user_obs[item]] with 128 parameters, with item level variation.
+X[item_obs[user]] with 64 parameters, with user level variation.
+X[useritem_obs[constant]] with 32 parameters, with constant level variation.
+X[session_obs[item]] with 10 parameters, with item level variation.
+X[price_obs[constant]] with 12 parameters, with constant level variation.
+X[usersessionitem_obs[constant]] with 16 parameters, with constant level variation.
+X[intercept[item]] with 1 parameters, with item level variation.
+device=cpu
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="n">run</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">num_epochs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">model_optimizer</span><span class="o">=</span><span class="s2">&quot;Adam&quot;</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Time taken:&#39;</span><span class="p">,</span> <span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>GPU available: True (mps), used: False
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+
+
+==================== model received ====================
+ConditionalLogitModel(
+  (coef_dict): ModuleDict(
+    (user_obs[item]): Coefficient(variation=item, num_items=4, num_users=10, num_params=128, 384 trainable parameters in total, device=cpu).
+    (item_obs[user]): Coefficient(variation=user, num_items=4, num_users=10, num_params=64, 640 trainable parameters in total, device=cpu).
+    (useritem_obs[constant]): Coefficient(variation=constant, num_items=4, num_users=10, num_params=32, 32 trainable parameters in total, device=cpu).
+    (session_obs[item]): Coefficient(variation=item, num_items=4, num_users=10, num_params=10, 30 trainable parameters in total, device=cpu).
+    (price_obs[constant]): Coefficient(variation=constant, num_items=4, num_users=10, num_params=12, 12 trainable parameters in total, device=cpu).
+    (usersessionitem_obs[constant]): Coefficient(variation=constant, num_items=4, num_users=10, num_params=16, 16 trainable parameters in total, device=cpu).
+    (intercept[item]): Coefficient(variation=item, num_items=4, num_users=10, num_params=1, 3 trainable parameters in total, device=cpu).
+  )
+)
+Conditional logistic discrete choice model, expects input features:
+
+X[user_obs[item]] with 128 parameters, with item level variation.
+X[item_obs[user]] with 64 parameters, with user level variation.
+X[useritem_obs[constant]] with 32 parameters, with constant level variation.
+X[session_obs[item]] with 10 parameters, with item level variation.
+X[price_obs[constant]] with 12 parameters, with constant level variation.
+X[usersessionitem_obs[constant]] with 16 parameters, with constant level variation.
+X[intercept[item]] with 1 parameters, with item level variation.
+device=cpu
+==================== data set received ====================
+[Train dataset] ChoiceDataset(label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], useritem_obs=[10, 4, 32], session_obs=[500, 10], price_obs=[500, 4, 12], usersessionitem_obs=[10, 500, 4, 16], device=cpu)
+[Validation dataset] None
+[Test dataset] None
+
+
+/Users/tianyudu/miniforge3/envs/dev/lib/python3.9/site-packages/pytorch_lightning/trainer/setup.py:201: UserWarning: MPS available but not used. Set `accelerator` and `devices` using `Trainer(accelerator=&#39;mps&#39;, devices=1)`.
+  rank_zero_warn(
+/Users/tianyudu/miniforge3/envs/dev/lib/python3.9/site-packages/pytorch_lightning/trainer/configuration_validator.py:108: PossibleUserWarning: You defined a `validation_step` but have no `val_dataloader`. Skipping val loop.
+  rank_zero_warn(
+
+  | Name  | Type                  | Params
+------------------------------------------------
+0 | model | ConditionalLogitModel | 1.1 K 
+------------------------------------------------
+1.1 K     Trainable params
+0         Non-trainable params
+1.1 K     Total params
+0.004     Total estimated model params size (MB)
+/Users/tianyudu/miniforge3/envs/dev/lib/python3.9/site-packages/pytorch_lightning/trainer/connectors/data_connector.py:224: PossibleUserWarning: The dataloader, train_dataloader, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 10 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+  rank_zero_warn(
+
+
+Epoch 9: 100%|██████████| 1/1 [00:00&lt;00:00, 44.40it/s, loss=7.1e+04, v_num=44]
+
+`Trainer.fit` stopped: `max_epochs=10` reached.
+
+
+Epoch 9: 100%|██████████| 1/1 [00:00&lt;00:00, 39.46it/s, loss=7.1e+04, v_num=44]
+Time taken for training: 0.9634578227996826
+Skip testing, no test dataset is provided.
+==================== model results ====================
+Log-likelihood: [Training] -56230.62890625, [Validation] N/A, [Test] N/A
+
+| Coefficient                      |   Estimation |   Std. Err. |       z-value |      Pr(&gt;|z|) | Significance   |
+|:---------------------------------|-------------:|------------:|--------------:|--------------:|:---------------|
+| user_obs[item]_0                 | -0.0889893   | 139.667     |  -0.000637154 |   0.999492    |                |
+| user_obs[item]_1                 | -0.0341076   | nan         | nan           | nan           |                |
+| user_obs[item]_2                 | -0.0982556   | nan         | nan           | nan           |                |
+| user_obs[item]_3                 |  0.0670713   |  18.9429    |   0.00354071  |   0.997175    |                |
+| user_obs[item]_4                 |  0.0836471   | nan         | nan           | nan           |                |
+| user_obs[item]_5                 |  0.0925889   | nan         | nan           | nan           |                |
+| user_obs[item]_6                 |  0.0884399   |  37.105     |   0.0023835   |   0.998098    |                |
+| user_obs[item]_7                 | -0.0993338   | nan         | nan           | nan           |                |
+| user_obs[item]_8                 |  0.0396195   | nan         | nan           | nan           |                |
+| user_obs[item]_9                 | -0.000340273 |  24.0647    |  -1.41399e-05 |   0.999989    |                |
+| user_obs[item]_10                |  0.0980912   |  65.7966    |   0.00149082  |   0.99881     |                |
+| user_obs[item]_11                |  0.0712994   |  25.9504    |   0.00274752  |   0.997808    |                |
+| user_obs[item]_12                | -0.0654005   | nan         | nan           | nan           |                |
+| user_obs[item]_13                |  0.0673973   | nan         | nan           | nan           |                |
+| user_obs[item]_14                |  0.0940802   | nan         | nan           | nan           |                |
+| user_obs[item]_15                | -0.0938857   |  30.5794    |  -0.00307023  |   0.99755     |                |
+| user_obs[item]_16                | -0.0425794   |  47.2045    |  -0.000902021 |   0.99928     |                |
+| user_obs[item]_17                |  0.0794171   |  44.3518    |   0.00179062  |   0.998571    |                |
+| user_obs[item]_18                | -0.0998146   | nan         | nan           | nan           |                |
+| user_obs[item]_19                |  0.0852862   |   6.97753   |   0.012223    |   0.990248    |                |
+| user_obs[item]_20                |  0.05898     | nan         | nan           | nan           |                |
+| user_obs[item]_21                | -0.0854324   | nan         | nan           | nan           |                |
+| user_obs[item]_22                | -0.0237377   | nan         | nan           | nan           |                |
+| user_obs[item]_23                |  0.10116     |  20.1079    |   0.00503089  |   0.995986    |                |
+| user_obs[item]_24                |  0.0741224   |  46.0753    |   0.00160872  |   0.998716    |                |
+| user_obs[item]_25                |  0.0865076   |  58.1918    |   0.0014866   |   0.998814    |                |
+| user_obs[item]_26                |  0.0521571   |  51.714     |   0.00100857  |   0.999195    |                |
+| user_obs[item]_27                |  0.0759137   | nan         | nan           | nan           |                |
+| user_obs[item]_28                | -0.0809748   | nan         | nan           | nan           |                |
+| user_obs[item]_29                | -0.054031    |  25.3736    |  -0.00212942  |   0.998301    |                |
+| user_obs[item]_30                | -0.0164601   |  18.0856    |  -0.000910124 |   0.999274    |                |
+| user_obs[item]_31                | -0.080897    |  57.7205    |  -0.00140153  |   0.998882    |                |
+| user_obs[item]_32                | -0.0909767   |  37.1174    |  -0.00245105  |   0.998044    |                |
+| user_obs[item]_33                |  0.0485426   | nan         | nan           | nan           |                |
+| user_obs[item]_34                | -0.0734832   |  31.7805    |  -0.00231221  |   0.998155    |                |
+| user_obs[item]_35                |  0.0980138   |  20.8498    |   0.00470096  |   0.996249    |                |
+| user_obs[item]_36                |  0.0955767   | nan         | nan           | nan           |                |
+| user_obs[item]_37                |  0.0555144   |  97.5976    |   0.000568809 |   0.999546    |                |
+| user_obs[item]_38                |  0.0946894   | nan         | nan           | nan           |                |
+| user_obs[item]_39                |  0.0555615   | nan         | nan           | nan           |                |
+| user_obs[item]_40                | -0.100283    | 108.641     |  -0.00092307  |   0.999263    |                |
+| user_obs[item]_41                | -0.0225418   | nan         | nan           | nan           |                |
+| user_obs[item]_42                |  0.0648984   | nan         | nan           | nan           |                |
+| user_obs[item]_43                | -0.100141    | nan         | nan           | nan           |                |
+| user_obs[item]_44                | -0.0892176   |  54.9148    |  -0.00162466  |   0.998704    |                |
+| user_obs[item]_45                |  0.0068979   |  34.171     |   0.000201864 |   0.999839    |                |
+| user_obs[item]_46                |  0.0980878   | 111.224     |   0.000881892 |   0.999296    |                |
+| user_obs[item]_47                |  0.100062    | nan         | nan           | nan           |                |
+| user_obs[item]_48                |  0.0889476   | 119.958     |   0.000741491 |   0.999408    |                |
+| user_obs[item]_49                | -0.0980555   |  87.2634    |  -0.00112367  |   0.999103    |                |
+| user_obs[item]_50                | -0.00933557  |  65.2444    |  -0.000143086 |   0.999886    |                |
+| user_obs[item]_51                |  0.0365757   |  19.2679    |   0.00189827  |   0.998485    |                |
+| user_obs[item]_52                | -0.00636163  |  51.2761    |  -0.000124066 |   0.999901    |                |
+| user_obs[item]_53                | -0.0921691   |  24.4548    |  -0.00376896  |   0.996993    |                |
+| user_obs[item]_54                |  0.0908732   |  57.6774    |   0.00157554  |   0.998743    |                |
+| user_obs[item]_55                |  0.0971482   |  20.9316    |   0.00464121  |   0.996297    |                |
+| user_obs[item]_56                |  0.0900242   |  49.1325    |   0.00183227  |   0.998538    |                |
+| user_obs[item]_57                | -0.0802871   | nan         | nan           | nan           |                |
+| user_obs[item]_58                |  0.070944    | nan         | nan           | nan           |                |
+| user_obs[item]_59                |  0.089703    | nan         | nan           | nan           |                |
+| user_obs[item]_60                |  0.0615047   | nan         | nan           | nan           |                |
+| user_obs[item]_61                |  0.101459    |  60.6506    |   0.00167284  |   0.998665    |                |
+| user_obs[item]_62                |  0.0843676   |  51.1154    |   0.00165053  |   0.998683    |                |
+| user_obs[item]_63                |  0.0744298   |  50.0475    |   0.00148718  |   0.998813    |                |
+| user_obs[item]_64                |  0.0484441   |  66.7117    |   0.000726171 |   0.999421    |                |
+| user_obs[item]_65                | -0.0932577   |  47.0875    |  -0.00198052  |   0.99842     |                |
+| user_obs[item]_66                |  0.0937148   | nan         | nan           | nan           |                |
+| user_obs[item]_67                |  0.0938114   | nan         | nan           | nan           |                |
+| user_obs[item]_68                |  0.0919321   | 144.463     |   0.000636369 |   0.999492    |                |
+| user_obs[item]_69                | -0.100955    | nan         | nan           | nan           |                |
+| user_obs[item]_70                | -0.0694414   |  28.964     |  -0.00239751  |   0.998087    |                |
+| user_obs[item]_71                |  0.0618674   | 141.564     |   0.000437029 |   0.999651    |                |
+| user_obs[item]_72                |  0.0887234   | nan         | nan           | nan           |                |
+| user_obs[item]_73                |  0.0547917   | nan         | nan           | nan           |                |
+| user_obs[item]_74                | -0.0225696   | nan         | nan           | nan           |                |
+| user_obs[item]_75                |  0.0974109   |  21.2039    |   0.004594    |   0.996335    |                |
+| user_obs[item]_76                | -0.0991129   | nan         | nan           | nan           |                |
+| user_obs[item]_77                |  0.100791    | nan         | nan           | nan           |                |
+| user_obs[item]_78                | -0.0773081   | nan         | nan           | nan           |                |
+| user_obs[item]_79                |  0.095945    |  21.3157    |   0.00450114  |   0.996409    |                |
+| user_obs[item]_80                | -0.0946032   |  42.3599    |  -0.00223332  |   0.998218    |                |
+| user_obs[item]_81                | -0.0911672   |   8.6325    |  -0.0105609   |   0.991574    |                |
+| user_obs[item]_82                |  0.0901775   |  43.12      |   0.00209132  |   0.998331    |                |
+| user_obs[item]_83                |  0.0354095   | nan         | nan           | nan           |                |
+| user_obs[item]_84                |  0.100448    |  28.0476    |   0.00358133  |   0.997143    |                |
+| user_obs[item]_85                | -0.0448048   | nan         | nan           | nan           |                |
+| user_obs[item]_86                |  0.0958236   |  45.4539    |   0.00210815  |   0.998318    |                |
+| user_obs[item]_87                |  0.0734553   |  43.357     |   0.00169419  |   0.998648    |                |
+| user_obs[item]_88                | -0.0863962   |  40.7907    |  -0.00211804  |   0.99831     |                |
+| user_obs[item]_89                |  0.0714083   |  39.8753    |   0.00179079  |   0.998571    |                |
+| user_obs[item]_90                | -0.0744745   |  82.7771    |  -0.000899699 |   0.999282    |                |
+| user_obs[item]_91                |  0.0926561   |  77.8328    |   0.00119045  |   0.99905     |                |
+| user_obs[item]_92                | -0.0641654   |  32.6775    |  -0.0019636   |   0.998433    |                |
+| user_obs[item]_93                | -0.0825138   |  62.9386    |  -0.00131102  |   0.998954    |                |
+| user_obs[item]_94                |  0.0997649   |  38.279     |   0.00260625  |   0.997921    |                |
+| user_obs[item]_95                |  0.0904881   | nan         | nan           | nan           |                |
+| user_obs[item]_96                |  0.0678373   | 151.095     |   0.00044897  |   0.999642    |                |
+| user_obs[item]_97                | -0.0679895   | nan         | nan           | nan           |                |
+| user_obs[item]_98                | -0.0945796   |  57.5709    |  -0.00164284  |   0.998689    |                |
+| user_obs[item]_99                | -0.0876268   | nan         | nan           | nan           |                |
+| user_obs[item]_100               |  0.0973275   | nan         | nan           | nan           |                |
+| user_obs[item]_101               |  0.0733176   | nan         | nan           | nan           |                |
+| user_obs[item]_102               | -0.0915377   | nan         | nan           | nan           |                |
+| user_obs[item]_103               |  0.0939341   |  36.7327    |   0.00255723  |   0.99796     |                |
+| user_obs[item]_104               | -0.0685851   |  57.6987    |  -0.00118868  |   0.999052    |                |
+| user_obs[item]_105               |  0.0894344   | nan         | nan           | nan           |                |
+| user_obs[item]_106               |  0.00271086  | nan         | nan           | nan           |                |
+| user_obs[item]_107               |  0.0411001   |  21.7561    |   0.00188913  |   0.998493    |                |
+| user_obs[item]_108               |  0.0987024   |  28.026     |   0.00352181  |   0.99719     |                |
+| user_obs[item]_109               |  0.0967847   |  26.5516    |   0.00364516  |   0.997092    |                |
+| user_obs[item]_110               |  0.025779    |  25.6526    |   0.00100493  |   0.999198    |                |
+| user_obs[item]_111               | -0.0944387   | nan         | nan           | nan           |                |
+| user_obs[item]_112               | -0.0997579   | nan         | nan           | nan           |                |
+| user_obs[item]_113               | -0.00786996  | nan         | nan           | nan           |                |
+| user_obs[item]_114               |  0.0873028   | nan         | nan           | nan           |                |
+| user_obs[item]_115               |  0.0969093   | nan         | nan           | nan           |                |
+| user_obs[item]_116               | -0.0933952   | nan         | nan           | nan           |                |
+| user_obs[item]_117               |  0.0953693   |  36.8322    |   0.00258929  |   0.997934    |                |
+| user_obs[item]_118               | -0.0711203   |  44.3295    |  -0.00160436  |   0.99872     |                |
+| user_obs[item]_119               |  0.0387712   | nan         | nan           | nan           |                |
+| user_obs[item]_120               | -0.0718235   |  72.4445    |  -0.000991428 |   0.999209    |                |
+| user_obs[item]_121               |  0.0965576   | nan         | nan           | nan           |                |
+| user_obs[item]_122               |  0.0932075   | nan         | nan           | nan           |                |
+| user_obs[item]_123               |  0.0960881   | nan         | nan           | nan           |                |
+| user_obs[item]_124               | -0.0057018   | nan         | nan           | nan           |                |
+| user_obs[item]_125               | -0.0240208   |  59.3318    |  -0.000404855 |   0.999677    |                |
+| user_obs[item]_126               | -0.0832291   | nan         | nan           | nan           |                |
+| user_obs[item]_127               | -0.0127958   |  31.8142    |  -0.000402203 |   0.999679    |                |
+| user_obs[item]_128               |  0.0946697   |  39.9644    |   0.00236885  |   0.99811     |                |
+| user_obs[item]_129               |  0.0955388   | nan         | nan           | nan           |                |
+| user_obs[item]_130               | -0.100848    |  29.1098    |  -0.00346438  |   0.997236    |                |
+| user_obs[item]_131               | -0.0897986   | nan         | nan           | nan           |                |
+| user_obs[item]_132               | -0.0893218   | nan         | nan           | nan           |                |
+| user_obs[item]_133               | -0.0987934   |  51.4924    |  -0.0019186   |   0.998469    |                |
+| user_obs[item]_134               | -0.0561973   |   8.48221   |  -0.00662531  |   0.994714    |                |
+| user_obs[item]_135               |  0.0591518   | nan         | nan           | nan           |                |
+| user_obs[item]_136               | -0.0981552   | nan         | nan           | nan           |                |
+| user_obs[item]_137               | -0.0920462   |  14.2351    |  -0.00646616  |   0.994841    |                |
+| user_obs[item]_138               | -0.088343    |  52.507     |  -0.0016825   |   0.998658    |                |
+| user_obs[item]_139               | -0.0847579   | nan         | nan           | nan           |                |
+| user_obs[item]_140               |  0.0964178   | nan         | nan           | nan           |                |
+| user_obs[item]_141               | -0.0954367   |  44.7388    |  -0.0021332   |   0.998298    |                |
+| user_obs[item]_142               |  0.0901083   |  59.9893    |   0.00150207  |   0.998802    |                |
+| user_obs[item]_143               | -0.0976047   | nan         | nan           | nan           |                |
+| user_obs[item]_144               |  0.0893714   |   9.06721   |   0.00985655  |   0.992136    |                |
+| user_obs[item]_145               |  0.0762919   | nan         | nan           | nan           |                |
+| user_obs[item]_146               |  0.100248    |  34.6165    |   0.00289595  |   0.997689    |                |
+| user_obs[item]_147               |  0.0919174   |  24.59      |   0.00373801  |   0.997018    |                |
+| user_obs[item]_148               |  0.0596661   |  15.9393    |   0.00374334  |   0.997013    |                |
+| user_obs[item]_149               |  0.0956791   |  30.0228    |   0.00318688  |   0.997457    |                |
+| user_obs[item]_150               |  0.0988285   | nan         | nan           | nan           |                |
+| user_obs[item]_151               | -0.0958375   | nan         | nan           | nan           |                |
+| user_obs[item]_152               | -0.0862783   | nan         | nan           | nan           |                |
+| user_obs[item]_153               | -0.096879    |   8.60707   |  -0.0112557   |   0.991019    |                |
+| user_obs[item]_154               |  0.0899647   |  26.4254    |   0.00340448  |   0.997284    |                |
+| user_obs[item]_155               | -0.0971653   |  17.2313    |  -0.00563889  |   0.995501    |                |
+| user_obs[item]_156               | -0.0347459   | nan         | nan           | nan           |                |
+| user_obs[item]_157               |  0.0946411   | nan         | nan           | nan           |                |
+| user_obs[item]_158               |  0.0965939   |  33.4381    |   0.00288874  |   0.997695    |                |
+| user_obs[item]_159               | -0.0987432   |  50.6435    |  -0.00194977  |   0.998444    |                |
+| user_obs[item]_160               |  0.0554879   |  54.8858    |   0.00101097  |   0.999193    |                |
+| user_obs[item]_161               |  0.0916695   | nan         | nan           | nan           |                |
+| user_obs[item]_162               |  0.0903534   |  21.761     |   0.00415209  |   0.996687    |                |
+| user_obs[item]_163               |  0.0925355   | nan         | nan           | nan           |                |
+| user_obs[item]_164               | -0.0157946   |  21.2459    |  -0.000743417 |   0.999407    |                |
+| user_obs[item]_165               | -0.0911579   | nan         | nan           | nan           |                |
+| user_obs[item]_166               |  0.0960882   |  22.7401    |   0.0042255   |   0.996629    |                |
+| user_obs[item]_167               | -0.0921166   |  33.1998    |  -0.00277461  |   0.997786    |                |
+| user_obs[item]_168               | -0.0952001   |  16.7478    |  -0.00568434  |   0.995465    |                |
+| user_obs[item]_169               |  0.0906606   | nan         | nan           | nan           |                |
+| user_obs[item]_170               | -0.0929105   |  34.9538    |  -0.0026581   |   0.997879    |                |
+| user_obs[item]_171               | -0.0856273   | nan         | nan           | nan           |                |
+| user_obs[item]_172               |  0.0977275   | nan         | nan           | nan           |                |
+| user_obs[item]_173               | -0.0964915   | nan         | nan           | nan           |                |
+| user_obs[item]_174               |  0.0961557   |  34.6991    |   0.00277113  |   0.997789    |                |
+| user_obs[item]_175               | -0.0868459   | nan         | nan           | nan           |                |
+| user_obs[item]_176               |  0.0997443   | nan         | nan           | nan           |                |
+| user_obs[item]_177               | -0.0936593   | nan         | nan           | nan           |                |
+| user_obs[item]_178               |  0.0896609   | nan         | nan           | nan           |                |
+| user_obs[item]_179               | -0.0921307   | nan         | nan           | nan           |                |
+| user_obs[item]_180               |  0.0989775   | nan         | nan           | nan           |                |
+| user_obs[item]_181               | -0.0934007   | nan         | nan           | nan           |                |
+| user_obs[item]_182               | -0.0954752   | nan         | nan           | nan           |                |
+| user_obs[item]_183               |  0.101086    | nan         | nan           | nan           |                |
+| user_obs[item]_184               | -0.042742    | nan         | nan           | nan           |                |
+| user_obs[item]_185               | -0.0904764   | nan         | nan           | nan           |                |
+| user_obs[item]_186               |  0.0580969   | nan         | nan           | nan           |                |
+| user_obs[item]_187               |  0.0472953   |  21.1506    |   0.00223613  |   0.998216    |                |
+| user_obs[item]_188               | -0.0861624   |  21.6303    |  -0.00398342  |   0.996822    |                |
+| user_obs[item]_189               | -0.0496282   |  30.8671    |  -0.0016078   |   0.998717    |                |
+| user_obs[item]_190               |  0.0980903   |  40.4903    |   0.00242256  |   0.998067    |                |
+| user_obs[item]_191               | -0.0999367   | nan         | nan           | nan           |                |
+| user_obs[item]_192               |  0.0937635   | nan         | nan           | nan           |                |
+| user_obs[item]_193               |  0.0932748   | nan         | nan           | nan           |                |
+| user_obs[item]_194               | -0.0912127   |  43.9686    |  -0.0020745   |   0.998345    |                |
+| user_obs[item]_195               | -0.0954091   |  56.3073    |  -0.00169444  |   0.998648    |                |
+| user_obs[item]_196               |  0.0946353   | nan         | nan           | nan           |                |
+| user_obs[item]_197               |  0.0775572   |  11.1232    |   0.00697254  |   0.994437    |                |
+| user_obs[item]_198               |  0.0917828   | nan         | nan           | nan           |                |
+| user_obs[item]_199               | -0.0971661   | nan         | nan           | nan           |                |
+| user_obs[item]_200               | -0.0954552   |  22.4761    |  -0.00424696  |   0.996611    |                |
+| user_obs[item]_201               | -0.0986228   | nan         | nan           | nan           |                |
+| user_obs[item]_202               | -0.0948749   |  50.355     |  -0.00188412  |   0.998497    |                |
+| user_obs[item]_203               |  0.0887569   | nan         | nan           | nan           |                |
+| user_obs[item]_204               | -0.0736365   | nan         | nan           | nan           |                |
+| user_obs[item]_205               |  0.0945059   |  21.2864    |   0.00443973  |   0.996458    |                |
+| user_obs[item]_206               |  0.0952938   | nan         | nan           | nan           |                |
+| user_obs[item]_207               |  0.0852773   |  31.1982    |   0.0027334   |   0.997819    |                |
+| user_obs[item]_208               |  0.0331864   | nan         | nan           | nan           |                |
+| user_obs[item]_209               |  0.0887002   | nan         | nan           | nan           |                |
+| user_obs[item]_210               | -0.0987527   | nan         | nan           | nan           |                |
+| user_obs[item]_211               |  0.0601945   |  14.0004    |   0.00429948  |   0.99657     |                |
+| user_obs[item]_212               | -0.100431    | nan         | nan           | nan           |                |
+| user_obs[item]_213               | -0.0950364   | nan         | nan           | nan           |                |
+| user_obs[item]_214               | -0.0846135   | nan         | nan           | nan           |                |
+| user_obs[item]_215               | -0.0983446   | nan         | nan           | nan           |                |
+| user_obs[item]_216               | -0.0899129   |  21.6253    |  -0.00415776  |   0.996683    |                |
+| user_obs[item]_217               | -0.0969675   | nan         | nan           | nan           |                |
+| user_obs[item]_218               | -0.0936005   |  19.6852    |  -0.00475488  |   0.996206    |                |
+| user_obs[item]_219               |  0.0243296   | nan         | nan           | nan           |                |
+| user_obs[item]_220               |  0.0801605   | nan         | nan           | nan           |                |
+| user_obs[item]_221               | -0.100749    | nan         | nan           | nan           |                |
+| user_obs[item]_222               | -0.0995452   |   7.18452   |  -0.0138555   |   0.988945    |                |
+| user_obs[item]_223               | -0.0914686   |   4.87038   |  -0.0187806   |   0.985016    |                |
+| user_obs[item]_224               | -0.0500416   | nan         | nan           | nan           |                |
+| user_obs[item]_225               |  0.00523383  | nan         | nan           | nan           |                |
+| user_obs[item]_226               | -0.00516245  |  35.3175    |  -0.000146172 |   0.999883    |                |
+| user_obs[item]_227               | -0.0835066   | nan         | nan           | nan           |                |
+| user_obs[item]_228               | -0.0900212   | nan         | nan           | nan           |                |
+| user_obs[item]_229               | -0.0921853   | nan         | nan           | nan           |                |
+| user_obs[item]_230               |  0.0933748   |  25.8102    |   0.00361775  |   0.997113    |                |
+| user_obs[item]_231               |  0.0884962   |   5.54233   |   0.0159673   |   0.98726     |                |
+| user_obs[item]_232               | -0.100834    |  31.0845    |  -0.00324386  |   0.997412    |                |
+| user_obs[item]_233               | -0.0706101   |  45.4504    |  -0.00155356  |   0.99876     |                |
+| user_obs[item]_234               | -0.100623    |   9.49371   |  -0.0105989   |   0.991543    |                |
+| user_obs[item]_235               | -0.0950226   |   9.10836   |  -0.0104325   |   0.991676    |                |
+| user_obs[item]_236               |  0.0787224   | nan         | nan           | nan           |                |
+| user_obs[item]_237               |  0.0516931   | nan         | nan           | nan           |                |
+| user_obs[item]_238               |  0.0795601   | nan         | nan           | nan           |                |
+| user_obs[item]_239               | -0.0991568   |  25.7028    |  -0.00385782  |   0.996922    |                |
+| user_obs[item]_240               | -0.100388    |  17.91      |  -0.00560511  |   0.995528    |                |
+| user_obs[item]_241               | -0.0956626   | nan         | nan           | nan           |                |
+| user_obs[item]_242               | -0.00400375  |  23.6861    |  -0.000169034 |   0.999865    |                |
+| user_obs[item]_243               |  0.0944553   | nan         | nan           | nan           |                |
+| user_obs[item]_244               |  0.0983843   |  48.3653    |   0.00203419  |   0.998377    |                |
+| user_obs[item]_245               | -0.100297    | nan         | nan           | nan           |                |
+| user_obs[item]_246               | -0.0124805   | nan         | nan           | nan           |                |
+| user_obs[item]_247               |  0.0965049   | nan         | nan           | nan           |                |
+| user_obs[item]_248               |  0.0854822   | nan         | nan           | nan           |                |
+| user_obs[item]_249               |  0.0931216   | nan         | nan           | nan           |                |
+| user_obs[item]_250               |  0.0158794   |  28.2352    |   0.000562395 |   0.999551    |                |
+| user_obs[item]_251               | -0.0952249   | nan         | nan           | nan           |                |
+| user_obs[item]_252               |  0.0919503   |  12.5916    |   0.00730253  |   0.994173    |                |
+| user_obs[item]_253               |  0.0828517   | nan         | nan           | nan           |                |
+| user_obs[item]_254               | -0.0932373   | nan         | nan           | nan           |                |
+| user_obs[item]_255               |  0.100438    |   9.87784   |   0.010168    |   0.991887    |                |
+| user_obs[item]_256               | -0.0985134   |  11.5526    |  -0.00852738  |   0.993196    |                |
+| user_obs[item]_257               | -0.095954    | nan         | nan           | nan           |                |
+| user_obs[item]_258               | -0.0860235   | nan         | nan           | nan           |                |
+| user_obs[item]_259               |  0.0939709   | nan         | nan           | nan           |                |
+| user_obs[item]_260               |  0.0654559   | nan         | nan           | nan           |                |
+| user_obs[item]_261               |  0.0999005   |  10.7345    |   0.00930653  |   0.992575    |                |
+| user_obs[item]_262               | -0.0964731   | nan         | nan           | nan           |                |
+| user_obs[item]_263               |  0.0928897   | nan         | nan           | nan           |                |
+| user_obs[item]_264               |  0.0999005   |  21.306     |   0.00468885  |   0.996259    |                |
+| user_obs[item]_265               | -0.0909176   |  11.2045    |  -0.00811436  |   0.993526    |                |
+| user_obs[item]_266               |  0.0922943   |  35.6997    |   0.0025853   |   0.997937    |                |
+| user_obs[item]_267               | -0.0804861   | nan         | nan           | nan           |                |
+| user_obs[item]_268               | -0.0950919   |  10.6069    |  -0.00896508  |   0.992847    |                |
+| user_obs[item]_269               | -0.0514438   | nan         | nan           | nan           |                |
+| user_obs[item]_270               | -0.0884027   |  45.7692    |  -0.00193149  |   0.998459    |                |
+| user_obs[item]_271               |  0.0939372   |   4.13603   |   0.0227119   |   0.98188     |                |
+| user_obs[item]_272               |  0.0456208   |  26.7976    |   0.00170242  |   0.998642    |                |
+| user_obs[item]_273               | -0.0987425   | nan         | nan           | nan           |                |
+| user_obs[item]_274               | -0.0907353   |  15.5872    |  -0.00582112  |   0.995355    |                |
+| user_obs[item]_275               | -0.0895816   | nan         | nan           | nan           |                |
+| user_obs[item]_276               |  0.0891188   | nan         | nan           | nan           |                |
+| user_obs[item]_277               | -0.0987827   | nan         | nan           | nan           |                |
+| user_obs[item]_278               | -0.0972348   | nan         | nan           | nan           |                |
+| user_obs[item]_279               |  0.0966328   | nan         | nan           | nan           |                |
+| user_obs[item]_280               |  0.0951051   | nan         | nan           | nan           |                |
+| user_obs[item]_281               |  0.0975423   |  25.7122    |   0.00379362  |   0.996973    |                |
+| user_obs[item]_282               | -0.0791925   | nan         | nan           | nan           |                |
+| user_obs[item]_283               |  0.0958204   | nan         | nan           | nan           |                |
+| user_obs[item]_284               | -0.03573     |   7.18889   |  -0.00497016  |   0.996034    |                |
+| user_obs[item]_285               |  0.0810994   | nan         | nan           | nan           |                |
+| user_obs[item]_286               | -0.0951336   | nan         | nan           | nan           |                |
+| user_obs[item]_287               |  0.0841253   |  30.7186    |   0.00273858  |   0.997815    |                |
+| user_obs[item]_288               | -0.089892    | nan         | nan           | nan           |                |
+| user_obs[item]_289               |  0.00667884  |  19.0526    |   0.000350547 |   0.99972     |                |
+| user_obs[item]_290               | -0.0998388   | nan         | nan           | nan           |                |
+| user_obs[item]_291               | -0.0946387   | nan         | nan           | nan           |                |
+| user_obs[item]_292               |  0.0621858   | nan         | nan           | nan           |                |
+| user_obs[item]_293               |  0.0741694   | nan         | nan           | nan           |                |
+| user_obs[item]_294               | -0.0965614   | nan         | nan           | nan           |                |
+| user_obs[item]_295               |  0.0154573   | nan         | nan           | nan           |                |
+| user_obs[item]_296               |  0.0974524   |  33.1169    |   0.00294268  |   0.997652    |                |
+| user_obs[item]_297               |  0.0196788   |  11.5686    |   0.00170105  |   0.998643    |                |
+| user_obs[item]_298               |  0.0849441   |  12.0542    |   0.00704682  |   0.994377    |                |
+| user_obs[item]_299               |  0.086225    | nan         | nan           | nan           |                |
+| user_obs[item]_300               | -0.0914505   | nan         | nan           | nan           |                |
+| user_obs[item]_301               |  0.0921167   |   6.46036   |   0.0142588   |   0.988624    |                |
+| user_obs[item]_302               | -0.0933694   | nan         | nan           | nan           |                |
+| user_obs[item]_303               | -0.0489442   |  29.5071    |  -0.00165873  |   0.998677    |                |
+| user_obs[item]_304               | -0.0915071   |  42.9878    |  -0.00212868  |   0.998302    |                |
+| user_obs[item]_305               | -0.0667167   | nan         | nan           | nan           |                |
+| user_obs[item]_306               | -0.0938267   | nan         | nan           | nan           |                |
+| user_obs[item]_307               |  0.0443927   |  20.2969    |   0.00218716  |   0.998255    |                |
+| user_obs[item]_308               |  0.0775837   |  13.0335    |   0.00595263  |   0.995251    |                |
+| user_obs[item]_309               |  0.0827553   |   9.05362   |   0.00914058  |   0.992707    |                |
+| user_obs[item]_310               |  0.098086    | nan         | nan           | nan           |                |
+| user_obs[item]_311               |  0.0934891   | nan         | nan           | nan           |                |
+| user_obs[item]_312               | -0.0943368   |  21.9152    |  -0.00430463  |   0.996565    |                |
+| user_obs[item]_313               | -0.0976427   |  22.4439    |  -0.00435051  |   0.996529    |                |
+| user_obs[item]_314               | -0.0774443   |   8.54967   |  -0.00905817  |   0.992773    |                |
+| user_obs[item]_315               |  0.0536131   |  25.3484    |   0.00211504  |   0.998312    |                |
+| user_obs[item]_316               |  0.0899316   |  13.7525    |   0.00653929  |   0.994782    |                |
+| user_obs[item]_317               |  0.0912012   | nan         | nan           | nan           |                |
+| user_obs[item]_318               | -0.0992509   | nan         | nan           | nan           |                |
+| user_obs[item]_319               | -0.0153901   |  19.0264    |  -0.000808883 |   0.999355    |                |
+| user_obs[item]_320               | -0.100451    |  18.9858    |  -0.00529086  |   0.995779    |                |
+| user_obs[item]_321               |  0.0648664   |   9.6448    |   0.00672553  |   0.994634    |                |
+| user_obs[item]_322               |  0.0956555   | nan         | nan           | nan           |                |
+| user_obs[item]_323               | -0.00337489  |  46.38      |  -7.2766e-05  |   0.999942    |                |
+| user_obs[item]_324               | -0.0889243   |  68.278     |  -0.00130239  |   0.998961    |                |
+| user_obs[item]_325               |  0.0320671   |  18.9087    |   0.00169589  |   0.998647    |                |
+| user_obs[item]_326               | -0.0959391   |  13.0347    |  -0.0073603   |   0.994127    |                |
+| user_obs[item]_327               |  0.00849687  | nan         | nan           | nan           |                |
+| user_obs[item]_328               |  0.0979957   |  17.4037    |   0.00563072  |   0.995507    |                |
+| user_obs[item]_329               |  0.0999434   |  13.6447    |   0.00732472  |   0.994156    |                |
+| user_obs[item]_330               |  0.0902393   |  18.4601    |   0.00488835  |   0.9961      |                |
+| user_obs[item]_331               | -0.0937392   | nan         | nan           | nan           |                |
+| user_obs[item]_332               | -0.0918172   | nan         | nan           | nan           |                |
+| user_obs[item]_333               |  0.077242    | nan         | nan           | nan           |                |
+| user_obs[item]_334               |  0.0490345   | nan         | nan           | nan           |                |
+| user_obs[item]_335               | -0.0348693   |  25.5131    |  -0.00136672  |   0.99891     |                |
+| user_obs[item]_336               | -0.0219657   | nan         | nan           | nan           |                |
+| user_obs[item]_337               | -0.0996667   |   5.13986   |  -0.0193909   |   0.984529    |                |
+| user_obs[item]_338               |  0.0939913   | nan         | nan           | nan           |                |
+| user_obs[item]_339               |  0.0801734   | nan         | nan           | nan           |                |
+| user_obs[item]_340               |  0.0905974   | nan         | nan           | nan           |                |
+| user_obs[item]_341               |  0.0943427   |  24.0998    |   0.00391467  |   0.996877    |                |
+| user_obs[item]_342               | -0.0936997   |  22.9254    |  -0.00408717  |   0.996739    |                |
+| user_obs[item]_343               |  0.0956675   | nan         | nan           | nan           |                |
+| user_obs[item]_344               |  0.0924433   | nan         | nan           | nan           |                |
+| user_obs[item]_345               |  0.101126    |  30.9882    |   0.00326336  |   0.997396    |                |
+| user_obs[item]_346               |  0.0918561   |  30.0324    |   0.00305856  |   0.99756     |                |
+| user_obs[item]_347               | -0.0245837   |  38.7188    |  -0.000634929 |   0.999493    |                |
+| user_obs[item]_348               | -0.0896538   | nan         | nan           | nan           |                |
+| user_obs[item]_349               |  0.0947577   | nan         | nan           | nan           |                |
+| user_obs[item]_350               |  0.0985861   |  13.4305    |   0.00734046  |   0.994143    |                |
+| user_obs[item]_351               |  0.0979897   | nan         | nan           | nan           |                |
+| user_obs[item]_352               |  0.0999614   |  21.67      |   0.00461289  |   0.996319    |                |
+| user_obs[item]_353               |  0.0822363   |  10.8624    |   0.00757076  |   0.993959    |                |
+| user_obs[item]_354               | -0.0967529   | nan         | nan           | nan           |                |
+| user_obs[item]_355               | -0.0241711   |  11.2837    |  -0.00214212  |   0.998291    |                |
+| user_obs[item]_356               |  0.0973434   | nan         | nan           | nan           |                |
+| user_obs[item]_357               | -0.0788176   |   5.33626   |  -0.0147702   |   0.988216    |                |
+| user_obs[item]_358               | -0.0964527   | nan         | nan           | nan           |                |
+| user_obs[item]_359               | -0.0906674   | nan         | nan           | nan           |                |
+| user_obs[item]_360               |  0.0743494   |  19.7904    |   0.00375685  |   0.997002    |                |
+| user_obs[item]_361               | -0.0918878   |  15.1822    |  -0.00605235  |   0.995171    |                |
+| user_obs[item]_362               |  0.0670612   | nan         | nan           | nan           |                |
+| user_obs[item]_363               |  0.0951579   |   7.74944   |   0.0122793   |   0.990203    |                |
+| user_obs[item]_364               |  0.0961641   |  10.0334    |   0.00958435  |   0.992353    |                |
+| user_obs[item]_365               | -0.0716678   | nan         | nan           | nan           |                |
+| user_obs[item]_366               |  0.000673009 | nan         | nan           | nan           |                |
+| user_obs[item]_367               |  0.0941488   | nan         | nan           | nan           |                |
+| user_obs[item]_368               |  0.100942    | nan         | nan           | nan           |                |
+| user_obs[item]_369               |  0.0993893   | nan         | nan           | nan           |                |
+| user_obs[item]_370               |  0.100108    |  11.1383    |   0.00898776  |   0.992829    |                |
+| user_obs[item]_371               |  0.0221737   | nan         | nan           | nan           |                |
+| user_obs[item]_372               | -0.098036    | nan         | nan           | nan           |                |
+| user_obs[item]_373               |  0.0977015   | nan         | nan           | nan           |                |
+| user_obs[item]_374               | -0.0474964   |   6.59998   |  -0.00719644  |   0.994258    |                |
+| user_obs[item]_375               | -0.0979622   |  18.7567    |  -0.00522279  |   0.995833    |                |
+| user_obs[item]_376               |  0.0885426   | nan         | nan           | nan           |                |
+| user_obs[item]_377               | -0.0919497   | nan         | nan           | nan           |                |
+| user_obs[item]_378               | -0.0564472   | nan         | nan           | nan           |                |
+| user_obs[item]_379               |  0.0964465   |   7.6299    |   0.0126406   |   0.989915    |                |
+| user_obs[item]_380               |  0.0248318   |  21.5719    |   0.00115112  |   0.999082    |                |
+| user_obs[item]_381               | -0.10122     | nan         | nan           | nan           |                |
+| user_obs[item]_382               |  0.0836685   |  30.0802    |   0.00278152  |   0.997781    |                |
+| user_obs[item]_383               | -0.00442575  | nan         | nan           | nan           |                |
+| item_obs[user]_0                 |  0.0953294   | nan         | nan           | nan           |                |
+| item_obs[user]_1                 |  0.0849606   | nan         | nan           | nan           |                |
+| item_obs[user]_2                 | -0.074826    |  11.5431    |  -0.00648234  |   0.994828    |                |
+| item_obs[user]_3                 | -0.0930095   | nan         | nan           | nan           |                |
+| item_obs[user]_4                 | -0.088183    | nan         | nan           | nan           |                |
+| item_obs[user]_5                 | -0.0985564   | nan         | nan           | nan           |                |
+| item_obs[user]_6                 |  0.082744    |  24.3046    |   0.00340446  |   0.997284    |                |
+| item_obs[user]_7                 | -0.0800593   |  27.0081    |  -0.00296427  |   0.997635    |                |
+| item_obs[user]_8                 | -0.0951243   | nan         | nan           | nan           |                |
+| item_obs[user]_9                 | -0.0879356   | nan         | nan           | nan           |                |
+| item_obs[user]_10                |  0.096148    |  34.1177    |   0.00281813  |   0.997751    |                |
+| item_obs[user]_11                | -0.0197937   | nan         | nan           | nan           |                |
+| item_obs[user]_12                |  0.00669822  |  37.6851    |   0.000177742 |   0.999858    |                |
+| item_obs[user]_13                | -0.0797179   | nan         | nan           | nan           |                |
+| item_obs[user]_14                |  0.036266    | nan         | nan           | nan           |                |
+| item_obs[user]_15                |  0.0701227   | nan         | nan           | nan           |                |
+| item_obs[user]_16                |  0.0723617   | nan         | nan           | nan           |                |
+| item_obs[user]_17                |  0.0411248   | nan         | nan           | nan           |                |
+| item_obs[user]_18                | -0.0554874   |  22.3587    |  -0.00248169  |   0.99802     |                |
+| item_obs[user]_19                | -0.0863106   | nan         | nan           | nan           |                |
+| item_obs[user]_20                |  0.0677762   | nan         | nan           | nan           |                |
+| item_obs[user]_21                | -0.0538812   | nan         | nan           | nan           |                |
+| item_obs[user]_22                |  0.0669267   | nan         | nan           | nan           |                |
+| item_obs[user]_23                | -0.064349    | nan         | nan           | nan           |                |
+| item_obs[user]_24                | -0.0746401   | nan         | nan           | nan           |                |
+| item_obs[user]_25                | -0.0784752   | nan         | nan           | nan           |                |
+| item_obs[user]_26                |  0.0728878   |  36.6919    |   0.00198648  |   0.998415    |                |
+| item_obs[user]_27                |  0.0765257   | nan         | nan           | nan           |                |
+| item_obs[user]_28                |  0.079921    | nan         | nan           | nan           |                |
+| item_obs[user]_29                |  0.0753488   |  44.7365    |   0.00168428  |   0.998656    |                |
+| item_obs[user]_30                |  0.0669301   |  14.2758    |   0.00468836  |   0.996259    |                |
+| item_obs[user]_31                | -0.0371062   | nan         | nan           | nan           |                |
+| item_obs[user]_32                |  0.0682146   | nan         | nan           | nan           |                |
+| item_obs[user]_33                |  0.0834677   | nan         | nan           | nan           |                |
+| item_obs[user]_34                |  0.0153546   | nan         | nan           | nan           |                |
+| item_obs[user]_35                |  0.0685816   | nan         | nan           | nan           |                |
+| item_obs[user]_36                | -0.0880266   |  29.742     |  -0.00295968  |   0.997639    |                |
+| item_obs[user]_37                | -0.0885725   |   5.39468   |  -0.0164185   |   0.986901    |                |
+| item_obs[user]_38                |  0.09194     | nan         | nan           | nan           |                |
+| item_obs[user]_39                |  0.0756242   | nan         | nan           | nan           |                |
+| item_obs[user]_40                | -0.0287947   | nan         | nan           | nan           |                |
+| item_obs[user]_41                |  0.0585076   |  13.8805    |   0.0042151   |   0.996637    |                |
+| item_obs[user]_42                |  0.0564173   |   6.45187   |   0.00874434  |   0.993023    |                |
+| item_obs[user]_43                |  0.0635485   |   8.21708   |   0.0077337   |   0.993829    |                |
+| item_obs[user]_44                | -0.0873843   |  48.6134    |  -0.00179754  |   0.998566    |                |
+| item_obs[user]_45                | -0.0834753   |  94.0016    |  -0.00088802  |   0.999291    |                |
+| item_obs[user]_46                |  0.0764609   |  14.8363    |   0.00515363  |   0.995888    |                |
+| item_obs[user]_47                |  0.0274219   |  43.366     |   0.000632336 |   0.999495    |                |
+| item_obs[user]_48                | -0.0873803   | nan         | nan           | nan           |                |
+| item_obs[user]_49                | -0.0816547   |   2.08968   |  -0.0390751   |   0.96883     |                |
+| item_obs[user]_50                | -0.0226442   | nan         | nan           | nan           |                |
+| item_obs[user]_51                | -0.0956599   | nan         | nan           | nan           |                |
+| item_obs[user]_52                |  0.0783386   | nan         | nan           | nan           |                |
+| item_obs[user]_53                | -0.0633794   |  13.9623    |  -0.00453934  |   0.996378    |                |
+| item_obs[user]_54                |  0.0953538   |  26.6147    |   0.00358275  |   0.997141    |                |
+| item_obs[user]_55                |  0.055353    | nan         | nan           | nan           |                |
+| item_obs[user]_56                |  0.0908716   | nan         | nan           | nan           |                |
+| item_obs[user]_57                |  0.0607073   |  41.2198    |   0.00147277  |   0.998825    |                |
+| item_obs[user]_58                | -0.0720462   |  19.1767    |  -0.00375698  |   0.997002    |                |
+| item_obs[user]_59                | -0.0603374   |  54.1613    |  -0.00111403  |   0.999111    |                |
+| item_obs[user]_60                | -0.0185613   | nan         | nan           | nan           |                |
+| item_obs[user]_61                |  0.0708304   |   9.38333   |   0.00754853  |   0.993977    |                |
+| item_obs[user]_62                |  0.0791017   |   7.72274   |   0.0102427   |   0.991828    |                |
+| item_obs[user]_63                | -0.0571787   | nan         | nan           | nan           |                |
+| item_obs[user]_64                |  0.0329169   | 121.471     |   0.000270985 |   0.999784    |                |
+| item_obs[user]_65                |  0.0226816   | nan         | nan           | nan           |                |
+| item_obs[user]_66                | -0.00637343  | nan         | nan           | nan           |                |
+| item_obs[user]_67                | -0.0545586   | nan         | nan           | nan           |                |
+| item_obs[user]_68                | -0.0317221   |  32.09      |  -0.000988538 |   0.999211    |                |
+| item_obs[user]_69                | -0.0943223   |  17.817     |  -0.00529395  |   0.995776    |                |
+| item_obs[user]_70                |  0.00471362  | nan         | nan           | nan           |                |
+| item_obs[user]_71                | -0.00793153  | nan         | nan           | nan           |                |
+| item_obs[user]_72                | -0.0335794   | nan         | nan           | nan           |                |
+| item_obs[user]_73                | -0.0309263   |   2.68062   |  -0.011537    |   0.990795    |                |
+| item_obs[user]_74                |  0.0303063   | nan         | nan           | nan           |                |
+| item_obs[user]_75                | -0.0732667   | nan         | nan           | nan           |                |
+| item_obs[user]_76                | -0.0098093   |  27.1032    |  -0.000361924 |   0.999711    |                |
+| item_obs[user]_77                | -0.0138997   | nan         | nan           | nan           |                |
+| item_obs[user]_78                | -0.0118171   |   7.5586    |  -0.0015634   |   0.998753    |                |
+| item_obs[user]_79                |  0.0233654   | nan         | nan           | nan           |                |
+| item_obs[user]_80                |  0.0030736   |  37.2507    |   8.25112e-05 |   0.999934    |                |
+| item_obs[user]_81                |  0.0177793   | nan         | nan           | nan           |                |
+| item_obs[user]_82                | -0.071604    |  15.0995    |  -0.00474214  |   0.996216    |                |
+| item_obs[user]_83                | -0.0261888   | nan         | nan           | nan           |                |
+| item_obs[user]_84                |  0.0011142   | nan         | nan           | nan           |                |
+| item_obs[user]_85                |  0.0014559   |  47.6001    |   3.0586e-05  |   0.999976    |                |
+| item_obs[user]_86                |  0.00310078  | nan         | nan           | nan           |                |
+| item_obs[user]_87                |  0.0195079   |   0.511697  |   0.038124    |   0.969589    |                |
+| item_obs[user]_88                | -0.00919021  |  19.8504    |  -0.000462973 |   0.999631    |                |
+| item_obs[user]_89                | -0.0123839   | nan         | nan           | nan           |                |
+| item_obs[user]_90                | -0.0103893   | nan         | nan           | nan           |                |
+| item_obs[user]_91                |  0.0105079   | nan         | nan           | nan           |                |
+| item_obs[user]_92                |  0.0145338   | nan         | nan           | nan           |                |
+| item_obs[user]_93                |  0.00834626  | nan         | nan           | nan           |                |
+| item_obs[user]_94                |  0.00379122  |  26.508     |   0.000143022 |   0.999886    |                |
+| item_obs[user]_95                |  0.0260624   | nan         | nan           | nan           |                |
+| item_obs[user]_96                | -0.00103211  |  30.4632    |  -3.38804e-05 |   0.999973    |                |
+| item_obs[user]_97                |  0.00749817  | nan         | nan           | nan           |                |
+| item_obs[user]_98                | -0.00386528  | nan         | nan           | nan           |                |
+| item_obs[user]_99                | -0.00175826  |  14.1111    |  -0.000124602 |   0.999901    |                |
+| item_obs[user]_100               | -0.0241035   |  25.1352    |  -0.000958957 |   0.999235    |                |
+| item_obs[user]_101               | -0.0250482   |  10.4112    |  -0.00240589  |   0.99808     |                |
+| item_obs[user]_102               |  0.055889    | nan         | nan           | nan           |                |
+| item_obs[user]_103               |  0.000421926 | nan         | nan           | nan           |                |
+| item_obs[user]_104               |  0.0110912   | nan         | nan           | nan           |                |
+| item_obs[user]_105               | -0.00341909  | nan         | nan           | nan           |                |
+| item_obs[user]_106               | -0.00352724  | nan         | nan           | nan           |                |
+| item_obs[user]_107               | -0.00643651  | nan         | nan           | nan           |                |
+| item_obs[user]_108               | -0.0288748   | 107.796     |  -0.000267866 |   0.999786    |                |
+| item_obs[user]_109               | -0.016833    | nan         | nan           | nan           |                |
+| item_obs[user]_110               |  0.0100099   | nan         | nan           | nan           |                |
+| item_obs[user]_111               | -0.0096791   |  34.0665    |  -0.000284123 |   0.999773    |                |
+| item_obs[user]_112               | -0.0285409   |  80.6287    |  -0.000353979 |   0.999718    |                |
+| item_obs[user]_113               | -0.0169635   |  17.9643    |  -0.000944288 |   0.999247    |                |
+| item_obs[user]_114               | -0.00225602  |  31.8136    |  -7.09138e-05 |   0.999943    |                |
+| item_obs[user]_115               | -0.0541435   |  60.7676    |  -0.000890993 |   0.999289    |                |
+| item_obs[user]_116               |  0.00810096  |  20.7395    |   0.000390605 |   0.999688    |                |
+| item_obs[user]_117               | -0.0162214   |  37.0959    |  -0.000437283 |   0.999651    |                |
+| item_obs[user]_118               |  0.0258092   |  10.9363    |   0.00235996  |   0.998117    |                |
+| item_obs[user]_119               | -2.26311e-05 |  40.026     |  -5.65411e-07 |   1           |                |
+| item_obs[user]_120               |  0.0415286   |  13.5548    |   0.00306376  |   0.997555    |                |
+| item_obs[user]_121               | -0.0207364   | nan         | nan           | nan           |                |
+| item_obs[user]_122               | -0.0065696   |  20.8918    |  -0.000314458 |   0.999749    |                |
+| item_obs[user]_123               |  0.0190524   |  14.869     |   0.00128136  |   0.998978    |                |
+| item_obs[user]_124               |  0.0316112   | nan         | nan           | nan           |                |
+| item_obs[user]_125               |  0.00614487  | nan         | nan           | nan           |                |
+| item_obs[user]_126               |  0.0134792   |  19.8742    |   0.000678223 |   0.999459    |                |
+| item_obs[user]_127               | -0.0351917   | nan         | nan           | nan           |                |
+| item_obs[user]_128               |  0.082355    | nan         | nan           | nan           |                |
+| item_obs[user]_129               |  0.095309    |  18.8028    |   0.00506887  |   0.995956    |                |
+| item_obs[user]_130               | -0.0879696   |  29.2859    |  -0.00300382  |   0.997603    |                |
+| item_obs[user]_131               | -0.0830043   |  37.5038    |  -0.00221323  |   0.998234    |                |
+| item_obs[user]_132               | -0.0896925   | nan         | nan           | nan           |                |
+| item_obs[user]_133               | -0.0930006   | nan         | nan           | nan           |                |
+| item_obs[user]_134               |  0.0713312   |  37.349     |   0.00190986  |   0.998476    |                |
+| item_obs[user]_135               | -0.0770028   |  15.9662    |  -0.00482285  |   0.996152    |                |
+| item_obs[user]_136               | -0.0784881   |  36.5061    |  -0.00215     |   0.998285    |                |
+| item_obs[user]_137               | -0.0899085   | nan         | nan           | nan           |                |
+| item_obs[user]_138               |  0.0795249   |  52.347     |   0.00151919  |   0.998788    |                |
+| item_obs[user]_139               | -0.100354    |  56.5839    |  -0.00177354  |   0.998585    |                |
+| item_obs[user]_140               | -0.0748308   | nan         | nan           | nan           |                |
+| item_obs[user]_141               | -0.0945848   | nan         | nan           | nan           |                |
+| item_obs[user]_142               | -0.0841109   | nan         | nan           | nan           |                |
+| item_obs[user]_143               |  0.0791375   | nan         | nan           | nan           |                |
+| item_obs[user]_144               |  0.075823    |  24.9554    |   0.00303834  |   0.997576    |                |
+| item_obs[user]_145               |  0.0782816   | nan         | nan           | nan           |                |
+| item_obs[user]_146               | -0.100106    |  33.423     |  -0.00299513  |   0.99761     |                |
+| item_obs[user]_147               | -0.0894256   |  43.4752    |  -0.00205694  |   0.998359    |                |
+| item_obs[user]_148               | -0.0748489   |   6.55435   |  -0.0114197   |   0.990889    |                |
+| item_obs[user]_149               |  0.0691177   | nan         | nan           | nan           |                |
+| item_obs[user]_150               | -0.0574347   |  16.2724    |  -0.00352958  |   0.997184    |                |
+| item_obs[user]_151               |  0.0294429   | nan         | nan           | nan           |                |
+| item_obs[user]_152               |  0.00563431  |  39.8466    |   0.0001414   |   0.999887    |                |
+| item_obs[user]_153               | -0.096552    |  17.4384    |  -0.00553676  |   0.995582    |                |
+| item_obs[user]_154               |  0.0450145   | nan         | nan           | nan           |                |
+| item_obs[user]_155               |  0.0976836   |  50.7942    |   0.00192313  |   0.998466    |                |
+| item_obs[user]_156               |  0.0980685   |  14.9795    |   0.00654686  |   0.994776    |                |
+| item_obs[user]_157               |  0.0968644   |  21.2062    |   0.00456774  |   0.996355    |                |
+| item_obs[user]_158               | -0.0524446   |  17.5892    |  -0.00298163  |   0.997621    |                |
+| item_obs[user]_159               |  0.0945053   |  54.6474    |   0.00172936  |   0.99862     |                |
+| item_obs[user]_160               | -0.0973398   | nan         | nan           | nan           |                |
+| item_obs[user]_161               |  0.0734301   |  26.8878    |   0.00273098  |   0.997821    |                |
+| item_obs[user]_162               | -0.0609306   |  22.0643    |  -0.0027615   |   0.997797    |                |
+| item_obs[user]_163               | -0.101368    | nan         | nan           | nan           |                |
+| item_obs[user]_164               | -0.0810076   |  16.8674    |  -0.00480262  |   0.996168    |                |
+| item_obs[user]_165               | -0.080903    | nan         | nan           | nan           |                |
+| item_obs[user]_166               |  0.0833991   | nan         | nan           | nan           |                |
+| item_obs[user]_167               |  0.0658189   |  27.7891    |   0.00236851  |   0.99811     |                |
+| item_obs[user]_168               |  0.0812031   |   7.48511   |   0.0108486   |   0.991344    |                |
+| item_obs[user]_169               | -0.0805171   | nan         | nan           | nan           |                |
+| item_obs[user]_170               | -0.0787244   | nan         | nan           | nan           |                |
+| item_obs[user]_171               | -0.0975392   |   8.79285   |  -0.011093    |   0.991149    |                |
+| item_obs[user]_172               | -0.0924256   |  31.3937    |  -0.00294408  |   0.997651    |                |
+| item_obs[user]_173               | -0.0832566   |  46.9572    |  -0.00177303  |   0.998585    |                |
+| item_obs[user]_174               |  0.0980777   |   6.70879   |   0.0146193   |   0.988336    |                |
+| item_obs[user]_175               | -0.078849    | nan         | nan           | nan           |                |
+| item_obs[user]_176               | -0.0933594   | nan         | nan           | nan           |                |
+| item_obs[user]_177               | -0.0952743   |  26.0786    |  -0.00365334  |   0.997085    |                |
+| item_obs[user]_178               | -0.0432346   |  44.2405    |  -0.000977262 |   0.99922     |                |
+| item_obs[user]_179               | -0.0840413   |  26.3496    |  -0.00318947  |   0.997455    |                |
+| item_obs[user]_180               |  0.0800613   |  11.4991    |   0.00696239  |   0.994445    |                |
+| item_obs[user]_181               | -0.0740749   |  24.541     |  -0.00301842  |   0.997592    |                |
+| item_obs[user]_182               |  0.0782861   |  40.5394    |   0.00193111  |   0.998459    |                |
+| item_obs[user]_183               | -0.0634375   |  34.7348    |  -0.00182634  |   0.998543    |                |
+| item_obs[user]_184               |  0.0908027   |  12.6804    |   0.0071609   |   0.994286    |                |
+| item_obs[user]_185               |  0.0148654   | nan         | nan           | nan           |                |
+| item_obs[user]_186               |  0.0153121   |   7.12636   |   0.00214866  |   0.998286    |                |
+| item_obs[user]_187               |  0.0999311   |  22.8033    |   0.0043823   |   0.996503    |                |
+| item_obs[user]_188               |  0.0924136   | nan         | nan           | nan           |                |
+| item_obs[user]_189               | -0.0313981   | nan         | nan           | nan           |                |
+| item_obs[user]_190               |  0.0985501   |  10.9833    |   0.0089727   |   0.992841    |                |
+| item_obs[user]_191               | -0.0859244   |  36.5846    |  -0.00234865  |   0.998126    |                |
+| item_obs[user]_192               |  0.0940064   | nan         | nan           | nan           |                |
+| item_obs[user]_193               |  0.0832584   |  32.0548    |   0.00259738  |   0.997928    |                |
+| item_obs[user]_194               |  0.100225    | nan         | nan           | nan           |                |
+| item_obs[user]_195               | -0.0909778   |   9.19876   |  -0.00989022  |   0.992109    |                |
+| item_obs[user]_196               | -0.0874979   | nan         | nan           | nan           |                |
+| item_obs[user]_197               | -0.0938457   |  29.175     |  -0.00321665  |   0.997433    |                |
+| item_obs[user]_198               | -0.0937929   |  15.6314    |  -0.00600031  |   0.995212    |                |
+| item_obs[user]_199               |  0.0990231   | nan         | nan           | nan           |                |
+| item_obs[user]_200               | -0.0921627   |  11.5725    |  -0.00796393  |   0.993646    |                |
+| item_obs[user]_201               | -0.0871917   |  23.6936    |  -0.00367996  |   0.997064    |                |
+| item_obs[user]_202               |  0.0933521   | nan         | nan           | nan           |                |
+| item_obs[user]_203               | -0.0949833   | nan         | nan           | nan           |                |
+| item_obs[user]_204               | -0.0959055   | nan         | nan           | nan           |                |
+| item_obs[user]_205               |  0.0117426   | nan         | nan           | nan           |                |
+| item_obs[user]_206               | -0.0963619   |   6.62996   |  -0.0145343   |   0.988404    |                |
+| item_obs[user]_207               |  0.0942454   |  16.5252    |   0.00570314  |   0.99545     |                |
+| item_obs[user]_208               | -0.0993581   | nan         | nan           | nan           |                |
+| item_obs[user]_209               |  0.0948967   |   4.04483   |   0.0234612   |   0.981282    |                |
+| item_obs[user]_210               | -0.0947503   | nan         | nan           | nan           |                |
+| item_obs[user]_211               | -0.0834834   | nan         | nan           | nan           |                |
+| item_obs[user]_212               | -0.0986454   | nan         | nan           | nan           |                |
+| item_obs[user]_213               |  0.0977547   |  17.5796    |   0.00556067  |   0.995563    |                |
+| item_obs[user]_214               | -0.0991265   |  25.6013    |  -0.00387194  |   0.996911    |                |
+| item_obs[user]_215               |  0.0972205   |   3.50911   |   0.0277052   |   0.977897    |                |
+| item_obs[user]_216               |  0.0301802   |  24.2897    |   0.00124251  |   0.999009    |                |
+| item_obs[user]_217               |  0.0561406   |  13.9829    |   0.00401496  |   0.996797    |                |
+| item_obs[user]_218               | -0.098299    |  25.9009    |  -0.0037952   |   0.996972    |                |
+| item_obs[user]_219               | -0.0992086   |  32.7797    |  -0.00302652  |   0.997585    |                |
+| item_obs[user]_220               |  0.0253464   | nan         | nan           | nan           |                |
+| item_obs[user]_221               | -0.100714    |  23.3067    |  -0.00432123  |   0.996552    |                |
+| item_obs[user]_222               | -0.0995028   |  19.086     |  -0.0052134   |   0.99584     |                |
+| item_obs[user]_223               |  0.0961196   | nan         | nan           | nan           |                |
+| item_obs[user]_224               | -0.0984098   | nan         | nan           | nan           |                |
+| item_obs[user]_225               | -0.039659    | nan         | nan           | nan           |                |
+| item_obs[user]_226               | -0.0970929   | nan         | nan           | nan           |                |
+| item_obs[user]_227               | -0.0983761   | nan         | nan           | nan           |                |
+| item_obs[user]_228               | -0.0828517   |  31.4185    |  -0.00263703  |   0.997896    |                |
+| item_obs[user]_229               | -0.0843641   |  14.2476    |  -0.00592128  |   0.995276    |                |
+| item_obs[user]_230               |  0.0902104   | nan         | nan           | nan           |                |
+| item_obs[user]_231               | -0.0994968   |  29.1198    |  -0.00341681  |   0.997274    |                |
+| item_obs[user]_232               |  0.0962286   | nan         | nan           | nan           |                |
+| item_obs[user]_233               | -0.0975643   |  35.3898    |  -0.00275685  |   0.9978      |                |
+| item_obs[user]_234               | -0.09747     | nan         | nan           | nan           |                |
+| item_obs[user]_235               | -0.0976395   | nan         | nan           | nan           |                |
+| item_obs[user]_236               | -0.0871684   | nan         | nan           | nan           |                |
+| item_obs[user]_237               | -0.0422475   | nan         | nan           | nan           |                |
+| item_obs[user]_238               | -0.100429    |  15.8252    |  -0.0063461   |   0.994937    |                |
+| item_obs[user]_239               | -0.0962664   |  44.1614    |  -0.00217988  |   0.998261    |                |
+| item_obs[user]_240               | -0.0874716   | nan         | nan           | nan           |                |
+| item_obs[user]_241               | -0.0550082   | nan         | nan           | nan           |                |
+| item_obs[user]_242               |  0.0942492   |  19.712     |   0.00478131  |   0.996185    |                |
+| item_obs[user]_243               | -0.0925776   | nan         | nan           | nan           |                |
+| item_obs[user]_244               | -0.100297    |  10.4662    |  -0.00958297  |   0.992354    |                |
+| item_obs[user]_245               | -0.0942868   | nan         | nan           | nan           |                |
+| item_obs[user]_246               |  0.0936042   | nan         | nan           | nan           |                |
+| item_obs[user]_247               | -0.0982692   |  41.5473    |  -0.00236524  |   0.998113    |                |
+| item_obs[user]_248               |  0.0904482   | nan         | nan           | nan           |                |
+| item_obs[user]_249               | -0.0960117   | nan         | nan           | nan           |                |
+| item_obs[user]_250               |  0.100448    |  29.5796    |   0.00339585  |   0.997291    |                |
+| item_obs[user]_251               |  0.0970124   | nan         | nan           | nan           |                |
+| item_obs[user]_252               |  0.0957162   | nan         | nan           | nan           |                |
+| item_obs[user]_253               | -0.100491    |   8.99075   |  -0.0111771   |   0.991082    |                |
+| item_obs[user]_254               | -0.000854391 | nan         | nan           | nan           |                |
+| item_obs[user]_255               | -0.0946775   |  16.1911    |  -0.00584749  |   0.995334    |                |
+| item_obs[user]_256               | -0.0970131   | nan         | nan           | nan           |                |
+| item_obs[user]_257               | -0.0529265   |  89.3827    |  -0.000592134 |   0.999528    |                |
+| item_obs[user]_258               |  0.0968852   |  23.193     |   0.00417735  |   0.996667    |                |
+| item_obs[user]_259               |  0.0969059   | nan         | nan           | nan           |                |
+| item_obs[user]_260               |  0.0915281   | nan         | nan           | nan           |                |
+| item_obs[user]_261               | -0.100793    | nan         | nan           | nan           |                |
+| item_obs[user]_262               | -0.0983033   |  51.1771    |  -0.00192084  |   0.998467    |                |
+| item_obs[user]_263               |  0.0977857   | nan         | nan           | nan           |                |
+| item_obs[user]_264               |  0.098056    |  12.0407    |   0.0081437   |   0.993502    |                |
+| item_obs[user]_265               |  0.0912735   | nan         | nan           | nan           |                |
+| item_obs[user]_266               | -0.0979466   |  26.0132    |  -0.00376527  |   0.996996    |                |
+| item_obs[user]_267               | -0.0996658   | nan         | nan           | nan           |                |
+| item_obs[user]_268               |  0.0991034   |  11.0936    |   0.00893336  |   0.992872    |                |
+| item_obs[user]_269               |  0.0929837   | nan         | nan           | nan           |                |
+| item_obs[user]_270               | -0.0987016   |  21.8965    |  -0.00450765  |   0.996403    |                |
+| item_obs[user]_271               | -0.0981278   |  21.354     |  -0.00459529  |   0.996334    |                |
+| item_obs[user]_272               | -0.0974374   | nan         | nan           | nan           |                |
+| item_obs[user]_273               | -0.0984176   | nan         | nan           | nan           |                |
+| item_obs[user]_274               | -0.0997197   |  15.2512    |  -0.00653848  |   0.994783    |                |
+| item_obs[user]_275               |  0.09348     |  35.9393    |   0.00260105  |   0.997925    |                |
+| item_obs[user]_276               | -0.0969642   | nan         | nan           | nan           |                |
+| item_obs[user]_277               | -0.100422    |  40.003     |  -0.00251035  |   0.997997    |                |
+| item_obs[user]_278               | -0.0785515   | nan         | nan           | nan           |                |
+| item_obs[user]_279               |  0.0988289   |  22.1784    |   0.0044561   |   0.996445    |                |
+| item_obs[user]_280               | -0.100634    |  30.8907    |  -0.00325774  |   0.997401    |                |
+| item_obs[user]_281               |  0.0922791   |  47.1989    |   0.00195511  |   0.99844     |                |
+| item_obs[user]_282               | -0.0985925   | nan         | nan           | nan           |                |
+| item_obs[user]_283               | -0.0855048   | 109.686     |  -0.00077954  |   0.999378    |                |
+| item_obs[user]_284               | -0.079503    |   7.65406   |  -0.010387    |   0.991712    |                |
+| item_obs[user]_285               | -0.0951967   | nan         | nan           | nan           |                |
+| item_obs[user]_286               |  0.064595    | nan         | nan           | nan           |                |
+| item_obs[user]_287               |  0.0992524   | nan         | nan           | nan           |                |
+| item_obs[user]_288               | -0.0978423   | nan         | nan           | nan           |                |
+| item_obs[user]_289               | -0.0981954   |   8.2897    |  -0.0118455   |   0.990549    |                |
+| item_obs[user]_290               |  0.0993745   | nan         | nan           | nan           |                |
+| item_obs[user]_291               | -0.0979952   | nan         | nan           | nan           |                |
+| item_obs[user]_292               |  0.0974685   |  37.5531    |   0.00259549  |   0.997929    |                |
+| item_obs[user]_293               |  0.0974931   |  20.8291    |   0.00468061  |   0.996265    |                |
+| item_obs[user]_294               | -0.0967849   |  62.2247    |  -0.00155541  |   0.998759    |                |
+| item_obs[user]_295               | -0.0981366   |   8.26488   |  -0.0118739   |   0.990526    |                |
+| item_obs[user]_296               | -0.00655038  |  12.5499    |  -0.000521946 |   0.999584    |                |
+| item_obs[user]_297               | -0.097014    | nan         | nan           | nan           |                |
+| item_obs[user]_298               | -0.0959909   | nan         | nan           | nan           |                |
+| item_obs[user]_299               | -0.0983391   |   3.06209   |  -0.0321151   |   0.97438     |                |
+| item_obs[user]_300               |  0.0789196   | nan         | nan           | nan           |                |
+| item_obs[user]_301               |  0.0970505   | nan         | nan           | nan           |                |
+| item_obs[user]_302               | -0.0930589   | nan         | nan           | nan           |                |
+| item_obs[user]_303               |  0.0994269   |  60.973     |   0.00163067  |   0.998699    |                |
+| item_obs[user]_304               |  0.0624469   |  30.8561    |   0.00202381  |   0.998385    |                |
+| item_obs[user]_305               |  0.0875897   | nan         | nan           | nan           |                |
+| item_obs[user]_306               |  0.0993594   |  15.1301    |   0.00656701  |   0.99476     |                |
+| item_obs[user]_307               |  0.096207    | nan         | nan           | nan           |                |
+| item_obs[user]_308               | -0.0974722   |  14.7545    |  -0.00660625  |   0.994729    |                |
+| item_obs[user]_309               |  0.0987371   | nan         | nan           | nan           |                |
+| item_obs[user]_310               | -0.098197    |  48.1707    |  -0.00203852  |   0.998373    |                |
+| item_obs[user]_311               |  0.100163    | nan         | nan           | nan           |                |
+| item_obs[user]_312               | -0.0765836   |  11.3691    |  -0.00673609  |   0.994625    |                |
+| item_obs[user]_313               | -0.0992518   |  23.0874    |  -0.00429897  |   0.99657     |                |
+| item_obs[user]_314               |  0.081712    |  20.5884    |   0.00396884  |   0.996833    |                |
+| item_obs[user]_315               |  0.0988516   | nan         | nan           | nan           |                |
+| item_obs[user]_316               |  0.0995762   | nan         | nan           | nan           |                |
+| item_obs[user]_317               |  0.0199967   |   5.69144   |   0.00351346  |   0.997197    |                |
+| item_obs[user]_318               | -0.0811777   |  17.7111    |  -0.00458345  |   0.996343    |                |
+| item_obs[user]_319               |  0.0594883   |  36.3683    |   0.00163572  |   0.998695    |                |
+| item_obs[user]_320               | -0.0706452   | 127.149     |  -0.000555611 |   0.999557    |                |
+| item_obs[user]_321               |  0.0932138   | nan         | nan           | nan           |                |
+| item_obs[user]_322               |  0.0957365   | nan         | nan           | nan           |                |
+| item_obs[user]_323               |  0.0888632   |  15.3586    |   0.0057859   |   0.995384    |                |
+| item_obs[user]_324               |  0.0148378   |  34.7338    |   0.000427185 |   0.999659    |                |
+| item_obs[user]_325               | -0.0959005   |   3.56834   |  -0.0268754   |   0.978559    |                |
+| item_obs[user]_326               | -0.0936275   |  31.0117    |  -0.00301911  |   0.997591    |                |
+| item_obs[user]_327               |  0.094207    |  46.1988    |   0.00203917  |   0.998373    |                |
+| item_obs[user]_328               |  0.0904799   | nan         | nan           | nan           |                |
+| item_obs[user]_329               |  0.00110466  |  21.3344    |   5.17785e-05 |   0.999959    |                |
+| item_obs[user]_330               | -0.088346    | nan         | nan           | nan           |                |
+| item_obs[user]_331               | -0.0946461   |  47.9157    |  -0.00197526  |   0.998424    |                |
+| item_obs[user]_332               |  0.0858891   |  31.448     |   0.00273115  |   0.997821    |                |
+| item_obs[user]_333               |  0.0966716   | nan         | nan           | nan           |                |
+| item_obs[user]_334               | -0.0983847   |  30.7631    |  -0.00319814  |   0.997448    |                |
+| item_obs[user]_335               | -0.0862027   | nan         | nan           | nan           |                |
+| item_obs[user]_336               | -0.0956795   | nan         | nan           | nan           |                |
+| item_obs[user]_337               | -0.084618    |  13.3537    |  -0.00633668  |   0.994944    |                |
+| item_obs[user]_338               | -0.0945352   | nan         | nan           | nan           |                |
+| item_obs[user]_339               |  0.0895445   |  24.7765    |   0.00361409  |   0.997116    |                |
+| item_obs[user]_340               | -0.0967957   |  14.8669    |  -0.0065108   |   0.994805    |                |
+| item_obs[user]_341               | -0.075029    |  36.2511    |  -0.0020697   |   0.998349    |                |
+| item_obs[user]_342               | -0.0974254   |  14.4251    |  -0.00675388  |   0.994611    |                |
+| item_obs[user]_343               |  0.0947823   | nan         | nan           | nan           |                |
+| item_obs[user]_344               | -0.091086    | nan         | nan           | nan           |                |
+| item_obs[user]_345               |  0.0975158   | nan         | nan           | nan           |                |
+| item_obs[user]_346               | -0.0944492   |  52.0876    |  -0.00181328  |   0.998553    |                |
+| item_obs[user]_347               | -0.0646427   |  97.4615    |  -0.000663264 |   0.999471    |                |
+| item_obs[user]_348               |  0.0679354   |  29.6162    |   0.00229386  |   0.99817     |                |
+| item_obs[user]_349               | -0.0968292   |  43.9476    |  -0.00220329  |   0.998242    |                |
+| item_obs[user]_350               |  0.0696103   | nan         | nan           | nan           |                |
+| item_obs[user]_351               |  0.0957686   | nan         | nan           | nan           |                |
+| item_obs[user]_352               | -0.0958262   |  40.836     |  -0.00234661  |   0.998128    |                |
+| item_obs[user]_353               | -0.0935495   |  35.8829    |  -0.00260708  |   0.99792     |                |
+| item_obs[user]_354               |  0.091956    | nan         | nan           | nan           |                |
+| item_obs[user]_355               | -0.0956021   |   4.51372   |  -0.0211803   |   0.983102    |                |
+| item_obs[user]_356               |  0.0924389   | nan         | nan           | nan           |                |
+| item_obs[user]_357               |  0.0922818   |  15.5246    |   0.00594424  |   0.995257    |                |
+| item_obs[user]_358               | -0.0894831   | nan         | nan           | nan           |                |
+| item_obs[user]_359               | -0.0946042   | nan         | nan           | nan           |                |
+| item_obs[user]_360               |  0.100855    | nan         | nan           | nan           |                |
+| item_obs[user]_361               | -0.0978983   |   7.57954   |  -0.0129161   |   0.989695    |                |
+| item_obs[user]_362               | -0.098857    |  10.7598    |  -0.0091876   |   0.992669    |                |
+| item_obs[user]_363               | -0.0956965   |  10.4204    |  -0.00918361  |   0.992673    |                |
+| item_obs[user]_364               | -0.0953318   |  31.3876    |  -0.00303724  |   0.997577    |                |
+| item_obs[user]_365               |  0.0936969   | 100.819     |   0.000929354 |   0.999258    |                |
+| item_obs[user]_366               | -0.0978077   | nan         | nan           | nan           |                |
+| item_obs[user]_367               | -0.030269    | nan         | nan           | nan           |                |
+| item_obs[user]_368               | -0.0949272   |  26.6484    |  -0.00356221  |   0.997158    |                |
+| item_obs[user]_369               |  0.0185981   | nan         | nan           | nan           |                |
+| item_obs[user]_370               |  0.0932242   |  20.08      |   0.00464263  |   0.996296    |                |
+| item_obs[user]_371               |  0.0784275   |  26.7891    |   0.00292758  |   0.997664    |                |
+| item_obs[user]_372               | -0.0946762   |  20.9825    |  -0.00451214  |   0.9964      |                |
+| item_obs[user]_373               |  0.0904542   | nan         | nan           | nan           |                |
+| item_obs[user]_374               | -0.0890081   | nan         | nan           | nan           |                |
+| item_obs[user]_375               |  0.0875345   |  37.3756    |   0.00234202  |   0.998131    |                |
+| item_obs[user]_376               |  0.0971968   |   9.30587   |   0.0104447   |   0.991667    |                |
+| item_obs[user]_377               | -0.0939917   | nan         | nan           | nan           |                |
+| item_obs[user]_378               |  0.0703475   |  19.195     |   0.00366488  |   0.997076    |                |
+| item_obs[user]_379               |  0.0950455   |  45.6899    |   0.00208023  |   0.99834     |                |
+| item_obs[user]_380               |  0.096078    | nan         | nan           | nan           |                |
+| item_obs[user]_381               |  0.071838    |   4.46025   |   0.0161063   |   0.98715     |                |
+| item_obs[user]_382               |  0.0437681   | nan         | nan           | nan           |                |
+| item_obs[user]_383               | -0.0996076   | nan         | nan           | nan           |                |
+| item_obs[user]_384               |  0.0925058   |  78.3725    |   0.00118034  |   0.999058    |                |
+| item_obs[user]_385               | -0.0997655   | nan         | nan           | nan           |                |
+| item_obs[user]_386               |  0.0996641   | nan         | nan           | nan           |                |
+| item_obs[user]_387               | -0.0885556   |   6.50647   |  -0.0136104   |   0.989141    |                |
+| item_obs[user]_388               | -0.0394394   |  18.6329    |  -0.00211665  |   0.998311    |                |
+| item_obs[user]_389               | -0.0888595   | nan         | nan           | nan           |                |
+| item_obs[user]_390               |  0.0815189   | nan         | nan           | nan           |                |
+| item_obs[user]_391               | -0.00675963  | nan         | nan           | nan           |                |
+| item_obs[user]_392               | -0.0914254   | nan         | nan           | nan           |                |
+| item_obs[user]_393               | -0.0311297   |  35.5267    |  -0.000876234 |   0.999301    |                |
+| item_obs[user]_394               |  0.0921635   | nan         | nan           | nan           |                |
+| item_obs[user]_395               |  0.0857765   |  18.9483    |   0.00452688  |   0.996388    |                |
+| item_obs[user]_396               | -0.0943922   |  11.9876    |  -0.00787413  |   0.993717    |                |
+| item_obs[user]_397               |  0.0998388   |  29.0521    |   0.00343655  |   0.997258    |                |
+| item_obs[user]_398               | -0.0955568   |  36.7198    |  -0.00260233  |   0.997924    |                |
+| item_obs[user]_399               |  0.0929876   | nan         | nan           | nan           |                |
+| item_obs[user]_400               | -0.0994204   | nan         | nan           | nan           |                |
+| item_obs[user]_401               |  0.0935985   |  22.8397    |   0.00409806  |   0.99673     |                |
+| item_obs[user]_402               |  0.0935873   |  17.6195    |   0.00531157  |   0.995762    |                |
+| item_obs[user]_403               | -0.00388969  |  39.7795    |  -9.77812e-05 |   0.999922    |                |
+| item_obs[user]_404               | -0.0979633   |   8.70624   |  -0.0112521   |   0.991022    |                |
+| item_obs[user]_405               |  0.0957639   |  28.2247    |   0.00339291  |   0.997293    |                |
+| item_obs[user]_406               | -0.0970069   | nan         | nan           | nan           |                |
+| item_obs[user]_407               |  0.100603    |  43.6991    |   0.00230217  |   0.998163    |                |
+| item_obs[user]_408               |  0.0968577   |  29.672     |   0.00326428  |   0.997395    |                |
+| item_obs[user]_409               |  0.0994124   |  44.7094    |   0.00222352  |   0.998226    |                |
+| item_obs[user]_410               |  0.00833281  | nan         | nan           | nan           |                |
+| item_obs[user]_411               | -0.098528    | nan         | nan           | nan           |                |
+| item_obs[user]_412               | -0.0992177   |  21.6188    |  -0.00458941  |   0.996338    |                |
+| item_obs[user]_413               | -0.0990562   |  15.2129    |  -0.00651134  |   0.994805    |                |
+| item_obs[user]_414               | -0.0967073   |  14.7606    |  -0.00655172  |   0.994773    |                |
+| item_obs[user]_415               |  0.0964948   | nan         | nan           | nan           |                |
+| item_obs[user]_416               | -0.09874     | nan         | nan           | nan           |                |
+| item_obs[user]_417               |  0.0809907   |  55.8453    |   0.00145027  |   0.998843    |                |
+| item_obs[user]_418               | -0.0942727   | nan         | nan           | nan           |                |
+| item_obs[user]_419               | -0.0990881   |  36.3365    |  -0.00272696  |   0.997824    |                |
+| item_obs[user]_420               | -0.0832632   |  13.1282    |  -0.00634233  |   0.99494     |                |
+| item_obs[user]_421               | -0.0844952   | nan         | nan           | nan           |                |
+| item_obs[user]_422               |  0.0872249   |  30.0539    |   0.00290228  |   0.997684    |                |
+| item_obs[user]_423               | -0.0682815   |  37.9265    |  -0.00180036  |   0.998564    |                |
+| item_obs[user]_424               |  0.0951386   |  31.3659    |   0.00303318  |   0.99758     |                |
+| item_obs[user]_425               | -0.09675     | nan         | nan           | nan           |                |
+| item_obs[user]_426               | -0.0964502   |  13.2103    |  -0.00730117  |   0.994175    |                |
+| item_obs[user]_427               | -0.0984184   |  13.0909    |  -0.00751807  |   0.994002    |                |
+| item_obs[user]_428               |  0.0355085   | nan         | nan           | nan           |                |
+| item_obs[user]_429               | -0.0303457   |  71.8596    |  -0.000422291 |   0.999663    |                |
+| item_obs[user]_430               | -0.0989598   | nan         | nan           | nan           |                |
+| item_obs[user]_431               | -0.0950014   |  10.5138    |  -0.00903586  |   0.992791    |                |
+| item_obs[user]_432               |  0.059162    |  19.8895    |   0.00297454  |   0.997627    |                |
+| item_obs[user]_433               |  0.099902    |  26.4907    |   0.00377121  |   0.996991    |                |
+| item_obs[user]_434               | -0.0936469   | nan         | nan           | nan           |                |
+| item_obs[user]_435               | -0.0902371   | nan         | nan           | nan           |                |
+| item_obs[user]_436               | -0.0969874   |  19.8906    |  -0.00487605  |   0.996109    |                |
+| item_obs[user]_437               | -0.0932415   | nan         | nan           | nan           |                |
+| item_obs[user]_438               |  0.0925134   | nan         | nan           | nan           |                |
+| item_obs[user]_439               | -0.0956111   | nan         | nan           | nan           |                |
+| item_obs[user]_440               |  0.0624112   | nan         | nan           | nan           |                |
+| item_obs[user]_441               |  0.0909541   |  19.3149    |   0.00470901  |   0.996243    |                |
+| item_obs[user]_442               |  0.0976485   |   5.79844   |   0.0168405   |   0.986564    |                |
+| item_obs[user]_443               |  0.0999445   | nan         | nan           | nan           |                |
+| item_obs[user]_444               |  0.0954517   |  24.2489    |   0.00393633  |   0.996859    |                |
+| item_obs[user]_445               | -0.0971528   | nan         | nan           | nan           |                |
+| item_obs[user]_446               | -0.0990373   |   5.69325   |  -0.0173956   |   0.986121    |                |
+| item_obs[user]_447               | -0.0932183   |  19.3147    |  -0.00482627  |   0.996149    |                |
+| item_obs[user]_448               | -0.0927753   | nan         | nan           | nan           |                |
+| item_obs[user]_449               |  0.0621279   |  30.3748    |   0.00204538  |   0.998368    |                |
+| item_obs[user]_450               | -0.0809301   | nan         | nan           | nan           |                |
+| item_obs[user]_451               |  0.0994425   |  20.6135    |   0.00482413  |   0.996151    |                |
+| item_obs[user]_452               | -0.00339906  |  44.1701    |  -7.69537e-05 |   0.999939    |                |
+| item_obs[user]_453               |  0.088211    |  19.9226    |   0.00442768  |   0.996467    |                |
+| item_obs[user]_454               |  0.0713015   | nan         | nan           | nan           |                |
+| item_obs[user]_455               | -0.0759135   | nan         | nan           | nan           |                |
+| item_obs[user]_456               |  0.0990266   |  27.8852    |   0.00355122  |   0.997167    |                |
+| item_obs[user]_457               | -0.0117378   | nan         | nan           | nan           |                |
+| item_obs[user]_458               | -0.0961448   | nan         | nan           | nan           |                |
+| item_obs[user]_459               |  0.0831571   | nan         | nan           | nan           |                |
+| item_obs[user]_460               |  0.0912292   |  51.1911    |   0.00178213  |   0.998578    |                |
+| item_obs[user]_461               | -0.0786143   | nan         | nan           | nan           |                |
+| item_obs[user]_462               |  0.086667    |  23.4063    |   0.00370272  |   0.997046    |                |
+| item_obs[user]_463               | -0.0937922   | nan         | nan           | nan           |                |
+| item_obs[user]_464               |  0.0816098   | nan         | nan           | nan           |                |
+| item_obs[user]_465               | -0.092377    | nan         | nan           | nan           |                |
+| item_obs[user]_466               |  0.0829483   | nan         | nan           | nan           |                |
+| item_obs[user]_467               | -0.0526504   |  60.7403    |  -0.000866812 |   0.999308    |                |
+| item_obs[user]_468               |  0.0834334   | nan         | nan           | nan           |                |
+| item_obs[user]_469               | -0.0878659   | nan         | nan           | nan           |                |
+| item_obs[user]_470               |  0.085108    |  11.3149    |   0.00752177  |   0.993999    |                |
+| item_obs[user]_471               | -0.0813613   | nan         | nan           | nan           |                |
+| item_obs[user]_472               | -0.0868949   |  19.8092    |  -0.00438659  |   0.9965      |                |
+| item_obs[user]_473               | -0.0799593   |  20.2317    |  -0.00395218  |   0.996847    |                |
+| item_obs[user]_474               |  0.0792365   |  14.9123    |   0.0053135   |   0.99576     |                |
+| item_obs[user]_475               |  0.0819139   |   9.91519   |   0.00826145  |   0.993408    |                |
+| item_obs[user]_476               |  0.079369    | nan         | nan           | nan           |                |
+| item_obs[user]_477               |  0.0814347   | nan         | nan           | nan           |                |
+| item_obs[user]_478               |  0.0859619   |  10.2074    |   0.00842151  |   0.993281    |                |
+| item_obs[user]_479               | -0.0847155   | nan         | nan           | nan           |                |
+| item_obs[user]_480               |  0.0825994   |  96.9404    |   0.000852064 |   0.99932     |                |
+| item_obs[user]_481               |  0.0700469   |  12.9685    |   0.0054013   |   0.99569     |                |
+| item_obs[user]_482               |  0.0979825   | nan         | nan           | nan           |                |
+| item_obs[user]_483               |  0.0822898   |  19.2019    |   0.00428551  |   0.996581    |                |
+| item_obs[user]_484               | -0.0447001   |  34.3641    |  -0.00130078  |   0.998962    |                |
+| item_obs[user]_485               | -0.0377576   |  20.5678    |  -0.00183576  |   0.998535    |                |
+| item_obs[user]_486               | -0.096818    |  42.0827    |  -0.00230066  |   0.998164    |                |
+| item_obs[user]_487               |  0.0789985   | nan         | nan           | nan           |                |
+| item_obs[user]_488               | -0.0877571   |  17.5541    |  -0.00499923  |   0.996011    |                |
+| item_obs[user]_489               |  0.0851457   | nan         | nan           | nan           |                |
+| item_obs[user]_490               |  0.0856856   |   8.13371   |   0.0105346   |   0.991595    |                |
+| item_obs[user]_491               |  0.0830748   | nan         | nan           | nan           |                |
+| item_obs[user]_492               | -0.0120651   |  75.8833    |  -0.000158995 |   0.999873    |                |
+| item_obs[user]_493               | -0.0706219   | nan         | nan           | nan           |                |
+| item_obs[user]_494               |  0.0812898   | nan         | nan           | nan           |                |
+| item_obs[user]_495               |  0.0884591   |  51.1858    |   0.0017282   |   0.998621    |                |
+| item_obs[user]_496               | -0.000764623 |  17.3882    |  -4.39738e-05 |   0.999965    |                |
+| item_obs[user]_497               | -0.0763722   | nan         | nan           | nan           |                |
+| item_obs[user]_498               | -0.0622482   |  57.0773    |  -0.00109059  |   0.99913     |                |
+| item_obs[user]_499               |  0.0959818   | nan         | nan           | nan           |                |
+| item_obs[user]_500               |  0.0780311   |  13.5996    |   0.00573776  |   0.995422    |                |
+| item_obs[user]_501               |  0.0965235   | nan         | nan           | nan           |                |
+| item_obs[user]_502               | -0.0960972   | nan         | nan           | nan           |                |
+| item_obs[user]_503               |  0.0890833   | nan         | nan           | nan           |                |
+| item_obs[user]_504               | -0.0988816   |  25.2671    |  -0.00391345  |   0.996878    |                |
+| item_obs[user]_505               |  0.0779958   |  43.1736    |   0.00180656  |   0.998559    |                |
+| item_obs[user]_506               | -0.0838996   | nan         | nan           | nan           |                |
+| item_obs[user]_507               | -0.0823245   | nan         | nan           | nan           |                |
+| item_obs[user]_508               | -0.0856427   | nan         | nan           | nan           |                |
+| item_obs[user]_509               |  0.0850381   |  10.2073    |   0.00833112  |   0.993353    |                |
+| item_obs[user]_510               |  0.0801802   |  15.8546    |   0.00505723  |   0.995965    |                |
+| item_obs[user]_511               |  0.0894666   | nan         | nan           | nan           |                |
+| item_obs[user]_512               |  0.09686     |  11.4213    |   0.00848068  |   0.993233    |                |
+| item_obs[user]_513               | -0.101392    | 112.293     |  -0.000902922 |   0.99928     |                |
+| item_obs[user]_514               |  0.101387    |  92.6231    |   0.00109462  |   0.999127    |                |
+| item_obs[user]_515               | -0.0944149   |  11.5269    |  -0.00819082  |   0.993465    |                |
+| item_obs[user]_516               | -0.0550151   | nan         | nan           | nan           |                |
+| item_obs[user]_517               | -0.094628    |  24.6297    |  -0.00384203  |   0.996935    |                |
+| item_obs[user]_518               |  0.0907541   |  21.556     |   0.00421017  |   0.996641    |                |
+| item_obs[user]_519               | -0.0512732   | nan         | nan           | nan           |                |
+| item_obs[user]_520               | -0.0961344   |  20.3319    |  -0.00472827  |   0.996227    |                |
+| item_obs[user]_521               | -0.046617    | nan         | nan           | nan           |                |
+| item_obs[user]_522               |  0.096604    | nan         | nan           | nan           |                |
+| item_obs[user]_523               |  0.0946415   | nan         | nan           | nan           |                |
+| item_obs[user]_524               | -0.0979703   | nan         | nan           | nan           |                |
+| item_obs[user]_525               |  0.101373    |  40.7102    |   0.00249012  |   0.998013    |                |
+| item_obs[user]_526               | -0.09886     | nan         | nan           | nan           |                |
+| item_obs[user]_527               |  0.0971182   |  12.7973    |   0.00758894  |   0.993945    |                |
+| item_obs[user]_528               | -0.10131     | nan         | nan           | nan           |                |
+| item_obs[user]_529               |  0.0974968   | nan         | nan           | nan           |                |
+| item_obs[user]_530               |  0.0966032   | nan         | nan           | nan           |                |
+| item_obs[user]_531               | -0.0222043   | nan         | nan           | nan           |                |
+| item_obs[user]_532               | -0.100382    |  28.1908    |  -0.00356081  |   0.997159    |                |
+| item_obs[user]_533               |  0.0988351   |  19.4841    |   0.00507261  |   0.995953    |                |
+| item_obs[user]_534               | -0.0996468   | nan         | nan           | nan           |                |
+| item_obs[user]_535               |  0.0220482   | nan         | nan           | nan           |                |
+| item_obs[user]_536               |  0.0993891   |  27.55      |   0.00360759  |   0.997122    |                |
+| item_obs[user]_537               |  0.101127    | nan         | nan           | nan           |                |
+| item_obs[user]_538               |  0.0659058   | nan         | nan           | nan           |                |
+| item_obs[user]_539               | -0.100557    |  53.8734    |  -0.00186654  |   0.998511    |                |
+| item_obs[user]_540               | -0.100945    |  27.2811    |  -0.00370018  |   0.997048    |                |
+| item_obs[user]_541               | -0.100976    |   6.00068   |  -0.0168274   |   0.986574    |                |
+| item_obs[user]_542               | -0.0994133   |  26.806     |  -0.00370863  |   0.997041    |                |
+| item_obs[user]_543               |  0.0998101   |  47.2879    |   0.00211069  |   0.998316    |                |
+| item_obs[user]_544               | -0.100968    | nan         | nan           | nan           |                |
+| item_obs[user]_545               |  0.0904308   |  26.676     |   0.00338997  |   0.997295    |                |
+| item_obs[user]_546               | -0.0977851   | nan         | nan           | nan           |                |
+| item_obs[user]_547               | -0.101204    | nan         | nan           | nan           |                |
+| item_obs[user]_548               | -0.091354    | nan         | nan           | nan           |                |
+| item_obs[user]_549               | -0.0920535   | nan         | nan           | nan           |                |
+| item_obs[user]_550               |  0.0936059   | nan         | nan           | nan           |                |
+| item_obs[user]_551               | -0.00462256  | nan         | nan           | nan           |                |
+| item_obs[user]_552               |  0.0985385   | nan         | nan           | nan           |                |
+| item_obs[user]_553               | -0.0995969   |  86.588     |  -0.00115024  |   0.999082    |                |
+| item_obs[user]_554               | -0.0993786   | nan         | nan           | nan           |                |
+| item_obs[user]_555               | -0.100863    |  21.6456    |  -0.00465977  |   0.996282    |                |
+| item_obs[user]_556               |  0.0455634   | nan         | nan           | nan           |                |
+| item_obs[user]_557               | -0.0602423   |  90.3012    |  -0.000667126 |   0.999468    |                |
+| item_obs[user]_558               | -0.100872    | nan         | nan           | nan           |                |
+| item_obs[user]_559               | -0.098416    | nan         | nan           | nan           |                |
+| item_obs[user]_560               |  0.0946484   | nan         | nan           | nan           |                |
+| item_obs[user]_561               |  0.101381    | nan         | nan           | nan           |                |
+| item_obs[user]_562               | -0.0972952   |  34.1918    |  -0.00284557  |   0.99773     |                |
+| item_obs[user]_563               | -0.0954583   | nan         | nan           | nan           |                |
+| item_obs[user]_564               | -0.0615614   |  23.7913    |  -0.00258756  |   0.997935    |                |
+| item_obs[user]_565               | -0.0972221   | nan         | nan           | nan           |                |
+| item_obs[user]_566               |  0.0968082   | nan         | nan           | nan           |                |
+| item_obs[user]_567               | -0.0986948   | nan         | nan           | nan           |                |
+| item_obs[user]_568               |  0.0729944   |  16.1102    |   0.00453095  |   0.996385    |                |
+| item_obs[user]_569               |  0.0956325   |  75.9917    |   0.00125846  |   0.998996    |                |
+| item_obs[user]_570               |  0.100028    |  18.0383    |   0.00554533  |   0.995575    |                |
+| item_obs[user]_571               |  0.101555    | nan         | nan           | nan           |                |
+| item_obs[user]_572               |  0.0990644   |  66.289     |   0.00149443  |   0.998808    |                |
+| item_obs[user]_573               | -0.0996809   |  16.4579    |  -0.00605673  |   0.995167    |                |
+| item_obs[user]_574               | -0.100842    | nan         | nan           | nan           |                |
+| item_obs[user]_575               | -0.0973879   |  14.9075    |  -0.00653282  |   0.994788    |                |
+| item_obs[user]_576               | -0.100981    | 207.749     |  -0.000486071 |   0.999612    |                |
+| item_obs[user]_577               |  0.0736564   | nan         | nan           | nan           |                |
+| item_obs[user]_578               |  0.0971491   | nan         | nan           | nan           |                |
+| item_obs[user]_579               |  0.100339    |   9.64719   |   0.0104009   |   0.991701    |                |
+| item_obs[user]_580               | -0.0286677   | nan         | nan           | nan           |                |
+| item_obs[user]_581               | -0.0804997   |  10.7311    |  -0.00750155  |   0.994015    |                |
+| item_obs[user]_582               | -0.0941832   | nan         | nan           | nan           |                |
+| item_obs[user]_583               |  0.0954553   | nan         | nan           | nan           |                |
+| item_obs[user]_584               |  0.0969549   |   7.95363   |   0.01219     |   0.990274    |                |
+| item_obs[user]_585               | -0.0316282   |   6.77455   |  -0.00466867  |   0.996275    |                |
+| item_obs[user]_586               | -0.0978867   | nan         | nan           | nan           |                |
+| item_obs[user]_587               | -0.0880501   | nan         | nan           | nan           |                |
+| item_obs[user]_588               |  0.0954066   |  38.8982    |   0.00245273  |   0.998043    |                |
+| item_obs[user]_589               | -0.0273292   |  18.6961    |  -0.00146176  |   0.998834    |                |
+| item_obs[user]_590               | -0.0663264   |  25.0619    |  -0.0026465   |   0.997888    |                |
+| item_obs[user]_591               | -0.0978446   |  13.0446    |  -0.0075008   |   0.994015    |                |
+| item_obs[user]_592               | -0.094629    | nan         | nan           | nan           |                |
+| item_obs[user]_593               | -0.0973843   | nan         | nan           | nan           |                |
+| item_obs[user]_594               | -0.08807     |  12.54      |  -0.00702312  |   0.994396    |                |
+| item_obs[user]_595               |  0.000126938 | nan         | nan           | nan           |                |
+| item_obs[user]_596               | -0.0937052   |   7.72741   |  -0.0121263   |   0.990325    |                |
+| item_obs[user]_597               | -0.093032    |  52.6126    |  -0.00176825  |   0.998589    |                |
+| item_obs[user]_598               |  0.087314    |   4.23278   |   0.020628    |   0.983542    |                |
+| item_obs[user]_599               |  0.0906963   |  12.3998    |   0.00731431  |   0.994164    |                |
+| item_obs[user]_600               | -0.0879108   | nan         | nan           | nan           |                |
+| item_obs[user]_601               | -0.0428856   | nan         | nan           | nan           |                |
+| item_obs[user]_602               | -0.0921108   | nan         | nan           | nan           |                |
+| item_obs[user]_603               |  0.073359    |  52.1726    |   0.00140608  |   0.998878    |                |
+| item_obs[user]_604               |  0.0728731   |   7.48711   |   0.00973315  |   0.992234    |                |
+| item_obs[user]_605               | -0.0972289   |  25.1176    |  -0.00387094  |   0.996911    |                |
+| item_obs[user]_606               |  0.089037    |  19.2986    |   0.00461366  |   0.996319    |                |
+| item_obs[user]_607               |  0.0868189   |  78.4711    |   0.00110638  |   0.999117    |                |
+| item_obs[user]_608               | -0.0923796   |   5.70752   |  -0.0161856   |   0.987086    |                |
+| item_obs[user]_609               | -0.0946419   | nan         | nan           | nan           |                |
+| item_obs[user]_610               |  0.0921649   |   7.65234   |   0.012044    |   0.990391    |                |
+| item_obs[user]_611               | -0.0922693   | nan         | nan           | nan           |                |
+| item_obs[user]_612               |  0.0979111   | nan         | nan           | nan           |                |
+| item_obs[user]_613               |  0.0979093   | nan         | nan           | nan           |                |
+| item_obs[user]_614               | -0.100505    | nan         | nan           | nan           |                |
+| item_obs[user]_615               | -0.0935866   | nan         | nan           | nan           |                |
+| item_obs[user]_616               | -0.101036    |  11.2001    |  -0.00902098  |   0.992802    |                |
+| item_obs[user]_617               | -0.0834687   |  16.6885    |  -0.00500157  |   0.996009    |                |
+| item_obs[user]_618               | -0.0551828   | nan         | nan           | nan           |                |
+| item_obs[user]_619               | -0.0905586   | nan         | nan           | nan           |                |
+| item_obs[user]_620               | -0.0637796   | nan         | nan           | nan           |                |
+| item_obs[user]_621               |  0.0985965   |  56.6959    |   0.00173904  |   0.998612    |                |
+| item_obs[user]_622               |  0.0359899   | nan         | nan           | nan           |                |
+| item_obs[user]_623               |  0.0991734   | nan         | nan           | nan           |                |
+| item_obs[user]_624               | -0.0697729   |  25.4716    |  -0.00273925  |   0.997814    |                |
+| item_obs[user]_625               | -0.0617766   |  24.8065    |  -0.00249034  |   0.998013    |                |
+| item_obs[user]_626               |  0.0910757   |  27.072     |   0.0033642   |   0.997316    |                |
+| item_obs[user]_627               |  0.101418    |  58.0109    |   0.00174825  |   0.998605    |                |
+| item_obs[user]_628               | -0.0961346   | nan         | nan           | nan           |                |
+| item_obs[user]_629               |  0.094964    |   7.48973   |   0.0126792   |   0.989884    |                |
+| item_obs[user]_630               | -0.0970363   | nan         | nan           | nan           |                |
+| item_obs[user]_631               |  0.0919417   | nan         | nan           | nan           |                |
+| item_obs[user]_632               |  0.0605234   |  18.7139    |   0.00323414  |   0.99742     |                |
+| item_obs[user]_633               | -0.0904889   |  44.1136    |  -0.00205127  |   0.998363    |                |
+| item_obs[user]_634               | -0.0814091   | nan         | nan           | nan           |                |
+| item_obs[user]_635               |  0.0901025   |  40.7631    |   0.00221039  |   0.998236    |                |
+| item_obs[user]_636               |  0.0846401   | nan         | nan           | nan           |                |
+| item_obs[user]_637               |  0.0866962   |  20.7103    |   0.00418613  |   0.99666     |                |
+| item_obs[user]_638               |  0.0730155   | nan         | nan           | nan           |                |
+| item_obs[user]_639               | -0.0374388   |  76.4471    |  -0.000489735 |   0.999609    |                |
+| useritem_obs[constant]_0         | -2.19513     | nan         | nan           | nan           |                |
+| useritem_obs[constant]_1         | -0.0450221   |   5.51083   |  -0.00816975  |   0.993482    |                |
+| useritem_obs[constant]_2         |  0.335328    | nan         | nan           | nan           |                |
+| useritem_obs[constant]_3         |  0.222887    |   8.65038   |   0.0257662   |   0.979444    |                |
+| useritem_obs[constant]_4         |  0.749399    | nan         | nan           | nan           |                |
+| useritem_obs[constant]_5         |  0.113332    | nan         | nan           | nan           |                |
+| useritem_obs[constant]_6         | -0.19438     | nan         | nan           | nan           |                |
+| useritem_obs[constant]_7         | -0.608253    | nan         | nan           | nan           |                |
+| useritem_obs[constant]_8         | -0.938155    |   4.00518   |  -0.234236    |   0.814802    |                |
+| useritem_obs[constant]_9         |  0.442151    | nan         | nan           | nan           |                |
+| useritem_obs[constant]_10        |  0.941669    | nan         | nan           | nan           |                |
+| useritem_obs[constant]_11        |  0.92923     |  12.0349    |   0.0772115   |   0.938455    |                |
+| useritem_obs[constant]_12        | -1.79719     |  14.5266    |  -0.123717    |   0.901539    |                |
+| useritem_obs[constant]_13        | -2.44433     | nan         | nan           | nan           |                |
+| useritem_obs[constant]_14        | -1.80492     |   1.72967   |  -1.04351     |   0.296713    |                |
+| useritem_obs[constant]_15        |  0.294402    |  10.9838    |   0.0268033   |   0.978617    |                |
+| useritem_obs[constant]_16        |  0.325979    | nan         | nan           | nan           |                |
+| useritem_obs[constant]_17        | -0.927703    |  14.3181    |  -0.0647922   |   0.948339    |                |
+| useritem_obs[constant]_18        |  0.644161    |   4.20224   |   0.15329     |   0.87817     |                |
+| useritem_obs[constant]_19        |  0.566723    | nan         | nan           | nan           |                |
+| useritem_obs[constant]_20        | -0.0449253   | nan         | nan           | nan           |                |
+| useritem_obs[constant]_21        |  0.515094    |  15.1087    |   0.0340925   |   0.972803    |                |
+| useritem_obs[constant]_22        | -0.73947     |   7.51922   |  -0.0983439   |   0.921659    |                |
+| useritem_obs[constant]_23        |  1.77285     |   6.26404   |   0.283019    |   0.777162    |                |
+| useritem_obs[constant]_24        |  1.48855     |  13.3312    |   0.111659    |   0.911094    |                |
+| useritem_obs[constant]_25        | -0.589749    | nan         | nan           | nan           |                |
+| useritem_obs[constant]_26        | -0.189601    | nan         | nan           | nan           |                |
+| useritem_obs[constant]_27        | -1.58579     |  22.8557    |  -0.0693824   |   0.944685    |                |
+| useritem_obs[constant]_28        |  1.63166     | nan         | nan           | nan           |                |
+| useritem_obs[constant]_29        |  0.834129    | nan         | nan           | nan           |                |
+| useritem_obs[constant]_30        |  0.245165    |  14.8609    |   0.0164973   |   0.986838    |                |
+| useritem_obs[constant]_31        | -1.21305     |  13.5542    |  -0.0894957   |   0.928688    |                |
+| session_obs[item]_0              |  0.068609    |   0.0575214 |   1.19276     |   0.232965    |                |
+| session_obs[item]_1              |  0.0943611   |   0.0569426 |   1.65713     |   0.0974938   |                |
+| session_obs[item]_2              |  0.10083     |   0.0597371 |   1.68789     |   0.0914315   |                |
+| session_obs[item]_3              | -0.0830204   |   0.0582709 |  -1.42473     |   0.154235    |                |
+| session_obs[item]_4              | -0.0681213   |   0.0617401 |  -1.10336     |   0.269873    |                |
+| session_obs[item]_5              | -0.0285107   |   0.0595629 |  -0.478665    |   0.632177    |                |
+| session_obs[item]_6              | -0.0703343   |   0.0618407 |  -1.13735     |   0.255393    |                |
+| session_obs[item]_7              | -0.091474    |   0.0561316 |  -1.62964     |   0.103178    |                |
+| session_obs[item]_8              | -0.00161236  |   0.0584364 |  -0.0275917   |   0.977988    |                |
+| session_obs[item]_9              | -0.101113    |   0.0557252 |  -1.8145      |   0.0696007   |                |
+| session_obs[item]_10             |  0.0998974   |   0.059756  |   1.67176     |   0.0945726   |                |
+| session_obs[item]_11             |  0.0992974   |   0.0580802 |   1.70966     |   0.0873287   |                |
+| session_obs[item]_12             |  0.0687278   |   0.0615169 |   1.11722     |   0.263901    |                |
+| session_obs[item]_13             |  0.0993844   |   0.0609478 |   1.63065     |   0.102964    |                |
+| session_obs[item]_14             |  0.0950583   |   0.0647747 |   1.46752     |   0.142234    |                |
+| session_obs[item]_15             | -0.0906975   |   0.0621541 |  -1.45924     |   0.1445      |                |
+| session_obs[item]_16             |  0.100648    |   0.0630845 |   1.59544     |   0.110613    |                |
+| session_obs[item]_17             |  0.0970964   |   0.0571602 |   1.69867     |   0.0893813   |                |
+| session_obs[item]_18             | -0.0139554   |   0.0603362 |  -0.231293    |   0.817087    |                |
+| session_obs[item]_19             |  0.099739    |   0.0575703 |   1.73247     |   0.0831891   |                |
+| session_obs[item]_20             | -0.0737882   |   0.0598032 |  -1.23385     |   0.217258    |                |
+| session_obs[item]_21             | -0.0996387   |   0.0595788 |  -1.67238     |   0.0944485   |                |
+| session_obs[item]_22             | -0.0899075   |   0.0595985 |  -1.50855     |   0.131413    |                |
+| session_obs[item]_23             |  0.0723293   |   0.0592888 |   1.21995     |   0.222484    |                |
+| session_obs[item]_24             | -0.0981705   |   0.0633841 |  -1.54882     |   0.121425    |                |
+| session_obs[item]_25             |  0.0222866   |   0.0617213 |   0.361084    |   0.718037    |                |
+| session_obs[item]_26             |  0.0727327   |   0.064012  |   1.13624     |   0.255858    |                |
+| session_obs[item]_27             |  0.0981871   |   0.0596296 |   1.64662     |   0.0996369   |                |
+| session_obs[item]_28             | -0.0962339   |   0.061448  |  -1.5661      |   0.117324    |                |
+| session_obs[item]_29             | -0.0938598   |   0.0576089 |  -1.62926     |   0.103259    |                |
+| price_obs[constant]_0            | -1.3209      |   0.032758  | -40.3231      |   0           | ***            |
+| price_obs[constant]_1            | -0.0466729   |   0.024418  |  -1.91141     |   0.0559515   |                |
+| price_obs[constant]_2            |  1.6281      |   0.0371453 |  43.8305      |   0           | ***            |
+| price_obs[constant]_3            |  0.328977    |   0.0241234 |  13.6373      |   0           | ***            |
+| price_obs[constant]_4            | -0.437104    |   0.0250135 | -17.4747      |   0           | ***            |
+| price_obs[constant]_5            |  0.3052      |   0.0235386 |  12.9659      |   0           | ***            |
+| price_obs[constant]_6            |  1.03763     |   0.0299154 |  34.6855      |   0           | ***            |
+| price_obs[constant]_7            |  1.00561     |   0.0297657 |  33.784       |   0           | ***            |
+| price_obs[constant]_8            | -0.507221    |   0.0256846 | -19.748       |   0           | ***            |
+| price_obs[constant]_9            |  0.215656    |   0.0228565 |   9.43519     |   0           | ***            |
+| price_obs[constant]_10           | -1.17904     |   0.0317257 | -37.1636      |   0           | ***            |
+| price_obs[constant]_11           |  0.871396    |   0.0287952 |  30.2619      |   0           | ***            |
+| usersessionitem_obs[constant]_0  | -0.0973257   |   0.0230575 |  -4.221       |   2.43223e-05 | ***            |
+| usersessionitem_obs[constant]_1  | -1.25702     |   0.0319555 | -39.3367      |   0           | ***            |
+| usersessionitem_obs[constant]_2  |  1.17756     |   0.03094   |  38.0595      |   0           | ***            |
+| usersessionitem_obs[constant]_3  | -0.6465      |   0.0256232 | -25.231       |   0           | ***            |
+| usersessionitem_obs[constant]_4  |  0.203393    |   0.023352  |   8.70989     |   0           | ***            |
+| usersessionitem_obs[constant]_5  | -0.314032    |   0.0235116 | -13.3565      |   0           | ***            |
+| usersessionitem_obs[constant]_6  | -0.427146    |   0.0243446 | -17.5458      |   0           | ***            |
+| usersessionitem_obs[constant]_7  | -1.22026     |   0.0317813 | -38.3956      |   0           | ***            |
+| usersessionitem_obs[constant]_8  | -0.356615    |   0.0239962 | -14.8613      |   0           | ***            |
+| usersessionitem_obs[constant]_9  | -1.5531      |   0.0353216 | -43.9703      |   0           | ***            |
+| usersessionitem_obs[constant]_10 | -0.994266    |   0.0288841 | -34.4226      |   0           | ***            |
+| usersessionitem_obs[constant]_11 |  1.0114      |   0.0291006 |  34.7554      |   0           | ***            |
+| usersessionitem_obs[constant]_12 |  1.65349     |   0.0375474 |  44.0373      |   0           | ***            |
+| usersessionitem_obs[constant]_13 | -0.331221    |   0.0243139 | -13.6227      |   0           | ***            |
+| usersessionitem_obs[constant]_14 |  2.49692     |   0.0490014 |  50.9562      |   0           | ***            |
+| usersessionitem_obs[constant]_15 |  0.121984    |   0.0237004 |   5.14692     |   2.64804e-07 | ***            |
+| intercept[item]_0                |  0.0222749   |   8.51919   |   0.00261468  |   0.997914    |                |
+| intercept[item]_1                | -0.0889155   |  13.2526    |  -0.0067093   |   0.994647    |                |
+| intercept[item]_2                | -0.0932965   | nan         | nan           | nan           |                |
+Significance codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+Time taken: 12.200577974319458
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>
+</code></pre></div>
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.ed9748b7.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

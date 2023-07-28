@@ -11,6 +11,7 @@ nav:
     - Conditional Logit Model: conditional_logit_model_mode_canada.md
     - Nested Logit Model: nested_logit_model_house_cooling.md
     - Post Estimation: post_estimation_demos.md
+    - Coefficient Initialization: coefficient_initialization.md
     - Related Projects: projects.md
     - Compatibility Tests: test.md
     - API Reference Torch-Choice: api_torch_choice.md

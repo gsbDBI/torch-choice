@@ -22,6 +22,18 @@ from torch_choice.data import ChoiceDataset, JointDataset, utils, load_mode_cana
 from torch_choice.model import ConditionalLogitModel, NestedLogitModel
 ```
 
+
+```python
+torch_choice.__version__
+```
+
+
+
+
+    '1.0.3'
+
+
+
 # Data Structure
 
 
@@ -277,8 +289,11 @@ num_sessions = 500
 
 user_obs = torch.randn(num_users, 128)
 item_obs = torch.randn(num_items, 64)
+useritem_obs = torch.randn(num_users, num_items, 32)
 session_obs = torch.randn(num_sessions, 10)
 itemsession_obs = torch.randn(num_sessions, num_items, 12)
+usersessionitem_obs = torch.randn(num_users, num_sessions, num_items, 8)
+
 item_index = torch.LongTensor(np.random.choice(num_items, size=N))
 user_index = torch.LongTensor(np.random.choice(num_users, size=N))
 session_index = torch.LongTensor(np.random.choice(num_sessions, size=N))
@@ -290,7 +305,7 @@ dataset = ChoiceDataset(
     # optional:
     user_index=user_index, session_index=session_index, item_availability=item_availability,
     # observable tensors are supplied as keyword arguments with special prefixes.
-    user_obs=user_obs, item_obs=item_obs, session_obs=session_obs, itemsession_obs=itemsession_obs)
+    user_obs=user_obs, item_obs=item_obs, useritem_obs=useritem_obs, session_obs=session_obs, itemsession_obs=itemsession_obs, usersessionitem_obs=usersessionitem_obs)
 ```
 
 
@@ -298,7 +313,7 @@ dataset = ChoiceDataset(
 print(dataset)
 ```
 
-    ChoiceDataset(label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], itemsession_obs=[500, 4, 12], device=cpu)
+    ChoiceDataset(label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], useritem_obs=[10, 4, 32], session_obs=[500, 10], itemsession_obs=[500, 4, 12], usersessionitem_obs=[10, 500, 4, 8], device=cpu)
 
 
 ## Functionalities of the Choice Dataset
@@ -337,9 +352,9 @@ print(dataset.item_index[:10])
 # tensor([2, 2, 3, 1, 3, 2, 2, 1, 0, 1])
 ```
 
-    tensor([1, 2, 0, 0, 3, 0, 3, 1, 0, 2])
+    tensor([0, 1, 3, 1, 2, 0, 3, 2, 3, 1])
     tensor([99., 99., 99., 99., 99., 99., 99., 99., 99., 99.])
-    tensor([1, 2, 0, 0, 3, 0, 3, 1, 0, 2])
+    tensor([0, 1, 3, 1, 2, 0, 3, 2, 3, 1])
 
 
 
@@ -354,28 +369,27 @@ print(f'{dataset.user_index.device=:}')
 print(f'{dataset.session_index.device=:}')
 # dataset.session_index.device=cpu
 
-dataset = dataset.to('cuda')
 
-print(f'{dataset.device=:}')
-# dataset.device=cuda:0
-print(f'{dataset.item_index.device=:}')
-# dataset.item_index.device=cuda:0
-print(f'{dataset.user_index.device=:}')
-# dataset.user_index.device=cuda:0
-print(f'{dataset.session_index.device=:}')
-# dataset.session_index.device=cuda:0
+if torch.cuda.is_available():
+    # please note that this can only be demonstrated 
+    dataset = dataset.to('cuda')
 
-dataset._check_device_consistency()
+    print(f'{dataset.device=:}')
+    # dataset.device=cuda:0
+    print(f'{dataset.item_index.device=:}')
+    # dataset.item_index.device=cuda:0
+    print(f'{dataset.user_index.device=:}')
+    # dataset.user_index.device=cuda:0
+    print(f'{dataset.session_index.device=:}')
+    # dataset.session_index.device=cuda:0
+
+    dataset._check_device_consistency()
 ```
 
     dataset.device=cpu
     dataset.device=cpu
     dataset.user_index.device=cpu
     dataset.session_index.device=cpu
-    dataset.device=cuda:0
-    dataset.item_index.device=cuda:0
-    dataset.user_index.device=cuda:0
-    dataset.session_index.device=cuda:0
 
 
 
@@ -389,8 +403,10 @@ print_dict_shape(dataset.x_dict)
 
     dict.user_obs.shape=torch.Size([10000, 4, 128])
     dict.item_obs.shape=torch.Size([10000, 4, 64])
+    dict.useritem_obs.shape=torch.Size([10000, 4, 32])
     dict.session_obs.shape=torch.Size([10000, 4, 10])
     dict.itemsession_obs.shape=torch.Size([10000, 4, 12])
+    dict.usersessionitem_obs.shape=torch.Size([10000, 4, 8])
 
 
 
@@ -408,9 +424,9 @@ print(subset)
 # ChoiceDataset(label=[], item_index=[5], user_index=[5], session_index=[5], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], price_obs=[500, 4, 12], device=cpu)
 ```
 
-    tensor([1865, 6236, 4548, 5486, 1771])
-    ChoiceDataset(label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], itemsession_obs=[500, 4, 12], device=cpu)
-    ChoiceDataset(label=[], item_index=[5], user_index=[5], session_index=[5], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], itemsession_obs=[500, 4, 12], device=cpu)
+    tensor([6419, 3349, 6741, 3078, 6424])
+    ChoiceDataset(label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], useritem_obs=[10, 4, 32], session_obs=[500, 10], itemsession_obs=[500, 4, 12], usersessionitem_obs=[10, 500, 4, 8], device=cpu)
+    ChoiceDataset(label=[], item_index=[5], user_index=[5], session_index=[5], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], useritem_obs=[10, 4, 32], session_obs=[500, 10], itemsession_obs=[500, 4, 12], usersessionitem_obs=[10, 500, 4, 8], device=cpu)
 
 
 
@@ -428,10 +444,10 @@ print(dataset.item_index[indices])
 # tensor([0, 1, 0, 0, 0])
 ```
 
-    tensor([1, 1, 2, 2, 2])
-    tensor([1, 1, 2, 2, 2])
-    tensor([2, 2, 3, 3, 3])
-    tensor([1, 1, 2, 2, 2])
+    tensor([2, 1, 1, 0, 0])
+    tensor([2, 1, 1, 0, 0])
+    tensor([3, 2, 2, 1, 1])
+    tensor([2, 1, 1, 0, 0])
 
 
 
@@ -448,10 +464,10 @@ print(dataset.item_obs[0, 0])
 # tensor(-1.5811)
 ```
 
-    tensor(-0.6857)
-    tensor(-0.6857)
-    tensor(0.3143)
-    tensor(-0.6857)
+    tensor(0.1007)
+    tensor(0.1007)
+    tensor(1.1007)
+    tensor(0.1007)
 
 
 
@@ -463,8 +479,8 @@ print(id(dataset.item_index[indices]))
 # these two are different objects in memory.
 ```
 
-    139766186199856
-    139766186203856
+    11458049504
+    11458562704
 
 
 ## Chaining Multiple Datasets with JointDataset
@@ -481,8 +497,8 @@ print(joint_dataset)
 ```
 
     JointDataset with 2 sub-datasets: (
-    	item: ChoiceDataset(label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], itemsession_obs=[500, 4, 12], device=cpu)
-    	nest: ChoiceDataset(label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], itemsession_obs=[500, 4, 12], device=cpu)
+    	item: ChoiceDataset(label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], useritem_obs=[10, 4, 32], session_obs=[500, 10], itemsession_obs=[500, 4, 12], usersessionitem_obs=[10, 500, 4, 8], device=cpu)
+    	nest: ChoiceDataset(label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], useritem_obs=[10, 4, 32], session_obs=[500, 10], itemsession_obs=[500, 4, 12], usersessionitem_obs=[10, 500, 4, 8], device=cpu)
     )
 
 
@@ -552,8 +568,10 @@ print_dict_shape(dataset.x_dict)
 
     dict.user_obs.shape=torch.Size([10000, 4, 128])
     dict.item_obs.shape=torch.Size([10000, 4, 64])
+    dict.useritem_obs.shape=torch.Size([10000, 4, 32])
     dict.session_obs.shape=torch.Size([10000, 4, 10])
     dict.itemsession_obs.shape=torch.Size([10000, 4, 12])
+    dict.usersessionitem_obs.shape=torch.Size([10000, 4, 8])
 
 
 
@@ -634,19 +652,10 @@ from torch_choice import run
 run(model, dataset, batch_size=-1, learning_rate=0.01, num_epochs=1000, model_optimizer="LBFGS")
 ```
 
-    GPU available: True (cuda), used: False
+    GPU available: True (mps), used: False
     TPU available: False, using: 0 TPU cores
     IPU available: False, using: 0 IPUs
     HPU available: False, using: 0 HPUs
-    
-      | Name  | Type                  | Params
-    ------------------------------------------------
-    0 | model | ConditionalLogitModel | 13    
-    ------------------------------------------------
-    13        Trainable params
-    0         Non-trainable params
-    13        Total params
-    0.000     Total estimated model params size (MB)
 
 
     ==================== model received ====================
@@ -666,38 +675,48 @@ run(model, dataset, batch_size=-1, learning_rate=0.01, num_epochs=1000, model_op
     X[intercept[item]] with 1 parameters, with item level variation.
     device=cpu
     ==================== data set received ====================
-    [Train dataset] ChoiceDataset(label=[], item_index=[2779], user_index=[], session_index=[2779], item_availability=[], itemsession_cost_freq_ovt=[2779, 4, 3], session_income=[2779, 1], itemsession_ivt=[2779, 4, 1], device=cuda:0)
+    [Train dataset] ChoiceDataset(label=[], item_index=[2779], user_index=[], session_index=[2779], item_availability=[], itemsession_cost_freq_ovt=[2779, 4, 3], session_income=[2779, 1], itemsession_ivt=[2779, 4, 1], device=cpu)
     [Validation dataset] None
     [Test dataset] None
 
 
+    
+      | Name  | Type                  | Params
+    ------------------------------------------------
+    0 | model | ConditionalLogitModel | 13    
+    ------------------------------------------------
+    13        Trainable params
+    0         Non-trainable params
+    13        Total params
+    0.000     Total estimated model params size (MB)
 
-    Training: 0it [00:00, ?it/s]
 
+    Epoch 999: 100%|██████████| 1/1 [00:00<00:00, 107.14it/s, loss=1.88e+03, v_num=45]
 
     `Trainer.fit` stopped: `max_epochs=1000` reached.
 
 
-    Time taken for training: 23.79274034500122
+    Epoch 999: 100%|██████████| 1/1 [00:00<00:00, 98.73it/s, loss=1.88e+03, v_num=45] 
+    Time taken for training: 18.987757921218872
     Skip testing, no test dataset is provided.
     ==================== model results ====================
-    Log-likelihood: [Training] -1874.63623046875, [Validation] N/A, [Test] N/A
+    Log-likelihood: [Training] -1874.63818359375, [Validation] N/A, [Test] N/A
     
-    | Coefficient                           |   Estimation |   Std. Err. |       z-value |    Pr(>|z|) | Significance   |
-    |:--------------------------------------|-------------:|------------:|--------------:|------------:|:---------------|
-    | itemsession_cost_freq_ovt[constant]_0 | -0.0372827   |  0.00709507 |  -5.25473     | 1.48243e-07 | ***            |
-    | itemsession_cost_freq_ovt[constant]_1 |  0.0934419   |  0.00509598 |  18.3364      | 0           | ***            |
-    | itemsession_cost_freq_ovt[constant]_2 | -0.0427658   |  0.00322177 | -13.274       | 0           | ***            |
-    | session_income[item]_0                | -0.0862181   |  0.0183006  |  -4.71123     | 2.46226e-06 | ***            |
-    | session_income[item]_1                | -0.0269176   |  0.00384876 |  -6.99383     | 2.67497e-12 | ***            |
-    | session_income[item]_2                | -0.0370536   |  0.0040631  |  -9.11952     | 0           | ***            |
-    | itemsession_ivt[item-full]_0          |  0.0593798   |  0.0100866  |   5.88698     | 3.93307e-09 | ***            |
-    | itemsession_ivt[item-full]_1          | -0.00634217  |  0.0042797  |  -1.48192     | 0.138361    |                |
-    | itemsession_ivt[item-full]_2          | -0.00583443  |  0.00189438 |  -3.07986     | 0.00207095  | **             |
-    | itemsession_ivt[item-full]_3          | -0.00137758  |  0.00118694 |  -1.16061     | 0.245801    |                |
-    | intercept[item]_0                     | -1.91536e-07 |  1.26821    |  -1.51029e-07 | 1           |                |
-    | intercept[item]_1                     |  1.32858     |  0.703745   |   1.88787     | 0.0590437   |                |
-    | intercept[item]_2                     |  2.82011     |  0.618218   |   4.56167     | 5.07483e-06 | ***            |
+    | Coefficient                           |   Estimation |   Std. Err. |      z-value |    Pr(>|z|) | Significance   |
+    |:--------------------------------------|-------------:|------------:|-------------:|------------:|:---------------|
+    | itemsession_cost_freq_ovt[constant]_0 | -0.0372949   |  0.00709483 |  -5.25663    | 1.46723e-07 | ***            |
+    | itemsession_cost_freq_ovt[constant]_1 |  0.0934485   |  0.00509605 |  18.3374     | 0           | ***            |
+    | itemsession_cost_freq_ovt[constant]_2 | -0.0427757   |  0.00322198 | -13.2762     | 0           | ***            |
+    | session_income[item]_0                | -0.0862389   |  0.0183019  |  -4.71202    | 2.4527e-06  | ***            |
+    | session_income[item]_1                | -0.0269126   |  0.00384874 |  -6.99258    | 2.69873e-12 | ***            |
+    | session_income[item]_2                | -0.0370584   |  0.00406312 |  -9.12069    | 0           | ***            |
+    | itemsession_ivt[item-full]_0          |  0.0593796   |  0.0100867  |   5.88689    | 3.93536e-09 | ***            |
+    | itemsession_ivt[item-full]_1          | -0.00634707  |  0.0042809  |  -1.48265    | 0.138168    |                |
+    | itemsession_ivt[item-full]_2          | -0.00583223  |  0.00189433 |  -3.07879    | 0.00207844  | **             |
+    | itemsession_ivt[item-full]_3          | -0.00137813  |  0.00118697 |  -1.16105    | 0.245622    |                |
+    | intercept[item]_0                     | -9.98532e-09 |  1.26823    |  -7.8734e-09 | 1           |                |
+    | intercept[item]_1                     |  1.32592     |  0.703708   |   1.88419    | 0.0595399   |                |
+    | intercept[item]_2                     |  2.8192      |  0.618182   |   4.56047    | 5.10383e-06 | ***            |
     Significance codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 
@@ -727,14 +746,9 @@ run(model, dataset, batch_size=-1, learning_rate=0.01, num_epochs=1000, model_op
 ! tensorboard --logdir ./lightning_logs --port 6006
 ```
 
-    2023-05-14 21:27:08.325570: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX512F AVX512_VNNI
-    To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
-    2023-05-14 21:27:08.389919: I tensorflow/core/util/port.cc:104] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
-    2023-05-14 21:27:09.137097: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:981] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
-    2023-05-14 21:27:09.184401: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:981] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
-    2023-05-14 21:27:09.185605: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:981] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+    TensorFlow installation not found - running with reduced feature set.
     Serving TensorBoard on localhost; to expose to the network, use a proxy or pass --bind_all
-    TensorBoard 2.11.0 at http://localhost:6006/ (Press CTRL+C to quit)
+    TensorBoard 2.12.1 at http://localhost:6006/ (Press CTRL+C to quit)
     ^C
 
 
