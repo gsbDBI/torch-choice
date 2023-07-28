@@ -5,7 +5,8 @@ Implementation of the nested logit model, see page 86 of the book
 Author: Tianyu Du
 Update; Apr. 7, 2023
 """
-from typing import Dict, List, Optional
+from copy import deepcopy
+from typing import Dict, List, Optional, Union
 
 import torch
 import torch.nn as nn
@@ -31,7 +32,9 @@ class NestedLogitModel(nn.Module):
                  num_users: Optional[int]=None,
                  shared_lambda: bool=False,
                  regularization: Optional[str]=None,
-                 regularization_weight: Optional[float]=None
+                 regularization_weight: Optional[float]=None,
+                 nest_weight_initialization: Optional[Union[str, Dict[str, str]]]=None,
+                 item_weight_initialization: Optional[Union[str, Dict[str, str]]]=None
                  ) -> None:
         """Initialization method of the nested logit model.
 
@@ -85,6 +88,9 @@ class NestedLogitModel(nn.Module):
                 This term controls the strength of regularization. This argument is required if and only if regularization
                 is not None.
                 Defaults to None.
+
+            {nest, item}_weight_initialization (Optional[Union[str, Dict[str, str]]]): methods to initialize the weights of
+                coefficients for {nest, item} level model. Please refer to the `weight_initialization` keyword in ConditionalLogitModel's documentation for more details.
         """
         # handle nest level model.
         using_formula_to_initiate = (item_formula is not None) and (nest_formula is not None)
@@ -125,12 +131,14 @@ class NestedLogitModel(nn.Module):
         # nest coefficients.
         self.nest_coef_dict = self._build_coef_dict(self.nest_coef_variation_dict,
                                                     self.nest_num_param_dict,
-                                                    self.num_nests)
+                                                    self.num_nests,
+                                                    weight_initialization=deepcopy(nest_weight_initialization))
 
         # item coefficients.
         self.item_coef_dict = self._build_coef_dict(self.item_coef_variation_dict,
                                                     self.item_num_param_dict,
-                                                    self.num_items)
+                                                    self.num_items,
+                                                    weight_initialization=deepcopy(item_weight_initialization))
 
         self.shared_lambda = shared_lambda
         if self.shared_lambda:
@@ -164,7 +172,9 @@ class NestedLogitModel(nn.Module):
     def _build_coef_dict(self,
                          coef_variation_dict: Dict[str, str],
                          num_param_dict: Dict[str, int],
-                         num_items: int) -> nn.ModuleDict:
+                         num_items: int,
+                         weight_initialization: Optional[Union[str, Dict[str, str]]]=None
+                         ) -> nn.ModuleDict:
         """Builds a coefficient dictionary containing all trainable components of the model, mapping coefficient names
             to the corresponding Coefficient Module.
             num_items could be the actual number of items or the number of nests depends on the use case.
@@ -184,10 +194,23 @@ class NestedLogitModel(nn.Module):
         coef_dict = dict()
         for var_type, variation in coef_variation_dict.items():
             num_params = num_param_dict[var_type]
+
+            if isinstance(weight_initialization, dict):
+                if var_type.split('[')[0] in weight_initialization.keys():
+                    # use the variable-specific initialization if provided.
+                    init = weight_initialization[var_type.split('[')[0]]
+                else:
+                    # use default initialization.
+                    init = None
+            else:
+                # initialize all coefficients in the same way.
+                init = weight_initialization
+
             coef_dict[var_type] = Coefficient(variation=variation,
                                               num_items=num_items,
                                               num_users=self.num_users,
-                                              num_params=num_params)
+                                              num_params=num_params,
+                                              init=init)
         return nn.ModuleDict(coef_dict)
 
 

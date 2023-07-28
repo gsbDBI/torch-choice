@@ -6,7 +6,7 @@ Update: Apr. 10, 2023
 """
 import warnings
 from copy import deepcopy
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 
 import torch
 import torch.nn as nn
@@ -47,7 +47,8 @@ class ConditionalLogitModel(nn.Module):
                  num_items: Optional[int]=None,
                  num_users: Optional[int]=None,
                  regularization: Optional[str]=None,
-                 regularization_weight: Optional[float]=None
+                 regularization_weight: Optional[float]=None,
+                 weight_initialization: Optional[Union[str, Dict[str, str]]]=None
                  ) -> None:
         """
         Args:
@@ -100,6 +101,11 @@ class ConditionalLogitModel(nn.Module):
                 This term controls the strength of regularization. This argument is required if and only if regularization
                 is not None.
                 Defaults to None.
+            weight_initialization (Optional[Union[str, Dict[str, str]]]): controls for how coefficients are initialized;
+                users can pass a string from {'normal', 'uniform', 'zero'} to initialize all coefficients in the same way.
+                Alternatively, users can pass a dictionary with keys exactly the same as the `coef_variation_dict` dictionary,
+                and values from {'normal', 'uniform', 'zero'} to initialize coefficients of different types of variables differently.
+                By default, all coefficients are initialized following a standard normal distribution.
         """
         # ==============================================================================================================
         # Check that the model received a valid combination of inputs so that it can be initialized.
@@ -148,7 +154,7 @@ class ConditionalLogitModel(nn.Module):
         self.num_items = num_items
         self.num_users = num_users
 
-        self.regularization = regularization
+        self.regularization = deepcopy(regularization)
         assert self.regularization in ['L1', 'L2', None], f"Provided regularization={self.regularization} is not allowed, allowed values are ['L1', 'L2', None]."
         self.regularization_weight = regularization_weight
         if (self.regularization is not None) and (self.regularization_weight is None):
@@ -166,13 +172,28 @@ class ConditionalLogitModel(nn.Module):
                 warnings.warn(f"`{variable}` key found in coef_variation_dict but not in num_param_dict, num_param_dict['{variable}'] has been set to 1.")
                 self.num_param_dict[variable] = 1
 
+        # inform coefficients their ways of being initialized.
+        self.weight_initialization = deepcopy(weight_initialization)
+
         # construct trainable parameters.
         coef_dict = dict()
         for var_type, variation in self.coef_variation_dict.items():
+            if isinstance(self.weight_initialization, dict):
+                if var_type.split('[')[0] in self.weight_initialization.keys():
+                    # use the variable-specific initialization if provided.
+                    init = self.weight_initialization[var_type.split('[')[0]]
+                else:
+                    # use default initialization.
+                    init = None
+            else:
+                # initialize all coefficients in the same way.
+                init = self.weight_initialization
+
             coef_dict[var_type] = Coefficient(variation=variation,
                                               num_items=self.num_items,
                                               num_users=self.num_users,
-                                              num_params=self.num_param_dict[var_type])
+                                              num_params=self.num_param_dict[var_type],
+                                              init=init)
         # A ModuleDict is required to properly register all trainable parameters.
         # self.parameter() will fail if a python dictionary is used instead.
         self.coef_dict = nn.ModuleDict(coef_dict)

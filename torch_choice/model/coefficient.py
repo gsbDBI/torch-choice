@@ -20,7 +20,8 @@ class Coefficient(nn.Module):
                  variation: str,
                  num_params: int,
                  num_items: Optional[int]=None,
-                 num_users: Optional[int]=None
+                 num_users: Optional[int]=None,
+                 init: Optional[str]=None
                  ) -> None:
         """A generic coefficient object storing trainable parameters. This class corresponds to those variables typically
         in Greek letters in the model's utility representation.
@@ -38,35 +39,47 @@ class Coefficient(nn.Module):
             num_items (int): the number of items in the prediction problem, this is required to reshape the parameter correctly.
             num_users (Optional[int], optional): number of users, this is only necessary if the coefficient varies by users.
                 Defaults to None.
+            init (Optional[str], optional): the initialization method for the coefficient. Currently, we support zero initialization, standard normal distribution, and uniform distribution. By default, the coefficient is initialized using standard normal distribution.
         """
         super(Coefficient, self).__init__()
         self.variation = variation
         self.num_items = num_items
         self.num_users = num_users
         self.num_params = num_params
+        self.init = init
+        # create initialization function.
+        str_to_init_func = {'zero': torch.zeros,
+                            'uniform': torch.rand,
+                            'normal': torch.randn,
+                            None: torch.randn # default initialization is standard normal distribution.
+                            }
+        if self.init in str_to_init_func:
+            init_func = str_to_init_func[self.init]  # retrieve the initialization function.
+        else:
+            raise ValueError(f"Unsupported initialization method: {self.init}, supported methods are {list(str_to_init_func.keys())}")
 
         # construct the trainable.
         if self.variation == 'constant':
             # constant for all users and items.
-            self.coef = nn.Parameter(torch.randn(num_params), requires_grad=True)
+            self.coef = nn.Parameter(init_func(num_params), requires_grad=True)
         elif self.variation == 'item':
             # coef depends on item j but not on user i.
             # force coefficients for the first item class to be zero.
-            self.coef = nn.Parameter(torch.zeros(num_items - 1, num_params), requires_grad=True)
+            self.coef = nn.Parameter(init_func(num_items - 1, num_params), requires_grad=True)
         elif self.variation == 'item-full':
             # coef depends on item j but not on user i.
             # model coefficient for every item.
-            self.coef = nn.Parameter(torch.zeros(num_items, num_params), requires_grad=True)
+            self.coef = nn.Parameter(init_func(num_items, num_params), requires_grad=True)
         elif self.variation == 'user':
             # coef depends on the user.
             # we always model coefficient for all users.
-            self.coef = nn.Parameter(torch.zeros(num_users, num_params), requires_grad=True)
+            self.coef = nn.Parameter(init_func(num_users, num_params), requires_grad=True)
         elif self.variation == 'user-item':
             # coefficients of the first item is forced to be zero, model coefficients for N - 1 items only.
-            self.coef = nn.Parameter(torch.zeros(num_users, num_items - 1, num_params), requires_grad=True)
+            self.coef = nn.Parameter(init_func(num_users, num_items - 1, num_params), requires_grad=True)
         elif self.variation == 'user-item-full':
             # construct coefficients for every items.
-            self.coef = nn.Parameter(torch.zeros(num_users, num_items, num_params), requires_grad=True)
+            self.coef = nn.Parameter(init_func(num_users, num_items, num_params), requires_grad=True)
         else:
             raise ValueError(f'Unsupported type of variation: {self.variation}.')
 
@@ -78,7 +91,7 @@ class Coefficient(nn.Module):
         """
         return f'Coefficient(variation={self.variation}, num_items={self.num_items},' \
                + f' num_users={self.num_users}, num_params={self.num_params},' \
-               + f' {self.coef.numel()} trainable parameters in total, device={self.device}).'
+               + f" {self.coef.numel()} trainable parameters in total, initialization={self.init if self.init is not None else 'normal'}, device={self.device})."
 
     @property
     def device(self) ->torch.device:
