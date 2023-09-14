@@ -239,15 +239,6 @@ class ChoiceDataset(torch.utils.data.Dataset):
             # infer the number of sessions from session_index.
             return len(torch.unique(self.session_index))
 
-        # if self.session_index is None:
-        #     return 1
-
-        # for key, val in self.__dict__.items():
-        #     if torch.is_tensor(val):
-        #         if self._is_session_attribute(key) or self._is_price_attribute(key):
-        #             return val.shape[0]
-        # return 1
-
     @property
     def x_dict(self) -> Dict[object, torch.Tensor]:
         """Formats attributes of in this dataset into shape (num_sessions, num_items, num_params) and returns in a dictionary format.
