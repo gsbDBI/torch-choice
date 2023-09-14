@@ -18,6 +18,7 @@ class ChoiceDataset(torch.utils.data.Dataset):
                  item_index: torch.LongTensor,
                  num_items: int = None,
                  num_users: int = None,
+                 num_sessions: int = None,
                  label: Optional[torch.LongTensor] = None,
                  user_index: Optional[torch.LongTensor] = None,
                  session_index: Optional[torch.LongTensor] = None,
@@ -46,6 +47,8 @@ class ChoiceDataset(torch.utils.data.Dataset):
             num_items (Optional[int]): the number of items in the dataset. If `None` is provided (default), the number of items will be inferred from the number of unique numbers in `item_index`.
 
             num_users (Optional[int]): the number of users in the dataset. If `None` is provided (default), the number of users will be inferred from the number of unique numbers in `user_index`.
+
+            num_sessions (Optional[int]): the number of sessions in the dataset. If `None` is provided (default), the number of sessions will be inferred from the number of unique numbers in `session_index`.
 
             label (Optional[torch.LongTensor], optional): a tensor of shape (batch_size) indicating the label for prediction in
                 each choice instance. While you want to predict the item bought, you can leave the `label` argument
@@ -97,6 +100,7 @@ class ChoiceDataset(torch.utils.data.Dataset):
         self.item_index = item_index
         self._num_items = num_items
         self._num_users = num_users
+        self._num_sessions = num_sessions
 
         self.user_index = user_index
         self.session_index = session_index
@@ -148,7 +152,13 @@ class ChoiceDataset(torch.utils.data.Dataset):
                     new_dict[key] = val.clone()
                 else:
                     new_dict[key] = copy.deepcopy(val)
-        return self._from_dict(new_dict)
+
+        subset = self._from_dict(new_dict)
+        # make sure the new dataset inherits the num_sessions, num_items, and num_users from parent.
+        subset._num_users = self.num_users
+        subset._num_items = self.num_items
+        subset._num_sessions = self.num_sessions
+        return subset
 
     def __len__(self) -> int:
         """Returns number of samples in this dataset.
@@ -201,12 +211,6 @@ class ChoiceDataset(torch.utils.data.Dataset):
         else:
             return 1
 
-        # for key, val in self.__dict__.items():
-        #     if torch.is_tensor(val):
-        #         if self._is_user_attribute(key) or self._is_taste_attribute(key):
-        #             return val.shape[0]
-        # return 1
-
     @property
     def num_items(self) -> int:
         """Returns the number of items involved in this dataset.
@@ -221,14 +225,6 @@ class ChoiceDataset(torch.utils.data.Dataset):
             # infer the number of items from item_index.
             return len(torch.unique(self.item_index))
 
-        # for key, val in self.__dict__.items():
-        #     if torch.is_tensor(val):
-        #         if self._is_item_attribute(key):
-        #             return val.shape[0]
-        #         elif self._is_taste_attribute(key) or self._is_price_attribute(key):
-        #             return val.shape[1]
-        # return 1
-
     @property
     def num_sessions(self) -> int:
         """Returns the number of sessions involved in this dataset.
@@ -236,7 +232,12 @@ class ChoiceDataset(torch.utils.data.Dataset):
         Returns:
             int: the number of sessions involved in this dataset.
         """
-        return len(torch.unique(self.session_index))
+        if self._num_sessions is not None:
+            # return the _num_sessions provided in the constructor.
+            return self._num_sessions
+        else:
+            # infer the number of sessions from session_index.
+            return len(torch.unique(self.session_index))
 
         # if self.session_index is None:
         #     return 1
