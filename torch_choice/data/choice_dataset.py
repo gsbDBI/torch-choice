@@ -239,15 +239,6 @@ class ChoiceDataset(torch.utils.data.Dataset):
             # infer the number of sessions from session_index.
             return len(torch.unique(self.session_index))
 
-        # if self.session_index is None:
-        #     return 1
-
-        # for key, val in self.__dict__.items():
-        #     if torch.is_tensor(val):
-        #         if self._is_session_attribute(key) or self._is_price_attribute(key):
-        #             return val.shape[0]
-        # return 1
-
     @property
     def x_dict(self) -> Dict[object, torch.Tensor]:
         """Formats attributes of in this dataset into shape (num_sessions, num_items, num_params) and returns in a dictionary format.
@@ -379,7 +370,7 @@ class ChoiceDataset(torch.utils.data.Dataset):
 
     @staticmethod
     def _is_useritem_attribute(key: str) -> bool:
-        return key.startswith('useritem_')
+        return key.startswith('useritem_') or key.startswith('itemuser_')
 
     @staticmethod
     def _is_session_attribute(key: str) -> bool:
@@ -387,11 +378,13 @@ class ChoiceDataset(torch.utils.data.Dataset):
 
     @staticmethod
     def _is_price_attribute(key: str) -> bool:
-        return key.startswith('price_') or key.startswith('itemsession_')
+        return key.startswith('price_') or key.startswith('itemsession_') or key.startswith('sessionitem_')
 
     @staticmethod
     def _is_usersessionitem_attribute(key: str) -> bool:
-        return key.startswith('usersessionitem_')
+        return key.startswith('usersessionitem_') or key.startswith('useritemsession_') \
+            or key.startswith('itemusersession_') or key.startswith('itemsessionuser_') \
+            or key.startswith('sessionuseritem_') or key.startswith('sessionitemuser_')
 
     def _is_attribute(self, key: str) -> bool:
         return self._is_item_attribute(key) \
@@ -400,7 +393,6 @@ class ChoiceDataset(torch.utils.data.Dataset):
             or self._is_session_attribute(key) \
             or self._is_price_attribute(key) \
             or self._is_usersessionitem_attribute(key)
-
 
     def _expand_tensor(self, key: str, val: torch.Tensor) -> torch.Tensor:
         """Expands attribute tensor to (len(self), num_items, num_params) shape for prediction tasks, this method
