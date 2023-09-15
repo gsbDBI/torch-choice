@@ -311,7 +311,11 @@ class ChoiceDataset(torch.utils.data.Dataset):
                 dictionary[k] = v.clone()
             else:
                 dictionary[k] = copy.deepcopy(v)
-        return self.__class__._from_dict(dictionary)
+        new = self.__class__._from_dict(dictionary)
+        new._num_users = self.num_users
+        new._num_items = self.num_items
+        new._num_sessions = self.num_sessions
+        return new
 
     def _check_device_consistency(self) -> None:
         """Checks if all tensors in this dataset are on the same device.
