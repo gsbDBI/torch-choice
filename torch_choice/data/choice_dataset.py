@@ -311,7 +311,11 @@ class ChoiceDataset(torch.utils.data.Dataset):
                 dictionary[k] = v.clone()
             else:
                 dictionary[k] = copy.deepcopy(v)
-        return self.__class__._from_dict(dictionary)
+        new = self.__class__._from_dict(dictionary)
+        new._num_users = self.num_users
+        new._num_items = self.num_items
+        new._num_sessions = self.num_sessions
+        return new
 
     def _check_device_consistency(self) -> None:
         """Checks if all tensors in this dataset are on the same device.
@@ -369,16 +373,20 @@ class ChoiceDataset(torch.utils.data.Dataset):
         return key.startswith('user_') and (key != 'user_index')
 
     @staticmethod
-    def _is_useritem_attribute(key: str) -> bool:
-        return key.startswith('useritem_') or key.startswith('itemuser_')
-
-    @staticmethod
     def _is_session_attribute(key: str) -> bool:
         return key.startswith('session_') and (key != 'session_index')
 
     @staticmethod
+    def _is_useritem_attribute(key: str) -> bool:
+        return key.startswith('useritem_') or key.startswith('itemuser_')
+
+    @staticmethod
     def _is_price_attribute(key: str) -> bool:
         return key.startswith('price_') or key.startswith('itemsession_') or key.startswith('sessionitem_')
+
+    @staticmethod
+    def _is_usersession_attribute(key: str) -> bool:
+        return key.startswith('usersession_') or key.startswith('sessionuser_')
 
     @staticmethod
     def _is_usersessionitem_attribute(key: str) -> bool:
@@ -389,9 +397,10 @@ class ChoiceDataset(torch.utils.data.Dataset):
     def _is_attribute(self, key: str) -> bool:
         return self._is_item_attribute(key) \
             or self._is_user_attribute(key) \
-            or self._is_useritem_attribute(key) \
             or self._is_session_attribute(key) \
+            or self._is_useritem_attribute(key) \
             or self._is_price_attribute(key) \
+            or self._is_usersession_attribute(key) \
             or self._is_usersessionitem_attribute(key)
 
     def _expand_tensor(self, key: str, val: torch.Tensor) -> torch.Tensor:
@@ -428,12 +437,13 @@ class ChoiceDataset(torch.utils.data.Dataset):
             # session_attribute (num_sessions, *)
             out = val[self.session_index, :].view(
                 len(self), 1, num_params).expand(-1, self.num_items, -1)
-        # elif self._is_taste_attribute(key):
-        #     # taste_attribute (num_users, num_items, *)
-        #     out = val[self.user_index, :, :]
         elif self._is_price_attribute(key):
             # price_attribute (num_sessions, num_items, *)
             out = val[self.session_index, :, :]
+        elif self._is_usersession_attribute(key):
+            # user-session (num_users, num_sessions, *)
+            out = val[self.user_index, self.session_index, :]  # (len(self), *)
+            out = out.view(len(self), 1, num_params).expand(-1, self.num_items, -1)  # (len(self), num_items, *)
         elif self._is_usersessionitem_attribute(key):
             # usersessionitem_attribute has shape (num_users, num_sessions, num_items, *)
             out = val[self.user_index, self.session_index, :, :]  # (len(self), num_items, *)
@@ -490,7 +500,7 @@ class ChoiceDataset(torch.utils.data.Dataset):
             if self._is_attribute(key) and torch.is_tensor(item):
                 summary.append("Observable Tensor '{}' with shape {}".format(key, item.shape))
                 # price attributes are 3-dimensional tensors, ignore  for cleanness here.
-                if (not self._is_price_attribute(key)) and (not self._is_usersessionitem_attribute(key)) and (not self._is_useritem_attribute(key)):
+                if (not self._is_price_attribute(key)) and (not self._is_usersessionitem_attribute(key)) and (not self._is_useritem_attribute(key)) and (not self._is_usersession_attribute(key)):
                     summary.append(str(pd.DataFrame(item.to('cpu').float().numpy()).describe()))
         print('\n'.join(summary) + f"\ndevice={self.device}")
         return None
