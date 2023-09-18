@@ -359,7 +359,7 @@ class ChoiceDataset(torch.utils.data.Dataset):
         """
         # don't print shapes of internal attributes like _num_users and _num_items.
         info = [f'{key}={self._size_repr(item)}' for key, item in self.__dict__.items() if not key.startswith('_')]
-        return f"{self.__class__.__name__}({', '.join(info)}, device={self.device})"
+        return f"{self.__class__.__name__}(num_items={self.num_items}, num_users={self.num_users}, num_sessions={self.num_sessions}, {', '.join(info)}, device={self.device})"
 
     # ==================================================================================================================
     # methods for checking attribute categories.
