@@ -210,3 +210,18 @@ Then,
 This is a classic problem used for exposition in Computer Science to motivate various Machine Learning models. There is no concept of a user in this setup. Our package allows for models of this nature and is fully usable for Machine Learning problems with added flexibility over [scikit-learn logistic regression](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html)
  -->
 We highly recommend users to go through [tutorials](https://github.com/gsbDBI/torch-choice/blob/main/tutorials) we prepared to get a better understanding of what the package offers. We present multiple examples, and for each case we specify the utility form.
+
+## Reproducibility
+The `torch-choice` package is built upon several dependencies that introduce randomness, you would need to fix random seeds for these packages for reproducibility:
+
+```python
+import random
+import numpy as np
+import torch
+
+SEED = 12345
+random.seed(SEED)
+np.random.seed(SEED)
+torch.manual_seed(SEED)
+torch.use_deterministic_algorithms(True)
+```
