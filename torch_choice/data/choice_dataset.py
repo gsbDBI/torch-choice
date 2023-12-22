@@ -452,7 +452,7 @@ class ChoiceDataset(torch.utils.data.Dataset):
         else:
             raise ValueError(f'Warning: the input key {key} is not an attribute of the dataset, will NOT modify the provided tensor.')
 
-        assert out.shape == (len(self), self.num_items, num_params), f'Error: the output shape {out.shape} is not correct.'
+        assert out.shape == (len(self), self.num_items, num_params), f'Error: the output shape {out.shape} is not correct, expected: {(len(self), self.num_items, num_params)}.'
         return out
 
     @staticmethod
