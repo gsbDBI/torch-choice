@@ -301,7 +301,7 @@ class NestedLogitModel(nn.Module):
             Y += coef(item_x_dict[corresponding_observable], user_index)
 
         if item_availability is not None:
-            Y[~item_availability] =torch.finfo(Y.dtype).min / 2
+            Y[~item_availability] = torch.finfo(Y.dtype).min / 2
 
         # =============================================================================
         # compute the inclusive value of each nest.
