@@ -223,7 +223,8 @@ class ChoiceDataset(torch.utils.data.Dataset):
             return self._num_items
         else:
             # infer the number of items from item_index.
-            return len(torch.unique(self.item_index))
+            # the -1 is an optional special symbol for outside option, do not count it towards the number of items.
+            return len(torch.unique(self.item_index[self.item_index != -1]))
 
     @property
     def num_sessions(self) -> int:
@@ -451,7 +452,7 @@ class ChoiceDataset(torch.utils.data.Dataset):
         else:
             raise ValueError(f'Warning: the input key {key} is not an attribute of the dataset, will NOT modify the provided tensor.')
 
-        assert out.shape == (len(self), self.num_items, num_params)
+        assert out.shape == (len(self), self.num_items, num_params), f'Error: the output shape {out.shape} is not correct.'
         return out
 
     @staticmethod
