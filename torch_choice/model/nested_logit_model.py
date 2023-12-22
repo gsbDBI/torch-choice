@@ -34,7 +34,8 @@ class NestedLogitModel(nn.Module):
                  regularization: Optional[str]=None,
                  regularization_weight: Optional[float]=None,
                  nest_weight_initialization: Optional[Union[str, Dict[str, str]]]=None,
-                 item_weight_initialization: Optional[Union[str, Dict[str, str]]]=None
+                 item_weight_initialization: Optional[Union[str, Dict[str, str]]]=None,
+                 model_outside_option: Optional[bool]=False
                  ) -> None:
         """Initialization method of the nested logit model.
 
@@ -91,6 +92,12 @@ class NestedLogitModel(nn.Module):
 
             {nest, item}_weight_initialization (Optional[Union[str, Dict[str, str]]]): methods to initialize the weights of
                 coefficients for {nest, item} level model. Please refer to the `weight_initialization` keyword in ConditionalLogitModel's documentation for more details.
+
+            model_outside_option (Optional[bool]): whether to explicitly model the outside option (i.e., the consumer did not buy anything).
+                To enable modeling outside option, the outside option is indicated by `item_index[n] == -1` in the item-index-tensor.
+                In this case, the item-index-tensor can contain values in `{-1, 0, 1, ..., num_items-1}`.
+                Otherwise, if the outside option is not modelled, the item-index-tensor should only contain values in `{0, 1, ..., num_items-1}`.
+                By default, model_outside_option is set to False and the model does not model the outside option.
         """
         # handle nest level model.
         using_formula_to_initiate = (item_formula is not None) and (nest_formula is not None)
@@ -157,6 +164,8 @@ class NestedLogitModel(nn.Module):
             raise ValueError(f'You specified regularization type {self.regularization} without providing regularization_weight.')
         if (self.regularization is None) and (self.regularization_weight is not None):
             raise ValueError(f'You specified no regularization but you provide regularization_weight={self.regularization_weight}, you should leave regularization_weight as None if you do not want to regularize the model.')
+
+        self.model_outside_option = model_outside_option
 
     @property
     def num_params(self) -> int:
@@ -321,6 +330,13 @@ class NestedLogitModel(nn.Module):
         # logP_item[t, i] = log P(ni|Bk), where Bk is the nest item i is in, n is the user in trip t.
         logP_item = Y - I  # (T, num_items)
 
+        if self.model_outside_option:
+            # if the model explicitly models the outside option, we need to add a column of zeros to logP_item.
+            # log P(ni|Bk) = 0 for the outside option since Y = 0 and the outside option has its own nest.
+            logP_item = torch.cat((logP_item, torch.zeros(T, 1).to(device)), dim=1)
+            assert logP_item.shape == (T, self.num_items+1)
+            assert torch.all(logP_item[:, -1] == 0)
+
         # =============================================================================
         # logP_nest[t, i] = log P(Bk), for item i in trip t, the probability of choosing the nest/bucket
         # item i belongs to. logP_nest has shape (T, num_items)
@@ -331,6 +347,12 @@ class NestedLogitModel(nn.Module):
             logit[:, Bk] = (W[:, k] + self.lambdas[k] * inclusive_value[k]).view(-1, 1)  # (T, |Bk|)
         # only count each nest once in the logsumexp within the nest level model.
         cols = [x[0] for x in self.nest_to_item.values()]
+        if self.model_outside_option:
+            # the last column corresponds to the outside option, which has W+lambda*I = 0 since W = I = Y = 0 for the outside option.
+            logit = torch.cat((logit, torch.zeros(T, 1).to(device)), dim=1)
+            assert logit.shape == (T, self.num_items+1)
+            # we have already added W+lambda*I for each "actual" nest, now we add the "fake" nest for the outside option.
+            cols.append(-1)
         logP_nest = logit - torch.logsumexp(logit[:, cols], dim=1, keepdim=True)
 
         # =============================================================================
@@ -372,6 +394,13 @@ class NestedLogitModel(nn.Module):
             self.eval()
         # (num_trips, num_items)
         logP = self.forward(batch)
+        # check shapes
+        if self.model_outside_option:
+            assert logP.shape == (len(batch['item']), self.num_items+1)
+        else:
+            assert logP.shape == (len(batch['item']), self.num_items)
+        # since y == -1 indicates the outside option and the last column of total_utility is the outside option, the following
+        # indexing should correctly retrieve the log-likelihood even for outside options.
         nll = - logP[torch.arange(len(y)), y].sum()
         return nll
 
