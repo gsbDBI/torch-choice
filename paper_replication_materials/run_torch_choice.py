@@ -13,14 +13,25 @@ from torch_choice.data import utils as data_utils
 from torch_choice.model import ConditionalLogitModel
 from torch_choice.model.conditional_logit_model import ConditionalLogitModel
 from torch_choice.model.nested_logit_model import NestedLogitModel
-from torch_choice.utils.run_helper import run
 
-DATA_PATH = "/home/tianyudu/Development/torch-choice/tutorials/performance_benchmark/benchmark_data"
-DEVICE = "cuda"
+# The path storing the benchmark datasets, please check the README.md for instruction of
+# getting these datasets and a list of expected files.
+DATA_PATH = "./torch_choice_paper_data/"
+assert os.path.exists(DATA_PATH), f"Please check README.md download the benchmark datasets and put them in {DATA_PATH}."
+OUTPUT_PATH = "./results/"
+assert os.path.exists(OUTPUT_PATH), f"Please check README.md create the output folder {OUTPUT_PATH} for storing performance benchmark outputs."
+
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+if not torch.cuda.is_available():
+    print("*" * 40)
+    print("WARNING: CUDA (GPU device) is not available, benchmarking on CPU; the performance of torch-choice might not be as fast as expected.")
+    print("*" * 40)
+
 NUM_SEEDS = 5
+OPTIMIZER = "Adam"
 
 
-def run(model, dataset, dataset_test=None, batch_size=-1, learning_rate=0.01, num_epochs=5000, report_frequency=None, compute_std=True, return_final_training_log_likelihood=False, model_optimizer='Adam'):
+def run(model, dataset, dataset_test=None, batch_size=-1, learning_rate=0.01, num_epochs=5000, report_frequency=None, model_optimizer='LBFGS'):
     """All in one script for the model training and result presentation."""
     if report_frequency is None:
         report_frequency = (num_epochs // 10)
@@ -107,13 +118,12 @@ if __name__ == "__main__":
                     dataset_subset = dataset[dataset.session_index < subsample_size].to(DEVICE)
                     start_time = time()
                     model = ConditionalLogitModel(formula=formula, dataset=dataset_subset, num_items=dataset_subset.num_items).to(DEVICE)
-                    run(model, dataset_subset, num_epochs=50000, learning_rate=0.03, batch_size=-1, report_frequency=100)
+                    run(model, dataset_subset, num_epochs=50000, learning_rate=0.03, batch_size=-1, model_optimizer=OPTIMIZER)
                     time_taken = time() - start_time
                     print('Time taken:', time_taken)
                     record_list.append({'sample_size': subsample_size, 'time': time_taken, 'formula': formula, 'seed': seed})
                     del model, dataset_subset
-        record = pd.DataFrame(record_list)
-        record.to_csv(f'Python_{TASK}.csv', index=False)
+
     elif TASK == "num_records_experiment_small":
         for seed in range(NUM_SEEDS):
             for formula in formula_list:
@@ -122,14 +132,15 @@ if __name__ == "__main__":
                     dataset_subset = dataset[dataset.session_index < subsample_size].to(DEVICE)
                     start_time = time()
                     model = ConditionalLogitModel(formula=formula, dataset=dataset_subset, num_items=dataset_subset.num_items).to(DEVICE)
-                    run(model, dataset_subset, num_epochs=50000, learning_rate=0.03, batch_size=-1, report_frequency=100)
+                    run(model, dataset_subset, num_epochs=50000, learning_rate=0.03, batch_size=-1, model_optimizer=OPTIMIZER)
                     time_taken = time() - start_time
                     print('Time taken:', time_taken)
                     record_list.append({'sample_size': subsample_size, 'time': time_taken, 'formula': formula, 'seed': seed})
                     del model, dataset_subset
 
-        record = pd.DataFrame(record_list)
-        record.to_csv(f'Python_{TASK}.csv', index=False)
+    # ==================================================================================================================
+    # experiment 2: benchmark the performance of different number of parameters.
+    # ==================================================================================================================
     elif TASK == "num_params_experiment_small":
         record_list = []
         for seed in range(NUM_SEEDS):
@@ -143,13 +154,11 @@ if __name__ == "__main__":
                     model = ConditionalLogitModel(formula=formula, dataset=dataset_subset, num_items=dataset_subset.num_items).to(DEVICE)
                     print(model)
                     print(dataset_subset)
-                    run(model, dataset_subset, num_epochs=50000, learning_rate=0.03, batch_size=-1, report_frequency=100)
+                    run(model, dataset_subset, num_epochs=50000, learning_rate=0.03, batch_size=-1, report_frequency=100, model_optimizer=OPTIMIZER)
                     time_taken = time() - start_time
                     print('Time taken:', time_taken)
                     record_list.append({'sample_size': len(dataset_subset), 'time': time_taken, 'formula': formula, 'num_params': num_params, 'seed': seed})
                     del model, dataset_subset
-        record = pd.DataFrame(record_list)
-        record.to_csv(f'Python_{TASK}.csv', index=False)
 
     elif TASK == "num_params_experiment_large":
         record_list = []
@@ -165,48 +174,52 @@ if __name__ == "__main__":
                     model = ConditionalLogitModel(formula=formula, dataset=dataset_subset, num_items=dataset_subset.num_items).to(DEVICE)
                     print(model)
                     print(dataset_subset)
-                    run(model, dataset_subset, num_epochs=50000, learning_rate=0.03, batch_size=-1, report_frequency=100)
+                    run(model, dataset_subset, num_epochs=50000, learning_rate=0.03, batch_size=-1, report_frequency=100, model_optimizer=OPTIMIZER)
                     time_taken = time() - start_time
                     print('Time taken:', time_taken)
                     record_list.append({'sample_size': len(dataset_subset), 'time': time_taken, 'formula': formula, 'num_params': num_params, 'seed': seed})
                     del model, dataset_subset
-        record = pd.DataFrame(record_list)
-        record.to_csv(f'Python_{TASK}.csv', index=False)
 
+    # ==================================================================================================================
+    # experiment 3: benchmark the performance of different number of items.
+    # ==================================================================================================================
     elif TASK == "num_items_experiment_small":
         # to compare with R.
         record_list = []
         for formula in formula_list:
-            for num_items in [10, 30, 50, 100, 150, 200]:
+            for num_items in [10, 20, 50, 100, 150, 200]:
                 for seed in range(NUM_SEEDS):
                     start_time = time()
                     dataset_subset = torch.load(os.path.join(DATA_PATH, f"simulated_choice_data_{num_items}_items.pt")).to(DEVICE)
                     model = ConditionalLogitModel(formula=formula, dataset=dataset_subset, num_items=dataset_subset.num_items).to(DEVICE)
                     print(model)
                     print(dataset_subset)
-                    run(model, dataset_subset, num_epochs=50000, learning_rate=0.03, batch_size=-1, report_frequency=100)
+                    run(model, dataset_subset, num_epochs=50000, learning_rate=0.03, batch_size=-1, report_frequency=100, model_optimizer=OPTIMIZER)
                     time_taken = time() - start_time
                     print('Time taken:', time_taken)
                     record_list.append({'sample_size': len(dataset_subset), 'time': time_taken, 'formula': formula, 'num_items': num_items, 'seed': seed})
                     del model, dataset_subset
 
-        record = pd.DataFrame(record_list)
-        record.to_csv(f'Python_{TASK}.csv', index=False)
     elif TASK == "num_items_experiment_large":
         record_list = []
         for formula in formula_list:
-            for num_items in [10, 20, 30, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500]:
+            for num_items in [10, 20, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500]:
                 for seed in range(NUM_SEEDS):
                     start_time = time()
                     dataset_subset = torch.load(os.path.join(DATA_PATH, f"simulated_choice_data_{num_items}_items.pt")).to(DEVICE)
                     model = ConditionalLogitModel(formula=formula, dataset=dataset_subset, num_items=dataset_subset.num_items).to(DEVICE)
                     print(model)
                     print(dataset_subset)
-                    run(model, dataset_subset, num_epochs=50000, learning_rate=0.03, batch_size=-1, report_frequency=100)
+                    run(model, dataset_subset, num_epochs=50000, learning_rate=0.03, batch_size=-1, report_frequency=100, model_optimizer=OPTIMIZER)
                     time_taken = time() - start_time
                     print('Time taken:', time_taken)
                     record_list.append({'sample_size': len(dataset_subset), 'time': time_taken, 'formula': formula, 'num_items': num_items, 'seed': seed})
                     del model, dataset_subset
 
-        record = pd.DataFrame(record_list)
-        record.to_csv(f'Python_{TASK}.csv', index=False)
+    else:
+        print("Invalid task, we don't have this task. Please check the README.md for the list of available tasks.")
+
+    # combine records into a single dataframe.
+    record = pd.DataFrame(record_list)
+    # save the performance benchmark result.
+    record.to_csv(os.path.join(OUTPUT_PATH, f'Python_{TASK}_{OPTIMIZER}.csv'), index=False)

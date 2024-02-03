@@ -153,3 +153,5 @@ tutorials/mnist/data/MNIST/raw/train-labels-idx1-ubyte
 tutorials/mnist/data/MNIST/raw/train-labels-idx1-ubyte.gz
 
 .history/
+
+torch_choice_paper_data/

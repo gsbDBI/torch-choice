@@ -4,7 +4,14 @@ Updated: 2024-02-01 by Tianyu Du
 All replication materials of the paper are located in the `paper_replication_materials` directory, including a copy of this README file.
 
 Readers are expected to have `torch-choice` and dependencies properly installed before running the replication materials.
-You can either install `torch-choice` from the source code or from the PyPI repository.
+
+You can install this copy `torch-choice` (frozen for paper replications) by running the following command:
+
+```bash
+# NOTE: you would need to navigate to the directory where the setup.py file is located.
+python setup.py develop
+```
+
 Please refer to the installation guideline page for more details.
 
 The replication materials consist of two components:
@@ -83,8 +90,12 @@ daaadbf257f98af342fe4aea98497af2  ./torch_choice_paper_data/simulated_choice_dat
 174640f86e905d6f05e83558170e966b  ./torch_choice_paper_data/simulated_choice_data_num_records_experiment.pt
 ```
 
-## To Run Python Benchmarks
-`run_torch_choice.py` is the script for running six benchmarks using `torch-choice`. Specifically, the following commands will run the benchmarks for the number of records N, the number of model parameters P, and the number of items in the choice set I (corresponding to Figure 4 to 9 in the paper).
+## Run Python Benchmarks
+`run_torch_choice.py` is the script for running six benchmarks using `torch-choice`. Specifically, the following commands will run the benchmarks for the number of records N, the number of model parameters P, and the number of items in the choice set I (corresponding to Figure 4 to 9 in the paper). The following command will generate the CSV files recording package performances in the `results` directory.
+
+For your convenience, we have included the CSV files from OUR experiments in the `our_results.tar.gz` zipped file together with the replication material; you can fill the `results` directory with our results and proceed to the next step to visualize the performance of different implementations while you are benchmarking the package on your own machine.
+
+These experiments are designed to stress test the performance of `torch-choice` under different scales of the dataset and model. They could take several hours to run, depending on the computing environment. You can modify the `NUM_SEEDS` variable in the script to reduce the number of random seeds (we are using 5) to speed up the process.
 
 ```bash
 # make a directory to store the results, we will use this directory to store the results of the benchmarks, there should already be a directory called `results` in the replication material. If not, please create one.
@@ -109,19 +120,39 @@ python ./run_torch_choice.py num_items_experiment_small
 python ./run_torch_choice.py num_items_experiment_large
 ```
 
-Commands above will generate CSV files named as `Python_<benchmark name>.csv` (e.g., )
-
-You would need to change the `DATA_PATH` variable in the script to the location where you put the benchmark datasets.
-Please use the command in `run_torch_choice.sh` to run the benchmarks.
-
-## Run R Benchmarks**
+## Run R Benchmarks
 The `run_logit_num_{items, params, records}.R` are R scripts to run the benchmarks in `R`.
+Certain experiments in the stress test will demand extensive computational resources, and we recommend running these benchmarks on a high-performance computing cluster or a machine with sufficient computational resources. We tested these benchmarks on a Linux machine with 16 CPU cores Intel Xeon processor and 112GiB of memory. No GPU is required for these benchmarks in R.
+
+You can reduce the `num.seeds` variable in the R scripts to speed up the process by using fewer random seeds (we are using 5 random seeds).
+
 ```bash
 Rscript run_mlogit_num_items.R
 Rscript run_mlogit_num_records.R
 Rscript run_mlogit_num_params.R
 ```
 
-## Reproduce Figures in Chapter 5 of the Paper
-Please run the `visualize_performance_benchmarks.ipynb` to generate figures in the paper. You can set the `REPORT_RATIO` variable in the notebook to change the Y-axis. The Y-axis can either report the relative time (i.e., the time of the algorithm divided by the time of the baseline case) or the absolute time (i.e., the time of the algorithm).
+After running the nine benchmarks above, you should get the following CSV files in the `results` directory:
+```
+Python_num_items_experiment_large_Adam.csv
+Python_num_items_experiment_small_Adam.csv
+Python_num_params_experiment_large_Adam.csv
+Python_num_params_experiment_small_Adam.csv
+Python_num_records_experiment_large_Adam.csv
+Python_num_records_experiment_small_Adam.csv
+R_performance_num_items.csv
+R_performance_num_params.csv
+R_performance_num_records.csv
+```
+These CSV files records the runtime of the benchmarks for the number of records N, the number of model parameters P, and the number of items in the choice set I, depending on the experiment.
+
+
+# Reproduce Figures in Chapter 5 of the Paper
+Please run the `visualize_performance_benchmarks.ipynb` to generate figures using the CSV files generated from the benchmarks. The notebook will generate figures in the `figures` directory.
+
+You can set the `REPORT_RATIO` variable in the notebook to change the Y-axis. The Y-axis can either report the relative time (i.e., the time of the algorithm divided by the time of the baseline case) or the absolute time (i.e., the time of the algorithm).
 The notebook will generate figures in the `figures` directory.
+
+For your convenience, we have included the performance data from OUR experiments in the `our_results.tar.gz` zipped file with the replication material. You can fill the `results` directory with our results and try to visualize the performance of different implementations while you are running your own benchmarks. Results in `our_results.tar.gz` should generate the same figures as in the paper.
+
+Note: the actual font size and figure size in the paper are adjusted for the publication format. The figures generated by the notebook may not be exactly the same as the figures in the paper in terms of format; but the content should be the same.
