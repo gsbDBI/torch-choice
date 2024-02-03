@@ -2,11 +2,8 @@ library(mlogit)
 library(tictoc)
 library(stringr)
 
-# setwd("/home/tianyudu/Development/torch-choice/tutorials/performance_benchmark/benchmark_data")
-setwd("/oak/stanford/groups/athey/tianyudu/Data/torch_choice_benchmark")
 
-# df <- read.csv(str_glue("simulated_choice_data_10k_records.csv"))
-df <- read.csv(str_glue("simulated_choice_data_num_records_experiment.csv"))
+df <- read.csv(str_glue("./torch_choice_paper_data/simulated_choice_data_num_records_experiment.csv"))
 df$item_id <- as.factor(df$item_id)
 
 user_latent_columns <- c('user_latent_0', 'user_latent_1', 'user_latent_2', 'user_latent_3', 'user_latent_4', 'user_latent_5', 'user_latent_6', 'user_latent_7', 'user_latent_8', 'user_latent_9', 'user_latent_10', 'user_latent_11', 'user_latent_12', 'user_latent_13', 'user_latent_14', 'user_latent_15', 'user_latent_16', 'user_latent_17', 'user_latent_18', 'user_latent_19', 'user_latent_20', 'user_latent_21', 'user_latent_22', 'user_latent_23', 'user_latent_24', 'user_latent_25', 'user_latent_26', 'user_latent_27', 'user_latent_28', 'user_latent_29')
@@ -47,5 +44,4 @@ for (seed in 1:num.seeds) {
   toc()
 }
 records <- data.frame('time'=t.list, 'formula'=f.list, 'num_records'=num.records.list, 'seed'=seed.list)
-# write.csv(records, "/home/tianyudu/Development/torch-choice/tutorials/performance_benchmark/R_performance_num_records_all.csv", row.names=FALSE)
-write.csv(records, "./R_performance_num_records.csv", row.names=FALSE)
+write.csv(records, "./results/R_performance_num_records.csv", row.names=FALSE)

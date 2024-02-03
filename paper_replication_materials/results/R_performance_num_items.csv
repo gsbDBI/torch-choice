@@ -1,91 +1,91 @@
 "time","formula","num_items","seed"
-3.263,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",10,1
-1.703,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",10,1
-3.368,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",10,1
-15.528,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",30,1
-5.138,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",30,1
-15.186,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",30,1
-34.949,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",50,1
-9.00700000000001,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",50,1
-36.824,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",50,1
-167.099,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",100,1
-20.707,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",100,1
-146.252,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",100,1
-357.144,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",150,1
-33.484,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",150,1
-391.135,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",150,1
-658.219,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",200,1
-45.229,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",200,1
-653.057,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",200,1
-2.28800000000001,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",10,2
-1.55999999999995,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",10,2
-2.529,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",10,2
-15.4700000000003,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",30,2
-5.16499999999996,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",30,2
-14.0799999999999,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",30,2
-35.0749999999998,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",50,2
-9.75300000000016,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",50,2
-35.0679999999998,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",50,2
-127.019,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",100,2
-20.415,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",100,2
-126.001,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",100,2
-285.594,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",150,2
-31.2890000000002,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",150,2
-282.972,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",150,2
-622.073,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",200,2
-46.0500000000002,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",200,2
-698.588,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",200,2
-2.39500000000044,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",10,3
-1.58300000000054,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",10,3
-2.74799999999959,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",10,3
-15.4979999999996,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",30,3
-5.55099999999948,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",30,3
-14.4059999999999,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",30,3
-35.8379999999997,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",50,3
-9.66300000000047,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",50,3
-36.4809999999998,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",50,3
-129.272,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",100,3
-20.4170000000004,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",100,3
-126.845,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",100,3
-299.109,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",150,3
-31.4580000000005,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",150,3
-300.786,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",150,3
-639.576999999999,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",200,3
-45.9199999999992,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",200,3
-655.418,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",200,3
-2.32499999999982,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",10,4
-1.52700000000004,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",10,4
-2.4980000000005,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",10,4
-16.0079999999998,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",30,4
-5.40300000000025,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",30,4
-14.3050000000003,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",30,4
-35.6390000000001,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",50,4
-9.73599999999988,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",50,4
-35.9790000000003,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",50,4
-130.161,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",100,4
-20.7669999999998,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",100,4
-130.449,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",100,4
-292.789,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",150,4
-31.5200000000004,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",150,4
-298.884,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",150,4
-619.326999999999,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",200,4
-46.4229999999989,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",200,4
-617.695,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",200,4
-2.31400000000031,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",10,5
-1.5739999999987,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",10,5
-2.61000000000058,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",10,5
-15.4660000000003,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",30,5
-5.38600000000042,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",30,5
-14.6550000000007,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",30,5
-36.3130000000001,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",50,5
-9.70700000000033,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",50,5
-36.4989999999998,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",50,5
-137.546,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",100,5
-20.5390000000007,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",100,5
-131.982,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",100,5
-301.012999999999,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",150,5
-31.7019999999993,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",150,5
-296.335999999999,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",150,5
-618.929,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",200,5
-47.1539999999986,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",200,5
-651.462,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",200,5
+3.893,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",10,1
+1.935,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",10,1
+4.168,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",10,1
+20.61,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",30,1
+5.59,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",30,1
+19.249,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",30,1
+46.941,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",50,1
+9.67999999999999,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",50,1
+48.189,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",50,1
+214.823,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",100,1
+20.473,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",100,1
+214.886,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",100,1
+537.685,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",150,1
+33.4959999999999,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",150,1
+533.139,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",150,1
+1000.593,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",200,1
+48.2719999999999,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",200,1
+974.617,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",200,1
+2.83000000000038,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",10,2
+1.82100000000037,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",10,2
+3.30499999999984,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",10,2
+19.4299999999998,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",30,2
+5.88299999999981,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",30,2
+18.1589999999997,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",30,2
+45.4679999999998,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",50,2
+10.1610000000001,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",50,2
+46.9140000000002,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",50,2
+173.47,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",100,2
+21.3429999999998,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",100,2
+175.326,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",100,2
+409.898,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",150,2
+33.8549999999996,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",150,2
+411.165,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",150,2
+889.532999999999,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",200,2
+48.1269999999995,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",200,2
+935.451,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",200,2
+2.87599999999929,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",10,3
+1.81099999999969,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",10,3
+3.25,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",10,3
+19.0799999999999,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",30,3
+5.70100000000002,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",30,3
+18.1669999999995,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",30,3
+45.6269999999995,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",50,3
+9.90099999999984,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",50,3
+46.6360000000004,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",50,3
+172.861,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",100,3
+22.2359999999999,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",100,3
+172.559,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",100,3
+406.769,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",150,3
+35.1930000000002,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",150,3
+409.525000000001,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",150,3
+902.050000000001,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",200,3
+49.0319999999992,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",200,3
+941.501,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",200,3
+2.91100000000006,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",10,4
+1.77599999999984,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",10,4
+3.19399999999951,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",10,4
+19.8670000000002,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",30,4
+5.77800000000025,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",30,4
+18.0599999999995,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",30,4
+45.5380000000005,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",50,4
+10.0259999999998,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",50,4
+48.7240000000002,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",50,4
+173.468000000001,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",100,4
+21.6799999999985,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",100,4
+175.953000000001,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",100,4
+399.834999999999,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",150,4
+33.9570000000003,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",150,4
+410.564,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",150,4
+923.558000000001,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",200,4
+49.3130000000001,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",200,4
+901.881000000001,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",200,4
+3.03700000000026,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",10,5
+1.77399999999943,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",10,5
+3.1979999999985,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",10,5
+19.2999999999993,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",30,5
+6.04399999999987,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",30,5
+18.0519999999997,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",30,5
+46.1530000000002,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",50,5
+10.2749999999996,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",50,5
+46.7999999999993,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",50,5
+173.397999999999,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",100,5
+21.5529999999999,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",100,5
+174.352000000001,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",100,5
+395.897000000001,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",150,5
+33.9470000000001,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",150,5
+402.824999999999,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",150,5
+876.375,"choice ~ 0 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",200,5
+48.1309999999994,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | 0 | 0",200,5
+930.317999999999,"choice ~ item_latent_0 + item_latent_1 + item_latent_2 + item_latent_3 + item_latent_4 - 1 | user_latent_0 + user_latent_1 + user_latent_2 + user_latent_3 + user_latent_4 - 1 | 0",200,5

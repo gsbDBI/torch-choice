@@ -2,11 +2,9 @@ library(mlogit)
 library(tictoc)
 library(stringr)
 
-# setwd("/home/tianyudu/Development/torch-choice/tutorials/performance_benchmark/benchmark_data")
-setwd("/oak/stanford/groups/athey/tianyudu/Data/torch_choice_benchmark")
 
 # df <- read.csv(str_glue("simulated_choice_data_10k_records.csv"))
-df <- read.csv(str_glue("simulated_choice_data_num_params_experiment_small.csv"))
+df <- read.csv(str_glue("./torch_choice_paper_data/simulated_choice_data_num_params_experiment_small.csv"))
 df$item_id <- as.factor(df$item_id)
 data <- mlogit.data(df, choice="choice", shape="long", alt.var="item_id", chid.var="session_id", id.var="user_id")
 
@@ -47,4 +45,4 @@ for (seed in 1:num.seeds) {
 }
 records <- data.frame('time'=t.list, 'formula'=f.list, 'num_params'=num.params.list, 'seed'=seed.list)
 # write.csv(records, "/home/tianyudu/Development/torch-choice/tutorials/performance_benchmark/R_performance_num_params.csv", row.names=FALSE)
-write.csv(records, "./R_performance_num_params.csv", row.names=FALSE)
+write.csv(records, "./results/R_performance_num_params.csv", row.names=FALSE)
