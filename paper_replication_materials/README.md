@@ -97,6 +97,8 @@ For your convenience, we have included the CSV files from OUR experiments in the
 
 These experiments are designed to stress test the performance of `torch-choice` under different scales of the dataset and model. They could take several hours to run, depending on the computing environment. You can modify the `NUM_SEEDS` variable in the script to reduce the number of random seeds (we are using 5) to speed up the process.
 
+We were running these benchmarks on a Linux machine with 16 CPU cores Intel Xeon processor and 128GiB of memory, with a single RTX3090 (24G) GPU.
+
 ```bash
 # make a directory to store the results, we will use this directory to store the results of the benchmarks, there should already be a directory called `results` in the replication material. If not, please create one.
 # mkdir results
