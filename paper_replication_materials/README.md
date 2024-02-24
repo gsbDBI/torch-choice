@@ -5,12 +5,22 @@ All replication materials of the paper are located in the `paper_replication_mat
 
 Readers are expected to have `torch-choice` and dependencies properly installed before running the replication materials.
 
-You can install this copy `torch-choice` (frozen for paper replications) by running the following command:
+Please use the `paper` branch after cloning the repository (frozen for paper replications) of `torch-choice` for these replication exercises.
+
+``` bash
+# clone repository
+git clone git@github.com:gsbDBI/torch-choice.git
+git checkout paper
+```
+
+You can install `torch-choice` by running the following command:
 
 ```bash
 # NOTE: you would need to navigate to the directory where the setup.py file is located.
 python setup.py develop
 ```
+
+
 
 Please refer to the installation guideline page for more details.
 
@@ -44,7 +54,7 @@ tar -xvf torch_choice_paper_data.tar.gz
 Alternatively, you can use other GUI tools to unzip the file (e.g., 7-zip).
 
 ### List of Datasets Expected
-The `get_torch_choice_paper_data.sh` would download the following datasets to the `torch_choice_paper_data` directory, we have included the MD5 checksums for each file to ensure the integrity of the datasets.
+The `get_torch_choice_paper_data.sh` downloads the replication data from the Harvard Dataverse and unzips it. The replication data includes the following datasets:
 
 ```
 9328b2aa1413fac66f495c8d3a6f3148  ./torch_choice_paper_data/car_choice.csv
@@ -91,9 +101,9 @@ daaadbf257f98af342fe4aea98497af2  ./torch_choice_paper_data/simulated_choice_dat
 ```
 
 ## Run Python Benchmarks
-`run_torch_choice.py` is the script for running six benchmarks using `torch-choice`. Specifically, the following commands will run the benchmarks for the number of records N, the number of model parameters P, and the number of items in the choice set I (corresponding to Figure 4 to 9 in the paper). The following command will generate the CSV files recording package performances in the `results` directory.
+`run_torch_choice.py` is the script for running six benchmarks using `torch-choice`. Specifically, the following commands will run the benchmarks for the number of records N, the number of model parameters P, and the number of items in the choice set I (corresponding to Figure 4 to 9 in the paper). The following command will generate the CSV files recording package performances in the `results` directory. Note that the `results` directory is prefilled with the results from our experiments, so that you can skip this step and directly generate the figures (see [this section](#generate-figures)).
 
-For your convenience, we have included the CSV files from OUR experiments in the `our_results.tar.gz` zipped file together with the replication material; you can fill the `results` directory with our results and proceed to the next step to visualize the performance of different implementations while you are benchmarking the package on your own machine.
+```bash
 
 These experiments are designed to stress test the performance of `torch-choice` under different scales of the dataset and model. They could take several hours to run, depending on the computing environment. You can modify the `NUM_SEEDS` variable in the script to reduce the number of random seeds (we are using 5) to speed up the process.
 
@@ -122,9 +132,22 @@ python ./run_torch_choice.py num_items_experiment_small
 python ./run_torch_choice.py num_items_experiment_large
 ```
 
+For your convenience, we have also included the CSV files from OUR experiments in the `our_results.tar.gz` zipped file together with the replication material; you can fill the `results` directory with our results and proceed to the next step (See section on reproducing figures below) to visualize the performance of different implementations while you are benchmarking the package on your own machine.
+
 ## Run R Benchmarks
 The `run_logit_num_{items, params, records}.R` are R scripts to run the benchmarks in `R`.
 Certain experiments in the stress test will demand extensive computational resources, and we recommend running these benchmarks on a high-performance computing cluster or a machine with sufficient computational resources. We tested these benchmarks on a Linux machine with 16 CPU cores Intel Xeon processor and 112GiB of memory. No GPU is required for these benchmarks in R.
+
+You need to install the following R packages before running the benchmarks:
+
+```R
+# install mlogit
+install.packages("mlogit")
+# install tictoc
+install.packages("tictoc")
+```
+
+```
 
 You can reduce the `num.seeds` variable in the R scripts to speed up the process by using fewer random seeds (we are using 5 random seeds).
 
@@ -149,7 +172,7 @@ R_performance_num_records.csv
 These CSV files records the runtime of the benchmarks for the number of records N, the number of model parameters P, and the number of items in the choice set I, depending on the experiment.
 
 
-# Reproduce Figures in Chapter 5 of the Paper
+# Reproduce Figures in Chapter 5 of the Paper {#generate-figures}
 Please run the `visualize_performance_benchmarks.ipynb` to generate figures using the CSV files generated from the benchmarks. The notebook will generate figures in the `figures` directory.
 
 You can set the `REPORT_RATIO` variable in the notebook to change the Y-axis. The Y-axis can either report the relative time (i.e., the time of the algorithm divided by the time of the baseline case) or the absolute time (i.e., the time of the algorithm).
