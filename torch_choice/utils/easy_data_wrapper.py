@@ -346,7 +346,7 @@ class EasyDatasetWrapper():
         """Get the item availability tensor from the main_data data-frame."""
         if self.session_index_column is None:
             raise ValueError(f'Item availability cannot be constructed without session index column.')
-        A = self.main_data.pivot(self.session_index_column, self.item_name_column, self.choice_column)
+        A = self.main_data.pivot(index=self.session_index_column, columns=self.item_name_column, values=self.choice_column)
         return torch.BoolTensor(~np.isnan(A.values))
 
     def __len__(self):
