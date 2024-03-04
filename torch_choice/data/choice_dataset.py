@@ -203,7 +203,7 @@ class ChoiceDataset(torch.utils.data.Dataset):
         Returns:
             int: the number of users involved in this dataset.
         """
-        if self._num_users is not None:
+        if hasattr(self, "_num_users") and self._num_users is not None:
             return self._num_users
         elif self.user_index is not None:
             # infer from the number of unique items in  user_index.
@@ -218,7 +218,7 @@ class ChoiceDataset(torch.utils.data.Dataset):
         Returns:
             int: the number of items involved in this dataset.
         """
-        if self._num_items is not None:
+        if hasattr(self, "_num_items") and self._num_items is not None:
             # return the _num_items provided in the constructor.
             return self._num_items
         else:
@@ -232,7 +232,7 @@ class ChoiceDataset(torch.utils.data.Dataset):
         Returns:
             int: the number of sessions involved in this dataset.
         """
-        if self._num_sessions is not None:
+        if hasattr(self, "_num_sessions") and self._num_sessions is not None:
             # return the _num_sessions provided in the constructor.
             return self._num_sessions
         else:
