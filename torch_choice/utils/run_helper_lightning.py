@@ -172,7 +172,15 @@ def run(model: Union [ConditionalLogitModel, NestedLogitModel],
     # ==================================================================================================================
     # current methods of computing standard deviation will corrupt the model, load weights into another model for returning.
     state_dict = deepcopy(lightning_model.model.state_dict())
-    model_clone.load_state_dict(state_dict)
+    if "lambdas" in state_dict:
+        # if the model is using a specific lambda for each nest, it will create an additional `lambdas` tensor in the forward process.
+        # the forward method on `model_clone` has never been called, so it does not have the `lambdas` tensor.
+        # we need to drop the `lambdas` tensor from the state_dict to avoid the error while loading the state dict.
+        # The lambdas tensor is simply a copy of the lambda_weight in this case.
+        assert torch.all(state_dict["lambdas"] == state_dict["lambda_weight"]), \
+            f"lambdas and lambda_weight should be the same, maximum difference: {torch.max(torch.abs(state_dict['lambdas'] - state_dict['lambda_weight']))}: {state_dict['lambdas']=:}, {state_dict['lambda_weight']=:}"
+        state_dict.pop("lambdas")
+    model_clone.load_state_dict(state_dict, strict=True)
 
     # get mean of estimation.
     mean_dict = dict()
