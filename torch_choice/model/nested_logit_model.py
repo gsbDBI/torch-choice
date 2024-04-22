@@ -97,6 +97,7 @@ class NestedLogitModel(nn.Module):
                 To enable modeling outside option, the outside option is indicated by `item_index[n] == -1` in the item-index-tensor.
                 In this case, the item-index-tensor can contain values in `{-1, 0, 1, ..., num_items-1}`.
                 Otherwise, if the outside option is not modelled, the item-index-tensor should only contain values in `{0, 1, ..., num_items-1}`.
+                The utility of the outside option is always set to 0 while computing the probability.
                 By default, model_outside_option is set to False and the model does not model the outside option.
         """
         # handle nest level model.
