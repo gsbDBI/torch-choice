@@ -48,7 +48,8 @@ class ConditionalLogitModel(nn.Module):
                  num_users: Optional[int]=None,
                  regularization: Optional[str]=None,
                  regularization_weight: Optional[float]=None,
-                 weight_initialization: Optional[Union[str, Dict[str, str]]]=None
+                 weight_initialization: Optional[Union[str, Dict[str, str]]]=None,
+                 model_outside_option: Optional[bool]=False
                  ) -> None:
         """
         Args:
@@ -106,6 +107,12 @@ class ConditionalLogitModel(nn.Module):
                 Alternatively, users can pass a dictionary with keys exactly the same as the `coef_variation_dict` dictionary,
                 and values from {'normal', 'uniform', 'zero'} to initialize coefficients of different types of variables differently.
                 By default, all coefficients are initialized following a standard normal distribution.
+            model_outside_option (Optional[bool]): whether to explicitly model the outside option (i.e., the consumer did not buy anything).
+                To enable modeling outside option, the outside option is indicated by `item_index[n] == -1` in the item-index-tensor.
+                In this case, the item-index-tensor can contain values in `{-1, 0, 1, ..., num_items-1}`.
+                Otherwise, if the outside option is not modelled, the item-index-tensor should only contain values in `{0, 1, ..., num_items-1}`.
+                The utility of the outside option is always set to 0 while computing the probability.
+                By default, model_outside_option is set to False and the model does not model the outside option.
         """
         # ==============================================================================================================
         # Check that the model received a valid combination of inputs so that it can be initialized.
@@ -197,6 +204,7 @@ class ConditionalLogitModel(nn.Module):
         # A ModuleDict is required to properly register all trainable parameters.
         # self.parameter() will fail if a python dictionary is used instead.
         self.coef_dict = nn.ModuleDict(coef_dict)
+        self.model_outside_option = model_outside_option
 
     def __repr__(self) -> str:
         """Return a string representation of the model.
@@ -275,6 +283,13 @@ class ConditionalLogitModel(nn.Module):
         if batch.item_availability is not None:
             # mask out unavailable items.
             total_utility[~batch.item_availability[batch.session_index, :]] = torch.finfo(total_utility.dtype).min / 2
+
+        # accommodate the outside option.
+        if self.model_outside_option:
+            # the outside option has zero utility.
+            util_zero = torch.zeros(total_utility.size(0), 1, device=batch.device)  # (len(batch), 1)  zero tensor.
+            # outside option is indicated by item_index == -1, we put it at the end.
+            total_utility = torch.cat((total_utility, util_zero), dim=1)  # (len(batch), num_items+1)
         return total_utility
 
 
@@ -297,7 +312,15 @@ class ConditionalLogitModel(nn.Module):
             self.eval()
         # (num_trips, num_items)
         total_utility = self.forward(batch)
+        # check shapes.
+        if self.model_outside_option:
+            assert total_utility.shape == (len(batch), self.num_items+1)
+            assert torch.all(total_utility[:, -1] == 0), "The last column of total_utility should be all zeros, which corresponds to the outside option."
+        else:
+            assert total_utility.shape == (len(batch), self.num_items)
         logP = torch.log_softmax(total_utility, dim=1)
+        # since y == -1 indicates the outside option and the last column of total_utility is the outside option, the following
+        # indexing should correctly retrieve the log-likelihood even for outside options.
         nll = - logP[torch.arange(len(y)), y].sum()
         return nll
 

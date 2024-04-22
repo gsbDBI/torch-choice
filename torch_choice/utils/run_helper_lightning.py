@@ -193,7 +193,17 @@ def run(model: Union [ConditionalLogitModel, NestedLogitModel],
     if isinstance(model, ConditionalLogitModel):
         def nll_loss(model):
             y_pred = model(dataset_for_std)
-            return F.cross_entropy(y_pred, dataset_for_std.item_index, reduction='sum')
+            item_index = dataset_for_std.item_index.clone()
+            if model.model_outside_option:
+                assert y_pred.shape == (len(dataset_for_std), model.num_items+1)
+                # y_pred has shape (len(dataset_for_std.choice_set), model.num_items+1) since the last column is the probability of the outside option.
+                # F.cross_entropy is not smart enough to handle the -1 outside option in y.
+                # Even though y_pred[:, -1] nad y_pred[:, model.num_items] are the same, F.cross_entropy does not know.
+                # We need to fix it manually.
+                # manually modify the index for the outside option.
+                item_index[item_index == -1] = model.num_items
+
+            return F.cross_entropy(y_pred, item_index, reduction='sum')
     elif isinstance(model, NestedLogitModel):
         def nll_loss(model):
             d = dataset_for_std[torch.arange(len(dataset_for_std))]

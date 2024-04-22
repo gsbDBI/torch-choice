@@ -41,6 +41,9 @@ class EasyDatasetWrapper():
                  price_observable_columns: Optional[List[str]] = None,
                  itemsession_observable_columns: Optional[List[str]] = None,
                  useritemsession_observable_columns: Optional[List[str]] = None,
+                 num_items: Optional[int] = None,
+                 num_users: Optional[int] = None,
+                 num_sessions: Optional[int] = None,
                  # Misc.
                  device: str = 'cpu'):
         """The initialization method of EasyDatasetWrapper.
@@ -89,6 +92,12 @@ class EasyDatasetWrapper():
 
             The itemsession_observable_column is an alias for the `price_observable_column` argument for backward compatibility,
                 all elements of `itemsession_observable_columns` will be appended to `price_observable_column`.
+
+            num_items (Optional[int], optional): the number of items in the dataset to pass to the ChoiceDataset. Defaults to None.
+
+            num_users (Optional[int], optional): the number of users in the dataset to pass to the ChoiceDataset. Defaults to None.
+
+            num_sessions (Optional[int], optional): the number of sessions in the dataset to pass to the ChoiceDataset. Defaults to None.
 
         Raises:
             ValueError: _description_
@@ -139,6 +148,10 @@ class EasyDatasetWrapper():
 
         self.observable_data_to_observable_tensors()
 
+        # read in explicit numbers of items, users, and sessions.
+        self._num_items = num_items
+        self._num_users = num_users
+        self._num_sessions = num_sessions
         self.create_choice_dataset()
         print('Finished Creating Choice Dataset.')
 
@@ -334,6 +347,9 @@ class EasyDatasetWrapper():
                                             user_index=torch.LongTensor(self.user_index) if self.user_index is not None else None,
                                             session_index=torch.LongTensor(self.session_index) if self.session_index is not None else None,
                                             item_availability=self.item_availability,
+                                            num_items=self._num_items,
+                                            num_users=self._num_users,
+                                            num_sessions=self._num_sessions,
                                             # keyword arguments for observables.
                                             **self.item_observable_tensors,
                                             **self.user_observable_tensors,
