@@ -6,4 +6,5 @@ for file_path in $(ls -1 ./tutorials/*ipynb) ; do
     jupyter nbconvert --to markdown --output-dir ./docs_src/ --output ${file%.ipynb}.md $file_path
 done
 
-mkdocs build
+# Only to host locally, github action will build the website automatically,
+# mkdocs build
