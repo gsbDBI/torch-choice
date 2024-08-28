@@ -225,3 +225,6 @@ np.random.seed(SEED)
 torch.manual_seed(SEED)
 torch.use_deterministic_algorithms(True)
 ```
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=gsbDBI/torch-choice&type=Date)](https://star-history.com/#gsbDBI/torch-choice&Date)
