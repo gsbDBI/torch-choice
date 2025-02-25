@@ -1,34 +1,32 @@
+# Standard library imports
+import argparse
 import os
 import sys
 from copy import deepcopy
 from time import time
 
-import matplotlib.pyplot as plt
-import numpy as np
+# Third-party imports
 import pandas as pd
 import torch
 import torch.optim
 
+# Local imports
 from torch_choice.data import utils as data_utils
 from torch_choice.model import ConditionalLogitModel
-from torch_choice.model.conditional_logit_model import ConditionalLogitModel
 from torch_choice.model.nested_logit_model import NestedLogitModel
-from torch_choice.utils.run_helper import run
 
-DATA_PATH = "/home/tianyudu/Development/torch-choice/tutorials/performance_benchmark/benchmark_data"
-DEVICE = "cuda"
-NUM_SEEDS = 5
-
-
-def run(model, dataset, dataset_test=None, batch_size=-1, learning_rate=0.01, num_epochs=5000, report_frequency=None, compute_std=True, return_final_training_log_likelihood=False, model_optimizer='Adam'):
+def run(model,
+        dataset,
+        batch_size=-1,
+        learning_rate=0.01,
+        num_epochs=5000,
+        model_optimizer='Adam') -> float:
     """All in one script for the model training and result presentation."""
-    if report_frequency is None:
-        report_frequency = (num_epochs // 10)
 
     assert isinstance(model, ConditionalLogitModel) or isinstance(model, NestedLogitModel), \
         f'A model of type {type(model)} is not supported by this runner.'
     model = deepcopy(model)  # do not modify the model outside.
-    trained_model = deepcopy(model)  # create another copy for returning.
+    # trained_model = deepcopy(model)  # create another copy for returning.
     data_loader = data_utils.create_data_loader(dataset, batch_size=batch_size, shuffle=True)
 
     optimizer = {'SGD': torch.optim.SGD,
@@ -40,7 +38,7 @@ def run(model, dataset, dataset_test=None, batch_size=-1, learning_rate=0.01, nu
     # optimizer = torch.optim.Adagrad(model.parameters(), lr=learning_rate)
     # optimizer = torch.optim.Adadelta(model.parameters(), lr=learning_rate)
     # scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10000, gamma=0.1)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10000, gamma=0.7)
+    # scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10000, gamma=0.7)
     # scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=5000, gamma=0.5)
     print('=' * 20, 'received model', '=' * 20)
     print(model)
@@ -48,116 +46,145 @@ def run(model, dataset, dataset_test=None, batch_size=-1, learning_rate=0.01, nu
     print(dataset)
     print('=' * 20, 'training the model', '=' * 20)
 
-    total_loss_history = list()
-    tol = 1E-5  # stop if the loss failed to improve tol proportion of average performance in the last k iterations.
-    k = 50
+    not_improved_tolerance = 50  # stop if the loss failed to improve tol proportion of average performance in the last k iterations.
+    best_loss = float('inf')
+    not_improved_count = 0
     # fit the model.
+    model.train()
     for e in range(1, num_epochs + 1):
-        # track the log-likelihood to minimize.
-        ll, count, total_loss = 0.0, 0.0, 0.0
+        # the total loss for the entire dataset, which is the sum of the loss of all batches.
+        total_loss = 0.0
         for batch in data_loader:
             item_index = batch['item'].item_index if isinstance(model, NestedLogitModel) else batch.item_index
-            # the model.loss returns negative log-likelihood + regularization term.
+            # the model.loss returns negative log-likelihood + regularization term,
+            # but we are not using the regularization in this benchmark.
             loss = model.loss(batch, item_index)
-            total_loss -= loss
-
-            with torch.no_grad():
-                if (e % report_frequency) == 0:
-                    # record log-likelihood.
-                    ll -= model.negative_log_likelihood(batch, item_index).detach().item() # * len(batch)
-                    count += len(batch)
-
-                    pred = model.forward(batch).argmax(dim=1)
-                    acc = (pred == item_index).float().mean().item()
-                    print('Accuracy: ', acc)
-
+            total_loss += float(loss.clone().detach().item())  # accumulate the loss to get the loss on the entire dataset.
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
-        scheduler.step()
+        # scheduler.step()
+        current_loss = total_loss
+        if current_loss < best_loss:
+            best_loss = current_loss
+            not_improved_count = 0  # reset the counter.
+        else:
+            not_improved_count += 1  # increment the counter.
 
-        current_loss = float(total_loss.detach().item())
-        if e > k:
-            past_avg = np.mean(total_loss_history[-k:])
-            improvement = (past_avg - current_loss) / past_avg
-            if improvement < tol:
-                print(f'Early stopped at {e} epochs.')
-                break
-        total_loss_history.append(current_loss)
-        # ll /= count
-        if (e % report_frequency) == 0:
-            print(f'Epoch {e}: Log-likelihood={ll}')
+        if not_improved_count >= not_improved_tolerance:
+            print(f'Early stopped at {e} epochs.')
+            break
+    return best_loss
+
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--task", type=str, required=True,
+                        choices=["num_records_experiment_large", "num_records_experiment_small", "num_params_experiment_small", "num_params_experiment_large", "num_items_experiment_small", "num_items_experiment_large"])
+    parser.add_argument("--data_path", type=str, required=True, help="The path to the data.")
+    parser.add_argument("--output_path", type=str, required=True, help="The path to save the results.")
+    # optional configurations.
+    parser.add_argument("--device", type=str, required=False, default="auto", help="The device to run the experiment on.")
+    parser.add_argument("--num_seeds", type=int, required=False, default=5, help="The number of seeds to run the experiment on.")
+    parser.add_argument("--num_epochs", type=int, required=False, default=50000, help="The maximum number of epochs to run the experiment on.")
+    parser.add_argument("--learning_rate", type=float, required=False, default=0.03, help="The learning rate to run the experiment on.")
+    parser.add_argument("--batch_size", type=int, required=False, default=-1, help="The batch size to run the experiment on, use -1 for full batch training.")
+    args = parser.parse_args()
+
+    run_configs = {
+        "num_epochs": args.num_epochs,
+        "learning_rate": args.learning_rate,
+        "batch_size": args.batch_size,
+    }
+
+    # detect device automatically.
+    if args.device == "auto":
+        DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+    else:
+        DEVICE = args.device
+
+    os.makedirs(args.output_path, exist_ok=True)
+
     record_list = []
     formula_list = ["(user_latents|item) + (item_latents|constant)",
                     "(user_latents|item)",
                     "(item_latents|constant)"]
 
-    TASK = sys.argv[1]
+    sys_info = {
+        "python_version": sys.version,
+        "torch_version": torch.__version__,
+        "torch_choice_version": __import__("torch_choice").__version__,
+        "device": DEVICE,
+        **args.__dict__,
+    }
+
     # ==================================================================================================================
     # experiment 1: benchmark the performance of different number of records.
     # ==================================================================================================================
-    if TASK == "num_records_experiment_large":
-        for seed in range(NUM_SEEDS):
+    if args.task == "num_records_experiment_large":
+        for seed in range(args.num_seeds):
             for formula in formula_list:
                 for subsample_size in [1000, 2000, 3000, 5000, 7000, 10000, 30000, 50000, 70000, 100000, 200000]:
+                    torch.manual_seed(seed)
                     # NOTE: on the entire dataset.
-                    dataset = torch.load(os.path.join(DATA_PATH, "simulated_choice_data_full.pt"))
+                    dataset = torch.load(os.path.join(args.data_path, "simulated_choice_data_full.pt"))
                     dataset_subset = dataset[dataset.session_index < subsample_size].to(DEVICE)
-                    start_time = time()
+                    # fix the random seed.
                     model = ConditionalLogitModel(formula=formula, dataset=dataset_subset, num_items=dataset_subset.num_items).to(DEVICE)
-                    run(model, dataset_subset, num_epochs=50000, learning_rate=0.03, batch_size=-1, report_frequency=100)
-                    time_taken = time() - start_time
-                    print('Time taken:', time_taken)
-                    record_list.append({'sample_size': subsample_size, 'time': time_taken, 'formula': formula, 'seed': seed})
+                    best_loss, time_taken = run(model, dataset_subset, **run_configs)
+                    record_list.append({'sample_size': subsample_size, 'time': time_taken, 'formula': formula, 'seed': seed, 'best_loss': best_loss})
                     del model, dataset_subset
         record = pd.DataFrame(record_list)
-        record.to_csv(f'Python_{TASK}.csv', index=False)
-    elif TASK == "num_records_experiment_small":
-        for seed in range(NUM_SEEDS):
+        for key, val in sys_info.items():
+            record[key] = val
+        record.to_csv(os.path.join(args.output_path, f'Python_{args.task}.csv'), index=False)
+    elif args.task == "num_records_experiment_small":
+        for seed in range(args.num_seeds):
             for formula in formula_list:
                 for subsample_size in [1000, 2000, 3000, 5000, 7000, 10000, 30000, 50000, 70000, 100000, 200000, 500000, 1000000]:
-                    dataset = torch.load(os.path.join(DATA_PATH, "simulated_choice_data_num_records_experiment.pt"))
+                    # fix the random seed.
+                    torch.manual_seed(seed)
+                    dataset = torch.load(os.path.join(args.data_path, "simulated_choice_data_num_records_experiment.pt"))
                     dataset_subset = dataset[dataset.session_index < subsample_size].to(DEVICE)
-                    start_time = time()
                     model = ConditionalLogitModel(formula=formula, dataset=dataset_subset, num_items=dataset_subset.num_items).to(DEVICE)
-                    run(model, dataset_subset, num_epochs=50000, learning_rate=0.03, batch_size=-1, report_frequency=100)
-                    time_taken = time() - start_time
-                    print('Time taken:', time_taken)
-                    record_list.append({'sample_size': subsample_size, 'time': time_taken, 'formula': formula, 'seed': seed})
+                    best_loss, time_taken = run(model, dataset_subset, **run_configs)
+                    record_list.append({'sample_size': subsample_size, 'time': time_taken, 'formula': formula, 'seed': seed, 'best_loss': best_loss})
                     del model, dataset_subset
 
         record = pd.DataFrame(record_list)
-        record.to_csv(f'Python_{TASK}.csv', index=False)
-    elif TASK == "num_params_experiment_small":
+        for key, val in sys_info.items():
+            record[key] = val
+        record.to_csv(os.path.join(args.output_path, f'Python_{args.task}.csv'), index=False)
+    elif args.task == "num_params_experiment_small":
         record_list = []
-        for seed in range(NUM_SEEDS):
+        for seed in range(args.num_seeds):
             for formula in formula_list:
                 for num_params in [1, 5, 10, 15, 20, 30]:
-                    start_time = time()
-                    dataset_subset = torch.load(os.path.join(DATA_PATH, "simulated_choice_data_num_params_experiment_small.pt")).to(DEVICE)
+                    # fix the random seed.
+                    torch.manual_seed(seed)
+                    dataset_subset = torch.load(os.path.join(args.data_path, "simulated_choice_data_num_params_experiment_small.pt")).to(DEVICE)
                     dataset_subset.user_latents = dataset_subset.user_latents[:, :num_params]
                     dataset_subset.item_latents = dataset_subset.item_latents[:, :num_params]
 
                     model = ConditionalLogitModel(formula=formula, dataset=dataset_subset, num_items=dataset_subset.num_items).to(DEVICE)
                     print(model)
                     print(dataset_subset)
-                    run(model, dataset_subset, num_epochs=50000, learning_rate=0.03, batch_size=-1, report_frequency=100)
-                    time_taken = time() - start_time
-                    print('Time taken:', time_taken)
-                    record_list.append({'sample_size': len(dataset_subset), 'time': time_taken, 'formula': formula, 'num_params': num_params, 'seed': seed})
+                    best_loss, time_taken = run(model, dataset_subset, **run_configs)
+                    record_list.append({'sample_size': len(dataset_subset), 'time': time_taken, 'formula': formula, 'num_params': num_params, 'seed': seed, 'best_loss': best_loss})
                     del model, dataset_subset
         record = pd.DataFrame(record_list)
-        record.to_csv(f'Python_{TASK}.csv', index=False)
+        for key, val in sys_info.items():
+            record[key] = val
+        record.to_csv(os.path.join(args.output_path, f'Python_{args.task}.csv'), index=False)
 
-    elif TASK == "num_params_experiment_large":
+    elif args.task == "num_params_experiment_large":
         record_list = []
-        for seed in range(NUM_SEEDS):
+        for seed in range(args.num_seeds):
             for formula in formula_list:
                 for num_params in [1, 5, 10, 15, 20, 30]:
-                    start_time = time()
-                    dataset_subset = torch.load(os.path.join(DATA_PATH, "simulated_choice_data_full.pt")).to(DEVICE)
+                    # fix the random seed.
+                    torch.manual_seed(seed)
+                    dataset_subset = torch.load(os.path.join(args.data_path, "simulated_choice_data_full.pt")).to(DEVICE)
                     dataset_subset.user_latents = dataset_subset.user_latents[:, :num_params]
                     dataset_subset.item_latents = dataset_subset.item_latents[:, :num_params]
                     dataset_subset = dataset_subset[dataset_subset.session_index < 200000]
@@ -165,48 +192,50 @@ if __name__ == "__main__":
                     model = ConditionalLogitModel(formula=formula, dataset=dataset_subset, num_items=dataset_subset.num_items).to(DEVICE)
                     print(model)
                     print(dataset_subset)
-                    run(model, dataset_subset, num_epochs=50000, learning_rate=0.03, batch_size=-1, report_frequency=100)
-                    time_taken = time() - start_time
-                    print('Time taken:', time_taken)
-                    record_list.append({'sample_size': len(dataset_subset), 'time': time_taken, 'formula': formula, 'num_params': num_params, 'seed': seed})
+                    best_loss, time_taken = run(model, dataset_subset, **run_configs)
+                    record_list.append({'sample_size': len(dataset_subset), 'time': time_taken, 'formula': formula, 'num_params': num_params, 'seed': seed, 'best_loss': best_loss})
                     del model, dataset_subset
         record = pd.DataFrame(record_list)
-        record.to_csv(f'Python_{TASK}.csv', index=False)
+        for key, val in sys_info.items():
+            record[key] = val
+        record.to_csv(os.path.join(args.output_path, f'Python_{args.task}.csv'), index=False)
 
-    elif TASK == "num_items_experiment_small":
+    elif args.task == "num_items_experiment_small":
         # to compare with R.
         record_list = []
         for formula in formula_list:
             for num_items in [10, 30, 50, 100, 150, 200]:
-                for seed in range(NUM_SEEDS):
-                    start_time = time()
-                    dataset_subset = torch.load(os.path.join(DATA_PATH, f"simulated_choice_data_{num_items}_items.pt")).to(DEVICE)
+                for seed in range(args.num_seeds):
+                    # fix the random seed.
+                    torch.manual_seed(seed)
+                    dataset_subset = torch.load(os.path.join(args.data_path, f"simulated_choice_data_num_items_experiment_{num_items}_seed_42.pt"), weights_only=False).to(DEVICE)
                     model = ConditionalLogitModel(formula=formula, dataset=dataset_subset, num_items=dataset_subset.num_items).to(DEVICE)
                     print(model)
                     print(dataset_subset)
-                    run(model, dataset_subset, num_epochs=50000, learning_rate=0.03, batch_size=-1, report_frequency=100)
-                    time_taken = time() - start_time
-                    print('Time taken:', time_taken)
-                    record_list.append({'sample_size': len(dataset_subset), 'time': time_taken, 'formula': formula, 'num_items': num_items, 'seed': seed})
+                    best_loss, time_taken = run(model, dataset_subset, **run_configs)
+                    record_list.append({'sample_size': len(dataset_subset), 'time': time_taken, 'formula': formula, 'num_items': num_items, 'seed': seed, 'best_loss': best_loss})
                     del model, dataset_subset
 
         record = pd.DataFrame(record_list)
-        record.to_csv(f'Python_{TASK}.csv', index=False)
-    elif TASK == "num_items_experiment_large":
+        for key, val in sys_info.items():
+            record[key] = val
+        record.to_csv(os.path.join(args.output_path, f'Python_{args.task}.csv'), index=False)
+    elif args.task == "num_items_experiment_large":
         record_list = []
         for formula in formula_list:
             for num_items in [10, 20, 30, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500]:
-                for seed in range(NUM_SEEDS):
-                    start_time = time()
-                    dataset_subset = torch.load(os.path.join(DATA_PATH, f"simulated_choice_data_{num_items}_items.pt")).to(DEVICE)
+                for seed in range(args.num_seeds):
+                    # fix the random seed.
+                    torch.manual_seed(seed)
+                    dataset_subset = torch.load(os.path.join(args.data_path, f"simulated_choice_data_{num_items}_items.pt")).to(DEVICE)
                     model = ConditionalLogitModel(formula=formula, dataset=dataset_subset, num_items=dataset_subset.num_items).to(DEVICE)
                     print(model)
                     print(dataset_subset)
-                    run(model, dataset_subset, num_epochs=50000, learning_rate=0.03, batch_size=-1, report_frequency=100)
-                    time_taken = time() - start_time
-                    print('Time taken:', time_taken)
+                    best_loss, time_taken = run(model, dataset_subset, **run_configs)
                     record_list.append({'sample_size': len(dataset_subset), 'time': time_taken, 'formula': formula, 'num_items': num_items, 'seed': seed})
                     del model, dataset_subset
 
         record = pd.DataFrame(record_list)
-        record.to_csv(f'Python_{TASK}.csv', index=False)
+        for key, val in sys_info.items():
+            record[key] = val
+        record.to_csv(os.path.join(args.output_path, f'Python_{args.task}.csv'), index=False)
