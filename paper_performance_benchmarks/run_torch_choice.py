@@ -9,6 +9,7 @@ from time import time
 import pandas as pd
 import torch
 import torch.optim
+from tqdm import tqdm
 
 # Local imports
 from torch_choice.data import utils as data_utils
@@ -20,7 +21,7 @@ def run(model,
         batch_size=-1,
         learning_rate=0.01,
         num_epochs=5000,
-        model_optimizer='Adam') -> float:
+        model_optimizer='Adam') -> tuple[float, float]:
     """All in one script for the model training and result presentation."""
 
     assert isinstance(model, ConditionalLogitModel) or isinstance(model, NestedLogitModel), \
@@ -50,8 +51,9 @@ def run(model,
     best_loss = float('inf')
     not_improved_count = 0
     # fit the model.
+    start_time = time()
     model.train()
-    for e in range(1, num_epochs + 1):
+    for e in tqdm(range(1, num_epochs + 1), desc=f'Training on {model.device}', leave=False):
         # the total loss for the entire dataset, which is the sum of the loss of all batches.
         total_loss = 0.0
         for batch in data_loader:
@@ -74,7 +76,8 @@ def run(model,
         if not_improved_count >= not_improved_tolerance:
             print(f'Early stopped at {e} epochs.')
             break
-    return best_loss
+    time_taken = float(time() - start_time)  # elapsed time in seconds
+    return best_loss, time_taken
 
 
 if __name__ == "__main__":
