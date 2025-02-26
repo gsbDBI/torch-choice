@@ -6,6 +6,7 @@ import sys
 import platform
 from copy import deepcopy
 from time import time
+from datetime import datetime  # Added to record the current date
 
 # Third-party imports
 import pandas as pd
@@ -175,6 +176,7 @@ if __name__ == "__main__":
         "cpu_name": platform.processor(),
         "cpu_count": os.cpu_count(),
         "gpu_name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "None",
+        "run_date": datetime.now().strftime("%Y-%m-%d")  # Added current date when benchmark is run
     }
     print(sys_info)
 
