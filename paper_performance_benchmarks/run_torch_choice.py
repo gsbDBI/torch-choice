@@ -223,7 +223,12 @@ if __name__ == "__main__":
         }
     }
 
+    EXPERIMENTS_TO_RUN = ["num_params_experiment_large"]
     for task in EXPERIMENT_CONFIGS.keys():
+
+        if task not in EXPERIMENTS_TO_RUN:
+            continue
+
         task_config = EXPERIMENT_CONFIGS[task]
         task_config = EXPERIMENT_CONFIGS[task]
         run_configs = {
