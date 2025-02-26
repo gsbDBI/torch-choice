@@ -132,7 +132,10 @@ def run_experiment(args, task_config, run_configs) -> pd.DataFrame:
                     'epochs_run': epochs_run
                 })
                 del model, dataset
-
+                # release memory
+                if torch.cuda.is_available():
+                    torch.cuda.empty_cache()
+                    __import__("gc").collect()
     record = pd.DataFrame(record_list)
     # Attach system information to the record.
     for key, val in sys_info.items():
@@ -231,3 +234,6 @@ if __name__ == "__main__":
         df_record = run_experiment(args, task_config, run_configs)
         df_record["task"] = task
         df_record.to_csv(os.path.join(args.output_path, f"torch_choice_{task}.csv"), index=False)
+        # Release CUDA memory after each experiment.
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
