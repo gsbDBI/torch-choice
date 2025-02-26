@@ -129,7 +129,8 @@ def run_experiment(args, task_config, run_configs) -> pd.DataFrame:
                     'seed': seed,
                     'best_loss': best_loss,
                     task_config['key']: value,
-                    'epochs_run': epochs_run
+                    'epochs_run': epochs_run,
+                    "dataset": str(dataset)
                 })
                 del model, dataset
                 # release memory
