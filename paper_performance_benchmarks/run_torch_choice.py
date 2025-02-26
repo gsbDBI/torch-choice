@@ -148,6 +148,7 @@ if __name__ == "__main__":
     parser.add_argument("--data_path", type=str, required=True, help="The path to the data.")
     parser.add_argument("--output_path", type=str, required=True, help="The path to save the results.")
     # Optional configurations.
+    parser.add_argument("--experiment_name", type=str, required=False, default="all", help="The name of the experiment to run. By default, all experiments are run.")
     parser.add_argument("--device", type=str, required=False, default="auto", help="The device to run the experiment on.")
     parser.add_argument("--num_seeds", type=int, required=False, default=5, help="The number of seeds to run the experiment on.")
     parser.add_argument("--num_epochs", type=int, required=False, default=50000, help="The maximum number of epochs to run the experiment on.")
@@ -223,13 +224,10 @@ if __name__ == "__main__":
         }
     }
 
-    EXPERIMENTS_TO_RUN = ["num_params_experiment_large"]
+    if args.experiment_name != "all":
+        EXPERIMENT_CONFIGS = {k: v for k, v in EXPERIMENT_CONFIGS.items() if k == args.experiment_name}
+
     for task in EXPERIMENT_CONFIGS.keys():
-
-        if task not in EXPERIMENTS_TO_RUN:
-            continue
-
-        task_config = EXPERIMENT_CONFIGS[task]
         task_config = EXPERIMENT_CONFIGS[task]
         run_configs = {
             "num_epochs": args.num_epochs,
