@@ -1,7 +1,9 @@
 # Standard library imports
 import argparse
+from typing import Union
 import os
 import sys
+import platform
 from copy import deepcopy
 from time import time
 
@@ -15,25 +17,31 @@ from tqdm import tqdm
 from torch_choice.data import utils as data_utils
 from torch_choice.model import ConditionalLogitModel
 from torch_choice.model.nested_logit_model import NestedLogitModel
+from torch_choice.data import ChoiceDataset
 
-def run(model,
-        dataset,
-        batch_size=-1,
-        learning_rate=0.01,
-        num_epochs=5000,
-        model_optimizer='Adam') -> tuple[float, float]:
-    """All in one script for the model training and result presentation."""
 
+def run(model: Union[ConditionalLogitModel, NestedLogitModel],
+        dataset: ChoiceDataset,
+        batch_size: int = -1,
+        learning_rate: float = 0.01,
+        num_epochs: int = 5000,
+        model_optimizer: str = 'Adam') -> tuple[float, float, int]:
+    """Run the model training and return the best loss, time taken, and the number of epochs run.
+       The number of epochs returned is where early stopping was triggered (or num_epochs if never triggered).
+    """
     assert isinstance(model, ConditionalLogitModel) or isinstance(model, NestedLogitModel), \
         f'A model of type {type(model)} is not supported by this runner.'
-    model = deepcopy(model)  # do not modify the model outside.
-    # trained_model = deepcopy(model)  # create another copy for returning.
+    # Create a copy of the model so that the original is not modified.
+    model = deepcopy(model)
     data_loader = data_utils.create_data_loader(dataset, batch_size=batch_size, shuffle=True)
 
-    optimizer = {'SGD': torch.optim.SGD,
-                 'Adagrad': torch.optim.Adagrad,
-                 'Adadelta': torch.optim.Adadelta,
-                 'Adam': torch.optim.Adam}[model_optimizer](model.parameters(), lr=learning_rate)
+    optimizer_cls = {'SGD': torch.optim.SGD,
+                     'Adagrad': torch.optim.Adagrad,
+                     'Adadelta': torch.optim.Adadelta,
+                     'Adam': torch.optim.Adam}.get(model_optimizer)
+    if optimizer_cls is None:
+        raise ValueError(f"Optimizer '{model_optimizer}' is not supported.")
+    optimizer = optimizer_cls(model.parameters(), lr=learning_rate)
 
     # optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
     # optimizer = torch.optim.Adagrad(model.parameters(), lr=learning_rate)
@@ -47,16 +55,19 @@ def run(model,
     print(dataset)
     print('=' * 20, 'training the model', '=' * 20)
 
-    not_improved_tolerance = 50  # stop if the loss failed to improve tol proportion of average performance in the last k iterations.
+    not_improved_tolerance = 50  # stop if the loss fails to improve for a number of consecutive epochs.
     best_loss = float('inf')
     not_improved_count = 0
-    # fit the model.
+    epochs_run = 0  # record the epoch at which training stops (or num_epochs if never early stopped)
+
     start_time = time()
     model.train()
-    for e in tqdm(range(1, num_epochs + 1), desc=f'Training on {model.device}', leave=False):
-        # the total loss for the entire dataset, which is the sum of the loss of all batches.
+    # Use one of the model's parameter devices for display purposes.
+    device_info = next(model.parameters()).device if list(model.parameters()) else "unknown"
+    for e in tqdm(range(1, num_epochs + 1), desc=f'Training on {device_info}', leave=False):
         total_loss = 0.0
         for batch in data_loader:
+            # Use the appropriate item_index based on the type of model.
             item_index = batch['item'].item_index if isinstance(model, NestedLogitModel) else batch.item_index
             # the model.loss returns negative log-likelihood + regularization term,
             # but we are not using the regularization in this benchmark.
@@ -69,24 +80,70 @@ def run(model,
         current_loss = total_loss
         if current_loss < best_loss:
             best_loss = current_loss
-            not_improved_count = 0  # reset the counter.
+            not_improved_count = 0  # reset the counter if improvement occurs
         else:
-            not_improved_count += 1  # increment the counter.
+            not_improved_count += 1  # increment the counter
 
         if not_improved_count >= not_improved_tolerance:
             print(f'Early stopped at {e} epochs.')
+            epochs_run = e
             break
-    time_taken = float(time() - start_time)  # elapsed time in seconds
-    return best_loss, time_taken
+        epochs_run = e
+
+    time_taken = float(time() - start_time)  # total time taken in seconds
+    return best_loss, time_taken, epochs_run
+
+
+def load_dataset(data_path, filename, session_limit=None, num_params=None) -> ChoiceDataset:
+    """
+    Loads a dataset via torch.load and optionally:
+      - Filters the dataset so that only sessions with session_index < session_limit are kept.
+      - Limits the dimension of latent variables to num_params.
+    """
+    # load the dataset from the pickle file.
+    ds = torch.load(os.path.join(data_path, filename), map_location=DEVICE, weights_only=False)
+    if num_params is not None:
+        ds.user_latents = ds.user_latents[:, :num_params]
+        ds.item_latents = ds.item_latents[:, :num_params]
+    if session_limit is not None:
+        ds = ds[ds.session_index < session_limit]
+    return ds
+
+
+def run_experiment(args, task_config, run_configs) -> pd.DataFrame:
+    record_list = []
+    for seed in range(args.num_seeds):
+        for formula in task_config['formulas']:
+            for value in task_config['values']:
+                torch.manual_seed(seed)
+                dataset = task_config['loader'](args.data_path, value)
+                model = ConditionalLogitModel(formula=formula,
+                                              dataset=dataset,
+                                              num_items=dataset.num_items).to(DEVICE)
+                best_loss, time_taken, epochs_run = run(model, dataset, **run_configs)
+                record_list.append({
+                    'sample_size': len(dataset),
+                    'time': time_taken,
+                    'formula': formula,
+                    'seed': seed,
+                    'best_loss': best_loss,
+                    task_config['key']: value,
+                    'epochs_run': epochs_run
+                })
+                del model, dataset
+
+    record = pd.DataFrame(record_list)
+    # Attach system information to the record.
+    for key, val in sys_info.items():
+        record[key] = val
+    return record
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--task", type=str, required=True,
-                        choices=["num_records_experiment_large", "num_records_experiment_small", "num_params_experiment_small", "num_params_experiment_large", "num_items_experiment_small", "num_items_experiment_large"])
     parser.add_argument("--data_path", type=str, required=True, help="The path to the data.")
     parser.add_argument("--output_path", type=str, required=True, help="The path to save the results.")
-    # optional configurations.
+    # Optional configurations.
     parser.add_argument("--device", type=str, required=False, default="auto", help="The device to run the experiment on.")
     parser.add_argument("--num_seeds", type=int, required=False, default=5, help="The number of seeds to run the experiment on.")
     parser.add_argument("--num_epochs", type=int, required=False, default=50000, help="The maximum number of epochs to run the experiment on.")
@@ -94,151 +151,81 @@ if __name__ == "__main__":
     parser.add_argument("--batch_size", type=int, required=False, default=-1, help="The batch size to run the experiment on, use -1 for full batch training.")
     args = parser.parse_args()
 
-    run_configs = {
-        "num_epochs": args.num_epochs,
-        "learning_rate": args.learning_rate,
-        "batch_size": args.batch_size,
-    }
-
-    # detect device automatically.
+    # Detect device automatically.
     if args.device == "auto":
         DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
     else:
         DEVICE = args.device
 
+    # Create the output directory if it does not exist.
     os.makedirs(args.output_path, exist_ok=True)
 
-    record_list = []
+    # List of regression formulas to be benchmarked.
     formula_list = ["(user_latents|item) + (item_latents|constant)",
                     "(user_latents|item)",
                     "(item_latents|constant)"]
 
+    global sys_info
     sys_info = {
         "python_version": sys.version,
         "torch_version": torch.__version__,
         "torch_choice_version": __import__("torch_choice").__version__,
         "device": DEVICE,
         **args.__dict__,
+        "cpu_name": platform.processor(),
+        "cpu_count": os.cpu_count(),
+        "gpu_name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "None",
+    }
+    print(sys_info)
+
+    # One set of experiments varies in one dimension, indicated by the (key, value) pairs.
+    EXPERIMENT_CONFIGS = {
+        "num_records_experiment_small": {
+            "key": "sample_size",
+            "values": [1_000, 2_000, 3_000, 5_000, 7_000, 10_000, 30_000, 50_000, 70_000, 100_000],
+            "formulas": formula_list,
+            "loader": lambda dp, val: load_dataset(data_path=dp, filename="simulated_choice_data_num_records_experiment_small_seed_42.pt", session_limit=val, num_params=None)
+        },
+        "num_records_experiment_large": {
+            "key": "sample_size",
+            "values": [1_000, 2_000, 3_000, 5_000, 7_000, 10_000, 30_000, 50_000, 70_000, 100_000],
+            "formulas": formula_list,
+            "loader": lambda dp, val: load_dataset(data_path=dp, filename="simulated_choice_data_full_dataset_seed_42.pt", session_limit=val, num_params=None)
+        },
+        "num_params_experiment_small": {
+            "key": "num_params",
+            "values": [1, 5, 10, 15, 20, 30],
+            "formulas": formula_list,
+            "loader": lambda dp, val: load_dataset(data_path=dp, filename="simulated_choice_data_num_params_experiment_small_seed_42.pt", session_limit=None, num_params=val)
+        },
+        "num_params_experiment_large": {
+            "key": "num_params",
+            "values": [1, 5, 10, 15, 20, 30],
+            "formulas": formula_list,
+            "loader": lambda dp, val: load_dataset(data_path=dp, filename="simulated_choice_data_full_dataset_seed_42.pt", session_limit=None, num_params=val)
+        },
+        "num_items_experiment_small": {
+            "key": "num_items",
+            "values": [10, 20, 30, 50, 100, 150, 200],
+            "formulas": formula_list,
+            "loader": lambda dp, val: load_dataset(data_path=dp, filename=f"simulated_choice_data_num_items_experiment_{val}_items_seed_42.pt", session_limit=None, num_params=None)
+        },
+        "num_items_experiment_large": {
+            "key": "num_items",
+            "values": [10, 20, 30, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500],
+            "formulas": formula_list,
+            "loader": lambda dp, val: load_dataset(data_path=dp, filename=f"simulated_choice_data_num_items_experiment_{val}_items_seed_42.pt", session_limit=None, num_params=None)
+        }
     }
 
-    # ==================================================================================================================
-    # experiment 1: benchmark the performance of different number of records.
-    # ==================================================================================================================
-    if args.task == "num_records_experiment_large":
-        for seed in range(args.num_seeds):
-            for formula in formula_list:
-                for subsample_size in [1000, 2000, 3000, 5000, 7000, 10000, 30000, 50000, 70000, 100000, 200000]:
-                    torch.manual_seed(seed)
-                    # NOTE: on the entire dataset.
-                    dataset = torch.load(os.path.join(args.data_path, "simulated_choice_data_full.pt"))
-                    dataset_subset = dataset[dataset.session_index < subsample_size].to(DEVICE)
-                    # fix the random seed.
-                    model = ConditionalLogitModel(formula=formula, dataset=dataset_subset, num_items=dataset_subset.num_items).to(DEVICE)
-                    best_loss, time_taken = run(model, dataset_subset, **run_configs)
-                    record_list.append({'sample_size': subsample_size, 'time': time_taken, 'formula': formula, 'seed': seed, 'best_loss': best_loss})
-                    del model, dataset_subset
-        record = pd.DataFrame(record_list)
-        for key, val in sys_info.items():
-            record[key] = val
-        record.to_csv(os.path.join(args.output_path, f'Python_{args.task}.csv'), index=False)
-    elif args.task == "num_records_experiment_small":
-        for seed in range(args.num_seeds):
-            for formula in formula_list:
-                for subsample_size in [1000, 2000, 3000, 5000, 7000, 10000, 30000, 50000, 70000, 100000, 200000, 500000, 1000000]:
-                    # fix the random seed.
-                    torch.manual_seed(seed)
-                    dataset = torch.load(os.path.join(args.data_path, "simulated_choice_data_num_records_experiment.pt"))
-                    dataset_subset = dataset[dataset.session_index < subsample_size].to(DEVICE)
-                    model = ConditionalLogitModel(formula=formula, dataset=dataset_subset, num_items=dataset_subset.num_items).to(DEVICE)
-                    best_loss, time_taken = run(model, dataset_subset, **run_configs)
-                    record_list.append({'sample_size': subsample_size, 'time': time_taken, 'formula': formula, 'seed': seed, 'best_loss': best_loss})
-                    del model, dataset_subset
-
-        record = pd.DataFrame(record_list)
-        for key, val in sys_info.items():
-            record[key] = val
-        record.to_csv(os.path.join(args.output_path, f'Python_{args.task}.csv'), index=False)
-    elif args.task == "num_params_experiment_small":
-        record_list = []
-        for seed in range(args.num_seeds):
-            for formula in formula_list:
-                for num_params in [1, 5, 10, 15, 20, 30]:
-                    # fix the random seed.
-                    torch.manual_seed(seed)
-                    dataset_subset = torch.load(os.path.join(args.data_path, "simulated_choice_data_num_params_experiment_small.pt")).to(DEVICE)
-                    dataset_subset.user_latents = dataset_subset.user_latents[:, :num_params]
-                    dataset_subset.item_latents = dataset_subset.item_latents[:, :num_params]
-
-                    model = ConditionalLogitModel(formula=formula, dataset=dataset_subset, num_items=dataset_subset.num_items).to(DEVICE)
-                    print(model)
-                    print(dataset_subset)
-                    best_loss, time_taken = run(model, dataset_subset, **run_configs)
-                    record_list.append({'sample_size': len(dataset_subset), 'time': time_taken, 'formula': formula, 'num_params': num_params, 'seed': seed, 'best_loss': best_loss})
-                    del model, dataset_subset
-        record = pd.DataFrame(record_list)
-        for key, val in sys_info.items():
-            record[key] = val
-        record.to_csv(os.path.join(args.output_path, f'Python_{args.task}.csv'), index=False)
-
-    elif args.task == "num_params_experiment_large":
-        record_list = []
-        for seed in range(args.num_seeds):
-            for formula in formula_list:
-                for num_params in [1, 5, 10, 15, 20, 30]:
-                    # fix the random seed.
-                    torch.manual_seed(seed)
-                    dataset_subset = torch.load(os.path.join(args.data_path, "simulated_choice_data_full.pt")).to(DEVICE)
-                    dataset_subset.user_latents = dataset_subset.user_latents[:, :num_params]
-                    dataset_subset.item_latents = dataset_subset.item_latents[:, :num_params]
-                    dataset_subset = dataset_subset[dataset_subset.session_index < 200000]
-
-                    model = ConditionalLogitModel(formula=formula, dataset=dataset_subset, num_items=dataset_subset.num_items).to(DEVICE)
-                    print(model)
-                    print(dataset_subset)
-                    best_loss, time_taken = run(model, dataset_subset, **run_configs)
-                    record_list.append({'sample_size': len(dataset_subset), 'time': time_taken, 'formula': formula, 'num_params': num_params, 'seed': seed, 'best_loss': best_loss})
-                    del model, dataset_subset
-        record = pd.DataFrame(record_list)
-        for key, val in sys_info.items():
-            record[key] = val
-        record.to_csv(os.path.join(args.output_path, f'Python_{args.task}.csv'), index=False)
-
-    elif args.task == "num_items_experiment_small":
-        # to compare with R.
-        record_list = []
-        for formula in formula_list:
-            for num_items in [10, 30, 50, 100, 150, 200]:
-                for seed in range(args.num_seeds):
-                    # fix the random seed.
-                    torch.manual_seed(seed)
-                    dataset_subset = torch.load(os.path.join(args.data_path, f"simulated_choice_data_num_items_experiment_{num_items}_seed_42.pt"), weights_only=False).to(DEVICE)
-                    model = ConditionalLogitModel(formula=formula, dataset=dataset_subset, num_items=dataset_subset.num_items).to(DEVICE)
-                    print(model)
-                    print(dataset_subset)
-                    best_loss, time_taken = run(model, dataset_subset, **run_configs)
-                    record_list.append({'sample_size': len(dataset_subset), 'time': time_taken, 'formula': formula, 'num_items': num_items, 'seed': seed, 'best_loss': best_loss})
-                    del model, dataset_subset
-
-        record = pd.DataFrame(record_list)
-        for key, val in sys_info.items():
-            record[key] = val
-        record.to_csv(os.path.join(args.output_path, f'Python_{args.task}.csv'), index=False)
-    elif args.task == "num_items_experiment_large":
-        record_list = []
-        for formula in formula_list:
-            for num_items in [10, 20, 30, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500]:
-                for seed in range(args.num_seeds):
-                    # fix the random seed.
-                    torch.manual_seed(seed)
-                    dataset_subset = torch.load(os.path.join(args.data_path, f"simulated_choice_data_{num_items}_items.pt")).to(DEVICE)
-                    model = ConditionalLogitModel(formula=formula, dataset=dataset_subset, num_items=dataset_subset.num_items).to(DEVICE)
-                    print(model)
-                    print(dataset_subset)
-                    best_loss, time_taken = run(model, dataset_subset, **run_configs)
-                    record_list.append({'sample_size': len(dataset_subset), 'time': time_taken, 'formula': formula, 'num_items': num_items, 'seed': seed})
-                    del model, dataset_subset
-
-        record = pd.DataFrame(record_list)
-        for key, val in sys_info.items():
-            record[key] = val
-        record.to_csv(os.path.join(args.output_path, f'Python_{args.task}.csv'), index=False)
+    for task in EXPERIMENT_CONFIGS.keys():
+        task_config = EXPERIMENT_CONFIGS[task]
+        task_config = EXPERIMENT_CONFIGS[task]
+        run_configs = {
+            "num_epochs": args.num_epochs,
+            "learning_rate": args.learning_rate,
+            "batch_size": args.batch_size,
+        }
+        df_record = run_experiment(args, task_config, run_configs)
+        df_record["task"] = task
+        df_record.to_csv(os.path.join(args.output_path, f"torch_choice_{task}.csv"), index=False)
