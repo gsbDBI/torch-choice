@@ -205,9 +205,9 @@ if __name__ == "__main__":
         },
         "num_params_experiment_large": {
             "key": "num_params",
-            "values": [1, 5, 10, 15, 20, 30],
+            "values": [30, 1, 5, 10, 15, 20],
             "formulas": formula_list,
-            "loader": lambda dp, val: load_dataset(data_path=dp, filename="simulated_choice_data_full_dataset_seed_42.pt", session_limit=None, num_params=val)
+            "loader": lambda dp, val: load_dataset(data_path=dp, filename="simulated_choice_data_full_dataset_seed_42.pt", session_limit=20_000, num_params=val)
         },
         "num_items_experiment_small": {
             "key": "num_items",
