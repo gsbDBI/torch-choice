@@ -6,6 +6,7 @@ library(stringr)
 args <- commandArgs(trailingOnly = TRUE)
 input_path <- args[1]
 output_path <- args[2]
+num.seeds <- as.numeric(args[3])
 setwd(input_path)
 
 user_latent_columns <- c('user_latent_0', 'user_latent_1', 'user_latent_2', 'user_latent_3', 'user_latent_4', 'user_latent_5', 'user_latent_6', 'user_latent_7', 'user_latent_8', 'user_latent_9', 'user_latent_10', 'user_latent_11', 'user_latent_12', 'user_latent_13', 'user_latent_14', 'user_latent_15', 'user_latent_16', 'user_latent_17', 'user_latent_18', 'user_latent_19', 'user_latent_20', 'user_latent_21', 'user_latent_22', 'user_latent_23', 'user_latent_24', 'user_latent_25', 'user_latent_26', 'user_latent_27', 'user_latent_28', 'user_latent_29')
@@ -18,8 +19,6 @@ seed.list <- c()
 parameter_count.list <- c()
 final_likelihood.list <- c()
 
-# run for 5 seeds.
-num.seeds <- 5
 for (seed in 1:num.seeds) {
   tic()
   print(paste0('Seed=', seed))
