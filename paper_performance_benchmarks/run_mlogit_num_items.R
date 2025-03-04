@@ -22,7 +22,8 @@ final_likelihood.list <- c()
 for (seed in 1:num.seeds) {
   tic()
   print(paste0('Seed=', seed))
-  for (num_items in c(10, 30, 50, 100, 150, 200)) {
+  # for (num_items in c(10, 30, 50, 100, 150, 200)) {
+  for (num_items in c(10, 30, 50)) {
     # Read in the simulated dataset.
     df <- read.csv(str_glue("simulated_choice_data_num_items_experiment_{num_items}_items_seed_42.csv"))
     df$item_id <- as.factor(df$item_id)
