@@ -215,13 +215,13 @@ if __name__ == "__main__":
             "key": "num_items",
             "values": [10, 20, 30, 50, 100, 150, 200],
             "formulas": formula_list,
-            "loader": lambda dp, val: load_dataset(data_path=dp, filename=f"simulated_choice_data_num_items_experiment_{val}_items_seed_42.pt", session_limit=None, num_params=None)
+            "loader": lambda dp, val: load_dataset(data_path=dp, filename=f"simulated_choice_data_num_items_experiment_small_{val}_items_seed_42.pt", session_limit=None, num_params=None)
         },
         "num_items_experiment_large": {
             "key": "num_items",
             "values": [10, 20, 30, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500],
             "formulas": formula_list,
-            "loader": lambda dp, val: load_dataset(data_path=dp, filename=f"simulated_choice_data_num_items_experiment_{val}_items_seed_42.pt", session_limit=None, num_params=None)
+            "loader": lambda dp, val: load_dataset(data_path=dp, filename=f"simulated_choice_data_num_items_experiment_large_{val}_items_seed_42.pt", session_limit=None, num_params=None)
         }
     }
 
