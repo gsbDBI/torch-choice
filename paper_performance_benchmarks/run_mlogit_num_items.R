@@ -24,7 +24,7 @@ for (seed in 1:num.seeds) {
   print(paste0('Seed=', seed))
   for (num_items in c(10, 30, 50, 100, 150, 200)) {
     # Read in the simulated dataset.
-    df <- read.csv(str_glue("simulated_choice_data_num_items_experiment_{num_items}_items_seed_42.csv"))
+    df <- read.csv(str_glue("simulated_choice_data_num_items_experiment_small_{num_items}_items_seed_42.csv"))
     df$item_id <- as.factor(df$item_id)
     data <- mlogit.data(df, choice="choice", shape="long", alt.var="item_id", chid.var="session_id", id.var="user_id")
 
