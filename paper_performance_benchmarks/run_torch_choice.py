@@ -123,7 +123,7 @@ def run_experiment(args, task_config, run_configs) -> pd.DataFrame:
                                               num_items=dataset.num_items).to(DEVICE)
                 best_loss, time_taken, epochs_run = run(model, dataset, **run_configs)
                 record_list.append({
-                    'sample_size': len(dataset),
+                    'num_records': len(dataset),
                     'time': time_taken,
                     'formula': formula,
                     'seed': seed,
