@@ -189,13 +189,15 @@ if __name__ == "__main__":
     EXPERIMENT_CONFIGS = {
         "num_records_experiment_small": {
             "key": "sample_size",
-            "values": [1_000, 2_000, 3_000, 5_000, 7_000, 10_000, 30_000, 50_000, 70_000, 100_000],
+            # "values": [1_000, 2_000, 3_000, 5_000, 7_000, 10_000, 30_000, 50_000, 70_000, 100_000],
+            "values": [3_000, 5_000, 7_000, 10_000, 30_000, 50_000, 70_000, 100_000],
             "formulas": formula_list,
             "loader": lambda dp, val: load_dataset(data_path=dp, filename="simulated_choice_data_num_records_experiment_small_seed_42.pt", session_limit=val, num_params=None)
         },
         "num_records_experiment_large": {
             "key": "sample_size",
-            "values": [1_000, 2_000, 3_000, 5_000, 7_000, 10_000, 30_000, 50_000, 70_000, 100_000],
+            # "values": [1_000, 2_000, 3_000, 5_000, 7_000, 10_000, 30_000, 50_000, 70_000, 100_000],
+            "values": [3_000, 5_000, 7_000, 10_000, 30_000, 50_000, 70_000, 100_000],
             "formulas": formula_list,
             "loader": lambda dp, val: load_dataset(data_path=dp, filename="simulated_choice_data_full_dataset_seed_42.pt", session_limit=val, num_params=None)
         },
