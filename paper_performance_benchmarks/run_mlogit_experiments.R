@@ -131,7 +131,7 @@ run_experiment <- function(experiment_type, input_path, output_path, num_seeds) 
 
       } else if (experiment_type == "records") {
         # Load the full dataset.
-        df_full <- read.csv(file.path(input_path, "simulated_choice_data_num_records_experiment_small.csv"))
+        df_full <- read.csv(file.path(input_path, "simulated_choice_data_num_records_experiment_small_seed_42.csv"))
         df_full$item_id <- as.factor(df_full$item_id)
         # Subset data for records experiment (with a limited number of records)
         data <- mlogit.data(subset(df_full, session_id < var_value),
@@ -141,7 +141,7 @@ run_experiment <- function(experiment_type, input_path, output_path, num_seeds) 
         formula_str_list <- build_formula_strings(10, 10)
 
       } else if (experiment_type == "params") {
-        df <- read.csv(file.path(input_path, "simulated_choice_data_num_params_experiment_small.csv"))
+        df <- read.csv(file.path(input_path, "simulated_choice_data_num_params_experiment_small_seed_42.csv"))
         df$item_id <- as.factor(df$item_id)
         data <- mlogit.data(df, choice="choice", shape="long", alt.var="item_id",
                             chid.var="session_id", id.var="user_id")
