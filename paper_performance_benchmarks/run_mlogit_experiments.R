@@ -100,7 +100,7 @@ run_experiment <- function(experiment_type, input_path, output_path, num_seeds) 
   if (experiment_type == "items") {
     var_name <- "num_items"
     # 200 is the limit that we can run on a 128GiB machine.
-    var_values <- c(10, 30, 50, 100, 150, 200)
+    var_values <- c(10, 20, 30, 50, 100, 150, 200)
   } else if (experiment_type == "records") {
     var_name <- "num_records"
     # var_values <- c(1000, 2000, 3000, 5000, 7000, 10000, 30000, 50000, 70000, 100000)
