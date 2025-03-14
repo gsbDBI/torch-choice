@@ -226,9 +226,12 @@ if __name__ == "__main__":
             "loader": lambda dp, val: load_dataset(data_path=dp, filename=f"simulated_choice_data_num_items_experiment_large_{val}_items_seed_42.pt", session_limit=None, num_params=None)
         }
     }
-
+    # Validate and subset the experiment configurations to run.
     if args.experiment_name != "all":
-        EXPERIMENT_CONFIGS = {k: v for k, v in EXPERIMENT_CONFIGS.items() if k == args.experiment_name}
+        if args.experiment_name in EXPERIMENT_CONFIGS:
+            EXPERIMENT_CONFIGS = {args.experiment_name: EXPERIMENT_CONFIGS[args.experiment_name]}
+        else:
+            raise ValueError(f"Experiment '{args.experiment_name}' not found in experiment configurations.")
 
     for task in EXPERIMENT_CONFIGS.keys():
         task_config = EXPERIMENT_CONFIGS[task]
