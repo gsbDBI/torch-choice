@@ -82,7 +82,7 @@ do
     python3.9 ./run_torch_choice.py \
         --data_path="/media/sata_drive/torch_choice_benchmark_data_totally_synthetic" \
         --output_path="./benchmark_results_aurora_20250314" \
-        --device="cuda"
+        --device="cuda" \
         --experiment_name=$experiment_name
 done
 
