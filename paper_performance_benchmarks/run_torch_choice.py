@@ -203,7 +203,7 @@ if __name__ == "__main__":
         },
         "num_params_experiment_small": {
             "key": "num_params",
-            "values": [1, 5, 10, 15, 20, 30],
+            "values": [3, 5, 10, 15, 20, 30],
             "formulas": formula_list,
             "loader": lambda dp, val: load_dataset(data_path=dp, filename="simulated_choice_data_num_params_experiment_small_seed_42.pt", session_limit=None, num_params=val)
         },

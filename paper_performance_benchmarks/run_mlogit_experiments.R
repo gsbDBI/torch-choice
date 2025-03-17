@@ -107,7 +107,7 @@ run_experiment <- function(experiment_type, input_path, output_path, num_seeds) 
     var_values <- c(3000, 5000, 7000, 10000, 30000, 50000, 70000, 100000)
   } else if (experiment_type == "params") {
     var_name <- "num_params"
-    var_values <- c(1, 5, 10, 15, 20, 30)
+    var_values <- c(3, 5, 10, 15, 20, 30)
   } else {
     stop("Invalid experiment type. Use 'items', 'records', 'params', or 'all'.")
   }
