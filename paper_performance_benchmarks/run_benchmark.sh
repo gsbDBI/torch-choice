@@ -1,7 +1,7 @@
 #! /bin/bash
 
-DATA_PATH="/media/sata_drive/torch_choice_benchmark_data_totally_synthetic"
-OUTPUT_PATH="./benchmark_results_aurora_20250314"
+DATA_PATH="/torch_choice_benchmark_data_totally_synthetic"
+OUTPUT_PATH="./benchmark_results_aurora_20250428"
 
 conda activate dev
 
