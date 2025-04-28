@@ -1,6 +1,6 @@
 #! /bin/bash
 
-DATA_PATH="/torch_choice_benchmark_data_totally_synthetic"
+DATA_PATH="/home/tianyudu/Development/torch-choice/paper_performance_benchmarks"
 OUTPUT_PATH="./benchmark_results_aurora_20250428"
 
 conda activate dev
