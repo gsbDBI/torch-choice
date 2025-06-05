@@ -125,7 +125,7 @@ device=cpu
 We include the R code for the ModeCanada example as well.
 <details>
     <summary> R code </summary>
-    
+
     ```{r}
     # load packages.
     library("mlogit")
@@ -144,7 +144,7 @@ We include the R code for the ModeCanada example as well.
     ```
 </details>
 
-<!-- 
+<!--
 ## Logistic Regression and Choice Models
 
 [Logistic Regression](https://en.wikipedia.org/wiki/Logistic_regression) models the probability that user $u$ chooses item $i$ in session $s$ by the logistic function
@@ -196,7 +196,7 @@ Then,
 - $X^{itemsession: (cost, freq, ovt)}_{it}$ is a matrix of size (I x S) x (3); it has three entries for each item-session, and is like a price; its coefficient $\beta^{1}$ has constant variation and is of size (1) x (3).
 - $X^{session: income}_{it}$ is a matrix which is of size (S) x (1); it has one entry for each session, and it denotes income of the user making the choice in the session. In this case, it is equivalent to $X^{usersession: income}_{it}$ since we observe a user making a decision only once; its coefficient $\beta^2_i$ has item level variation and is of size (I) x (1)
 - $X_{it}^{itemsession:ivt}$ is a matrix of size (I x S) x (1); this has one entry for each item-session; it is the price; its coefficent $\beta^3_i$ has item level variation and is of size (I) x (3) -->
-<!-- 
+<!--
 2. MNIST classification [(Upcoming Detailed Tutorial)]()
 
 $$
