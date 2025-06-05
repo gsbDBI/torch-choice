@@ -1,25 +1,26 @@
 # Replication Material
-Thank you for your interest in our paper and spending time to replicate the results.
+Thank you for your interest in our paper and for taking the time to replicate the results.
 
-The replication material of the paper consists of two parts, demonstration in the paper and code for running performance benchmarks.
+The replication material consists of two parts: demonstrations from the paper and code for running performance benchmarks.
 
 ## Setup the Environment
-You can choose your own Python environment to run the code, either using `conda` or pure Python virutal environment with `pip`. You would need to install the softwares listed in the `requirements.txt` file to fullfill the dependencies required by the `torch-choice` package.
+You can use either `conda` or a Python virtual environment with `pip` to run the code. You will need to install the software listed in the `requirements.txt` file to fulfill the dependencies required by the `torch-choice` package.
 
-## Installing `torch-choice` Package
-Please refer to our installation guide to set up the package. The package can be installed via two methods: from PyPI or from the source code.
-As we continuously update the package, if you are replicating the code presented in the paper and have received the source code in the replication package, we strongly recommend installing the package from the source code to ensure consistency and avoid potential discrepancies that may arise from newer versions of the package.
+## Installing the `torch-choice` Package
+Please refer to our installation guide to set up the package. The package can be installed via two methods: from PyPI or from source code.
 
-You can do so by running the following command:
+Since we continuously update the package, if you are replicating the code presented in the paper and have received the source code in the replication package, we strongly recommend installing from source to ensure consistency and avoid potential discrepancies from newer package versions.
+
+You can install from source by running:
 ```bash
 python setup.py install
 ```
 
-## Demo Code in the Paper
-Please refer to the `paper_demo.ipynb` notebook in this `replication` directory for all code demos in the paper and corresponding output figures.
+## Demo Code from the Paper
+Please refer to the `paper_demo.ipynb` notebook in this `replication` directory for all code demonstrations from the paper and their corresponding output figures.
 
-## Code for Performance Benchmark
-The following section describes the code for generating synthetic data for stress testing the software package, replicating results presented in the paper. All relevant materials are included in the `replication/paper_performance_benchmarks` directory.
+## Code for Performance Benchmarks
+This section describes the code for generating synthetic data to stress test the software package and replicate results presented in the paper. All relevant materials are located in the `replication/paper_performance_benchmarks` directory.
 
 ### Synthetic Data Generation
 The `simulated_datasets_synthetic.ipynb` notebook generates synthetic datasets of various sizes and complexities in terms of number of records, items, and features.
@@ -29,13 +30,20 @@ Please note that the process of generating synthetic datasets is memory intensiv
 **Optional**: the last section in the data generation notebook provides the chance to compare the data you generated with the version we used while writing the paper. You can download *our data* from [Google Drive](https://drive.google.com/drive/folders/1qPkDjbGiItfH-KBAK7jCEUlWT49E_t88?usp=sharing) and set the `REFERENCE_DATA_PATH` variable in the notebook to the location where you save the downloaded data. The notebook will then compare the data you generated with the version we used while writing the paper.
 
 ### Performance Benchmarks
-The `run_benchmark.sh` script estimates several different model specifications on these synthetic datasets using `torch-choice` (Python) and `mlogit` (R) separately.
-Please note that you would need to update the environment activation commands (e.g., `conda activate ...`) in the script to run it on your own machine to properly activate the Python and R environments.
-You would also need to change data paths (`DATA_PATH` and `OUTPUT_PATH`) to the location where you save the synthetic datasets (set in `simulated_datasets_synthetic.ipynb`) and the directory where you want to save the benchmarking results, respectively.
-These scripts will save the benchmarking results (e.g., size of datasets, model specifications, and runtime) in the directory specified in by `OUTPUT_PATH` in the script.
+The `run_benchmark.sh` script estimates several model specifications on these synthetic datasets using both `torch-choice` (Python) and `mlogit` (R).
 
-We have also included *our benchmarking results* in the `benchmark_results_aurora_20250428` directory for your reference. Please note that these files tracks the number of seconds taken for the algorithm to run on the synthetic datasets, so your results won't be exactly the same as ours, depending on the hardware you are using.
+Before running the script, you will need to:
+1. Update the environment activation commands (e.g., `conda activate ...`) to match your Python and R environments
+2. Set `DATA_PATH` to the location of your synthetic datasets (as specified in `simulated_datasets_synthetic.ipynb`)
+3. Set `OUTPUT_PATH` to the directory where you want to save the benchmarking results
+
+The script will save benchmarking results (including dataset sizes, model specifications, and runtime) in the directory specified by `OUTPUT_PATH`.
+
+We have included our benchmarking results in the `benchmark_results_aurora_20250428` directory for reference. Note that these files record the runtime in seconds for each algorithm on the synthetic datasets, so your results will vary depending on your hardware.
 
 ### Visualization
-The `visualize_performance_benchmarks_v2.ipynb` notebook visualizes the benchmarking results by reading the benchmarking results saved in the directory specified in by `OUTPUT_PATH` in the `run_benchmark.sh` script.
-As mentioned prevoiusly, the benchmark results you have will not be exactly the same as ours, these figures you generated will be slightly different from the ones in the paper. However, if you set `R_RECORD_PATH` and `TORCH_RECORD_PATH` to the location where you save *our benchmarking results* in the `benchmark_results_aurora_20250428` directory, the figures you generate will be exactly the same as the ones in the paper.
+The `visualize_performance_benchmarks_v2.ipynb` notebook visualizes the benchmarking results by reading from the directory specified by `OUTPUT_PATH` in the `run_benchmark.sh` script.
+
+As mentioned previously, your benchmark results will differ from ours due to hardware differences, so the figures you generate will be slightly different from those in the paper. However, if you set `R_RECORD_PATH` and `TORCH_RECORD_PATH` to point to our benchmarking results in the `benchmark_results_aurora_20250428` directory, you will generate figures identical to those in the paper.
+
+We have also included the figures generated from our benchmarking results in the `benchmark_figures_20250428` directory for your reference, these are figures we used in the paper draft.
