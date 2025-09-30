@@ -131,6 +131,8 @@ class ChoiceDataset(torch.utils.data.Dataset):
                 raise AssertionError(f'user_obs first dimension ({self.user_obs.shape[0]}) must equal num_users ({num_users})')
 
         if hasattr(self, 'item_obs'):
+            if num_items is None:
+                raise AssertionError("num_items must be provided if item_obs is given")
             if self.item_obs.shape[0] != num_items:
                 raise AssertionError(f'item_obs first dimension ({self.item_obs.shape[0]}) must equal num_items ({num_items})')
 
@@ -139,6 +141,8 @@ class ChoiceDataset(torch.utils.data.Dataset):
                 raise AssertionError("num_users must be provided if useritem_obs is given")
             if self.useritem_obs.shape[0] != num_users:
                 raise AssertionError(f'useritem_obs first dimension ({self.useritem_obs.shape[0]}) must equal num_users ({num_users})')
+            if num_items is None:
+                raise AssertionError("num_items must be provided if useritem_obs is given")
             if self.useritem_obs.shape[1] != num_items:
                 raise AssertionError(f'useritem_obs second dimension ({self.useritem_obs.shape[1]}) must equal num_items ({num_items})')
 
