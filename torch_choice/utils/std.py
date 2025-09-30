@@ -6,57 +6,56 @@ import torch.nn as nn
 
 
 def parameter_std(model_trained: nn.Module, loss_fn: callable) -> Tuple[dict, Optional[torch.Tensor]]:
-    """This method firstly computes the Hessian of loss_fn(model_trained) with respect to
-    model_trained.parameters(), then computes the standard error from the Hessian.
+    """Compute standard errors of parameters via the inverse Hessian of the loss.
 
-    NOTE: the current implementation involving deletion of attributes in model, this is an unsafe
-    workaround for now. See https://github.com/pytorch/pytorch/issues/50138 for details.
+    This method computes the Hessian of loss_fn(model_trained) with respect to
+    model_trained.parameters(), then returns standard errors derived from the Hessian.
+
+    NOTE: The current implementation involves deletion of attributes in the model, which is an
+    unsafe workaround. See https://github.com/pytorch/pytorch/issues/50138 for details.
 
     Args:
-        model_trained (nn.Module): a trained pytorch model, the std estimated from Hessian only works
-            if the model has been trained to optimal.
-        loss_fn (callable): the negatigve log-likelihood function (loss function).
-        return_hessian (bool): request to return hessian matrix as well.
+        model_trained (nn.Module): a trained PyTorch model. The Hessian-based std only makes sense
+            if the model has been trained to optimum.
+        loss_fn (callable): the negative log-likelihood (loss) function taking the model and
+            returning a scalar loss tensor.
 
     Returns:
-        [dict]: a dictionary maps from keys in model_train.state_dict() to standard errors of esimations
-            of each parameters in model_train.parameters(), shapes of values of returned dictionary
-            is the same as shapes in model_train.state_dict().
-        [torch.Tensor]: optionally return the Hessian of loss_fn(model_trained) w.r.t. model_trained.parameters()
+        Tuple[dict, Optional[torch.Tensor]]: A dictionary mapping keys from model_trained.state_dict()
+            to the standard errors with the same shapes as the corresponding parameters; and the
+            Hessian tensor if needed by callers in the future.
     """
-    # Need to make this safe.
+    # Work on a copy to avoid mutating the original model.
     model = copy(model_trained)
     state_dict = deepcopy(model.state_dict())
 
     shape, start, end = dict(), dict(), dict()
     param_list = list()
     s = 0
-    # wrap state dict into a single one dimensional tensor.
+    # Wrap state dict into a single one dimensional tensor.
     for k, v in state_dict.items():
         num_params = state_dict[k].numel()
         start[k], end[k] = (s, s + num_params)
         s += num_params
         shape[k] = v.shape
         param_list.append(v.clone().view(-1,))
+    if len(param_list) == 0:
+        raise ValueError('No parameters found in the model.')
     all_params = torch.cat(param_list)
 
-    def func(input_tensor):
-        # unwrap parameters.
+    def func(input_tensor: torch.Tensor) -> torch.Tensor:
+        # Unwrap parameters back into the cloned model.
         for k in state_dict.keys():
             src = input_tensor[start[k]: end[k]].view(*shape[k])
-            # NOTE: The removeprefix and removesuffix require Python >= 3.9!
-            # variable_name = k.removeprefix("coef_dict.").removesuffix(".coef")
-            # less elegant/robust but supports earlier versions of python.
-            # examples: k = "coef_dict.x1[user].coef" for conditional logit models
-            # k = "item_coef_dict.x1[user].coef" or "nest_coef_dict.x1[user].coef" for nested logit models.
-            # prefix = "coef_dict."
-            # suffix = ".coef"
 
             if k == "lambda_weight":
-                # this is a special case in nested logit models.
+                # Special handling in nested logit models
                 del model.lambda_weight
                 model.lambda_weight = src
             else:
+                # Keys look like:
+                #   - "coef_dict.x1[user].coef" for conditional logit models
+                #   - "item_coef_dict.x1[user].coef" or "nest_coef_dict.x1[user].coef" for nested logit models
                 coef_dict, variable_name = k.split(".")[0], k.split(".")[1]
                 del getattr(model, coef_dict)[variable_name].coef
                 getattr(model, coef_dict)[variable_name].coef = src
