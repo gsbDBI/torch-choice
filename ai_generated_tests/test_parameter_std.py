@@ -1,75 +1,56 @@
-# import unittest
-# import torch
-# import math
-# import torch.nn as nn
+import unittest
+import torch
+import torch.nn as nn
 
-# try:
-#     from torch_choice.utils.std import parameter_std
-#     REAL_STD = True
-# except ImportError:
-#     REAL_STD = False
-#     def parameter_std(x, loss_fn=None):
-#         return torch.std(torch.tensor(x, dtype=torch.float32))
+from torch_choice.utils.std import parameter_std
 
 
-# # Define a DummyCoefficient that wraps a parameter in a 'coef' attribute
-# class DummyCoefficient:
-#     def __init__(self, data):
-#         if not isinstance(data, torch.Tensor):
-#             data = torch.tensor(data, dtype=torch.float32)
-#         self.coef = nn.Parameter(data)
+class DummyCoefficient(nn.Module):
+    def __init__(self, shape):
+        super().__init__()
+        self.coef = nn.Parameter(torch.zeros(shape, dtype=torch.float32))
 
 
-# # Define DummyModel holding a plain dictionary of coefficients
-# class DummyModel(nn.Module):
-#     def __init__(self, data):
-#         super(DummyModel, self).__init__()
-#         self.coefficients = {'param': DummyCoefficient(data)}
-#     def state_dict(self, *args, **kwargs):
-#         return {'coefficients.param': self.coefficients['param'].coef}
+class DummyModel(nn.Module):
+    def __init__(self, param_shape):
+        super().__init__()
+        self.coef_dict = nn.ModuleDict({
+            'param': DummyCoefficient(param_shape)
+        })
 
 
-# class DummyLoss(nn.Module):
-#     def forward(self, model):
-#         return torch.mean(model.coefficients['param'].coef ** 2)
+def make_quadratic_loss_fn(diagonal: torch.Tensor):
+    # Returns loss(model) = 0.5 * sum_i diagonal[i] * p_i^2
+    def loss_fn(model: nn.Module) -> torch.Tensor:
+        p = model.coef_dict['param'].coef.reshape(-1)
+        d = diagonal.reshape(-1).to(p)
+        return 0.5 * (d * p.pow(2)).sum()
+    return loss_fn
 
 
-# class TestParameterStd(unittest.TestCase):
-#     def test_1d_tensor(self):
-#         # Create a DummyModel with 1D data
-#         dummy = DummyModel([1.0, 2.0, 3.0])
-#         loss_fn = DummyLoss()
-#         result = parameter_std(dummy, loss_fn=loss_fn)
-#         expected = torch.std(dummy.coefficients['param'].coef.detach())
-#         self.assertAlmostEqual(result['std'].item(), expected.item(), places=5)
+class TestParameterStdHessian(unittest.TestCase):
+    def test_1d_diagonal_hessian(self):
+        diagonal = torch.tensor([2.0, 8.0, 18.0], dtype=torch.float32)
+        model = DummyModel(param_shape=(3,))
+        loss_fn = make_quadratic_loss_fn(diagonal)
 
-#     def test_2d_tensor(self):
-#         # Create a DummyModel with 2D data
-#         dummy = DummyModel([[1.0, 2.0], [3.0, 4.0]])
-#         loss_fn = DummyLoss()
-#         result = parameter_std(dummy, loss_fn=loss_fn)
-#         expected = torch.std(dummy.coefficients['param'].coef.detach())
-#         self.assertAlmostEqual(result['std'].item(), expected.item(), places=5)
+        std_dict = parameter_std(model, loss_fn)
+        std = std_dict['coef_dict.param.coef'].reshape(-1)
 
-#     def test_list_input(self):
-#         # Wrap list input in DummyModel
-#         dummy = DummyModel([1.0, 2.0, 3.0])
-#         loss_fn = DummyLoss()
-#         result = parameter_std(dummy, loss_fn=loss_fn)
-#         expected = torch.std(dummy.coefficients['param'].coef.detach())
-#         self.assertAlmostEqual(result['std'].item(), expected.item(), places=5)
+        expected = torch.sqrt(1.0 / diagonal)
+        self.assertTrue(torch.allclose(std, expected, atol=1e-5, rtol=1e-5))
 
-#     def test_empty_tensor(self):
-#         with self.assertRaises(Exception):
-#             dummy = DummyModel([])
-#             loss_fn = DummyLoss()
-#             parameter_std(dummy, loss_fn=loss_fn)
+    def test_2d_diagonal_hessian(self):
+        diagonal = torch.tensor([1.0, 4.0, 9.0, 16.0], dtype=torch.float32)
+        model = DummyModel(param_shape=(2, 2))
+        loss_fn = make_quadratic_loss_fn(diagonal)
 
-#     def test_empty_list(self):
-#         with self.assertRaises(Exception):
-#             dummy = DummyModel([])
-#             loss_fn = DummyLoss()
-#             parameter_std(dummy, loss_fn=loss_fn)
+        std_dict = parameter_std(model, loss_fn)
+        std = std_dict['coef_dict.param.coef'].reshape(-1)
 
-# if __name__ == '__main__':
-#     unittest.main()
+        expected = torch.sqrt(1.0 / diagonal)
+        self.assertTrue(torch.allclose(std, expected, atol=1e-5, rtol=1e-5))
+
+
+if __name__ == '__main__':
+    unittest.main()
