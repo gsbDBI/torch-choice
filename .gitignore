@@ -1,6 +1,9 @@
 paper_performance_benchmarks/data
 *.DS_Store
 
+# Accidentally created by shell redirection when running unquoted pip install commands
+=*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -252,3 +255,4 @@ paper_performance_benchmarks/torch_choice_benchmark_results_aurora_20250306/torc
 paper_performance_benchmarks/torch_choice_benchmark_results_aurora_20250306/torch_choice_num_params_experiment_small.csv
 paper_performance_benchmarks/torch_choice_benchmark_results_aurora_20250306/torch_choice_num_records_experiment_large.csv
 paper_performance_benchmarks/torch_choice_benchmark_results_aurora_20250306/torch_choice_num_records_experiment_small.csv
+uv.lock

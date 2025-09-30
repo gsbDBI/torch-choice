@@ -118,9 +118,9 @@ fi
 # Install core dependencies (required for all environment types)
 echo -e "${BLUE}[INFO]${NC} Installing core dependencies..."
 # Use uv pip install to install packages with version constraints
-# \< escapes the < character to prevent shell interpretation as redirection
+# Quote package specs to prevent shell interpretation of special characters like >= and <
 # These are the minimal packages needed to run torch-choice
-uv pip install numpy>=1.22,\<2.0 termcolor>=1.1.0 scikit-learn pandas>=1.4.3 tabulate>=0.8.10 torch>=1.12.0 pytorch-lightning>=1.6.3
+uv pip install "numpy>=1.22,<2.0" "termcolor>=1.1.0" "scikit-learn" "pandas>=1.4.3" "tabulate>=0.8.10" "torch>=1.12.0" "pytorch-lightning>=1.6.3"
 
 # Note: Additional dependencies (dev tools, notebooks, etc.) will be installed
 # via torch-choice "extras" in the next step based on ENV_TYPE

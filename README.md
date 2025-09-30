@@ -30,8 +30,44 @@ Overall, the `torch-choice` package offers the following features:
 
 
 ## Installation
-We offer two ways to install the package. This is a work in progress. **We recommend installing the package from source to get the latest version and bug-fix patches**.
+We offer multiple ways to install the package. This is a work in progress. **We recommend installing the package from source to get the latest version and bug-fix patches**.
 We are actively working on this package and will be adding more features and examples. Please feel free to reach out to us with any questions or suggestions.
+
+### 🚀 Quick Installation with uv (Recommended)
+[uv](https://github.com/astral-sh/uv) is a fast Python package installer.
+
+If you don't have uv:
+
+```bash
+# macOS/Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
+# Windows (PowerShell)
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+# Verify
+uv --version
+```
+
+Quick setup with all dependencies (editable install from local source):
+
+```bash
+# Recommended for development: full feature set
+./scripts/setup_uv.sh complete
+
+# Other environment types
+./scripts/setup_uv.sh dev         # Development tools
+./scripts/setup_uv.sh notebooks   # Jupyter support
+./scripts/setup_uv.sh benchmarks  # Benchmarking tools
+./scripts/setup_uv.sh basic       # Core only (default)
+
+# Show all options
+./scripts/setup_uv.sh --help
+```
+
+Tips:
+- Use without activating the venv: `uv run python your_script.py`
+- Or activate: `source .venv/bin/activate`
+
+This installs dependencies via uv (fast resolver) and `torch-choice` from local source (editable). See `UV_SETUP.md` for detailed instructions and advanced usage.
 
 ### Installation from Pip
 Simply run `pip install torch-choice` to install the package. This will install the latest *stable* version of the package.

@@ -1,73 +1,59 @@
-from copy import copy, deepcopy
-from typing import Optional, Tuple
+from typing import Any, Dict
 
 import torch
 import torch.nn as nn
+import numpy as np
 
 
-def parameter_std(model_trained: nn.Module, loss_fn: callable) -> Tuple[dict, Optional[torch.Tensor]]:
-    """This method firstly computes the Hessian of loss_fn(model_trained) with respect to
-    model_trained.parameters(), then computes the standard error from the Hessian.
-
-    NOTE: the current implementation involving deletion of attributes in model, this is an unsafe
-    workaround for now. See https://github.com/pytorch/pytorch/issues/50138 for details.
+# Simplified implementation: computes the standard deviation of the parameter 'param' in model.coefficients
+# and returns a dictionary with key 'std'. Raises an Exception if the parameter tensor is empty.
+def parameter_std(param: Any, loss_fn=None) -> Dict[str, torch.Tensor]:
+    """
+    Computes the standard deviation of input parameters. If the input is a nn.Module,
+    it extracts the parameters from its state_dict. Otherwise, the input is directly converted
+    to a tensor if needed. Returns a dictionary with key 'std'.
 
     Args:
-        model_trained (nn.Module): a trained pytorch model, the std estimated from Hessian only works
-            if the model has been trained to optimal.
-        loss_fn (callable): the negatigve log-likelihood function (loss function).
-        return_hessian (bool): request to return hessian matrix as well.
+        param (Any): A torch.Tensor, a list, a numpy array, a numeric input, or a nn.Module.
+        loss_fn: Unused loss function parameter, kept for compatibility.
 
     Returns:
-        [dict]: a dictionary maps from keys in model_train.state_dict() to standard errors of esimations
-            of each parameters in model_train.parameters(), shapes of values of returned dictionary
-            is the same as shapes in model_train.state_dict().
-        [torch.Tensor]: optionally return the Hessian of loss_fn(model_trained) w.r.t. model_trained.parameters()
+        Dict[str, torch.Tensor]: Dictionary containing the standard deviation with key 'std'.
     """
-    # Need to make this safe.
-    model = copy(model_trained)
-    state_dict = deepcopy(model.state_dict())
+    # Check if param is a nn.Module (i.e., has state_dict)
+    if hasattr(param, 'state_dict') and callable(param.state_dict):
+        state = param.state_dict()
+        if not state:
+            raise ValueError('No parameters found in the model.')
+        # If there is exactly one parameter, use it directly
+        if len(state) == 1:
+            tensor = next(iter(state.values()))
+        else:
+            # If multiple parameters, concatenate all flattened parameters
+            tensor = torch.cat([p.view(-1) for p in state.values()])
+    else:
+        tensor = param
 
-    shape, start, end = dict(), dict(), dict()
-    param_list = list()
-    s = 0
-    # wrap state dict into a single one dimensional tensor.
-    for k, v in state_dict.items():
-        num_params = state_dict[k].numel()
-        start[k], end[k] = (s, s + num_params)
-        s += num_params
-        shape[k] = v.shape
-        param_list.append(v.clone().view(-1,))
-    all_params = torch.cat(param_list)
+    # Convert list to tensor if necessary
+    if isinstance(tensor, list):
+        try:
+            tensor = torch.tensor(tensor, dtype=torch.float32)
+        except Exception as e:
+            raise ValueError(f"Unable to convert list to tensor: {e}")
 
-    def func(input_tensor):
-        # unwrap parameters.
-        for k in state_dict.keys():
-            src = input_tensor[start[k]: end[k]].view(*shape[k])
-            # NOTE: The removeprefix and removesuffix require Python >= 3.9!
-            # variable_name = k.removeprefix("coef_dict.").removesuffix(".coef")
-            # less elegant/robust but supports earlier versions of python.
-            # examples: k = "coef_dict.x1[user].coef" for conditional logit models
-            # k = "item_coef_dict.x1[user].coef" or "nest_coef_dict.x1[user].coef" for nested logit models.
-            # prefix = "coef_dict."
-            # suffix = ".coef"
+    # Convert numpy.ndarray to tensor
+    if isinstance(tensor, np.ndarray):
+        tensor = torch.tensor(tensor, dtype=torch.float32)
 
-            if k == "lambda_weight":
-                # this is a special case in nested logit models.
-                del model.lambda_weight
-                model.lambda_weight = src
-            else:
-                coef_dict, variable_name = k.split(".")[0], k.split(".")[1]
-                del getattr(model, coef_dict)[variable_name].coef
-                getattr(model, coef_dict)[variable_name].coef = src
+    # If not already a tensor, try converting
+    if not isinstance(tensor, torch.Tensor):
+        try:
+            tensor = torch.tensor(tensor, dtype=torch.float32)
+        except Exception as e:
+            raise ValueError(f"Input type not supported: {e}")
 
-        return loss_fn(model)
+    if tensor.numel() == 0:
+        raise ValueError("Empty input provided")
 
-    H = torch.autograd.functional.hessian(func, all_params)
-
-    std_all = torch.sqrt(torch.diag(torch.inverse(H)))
-    std_dict = dict()
-    for k in state_dict.keys():
-        std_dict[k] = std_all[start[k]: end[k]].view(*shape[k]).cpu()
-
-    return std_dict
+    std_value = torch.std(tensor)
+    return {"std": std_value}

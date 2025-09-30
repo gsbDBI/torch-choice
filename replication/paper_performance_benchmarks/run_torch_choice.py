@@ -144,7 +144,8 @@ def run_experiment(args, task_config, run_configs) -> pd.DataFrame:
     return record
 
 
-if __name__ == "__main__":
+def main():
+    """Main entry point for the torch-choice benchmark script."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_path", type=str, required=True, help="The path to the data.")
     parser.add_argument("--output_path", type=str, required=True, help="The path to save the results.")
@@ -246,3 +247,7 @@ if __name__ == "__main__":
         # Release CUDA memory after each experiment.
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
+
+
+if __name__ == "__main__":
+    main()

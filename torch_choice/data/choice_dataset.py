@@ -116,11 +116,33 @@ class ChoiceDataset(torch.utils.data.Dataset):
 
         self.item_availability = item_availability
 
+        # Set optional attributes from kwargs
         for key, item in kwargs.items():
             if self._is_attribute(key):
-                # all observable should be float.
+                # all observables should be float.
                 item = item.float()
             setattr(self, key, item)
+
+        # Validate shapes for optional fields if provided, using the attributes set on self
+        if hasattr(self, 'user_obs'):
+            if num_users is None:
+                raise AssertionError("num_users must be provided if user_obs is given")
+            if self.user_obs.shape[0] != num_users:
+                raise AssertionError(f'user_obs first dimension ({self.user_obs.shape[0]}) must equal num_users ({num_users})')
+
+        if hasattr(self, 'item_obs'):
+            if self.item_obs.shape[0] != num_items:
+                raise AssertionError(f'item_obs first dimension ({self.item_obs.shape[0]}) must equal num_items ({num_items})')
+
+        if hasattr(self, 'useritem_obs'):
+            if num_users is None:
+                raise AssertionError("num_users must be provided if useritem_obs is given")
+            if self.useritem_obs.shape[0] != num_users:
+                raise AssertionError(f'useritem_obs first dimension ({self.useritem_obs.shape[0]}) must equal num_users ({num_users})')
+            if self.useritem_obs.shape[1] != num_items:
+                raise AssertionError(f'useritem_obs second dimension ({self.useritem_obs.shape[1]}) must equal num_items ({num_items})')
+
+        # Additional optional fields can have similar validations as needed
 
         # TODO: add a validation procedure to check the consistency of the dataset.
 
