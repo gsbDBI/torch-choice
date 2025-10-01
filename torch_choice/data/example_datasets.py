@@ -7,6 +7,9 @@ from torch_choice.data import ChoiceDataset, JointDataset, utils
 
 
 def load_mode_canada_dataset():
+    """
+    See https://rdrr.io/rforge/mlogit/man/ModeCanada.html for more details on the dataset.
+    """
     df = pd.read_csv('https://raw.githubusercontent.com/gsbDBI/torch-choice/main/tutorials/public_datasets/ModeCanada.csv')
     df = df.query('noalt == 4').reset_index(drop=True)
     df.sort_values(by='case', inplace=True)
@@ -25,6 +28,10 @@ def load_mode_canada_dataset():
     session_income = torch.Tensor(session_income.values).view(-1, 1)
 
     dataset = ChoiceDataset(item_index=item_index,
+                            num_items=num_items,
+                            num_users=1,
+                            session_index=torch.arange(len(session_income)),
+                            num_sessions=len(session_income),
                             itemsession_cost_freq_ovt=itemsession_cost_freq_ovt,
                             session_income=session_income,
                             itemsession_ivt=itemsession_ivt

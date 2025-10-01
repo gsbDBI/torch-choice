@@ -39,7 +39,7 @@ class Coefficient(nn.Module):
             num_items (int): the number of items in the prediction problem, this is required to reshape the parameter correctly.
             num_users (Optional[int], optional): number of users, this is only necessary if the coefficient varies by users.
                 Defaults to None.
-            init (Optional[str], optional): the initialization method for the coefficient. Currently, we support zero initialization, standard normal distribution, and uniform distribution. By default, the coefficient is initialized using standard normal distribution.
+            init (Optional[str], optional): the initialization method for the coefficient. Currently, we support zero initialization, standard normal distribution, uniform distribution, and Xavier (uniform/normal). By default, the coefficient is initialized using zeros for stability in small problems.
         """
         super(Coefficient, self).__init__()
         self.variation = variation
@@ -48,11 +48,25 @@ class Coefficient(nn.Module):
         self.num_params = num_params
         self.init = init
         # create initialization function.
-        str_to_init_func = {'zero': torch.zeros,
-                            'uniform': torch.rand,
-                            'normal': torch.randn,
-                            None: torch.randn # default initialization is standard normal distribution.
-                            }
+        def _xavier(shape, mode: str):
+            # Xavier requires at least 2D tensors; for 1D, fall back to normal.
+            if len(shape) < 2:
+                return torch.randn(*shape)
+            w = torch.empty(*shape)
+            if mode == 'uniform':
+                nn.init.xavier_uniform_(w)
+            else:
+                nn.init.xavier_normal_(w)
+            return w
+
+        str_to_init_func = {
+            'zero': lambda *s: torch.zeros(*s),
+            'uniform': lambda *s: torch.rand(*s),
+            'normal': lambda *s: torch.randn(*s),
+            'xavier_uniform': lambda *s: _xavier(s, 'uniform'),
+            'xavier_normal': lambda *s: _xavier(s, 'normal'),
+            None: lambda *s: torch.randn(*s)  # default initialization is standard normal
+        }
         if self.init in str_to_init_func:
             init_func = str_to_init_func[self.init]  # retrieve the initialization function.
         else:

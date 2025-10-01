@@ -27,10 +27,16 @@ def run(model, dataset, dataset_test=None, batch_size=-1, learning_rate=0.01, nu
     trained_model = deepcopy(model)  # create another copy for returning.
     data_loader = data_utils.create_data_loader(dataset, batch_size=batch_size, shuffle=True)
 
-    optimizer = {'SGD': torch.optim.SGD,
-                 'Adagrad': torch.optim.Adagrad,
-                 'Adadelta': torch.optim.Adadelta,
-                 'Adam': torch.optim.Adam}[model_optimizer](model.parameters(), lr=learning_rate)
+    optimizer_class = {'SGD': torch.optim.SGD,
+                       'Adagrad': torch.optim.Adagrad,
+                       'Adadelta': torch.optim.Adadelta,
+                       'Adam': torch.optim.Adam,
+                       'LBFGS': torch.optim.LBFGS}[model_optimizer]
+    # For LBFGS we often want a small history; let users tune via lr if needed
+    if optimizer_class is torch.optim.LBFGS:
+        optimizer = optimizer_class(model.parameters(), lr=learning_rate, max_iter=20, history_size=10)
+    else:
+        optimizer = optimizer_class(model.parameters(), lr=learning_rate)
 
     # optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
     # optimizer = torch.optim.Adagrad(model.parameters(), lr=learning_rate)
@@ -67,9 +73,17 @@ def run(model, dataset, dataset_test=None, batch_size=-1, learning_rate=0.01, nu
                     acc = (pred == item_index).float().mean().item()
                     print('Accuracy: ', acc)
 
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
+            if optimizer_class is torch.optim.LBFGS:
+                def closure():
+                    optimizer.zero_grad()
+                    l = model.loss(batch, item_index)
+                    l.backward()
+                    return l
+                optimizer.step(closure)
+            else:
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
         scheduler.step()
 
         current_loss = float(total_loss.detach().item())

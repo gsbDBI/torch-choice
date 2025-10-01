@@ -250,6 +250,18 @@ for display_name, import_name in notebook_packages.items():
     except ImportError:
         pass
 "
+
+    # Register Jupyter kernel for this virtual environment
+    echo
+    echo -e "${BLUE}[INFO]${NC} Registering Jupyter kernel..."
+    if uv run python -m ipykernel install --user --name torch-choice-uv --display-name "Python (uv: torch-choice)"; then
+        echo -e "${GREEN}[SUCCESS]${NC} Jupyter kernel registered as 'torch-choice-uv'"
+        echo -e "${BLUE}[INFO]${NC} You can now select 'Python (uv: torch-choice)' as your kernel in Jupyter"
+    else
+        echo -e "${YELLOW}[WARNING]${NC} Failed to register Jupyter kernel (non-critical)"
+        echo -e "${BLUE}[INFO]${NC} You can register it manually later with:"
+        echo "  uv run python -m ipykernel install --user --name torch-choice-uv --display-name \"Python (uv: torch-choice)\""
+    fi
 fi
 
 # Print usage instructions and next steps for the user
