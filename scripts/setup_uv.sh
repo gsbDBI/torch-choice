@@ -23,40 +23,8 @@ YELLOW='\033[1;33m'   # Yellow text for warnings
 BLUE='\033[0;34m'     # Blue text for informational messages
 NC='\033[0m'          # No Color - resets text color to default
 
-# Get environment type from first command-line argument
-# Use "basic" as default if no argument provided (${1:-"basic"} syntax)
-ENV_TYPE=${1:-"basic"}
-
-# Check if user requested help documentation
-# [[ ]] is bash's enhanced test command, supporting || (OR) operator
-if [[ "$ENV_TYPE" == "-h" || "$ENV_TYPE" == "--help" || "$ENV_TYPE" == "help" ]]; then
-    # Display comprehensive help documentation
-    echo "torch-choice uv Setup Script"
-    echo
-    echo "This script sets up torch-choice with uv package management:"
-    echo "• Installs all dependencies via uv from PyPI (fast resolution)"
-    echo "• Installs torch-choice from local source in editable mode"
-    echo
-    echo "USAGE:"
-    echo "  ./scripts/setup_uv.sh [ENVIRONMENT_TYPE]"
-    echo
-    echo "ENVIRONMENT TYPES:"
-    echo "  basic      - Core dependencies only (default)"
-    echo "  dev        - Development tools (pytest, black, etc.)"
-    echo "  complete   - All dependencies (dev + docs + notebooks + benchmarks)"
-    echo "  notebooks  - Jupyter notebook support"
-    echo "  benchmarks - Performance benchmarking tools"
-    echo
-    echo "EXAMPLES:"
-    echo "  ./scripts/setup_uv.sh              # Basic setup"
-    echo "  ./scripts/setup_uv.sh dev          # Development setup"
-    echo "  ./scripts/setup_uv.sh complete     # Full setup"
-    echo
-    echo "OPTIONS:"
-    echo "  -h, --help    Show this help message"
-    # Exit with success code (0) after displaying help
-    exit 0
-fi
+# Environment type is now fixed to 'complete' (full setup with all extras)
+ENV_TYPE="complete"
 
 # Print script header banner for visual clarity
 echo "========================================="
@@ -100,63 +68,16 @@ echo -e "${BLUE}[INFO]${NC} Creating new virtual environment with Python 3.12...
 uv venv --python 3.12
 echo -e "${GREEN}[SUCCESS]${NC} Virtual environment created with Python 3.12"
 
-# Install dependencies based on the specified environment type
-echo -e "${BLUE}[INFO]${NC} Installing dependencies for '$ENV_TYPE' environment..."
+# Install dependencies for the complete environment
+echo -e "${BLUE}[INFO]${NC} Installing dependencies for 'complete' environment..."
 
-# Validate that the environment type is one of the supported options
-# =~ is the regex match operator in bash
-# ^(basic|dev|complete|notebooks|benchmarks)$ matches only these exact strings
-# ! negates the match (true if NOT matched)
-if [[ ! "$ENV_TYPE" =~ ^(basic|dev|complete|notebooks|benchmarks)$ ]]; then
-    # Invalid environment type provided
-    echo -e "${RED}[ERROR]${NC} Unknown environment type: $ENV_TYPE"
-    echo "Available types: basic, dev, complete, notebooks, benchmarks"
-    # Exit with error code 1
-    exit 1
-fi
-
-# Install core dependencies (required for all environment types)
-echo -e "${BLUE}[INFO]${NC} Installing core dependencies..."
-# Use uv pip install to install packages with version constraints
-# Quote package specs to prevent shell interpretation of special characters like >= and <
-# These are the minimal packages needed to run torch-choice
-uv pip install "numpy>=1.22,<2.0" "termcolor>=1.1.0" "scikit-learn" "pandas>=1.4.3" "tabulate>=0.8.10" "torch>=1.12.0" "pytorch-lightning>=1.6.3"
-
-# Note: Additional dependencies (dev tools, notebooks, etc.) will be installed
-# via torch-choice "extras" in the next step based on ENV_TYPE
-
-echo -e "${GREEN}[SUCCESS]${NC} Dependencies installed"
-
-# Install torch-choice from local source with appropriate extras
-echo -e "${BLUE}[INFO]${NC} Installing torch-choice from local source..."
-
-# Install torch-choice with appropriate "extras" based on environment type
+# Install all core + optional dependencies via torch-choice "complete" extras
 # Extras are defined in pyproject.toml [project.optional-dependencies]
 # -e flag installs in "editable" mode (changes to source code take effect immediately)
-# . refers to current directory (where pyproject.toml is located)
-if [[ "$ENV_TYPE" == "complete" ]]; then
-    # Complete: all optional dependencies (dev + docs + notebooks + benchmarks)
-    echo -e "${BLUE}[INFO]${NC} Installing torch-choice with complete extras..."
-    uv pip install -e ".[complete]"
-elif [[ "$ENV_TYPE" == "dev" ]]; then
-    # Dev: development tools (pytest, black, flake8, etc.)
-    echo -e "${BLUE}[INFO]${NC} Installing torch-choice with dev extras..."
-    uv pip install -e ".[dev]"
-elif [[ "$ENV_TYPE" == "benchmarks" ]]; then
-    # Benchmarks: performance benchmarking tools
-    echo -e "${BLUE}[INFO]${NC} Installing torch-choice with benchmarks extras..."
-    uv pip install -e ".[benchmarks]"
-elif [[ "$ENV_TYPE" == "notebooks" ]]; then
-    # Notebooks: Jupyter notebook and lab support
-    echo -e "${BLUE}[INFO]${NC} Installing torch-choice with notebooks extras..."
-    uv pip install -e ".[notebooks]"
-else
-    # Basic: only core dependencies, no extras
-    echo -e "${BLUE}[INFO]${NC} Installing torch-choice (basic)..."
-    uv pip install -e .
-fi
+echo -e "${BLUE}[INFO]${NC} Installing torch-choice with complete extras..."
+uv pip install -e ".[complete]"
 
-echo -e "${GREEN}[SUCCESS]${NC} torch-choice installed from source"
+echo -e "${GREEN}[SUCCESS]${NC} torch-choice (complete) installed from source"
 
 # Verify that the installation was successful
 echo -e "${BLUE}[INFO]${NC} Verifying installation..."
@@ -184,84 +105,39 @@ else
     exit 1
 fi
 
-# Display installed package versions for verification
+# Run a small torch-choice model as a quick installation check
 echo
-echo -e "${BLUE}[INFO]${NC} Installed package versions:"
-# Run Python script to print versions of all core dependencies
-# Using a multi-line Python script embedded in the shell script
-uv run python -c "
-import sys
-# Define core packages to check with their import names
-packages = {
-    'torch-choice': 'torch_choice',
-    'numpy': 'numpy',
-    'pandas': 'pandas',
-    'torch': 'torch',
-    'pytorch-lightning': 'pytorch_lightning',
-    'scikit-learn': 'sklearn',
-    'termcolor': 'termcolor',
-    'tabulate': 'tabulate'
-}
+echo -e "${BLUE}[INFO]${NC} Running a quick torch-choice model to verify installation..."
+if uv run python - << 'PY'
+import torch
+import torch_choice
 
-print('  Core Dependencies:')
-for display_name, import_name in packages.items():
-    try:
-        mod = __import__(import_name)
-        version = getattr(mod, '__version__', 'unknown')
-        print(f'    • {display_name}: {version}')
-    except ImportError:
-        pass
-"
+device = "cuda" if torch.cuda.is_available() else "cpu"
+print(f"Using device: {device}")
 
-# Display environment-specific package versions if applicable
-if [[ "$ENV_TYPE" == "dev" || "$ENV_TYPE" == "complete" ]]; then
-    # Show dev tool versions
-    uv run python -c "
-dev_packages = {
-    'pytest': 'pytest',
-    'black': 'black',
-}
+dataset = torch_choice.data.load_mode_canada_dataset().to(device)
 
-print('  Development Tools:')
-for display_name, import_name in dev_packages.items():
-    try:
-        mod = __import__(import_name)
-        version = getattr(mod, '__version__', 'unknown')
-        print(f'    • {display_name}: {version}')
-    except ImportError:
-        pass
-"
-fi
+model = torch_choice.model.ConditionalLogitModel(
+    formula='(itemsession_cost_freq_ovt|constant) + (session_income|item) + (itemsession_ivt|item-full) + (intercept|item)',
+    dataset=dataset,
+    num_items=4,
+).to(device)
 
-if [[ "$ENV_TYPE" == "notebooks" || "$ENV_TYPE" == "complete" ]]; then
-    # Show notebook tool versions
-    uv run python -c "
-notebook_packages = {
-    'jupyter': 'jupyter',
-    'notebook': 'notebook',
-}
-
-print('  Notebook Tools:')
-for display_name, import_name in notebook_packages.items():
-    try:
-        mod = __import__(import_name)
-        version = getattr(mod, '__version__', 'unknown')
-        print(f'    • {display_name}: {version}')
-    except ImportError:
-        pass
-"
-
-    # Register Jupyter kernel for this virtual environment
-    echo
-    echo -e "${BLUE}[INFO]${NC} Registering Jupyter kernel..."
-    if uv run python -m ipykernel install --user --name torch-choice-uv --display-name "Python (uv: torch-choice)"; then
-        echo -e "${GREEN}[SUCCESS]${NC} Jupyter kernel registered as 'torch-choice-uv'"
-        echo -e "${BLUE}[INFO]${NC} You can now select 'Python (uv: torch-choice)' as your kernel in Jupyter"
-    else
-        echo -e "${YELLOW}[WARNING]${NC} Failed to register Jupyter kernel (non-critical)"
-        echo -e "${BLUE}[INFO]${NC} You can register it manually later with:"
-        echo "  uv run python -m ipykernel install --user --name torch-choice-uv --display-name \"Python (uv: torch-choice)\""
-    fi
+torch_choice.run(
+    model,
+    dataset,
+    num_epochs=5,
+    learning_rate=0.003,
+    batch_size=-1,
+    model_optimizer="LBFGS",
+    device=device,
+)
+PY
+then
+    echo -e "${GREEN}[SUCCESS]${NC} Quick torch-choice model run completed successfully"
+else
+    echo -e "${RED}[ERROR]${NC} Quick torch-choice model run failed"
+    exit 1
 fi
 
 # Print usage instructions and next steps for the user
@@ -269,10 +145,11 @@ echo
 echo -e "${GREEN}[SUCCESS]${NC} Setup complete! Here's how to use your environment:"
 echo
 # Display what was installed and where
-echo "📦 Installation Summary:"
-echo "  • Dependencies installed via uv from PyPI"
-echo "  • torch-choice installed from local source (editable mode)"
-echo "  • Environment type: $ENV_TYPE"
+echo "📦 Installation & Verification Summary:"
+echo "  • Complete environment created with uv in .venv"
+echo "  • torch-choice installed from local source (editable mode, [complete] extras)"
+echo "  • Import checks for torch-choice and PyTorch passed"
+echo "  • Quick torch-choice model run completed successfully"
 echo ""
 echo "📂 Virtual Environment Location:"
 echo "  • Directory: $(pwd)/.venv"
@@ -291,31 +168,23 @@ echo "  uv run python your_script.py"
 echo "  uv run jupyter notebook"
 echo
 
-# Show environment-specific usage instructions based on what was installed
-# Only display relevant commands for the chosen environment type
-if [[ "$ENV_TYPE" == "dev" || "$ENV_TYPE" == "complete" ]]; then
-    # Development tools are available
-    echo "Development tools available:"
-    echo "  uv run torch-choice-test          # Run tests"
-    echo "  uv run black torch_choice/        # Format code"
-    echo "  uv run pytest                     # Run pytest"
-    echo
-fi
+# Development tools are available
+echo "Development tools available:"
+echo "  uv run torch-choice-test          # Run tests"
+echo "  uv run black torch_choice/        # Format code"
+echo "  uv run pytest                     # Run pytest"
+echo
 
-if [[ "$ENV_TYPE" == "benchmarks" || "$ENV_TYPE" == "complete" ]]; then
-    # Benchmarking tools are available
-    echo "Benchmarking tools available:"
-    echo "  uv run torch-choice-benchmark --data_path ./data --output_path ./results"
-    echo
-fi
+# Benchmarking tools are available
+echo "Benchmarking tools available:"
+echo "  uv run torch-choice-benchmark --data_path ./data --output_path ./results"
+echo
 
-if [[ "$ENV_TYPE" == "notebooks" || "$ENV_TYPE" == "complete" ]]; then
-    # Jupyter notebook tools are available
-    echo "Jupyter notebooks:"
-    echo "  uv run jupyter notebook           # Start Jupyter"
-    echo "  uv run jupyter lab                # Start JupyterLab"
-    echo
-fi
+# Jupyter notebook tools are available
+echo "Jupyter notebooks:"
+echo "  uv run jupyter notebook           # Start Jupyter"
+echo "  uv run jupyter lab                # Start JupyterLab"
+echo
 
 # Direct user to comprehensive documentation
 echo "For more information, see UV_SETUP.md"

@@ -30,44 +30,58 @@ Overall, the `torch-choice` package offers the following features:
 
 
 ## Installation
-We offer multiple ways to install the package. This is a work in progress. **We recommend installing the package from source to get the latest version and bug-fix patches**.
+We offer multiple ways to install the package. This is a work in progress. **For most users, we recommend getting started with `uv`, which installs `torch-choice` from source in a lightweight, isolated environment so you get the latest version and bug-fix patches**.
 We are actively working on this package and will be adding more features and examples. Please feel free to reach out to us with any questions or suggestions.
 
 ### 🚀 Quick Installation with uv (Recommended)
-[uv](https://github.com/astral-sh/uv) is a fast Python package installer.
+[uv](https://github.com/astral-sh/uv) is a modern, fast Python package and environment manager written in Rust.
 
-If you don't have uv:
+- **What is `uv`?** `uv` replaces the usual `pip` + virtualenv workflow with a single tool that can create virtual environments and install Python packages much faster than `pip` alone.
+- **Lightweight virtual environment per project**: When you use the `uv` setup script below, it creates a separate, lightweight virtual environment in a `.venv/` folder so you can try `torch-choice` without touching your global Python.
+- **No interference with your existing environment**: `uv` works alongside your existing Python, Conda, and `pip` setups. It does **not** overwrite or modify your system Python or other environments; everything stays isolated inside the project’s virtual environment.
+
+If you don't have `uv`:
 
 ```bash
-# macOS/Linux
+# macOS/Linux (official installer)
 curl -LsSf https://astral.sh/uv/install.sh | sh
-# Windows (PowerShell)
+# Windows (PowerShell, official installer)
 powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
-# Verify
+# Or via pip (alternative, do not recommend)
+pip install uv
+# Verify the installation
 uv --version
 ```
 
 Quick setup with all dependencies (editable install from local source):
 
 ```bash
-# Recommended for development: full feature set
-./scripts/setup_uv.sh complete
-
-# Other environment types
-./scripts/setup_uv.sh dev         # Development tools
-./scripts/setup_uv.sh notebooks   # Jupyter support
-./scripts/setup_uv.sh benchmarks  # Benchmarking tools
-./scripts/setup_uv.sh basic       # Core only (default)
-
-# Show all options
-./scripts/setup_uv.sh --help
+# Recommended: full setup (creates .venv and installs all extras)
+./scripts/setup_uv.sh
 ```
 
 Tips:
 - Use without activating the venv: `uv run python your_script.py`
 - Or activate: `source .venv/bin/activate`
 
-This installs dependencies via uv (fast resolver) and `torch-choice` from local source (editable). See `UV_SETUP.md` for detailed instructions and advanced usage.
+This installs dependencies via `uv` (fast resolver) and `torch-choice` from local source (editable) inside a fresh `.venv/` virtual environment in the project directory. See `UV_SETUP.md` for detailed instructions and advanced usage.
+
+**Run the quick example with `uv`**
+
+To run the **Quick Example: Transportation Choice Dataset** (see section below) using `uv`:
+
+```bash
+# From the project root, after cloning the repository
+./scripts/setup_uv.sh
+
+# Start a Python session inside the uv-managed virtual environment
+uv run python
+
+# This script will run a small `torch-choice` model on CPU and GPU (if available) to verify the installation and training loop.
+uv run python scripts/quick_check.py
+```
+
+Then paste the Python code from the **Quick Example: Transportation Choice Dataset** section into the Python prompt. Because `uv` is using the lightweight `.venv/` environment it created for this project, your existing system or Conda environments will remain unchanged. The `setup_uv.sh` script also runs a small `torch-choice` model internally as a quick check that the installation and training loop work end-to-end.
 
 ### Installation from Pip
 Simply run `pip install torch-choice` to install the package. This will install the latest *stable* version of the package.
@@ -91,6 +105,8 @@ In this example, we are estimating the utility for user $u$ to choose transport 
 $$
 U_{uis} = \alpha_i + \beta_i \text{income}_s + \gamma \text{cost} + \delta \text{freq} + \eta \text{ovt} + \iota_i \text{ivt} + \varepsilon
 $$
+
+If you are using UV, you can use `uv run python` to start a Python session inside the uv-managed virtual environment and run the code below.
 
 ```python
 # load package.
