@@ -229,11 +229,26 @@ def run(model: Union [ConditionalLogitModel, NestedLogitModel],
     # Compute p-value (two tails).
     report['Pr(>|z|)'] = (1 - norm.cdf(abs(report['z-value']))) * 2
 
-    # Compute significance stars
+    # Compute significance stars using numeric p-values.
     report['Significance'] = ''
     report.loc[report['Pr(>|z|)'] < 0.001, 'Significance'] = '***'
     report.loc[(report['Pr(>|z|)'] >= 0.001) & (report['Pr(>|z|)'] < 0.01), 'Significance'] = '**'
     report.loc[(report['Pr(>|z|)'] >= 0.01) & (report['Pr(>|z|)'] < 0.05), 'Significance'] = '*'
+
+    # Format very small p-values in the regression summary similar to R:
+    # p-values smaller than 2e-16 are displayed as "< 2e-16".
+    def _format_p_value(p_val):
+        try:
+            # Guard against non-numeric values (e.g., NaN) by relying on comparison failure.
+            if p_val < 2e-16:
+                return '< 2e-16'
+        except TypeError:
+            # Fall back to the original representation if comparison fails.
+            return str(p_val)
+        # Use a compact general format for other p-values.
+        return f'{p_val:.6g}'
+
+    report['Pr(>|z|)'] = report['Pr(>|z|)'].apply(_format_p_value)
 
     # Compute log-likelihood on the final model on all splits of datasets.
     lightning_model.model.to(device)
