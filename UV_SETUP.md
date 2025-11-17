@@ -107,6 +107,14 @@ torch-choice-benchmark --data_path ./data --output_path ./results
 uv run python replication/paper_performance_benchmarks/run_torch_choice.py --data_path ./data --output_path ./results
 ```
 
+### 6. Visualize training runs with TensorBoard
+
+TensorBoard is included in the uv-managed environment, so you can inspect Lightning logs without any extra installs:
+
+```bash
+uv run tensorboard --logdir lightning_logs --port 6006
+```
+
 ## Working with Virtual Environments
 
 ### Create and activate a virtual environment
