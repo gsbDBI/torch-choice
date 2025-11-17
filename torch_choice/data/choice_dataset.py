@@ -312,8 +312,18 @@ class ChoiceDataset(torch.utils.data.Dataset):
         Returns:
             ChoiceDataset: the created copy of dataset.
         """
-        dataset = cls(**dictionary)
-        for key, item in dictionary.items():
+        base = dict(dictionary)
+        constructor_kwargs = {k: v for k, v in base.items() if not k.startswith("_")}
+        if "_num_users" in base and "num_users" not in constructor_kwargs:
+            constructor_kwargs["num_users"] = base["_num_users"]
+        if "_num_items" in base and "num_items" not in constructor_kwargs:
+            constructor_kwargs["num_items"] = base["_num_items"]
+        if "_num_sessions" in base and "num_sessions" not in constructor_kwargs:
+            constructor_kwargs["num_sessions"] = base["_num_sessions"]
+        dataset = cls(**constructor_kwargs)
+        for key, item in base.items():
+            if key in {"num_users", "num_items", "num_sessions"}:
+                continue
             setattr(dataset, key, item)
         return dataset
 
