@@ -11,26 +11,32 @@ Please refer to our installation guide to set up the package. The package can be
 
 Since we continuously update the package, if you are replicating the code presented in the paper and have received the source code in the replication package, we strongly recommend installing from source to ensure consistency and avoid potential discrepancies from newer package versions.
 
-You can install from source by running:
+Preferred (uv):
 ```bash
-python setup.py install
+# From the repo root, run the helper:
+./scripts/setup_uv.sh
 ```
+Notes:
+- We would highly recommend using uv to set up the environment, it is the preferred method of installation and it is the method we used to run the scripts.
+- On Windows use `.\scripts\setup_uv.sh`.
+- The script installs uv, creates `.venv`, and installs `torch-choice` in editable mode with dependencies.
+- If you do not want to use uv, follow the package installation instructions in `install.md` (conda/pip) and then return here; ensure the environment you activate matches the one used to run the scripts.
 
 ## Demo Code from the Paper
-Use the console-friendly script `paper_demo.py` in this `replication` directory to reproduce the demonstrations from the paper. Example:
+Use the console-friendly script `paper_demo.py` in this `replication` directory to reproduce the demonstrations from the paper. Prefer running via uv so the right environment is used:
 ```bash
-python paper_demo.py --skip-training  # add --num-epochs N to train
+uv run python replication/paper_demo.py
 ```
+Add `--skip-training` to avoid the model fit, or `--num-epochs N` to change training length. Training uses LBFGS on the Mode Canada dataset; it can take several minutes on CPU. To monitor logs, pass `--tensorboard-logdir <dir>` (defaults to `lightning_logs`) and open TensorBoard manually (`uv run tensorboard --logdir <dir>`).
 The original notebook (`paper_demo.ipynb`) is still available for interactive exploration.
 
 ## Code for Performance Benchmarks
 This section describes the code for generating synthetic data to stress test the software package and replicate results presented in the paper. All relevant materials are located in the `replication/paper_performance_benchmarks` directory.
 
 ### Synthetic Data Generation
-Run the script `paper_performance_benchmarks/simulate_datasets_synthetic.py` to generate synthetic datasets of varying sizes and feature counts:
+Run the script `paper_performance_benchmarks/simulate_datasets_synthetic.py` to generate synthetic datasets of varying sizes and feature counts (uv ensures the correct deps):
 ```bash
-cd replication/paper_performance_benchmarks
-python simulate_datasets_synthetic.py --output-path ./synthetic_data --skip-plots
+uv run python replication/paper_performance_benchmarks/simulate_datasets_synthetic.py --output-path ./replication/paper_performance_benchmarks/synthetic_data --skip-plots
 ```
 Key flags:
 - `--experiments ...` (default `all`) to generate a subset of datasets.
@@ -42,7 +48,7 @@ The generated datasets are roughly 5.7 GiB in total. Data generation is memory i
 **Optional**: To compare against our published artifacts, download the reference data from [Google Drive](https://drive.google.com/drive/folders/1qPkDjbGiItfH-KBAK7jCEUlWT49E_t88?usp=sharing) and pass its location via `--reference-path`.
 
 ### Performance Benchmarks
-The `run_benchmark.sh` script estimates several model specifications on these synthetic datasets using both `torch-choice` (Python) and `mlogit` (R).
+The `run_benchmark.sh` script estimates several model specifications on these synthetic datasets using both `torch-choice` (Python) and `mlogit` (R). For the Python steps inside that workflow, prefer `uv run` if you invoke components manually (e.g., `uv run python replication/paper_performance_benchmarks/run_torch_choice.py ...`); the shell script itself assumes your environment is already activated.
 
 Before running the script, you will need to:
 1. Update the environment activation commands (e.g., `conda activate ...`) to match your Python and R environments
