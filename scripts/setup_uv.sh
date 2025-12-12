@@ -123,8 +123,7 @@ model = torch_choice.model.ConditionalLogitModel(
     num_items=4,
 ).to(device)
 
-torch_choice.run(
-    model,
+model.fit(
     dataset,
     num_epochs=5,
     learning_rate=0.003,

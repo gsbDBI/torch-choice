@@ -49,7 +49,7 @@ def _run_single_check(device_name: str) -> str:
             dataset=dataset,
             num_items=4,
         ).to(device)
-        torch_choice.run(model, dataset, device=device_name, **TRAINING_KWARGS)
+        model.fit(dataset, device=device_name, **TRAINING_KWARGS)
 
     return _capture_output(_run)
 

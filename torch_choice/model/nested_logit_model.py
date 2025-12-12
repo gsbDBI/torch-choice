@@ -13,11 +13,12 @@ import torch.nn as nn
 
 from torch_choice.data.choice_dataset import ChoiceDataset
 from torch_choice.data.joint_dataset import JointDataset
+from torch_choice.model._fit_mixin import ChoiceModelFitMixin
 from torch_choice.model.coefficient import Coefficient
 from torch_choice.model.formula_parser import parse_formula
 
 
-class NestedLogitModel(nn.Module):
+class NestedLogitModel(nn.Module, ChoiceModelFitMixin):
     def __init__(self,
                  nest_to_item: Dict[object, List[int]],
                  # method 1: specify variation and num param. dictionary.
@@ -449,6 +450,15 @@ class NestedLogitModel(nn.Module):
             raise ValueError(f"Level should be either 'item' or 'nest', got {level}.")
 
         return self.state_dict()[f'{level}_coef_dict.{variable}.coef'].detach().clone()
+
+    # --------------------------------------------------------------------------------------------------
+    # Training helpers
+    # --------------------------------------------------------------------------------------------------
+    def _get_item_index_from_batch(self, batch) -> torch.Tensor:
+        if isinstance(batch, dict):
+            return batch['item'].item_index
+        # Fallback for datasets that already expose item indices directly.
+        return batch.item_index
 
     # def clamp_lambdas(self):
     #     """

@@ -12,11 +12,12 @@ import torch
 import torch.nn as nn
 
 from torch_choice.data.choice_dataset import ChoiceDataset
+from torch_choice.model._fit_mixin import ChoiceModelFitMixin
 from torch_choice.model.coefficient import Coefficient
 from torch_choice.model.formula_parser import parse_formula
 
 
-class ConditionalLogitModel(nn.Module):
+class ConditionalLogitModel(nn.Module, ChoiceModelFitMixin):
     """The more generalized version of conditional logit model, the model allows for research specific
     variable types(groups) and different levels of variations for coefficient.
 
@@ -358,3 +359,9 @@ class ConditionalLogitModel(nn.Module):
             torch.Tensor: the corresponding coefficient tensor of the requested variable.
         """
         return self.state_dict()[f"coef_dict.{variable}.coef"].detach().clone()
+
+    # --------------------------------------------------------------------------------------------------
+    # Training helpers
+    # --------------------------------------------------------------------------------------------------
+    def _get_item_index_from_batch(self, batch: ChoiceDataset) -> torch.Tensor:
+        return batch.item_index
