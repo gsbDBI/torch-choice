@@ -119,9 +119,24 @@ model = torch_choice.model.ConditionalLogitModel(
     formula='(itemsession_cost_freq_ovt|constant) + (session_income|item) + (itemsession_ivt|item-full) + (intercept|item)',
     dataset=dataset,
     num_items=4).to(device)
-# fit the conditional logit model.
-torch_choice.run(model, dataset, num_epochs=500, learning_rate=0.003, batch_size=-1, model_optimizer="LBFGS", device=device)
+# fit the conditional logit model using the new sklearn-style API.
+output = model.fit(
+    dataset,
+    num_epochs=500,
+    learning_rate=0.003,
+    batch_size=-1,
+    model_optimizer="LBFGS",
+    device=device,
+)
+# Access estimation results programmatically.
+print(output.train_ll)
+print(output.coef_summary.head())
 ```
+
+The ``fit`` method now returns an ``EstimationOutput`` object so you can inspect log-likelihoods,
+standard errors, and coefficient tables directly from Python. Legacy helpers `model.run(...)` and
+`torch_choice.run(...)` remain available and now simply forward to `model.fit(...)`, so existing
+scripts continue to work while you migrate.
 ```
   | Name  | Type                  | Params
 ------------------------------------------------
@@ -262,6 +277,20 @@ Then,
 This is a classic problem used for exposition in Computer Science to motivate various Machine Learning models. There is no concept of a user in this setup. Our package allows for models of this nature and is fully usable for Machine Learning problems with added flexibility over [scikit-learn logistic regression](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html)
  -->
 We highly recommend users to go through [tutorials](https://github.com/gsbDBI/torch-choice/blob/main/tutorials) we prepared to get a better understanding of what the package offers. We present multiple examples, and for each case we specify the utility form.
+
+## Paper Replication Script
+
+The replication material that accompanies the paper now ships as a **single executable script** in this repository:
+
+```bash
+uv run python replication/paper_demo.py
+```
+
+- Mirrors every section of the original `replication/paper_demo.ipynb` with console-friendly logging.
+- Accepts `--skip-training` for quick smoke tests, `--num-epochs` to control the conditional logit fit (defaults to the paper's 1000 epochs), and `--tensorboard-port`/`--tensorboard-logdir` to control the automatic TensorBoard launch.
+- Prints a helpful URL (or fallback instructions) if the `tensorboard` command is available.
+
+This script removes the need for a separate `requirements.txt` when using `uv`, and makes it easy to regenerate every table reported in the paper from the command line.
 
 ## Reproducibility
 The `torch-choice` package is built upon several dependencies that introduce randomness, you would need to fix random seeds for these packages for reproducibility:

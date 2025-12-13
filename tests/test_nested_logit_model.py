@@ -10,7 +10,6 @@ import pandas as pd
 import torch
 from torch_choice.data import ChoiceDataset, JointDataset, utils
 from torch_choice.model import NestedLogitModel
-from torch_choice.utils.run_helper import run
 
 
 class TestConditionalLogitModel(unittest.TestCase):
@@ -108,17 +107,17 @@ class TestConditionalLogitModel(unittest.TestCase):
     def test_model_fitting_functionality_example_1(self):
         _, dataset = self.load_house_cooling_datasets()
         model = self.test_initialization_example_1()
-        run(model, dataset, num_epochs=100)
+        model.fit(dataset, num_epochs=100)
 
     def test_model_fitting_functionality_example_2(self):
         _, dataset = self.load_house_cooling_datasets()
         model = self.test_initialization_example_2()
-        run(model, dataset, num_epochs=100)
+        model.fit(dataset, num_epochs=100)
 
     def test_model_fitting_functionality_example_3(self):
         _, dataset = self.load_house_cooling_datasets()
         model = self.test_initialization_example_3()
-        run(model, dataset, num_epochs=100)
+        model.fit(dataset, num_epochs=100)
 
     # ==================================================================================================================
     # Test the if the running script results in expected values of log-likelihood.

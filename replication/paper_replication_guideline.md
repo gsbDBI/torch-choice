@@ -13,8 +13,8 @@ Since we continuously update the package, if you are replicating the code presen
 
 Preferred (uv):
 ```bash
-# From the repo root, run the helper:
-./scripts/setup_uv.sh
+# From the repo root, run the helper, which will automatically install everything you would need to run the replication material.
+bash ./scripts/setup_uv.sh
 ```
 Notes:
 - We would highly recommend using uv to set up the environment, it is the preferred method of installation and it is the method we used to run the scripts.

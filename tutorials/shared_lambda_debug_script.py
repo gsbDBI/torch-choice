@@ -7,7 +7,6 @@ import torch
 
 from torch_choice.data import ChoiceDataset, JointDataset, utils
 from torch_choice.model.nested_logit_model import NestedLogitModel
-from torch_choice import run
 print(torch.__version__)
 
 
@@ -57,4 +56,4 @@ if __name__ == "__main__":
                             shared_lambda=False)
 
     model = model.to(DEVICE)
-    run(model, dataset, num_epochs=1000, model_optimizer="LBFGS")
+    model.fit(dataset, num_epochs=1000, model_optimizer="LBFGS")
