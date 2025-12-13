@@ -22,7 +22,6 @@ import torch
 from torch_choice.data import ChoiceDataset, utils
 from torch_choice.model import ConditionalLogitModel
 
-from torch_choice import run
 ```
 
     /Users/tianyudu/miniforge3/envs/dev/lib/python3.9/site-packages/torchvision/io/image.py:13: UserWarning: Failed to load image Python extension: dlopen(/Users/tianyudu/miniforge3/envs/dev/lib/python3.9/site-packages/torchvision/image.so, 0x0006): Symbol not found: __ZN2at4_ops19empty_memory_format4callEN3c108ArrayRefIxEENS2_8optionalINS2_10ScalarTypeEEENS5_INS2_6LayoutEEENS5_INS2_6DeviceEEENS5_IbEENS5_INS2_12MemoryFormatEEE
@@ -218,7 +217,7 @@ print(item_index)
     2       air
     3       air
     4       air
-           ... 
+           ...
     2774    car
     2775    car
     2776    car
@@ -352,7 +351,7 @@ Each of dictionary values tells the dimension of the corresponding observables, 
 For example, the `price_cost_freq_ovt` consists of three observables and we set the corresponding to three.
 
 Even the model can infer `num_param_dict['intercept'] = 1`, but we recommend the research to include it for completeness.
-   
+
 ### Number of items
 The `num_items` keyword informs the model how many alternatives users are choosing from.
 
@@ -395,7 +394,7 @@ print(model)
       )
     )
     Conditional logistic discrete choice model, expects input features:
-    
+
     X[price_cost_freq_ovt[constant]] with 3 parameters, with constant level variation.
     X[session_income[item]] with 1 parameters, with item level variation.
     X[price_ivt[item-full]] with 1 parameters, with item-full level variation.
@@ -432,7 +431,7 @@ print(model)
       )
     )
     Conditional logistic discrete choice model, expects input features:
-    
+
     X[price_cost_freq_ovt[constant]] with 3 parameters, with constant level variation.
     X[session_income[item]] with 1 parameters, with item level variation.
     X[price_ivt[item-full]] with 1 parameters, with item-full level variation.
@@ -442,11 +441,13 @@ print(model)
 
 ## Train the Model
 
-We provide an easy-to-use helper function `run()` imported from `torch_choice.utils.run_helper` to fit the model with a particular dataset.
+We now recommend calling `model.fit(...)` directly to train the model. Legacy helpers such as
+`torch_choice.utils.run_helper.run(...)` and `torch_choice.utils.run_helper_lightning.run(...)`
+remain available for both `ConditionalLogitModel` and `NestedLogitModel` instances and simply
+forward to `model.fit(...)` while printing the same regression-style summary.
 
-We provide an easy-to-use model runner for both `ConditionalLogitModel` and `NestedLogitModel` (see later) instances.
-
-The `run()` mehtod supports mini-batch updating as well, for small datasets like the one we are dealing right now, we can use `batch_size = -1` to conduct full-batch gradient update.
+The `.fit()` method supports mini-batch updating as well; for small datasets like the one we are
+dealing with right now, we can use `batch_size = -1` to conduct full-batch gradient updates.
 
 
 Here we use the LBFGS optimizer since we are working on a small dataset with only 2,779 choice records and 13 coefficients to be estimated. For larger datasets and larger models, we recommend using the Adam optimizer instead.
@@ -454,7 +455,7 @@ Here we use the LBFGS optimizer since we are working on a small dataset with onl
 
 ```python
 start_time = time()
-run(model, dataset, num_epochs=500, learning_rate=0.01, model_optimizer="LBFGS", batch_size=-1)
+model.fit(dataset, num_epochs=500, learning_rate=0.01, model_optimizer="LBFGS", batch_size=-1)
 print('Time taken:', time() - start_time)
 ```
 
@@ -468,7 +469,7 @@ print('Time taken:', time() - start_time)
       )
     )
     Conditional logistic discrete choice model, expects input features:
-    
+
     X[price_cost_freq_ovt[constant]] with 3 parameters, with constant level variation.
     X[session_income[item]] with 1 parameters, with item level variation.
     X[price_ivt[item-full]] with 1 parameters, with item-full level variation.
@@ -488,10 +489,10 @@ print('Time taken:', time() - start_time)
       rank_zero_warn(
     /Users/tianyudu/miniforge3/envs/dev/lib/python3.9/site-packages/pytorch_lightning/trainer/configuration_validator.py:108: PossibleUserWarning: You defined a `validation_step` but have no `val_dataloader`. Skipping val loop.
       rank_zero_warn(
-    
+
       | Name  | Type                  | Params
     ------------------------------------------------
-    0 | model | ConditionalLogitModel | 13    
+    0 | model | ConditionalLogitModel | 13
     ------------------------------------------------
     13        Trainable params
     0         Non-trainable params
@@ -503,7 +504,7 @@ print('Time taken:', time() - start_time)
       rank_zero_warn(
 
 
-    Epoch 499: 100%|██████████| 1/1 [00:00<00:00, 76.72it/s, loss=1.87e+03, v_num=32] 
+    Epoch 499: 100%|██████████| 1/1 [00:00<00:00, 76.72it/s, loss=1.87e+03, v_num=32]
 
     `Trainer.fit` stopped: `max_epochs=500` reached.
 
@@ -513,7 +514,7 @@ print('Time taken:', time() - start_time)
     Skip testing, no test dataset is provided.
     ==================== model results ====================
     Log-likelihood: [Training] -1874.3427734375, [Validation] N/A, [Test] N/A
-    
+
     | Coefficient                     |   Estimation |   Std. Err. |    z-value |    Pr(>|z|) | Significance   |
     |:--------------------------------|-------------:|------------:|-----------:|------------:|:---------------|
     | price_cost_freq_ovt[constant]_0 |  -0.0333421  |  0.00709556 |  -4.69901  | 2.61425e-06 | ***            |
@@ -538,11 +539,12 @@ The following is the R-output from the `mlogit` implementation, the estimation, 
 
 We see that the final log-likelihood of models estimated using two packages are all around `-1874`.
 
-The `run()` method calculates the standard deviation using $\sqrt{\text{diag}(H^{-1})}$, where $H$ is the hessian of negative log-likelihood with repsect to model parameters.
+The helper wrappers compute standard deviations using $\sqrt{\text{diag}(H^{-1})}$, where $H$ is the
+Hessian of the negative log-likelihood, but internally invoke `model.fit(...)`.
 
 Names of coefficients are slightly different, one can use the following conversion table to compare estimations and standard deviations reported by both packages.
 
-<!-- | Coefficient Name in Python |  Estimation |   Std. Err. |  Coeffcient Name in R | R Estimation | R Std. Err. | 
+<!-- | Coefficient Name in Python |  Estimation |   Std. Err. |  Coeffcient Name in R | R Estimation | R Std. Err. |
 |:---------------------:|-------------:|------------:| :--------------: | ----------: | ------: |
 | price_cost_freq_ovt_0 |  -0.0342194  |  0.00731707 | cost             | -0.0333389  |0.0070955|
 | price_cost_freq_ovt_1 |   0.092262   |  0.00520946 | freq             |  0.0925297  |0.0050976|
@@ -570,23 +572,23 @@ summary(ml.MC1)
 ```
 ```
 Call:
-mlogit(formula = choice ~ cost + freq + ovt | income | ivt, data = MC, 
+mlogit(formula = choice ~ cost + freq + ovt | income | ivt, data = MC,
     reflevel = "air", method = "nr")
 
 Frequencies of alternatives:choice
-      air     train       bus       car 
-0.3738755 0.1666067 0.0035984 0.4559194 
+      air     train       bus       car
+0.3738755 0.1666067 0.0035984 0.4559194
 
 nr method
-9 iterations, 0h:0m:0s 
-g'(-H)^-1g = 0.00014 
-successive function values within tolerance limits 
+9 iterations, 0h:0m:0s
+g'(-H)^-1g = 0.00014
+successive function values within tolerance limits
 
 Coefficients :
-                    Estimate Std. Error  z-value  Pr(>|z|)    
+                    Estimate Std. Error  z-value  Pr(>|z|)
 (Intercept):train  3.2741952  0.6244152   5.2436 1.575e-07 ***
-(Intercept):bus    0.6983381  1.2802466   0.5455 0.5854292    
-(Intercept):car    1.8441129  0.7085089   2.6028 0.0092464 ** 
+(Intercept):bus    0.6983381  1.2802466   0.5455 0.5854292
+(Intercept):car    1.8441129  0.7085089   2.6028 0.0092464 **
 cost              -0.0333389  0.0070955  -4.6986 2.620e-06 ***
 freq               0.0925297  0.0050976  18.1517 < 2.2e-16 ***
 ovt               -0.0430036  0.0032247 -13.3356 < 2.2e-16 ***
@@ -594,14 +596,14 @@ income:train      -0.0381466  0.0040831  -9.3426 < 2.2e-16 ***
 income:bus        -0.0890867  0.0183471  -4.8556 1.200e-06 ***
 income:car        -0.0279930  0.0038726  -7.2286 4.881e-13 ***
 ivt:air            0.0595097  0.0100727   5.9080 3.463e-09 ***
-ivt:train         -0.0014504  0.0011875  -1.2214 0.2219430    
-ivt:bus           -0.0067835  0.0044334  -1.5301 0.1259938    
+ivt:train         -0.0014504  0.0011875  -1.2214 0.2219430
+ivt:bus           -0.0067835  0.0044334  -1.5301 0.1259938
 ivt:car           -0.0064603  0.0018985  -3.4029 0.0006668 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Log-Likelihood: -1874.3
-McFadden R^2:  0.35443 
+McFadden R^2:  0.35443
 Likelihood ratio test : chisq = 2058.1 (p.value = < 2.22e-16)
 ```
 

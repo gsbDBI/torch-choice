@@ -9,7 +9,6 @@ from tqdm import tqdm
 tqdm.pandas()
 from torch_choice.data import ChoiceDataset, utils
 from torch_choice.model import ConditionalLogitModel
-from torch_choice.utils.run_helper import run
 
 
 def duplicate_items_mode_canada_datasets(num_copies: int):
@@ -145,8 +144,17 @@ if __name__ == '__main__':
                     num_items=dataset.num_items).to(DEVICE)
                 # only time the model estimation.
                 start_time = time()
-                # model, ll = run(model, dataset, batch_size=512, learning_rate=0.003 , num_epochs=30000, compute_std=False, return_final_training_log_likelihood=True, report_frequency=500)
-                model, ll = run(model, dataset, batch_size=512, learning_rate=0.003, num_epochs=1000, compute_std=False, return_final_training_log_likelihood=True, report_frequency=100, model_optimizer=optimizer)
+                model.fit(
+                    dataset,
+                    batch_size=512,
+                    learning_rate=0.003,
+                    num_epochs=1000,
+                    model_optimizer=optimizer,
+                    report_frequency=100,
+                )
+                ll = model._compute_dataset_log_likelihood(
+                    dataset, batch_size=512, num_workers=0
+                )
                 end_time = time()
                 performance_records.append(dict(k=k, seed=seed, time=end_time - start_time, ll=ll, device=DEVICE, optimizer=optimizer))
 

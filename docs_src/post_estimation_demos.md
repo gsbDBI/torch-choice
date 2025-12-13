@@ -20,7 +20,7 @@ import torch.nn.functional as F
 
 from torch_choice.data import ChoiceDataset, JointDataset, utils
 from torch_choice.model import ConditionalLogitModel, NestedLogitModel
-from torch_choice.utils.run_helper import run
+# Training is done elsewhere via model.fit(...); no legacy run helper needed in this tutorial.
 ```
 
 
@@ -49,7 +49,7 @@ length_of_dataset = 10000
 user_obs = torch.randn(num_users, 128)
 # generate 64 features for each user, e.g., quality.
 item_obs = torch.randn(num_items, 64)
-# generate 10 features for each session, e.g., weekday indicator. 
+# generate 10 features for each session, e.g., weekday indicator.
 session_obs = torch.randn(num_sessions, 10)
 # generate 12 features for each session user pair, e.g., the budget of that user at the shopping day.
 itemsession_obs = torch.randn(num_sessions, num_items, 12)
@@ -123,7 +123,7 @@ model
       )
     )
     Conditional logistic discrete choice model, expects input features:
-    
+
     X[intercept[constant]] with 1 parameters, with constant level variation.
     X[intercept[item]] with 1 parameters, with item level variation.
     X[intercept[user]] with 1 parameters, with user level variation.
@@ -138,7 +138,7 @@ model
 
 ## Retrieving Model Parameters with the `get_coefficient()` method.
 
-In the model representation above, we can see that the model has coefficients from `intercept[constant]` to `itemsession_obs`. 
+In the model representation above, we can see that the model has coefficients from `intercept[constant]` to `itemsession_obs`.
 The `get_coefficient()` method allows users to retrieve the coefficient values from the model using the general syntax `model.get_coefficient(COEFFICIENT_NAME)`.
 
 For example, `model.get_coefficient('intercept[constant]')` will return the value of $\alpha$, which is a scalar.
@@ -218,7 +218,7 @@ Researchers can use any plotting library to visualize the model parameters. Here
 
 For example, we can plot the distribution of user fixed effect $\gamma_u$'s as the following.
 
-1. Researcher can use the `get_coefficient()` method to retrieve the coefficient values. 
+1. Researcher can use the `get_coefficient()` method to retrieve the coefficient values.
 
 
 ```python
@@ -263,9 +263,9 @@ plt.show()
 ```
 
 
-    
+
 ![png](post_estimation_demos_files/post_estimation_demos_25_0.png)
-    
+
 
 
 # Nested Logit Model
