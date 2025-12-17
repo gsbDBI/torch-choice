@@ -1,10 +1,19 @@
 # Replication Materials for the Torch-Choice Paper
 
 > Author: Tianyu Du
-> 
+>
 > Email: `tianyudu@stanford.edu`
 
 This repository contains the replication materials for the paper "Torch-Choice: A Library for Choice Models in PyTorch". Due to the limited space in the main paper, we have omitted some codes and outputs in the paper. This repository contains the full version of codes mentioned in the paper.
+
+> ✅ **New in this release:** the entire replication workflow is now codified as a single Python script: `replication/paper_demo.py`.
+> Run it from the repository root with `uv run python replication/paper_demo.py`.
+> Useful flags:
+> - `--skip-training` (quick smoke test, no long logit fitting)
+> - `--num-epochs` (defaults to 1000, matches the paper results)
+> - `--tensorboard-port` (defaults to 6006; the script auto-launches TensorBoard when the command is available and prints the URL)
+>
+> The script mirrors the notebook sections one-to-one, prints clearly separated console output, and replaces the need for a separate `requirements.txt` when using `uv`.
 
 
 ```python
@@ -16,7 +25,6 @@ import numpy as np
 import pandas as pd
 import torch
 import torch_choice
-from torch_choice import run
 from tqdm import tqdm
 from torch_choice.data import ChoiceDataset, JointDataset, utils, load_mode_canada_dataset, load_house_cooling_dataset_v1
 from torch_choice.model import ConditionalLogitModel, NestedLogitModel
@@ -180,31 +188,31 @@ dataset = data_wrapper_from_columns.choice_dataset
     * Number of purchase records/cases: 885.
     * Preview of main data frame:
           record_id  session_id  consumer_id       car  purchase  gender  \
-    0             1           1            1  American         1       1   
-    1             1           1            1  Japanese         0       1   
-    2             1           1            1  European         0       1   
-    3             1           1            1    Korean         0       1   
-    4             2           2            2  American         1       1   
-    ...         ...         ...          ...       ...       ...     ...   
-    3155        884         884          884  Japanese         1       1   
-    3156        884         884          884  European         0       1   
-    3157        885         885          885  American         1       1   
-    3158        885         885          885  Japanese         0       1   
-    3159        885         885          885  European         0       1   
-    
-             income  speed  discount  price  
-    0     46.699997     10      0.94     90  
-    1     46.699997      8      0.94    110  
-    2     46.699997      7      0.94     50  
-    3     46.699997      8      0.94     10  
-    4     26.100000     10      0.95    100  
-    ...         ...    ...       ...    ...  
-    3155  20.900000      8      0.89    100  
-    3156  20.900000      7      0.89     40  
-    3157  30.600000     10      0.81    100  
-    3158  30.600000      8      0.81     50  
-    3159  30.600000      7      0.81     40  
-    
+    0             1           1            1  American         1       1
+    1             1           1            1  Japanese         0       1
+    2             1           1            1  European         0       1
+    3             1           1            1    Korean         0       1
+    4             2           2            2  American         1       1
+    ...         ...         ...          ...       ...       ...     ...
+    3155        884         884          884  Japanese         1       1
+    3156        884         884          884  European         0       1
+    3157        885         885          885  American         1       1
+    3158        885         885          885  Japanese         0       1
+    3159        885         885          885  European         0       1
+
+             income  speed  discount  price
+    0     46.699997     10      0.94     90
+    1     46.699997      8      0.94    110
+    2     46.699997      7      0.94     50
+    3     46.699997      8      0.94     10
+    4     26.100000     10      0.95    100
+    ...         ...    ...       ...    ...
+    3155  20.900000      8      0.89    100
+    3156  20.900000      7      0.89     40
+    3157  30.600000     10      0.81    100
+    3158  30.600000      8      0.81     50
+    3159  30.600000      7      0.81     40
+
     [3160 rows x 10 columns]
     * Preview of ChoiceDataset:
     ChoiceDataset(label=[], item_index=[885], user_index=[885], session_index=[885], item_availability=[885, 4], item_speed=[4, 1], user_gender=[885, 1], user_income=[885, 1], session_discount=[885, 1], itemsession_price=[885, 4, 1], device=cpu)
@@ -371,7 +379,7 @@ print(f'{dataset.session_index.device=:}')
 
 
 if torch.cuda.is_available():
-    # please note that this can only be demonstrated 
+    # please note that this can only be demonstrated
     dataset = dataset.to('cuda')
 
     print(f'{dataset.device=:}')
@@ -591,7 +599,7 @@ dataset.__len__()
 
 
 ```python
-dataset = load_mode_canada_dataset() 
+dataset = load_mode_canada_dataset()
 ```
 
     No `session_index` is provided, assume each choice instance is in its own session.
@@ -648,8 +656,14 @@ model = ConditionalLogitModel(
 
 
 ```python
-from torch_choice import run
-run(model, dataset, batch_size=-1, learning_rate=0.01, num_epochs=1000, model_optimizer="LBFGS")
+model.fit(
+    dataset,
+    batch_size=-1,
+    learning_rate=0.01,
+    num_epochs=1000,
+    model_optimizer="LBFGS",
+    backend="lightning",
+)
 ```
 
     GPU available: True (mps), used: False
@@ -668,7 +682,7 @@ run(model, dataset, batch_size=-1, learning_rate=0.01, num_epochs=1000, model_op
       )
     )
     Conditional logistic discrete choice model, expects input features:
-    
+
     X[itemsession_cost_freq_ovt[constant]] with 3 parameters, with constant level variation.
     X[session_income[item]] with 1 parameters, with item level variation.
     X[itemsession_ivt[item-full]] with 1 parameters, with item-full level variation.
@@ -680,10 +694,10 @@ run(model, dataset, batch_size=-1, learning_rate=0.01, num_epochs=1000, model_op
     [Test dataset] None
 
 
-    
+
       | Name  | Type                  | Params
     ------------------------------------------------
-    0 | model | ConditionalLogitModel | 13    
+    0 | model | ConditionalLogitModel | 13
     ------------------------------------------------
     13        Trainable params
     0         Non-trainable params
@@ -696,12 +710,12 @@ run(model, dataset, batch_size=-1, learning_rate=0.01, num_epochs=1000, model_op
     `Trainer.fit` stopped: `max_epochs=1000` reached.
 
 
-    Epoch 999: 100%|██████████| 1/1 [00:00<00:00, 98.73it/s, loss=1.88e+03, v_num=45] 
+    Epoch 999: 100%|██████████| 1/1 [00:00<00:00, 98.73it/s, loss=1.88e+03, v_num=45]
     Time taken for training: 18.987757921218872
     Skip testing, no test dataset is provided.
     ==================== model results ====================
     Log-likelihood: [Training] -1874.63818359375, [Validation] N/A, [Test] N/A
-    
+
     | Coefficient                           |   Estimation |   Std. Err. |      z-value |    Pr(>|z|) | Significance   |
     |:--------------------------------------|-------------:|------------:|-------------:|------------:|:---------------|
     | itemsession_cost_freq_ovt[constant]_0 | -0.0372949   |  0.00709483 |  -5.25663    | 1.46723e-07 | ***            |
@@ -732,7 +746,7 @@ run(model, dataset, batch_size=-1, learning_rate=0.01, num_epochs=1000, model_op
       )
     )
     Conditional logistic discrete choice model, expects input features:
-    
+
     X[itemsession_cost_freq_ovt[constant]] with 3 parameters, with constant level variation.
     X[session_income[item]] with 1 parameters, with item level variation.
     X[itemsession_ivt[item-full]] with 1 parameters, with item-full level variation.

@@ -22,7 +22,7 @@ $$
 P_{uis} = \frac{e^{\mu_{uis}}}{\Sigma_{j \in A_{us}}e^{\mu_{ujs}}}
 $$
 
-where, 
+where,
 
 $$\mu_{uis} = \alpha + \beta X + \gamma W + \dots$$
 
@@ -39,7 +39,7 @@ where $\epsilon$ is an unobserved random error term.
 If we assume iid extreme value type 1 errors for $\epsilon_{uis}$, this leads to the above logistic probabilities of user $u$ choosing item $i$ in session $s$, as shown by [McFadden](https://en.wikipedia.org/wiki/Choice_modelling), and as often studied in Econometrics.
 
 ## Package
-We implement a fully flexible setup, where we allow 
+We implement a fully flexible setup, where we allow
 1. coefficients ($\alpha$, $\beta$, $\gamma$, $\dots$) to be constant, user-specific (i.e., $\alpha=\alpha_u$), item-specific (i.e., $\alpha=\alpha_i$), session-specific (i.e., $\alpha=\alpha_t$), or (session, item)-specific (i.e., $\alpha=\alpha_{ti}$). For example, specifying $\alpha$ to be item-specific is equivalent to adding an item-level fixed effect.
 2. Observables ($X$, $Y$, $\dots$) to be constant, user-specific, item-specific, session-specific, or (session, item) (such as price) and (session, user) (such as income) specific as well.
 3. Specifying availability sets $A_{us}$
@@ -129,8 +129,10 @@ model = torch_choice.model.ConditionalLogitModel(
                          'price_ivt': 'item-full',
                          'intercept': 'item'},
     num_items=4)
-# fit the conditional logit model.
-torch_choice.utils.run_helper.run(model, data.choice_dataset, num_epochs=5000, learning_rate=0.01, batch_size=-1)
+# fit the conditional logit model with the sklearn-style API.
+model.fit(data.choice_dataset, num_epochs=5000, learning_rate=0.01, batch_size=-1)
+# Legacy helper torch_choice.utils.run_helper.run(...) now forwards to model.fit(...)
+# and remains available for older codebases.
 ```
 
 ## Mode Canada with R

@@ -7,11 +7,12 @@ Date: Jul. 23, 2022
 import unittest
 
 import pandas as pd
+import warnings
 from copy import deepcopy
 import torch
 from torch_choice.data import ChoiceDataset, utils
 from torch_choice.model import ConditionalLogitModel, NestedLogitModel
-from torch_choice.utils.run_helper import run
+from torch_choice.utils.estimation_output import EstimationOutput
 
 
 class TestConditionalLogitModel(unittest.TestCase):
@@ -60,7 +61,7 @@ class TestConditionalLogitModel(unittest.TestCase):
         dataset = self.load_mode_canada_data()
         model = self.test_initialization()
         # run for only 100 epochs.
-        run(model, dataset, num_epochs=100, learning_rate=0.01, batch_size=-1)
+        model.fit(dataset, num_epochs=100, learning_rate=0.01, batch_size=-1)
 
     def test_model_fitting_correctness(self):
         dataset = self.load_mode_canada_data()
@@ -94,6 +95,34 @@ class TestConditionalLogitModel(unittest.TestCase):
         expected_ll = -1874.3
 
         self.assertAlmostEqual(final_ll, expected_ll, delta=20)
+
+    def test_model_run_proxy(self):
+        dataset = self.load_mode_canada_data()
+        model = self.test_initialization()
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always", DeprecationWarning)
+            returned = model.run(dataset, num_epochs=1, learning_rate=0.01, batch_size=-1)
+        self.assertIsInstance(returned, EstimationOutput)
+        self.assertIs(returned.model, model)
+        self.assertTrue(any(issubclass(w.category, DeprecationWarning) for w in caught))
+
+    def test_module_level_run_wrapper(self):
+        from torch_choice import run as module_run
+
+        dataset = self.load_mode_canada_data()
+        model = self.test_initialization()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            trained_output = module_run(
+                model,
+                dataset,
+                num_epochs=1,
+                learning_rate=0.01,
+                batch_size=-1,
+                compute_std=False,
+            )
+        self.assertIsInstance(trained_output, EstimationOutput)
+        self.assertIsInstance(trained_output.model, ConditionalLogitModel)
 
 
 if __name__ == '__main__':

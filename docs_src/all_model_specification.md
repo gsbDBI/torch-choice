@@ -43,7 +43,7 @@ user_obs = torch.randn(num_users, 128)
 item_obs = torch.randn(num_items, 64)
 # generate 32 features for each user item pair.
 useritem_obs = torch.randn(num_users, num_items, 32)
-# generate 10 features for each session, e.g., weekday indicator. 
+# generate 10 features for each session, e.g., weekday indicator.
 session_obs = torch.randn(num_sessions, 10)
 # generate 12 features for each session user pair, e.g., the budget of that user at the shopping day.
 price_obs = torch.randn(num_sessions, num_items, 12)
@@ -127,28 +127,28 @@ for n in tqdm(np.random.choice(length_of_dataset, 10)):
             expected = user_obs[u, k]
             got = dataset.x_dict["user_obs"][n, i, k]
             assert expected == got
-        
+
         for k in range(64):
             expected = item_obs[i, k]
             got = dataset.x_dict["item_obs"][n, i, k]
             assert expected == got
-        
+
         for k in range(32):
             expected = useritem_obs[u, i, k]
             got = dataset.x_dict["useritem_obs"][n, i, k]
             assert expected == got
-        
+
         for k in range(10):
             expected = session_obs[s, k]
             got = dataset.x_dict["session_obs"][n, i, k]
             assert expected == got
-            
-        
+
+
         for k in range(12):
             expected = price_obs[s, i, k]
             got = dataset.x_dict["price_obs"][n, i, k]
             assert expected == got
-        
+
         for k in range(16):
             expected = usersessionitem_obs[u, s, i, k]
             got = dataset.x_dict["usersessionitem_obs"][n, i, k]
@@ -162,7 +162,7 @@ print("all good!")
     all good!
 
 
-    
+
 
 
 # Build a CLM Model
@@ -171,7 +171,6 @@ print("all good!")
 ```python
 from time import time
 from torch_choice.model import ConditionalLogitModel
-from torch_choice import run
 ```
 
 
@@ -203,7 +202,7 @@ model
       )
     )
     Conditional logistic discrete choice model, expects input features:
-    
+
     X[user_obs[item]] with 128 parameters, with item level variation.
     X[item_obs[user]] with 64 parameters, with user level variation.
     X[useritem_obs[constant]] with 32 parameters, with constant level variation.
@@ -218,7 +217,7 @@ model
 
 ```python
 start_time = time()
-run(model, dataset, num_epochs=10, learning_rate=0.01, model_optimizer="Adam", batch_size=-1)
+model.fit(dataset, num_epochs=10, learning_rate=0.01, model_optimizer="Adam", batch_size=-1)
 print('Time taken:', time() - start_time)
 ```
 
@@ -241,7 +240,7 @@ print('Time taken:', time() - start_time)
       )
     )
     Conditional logistic discrete choice model, expects input features:
-    
+
     X[user_obs[item]] with 128 parameters, with item level variation.
     X[item_obs[user]] with 64 parameters, with user level variation.
     X[useritem_obs[constant]] with 32 parameters, with constant level variation.
@@ -260,10 +259,10 @@ print('Time taken:', time() - start_time)
       rank_zero_warn(
     /Users/tianyudu/miniforge3/envs/dev/lib/python3.9/site-packages/pytorch_lightning/trainer/configuration_validator.py:108: PossibleUserWarning: You defined a `validation_step` but have no `val_dataloader`. Skipping val loop.
       rank_zero_warn(
-    
+
       | Name  | Type                  | Params
     ------------------------------------------------
-    0 | model | ConditionalLogitModel | 1.1 K 
+    0 | model | ConditionalLogitModel | 1.1 K
     ------------------------------------------------
     1.1 K     Trainable params
     0         Non-trainable params
@@ -273,7 +272,7 @@ print('Time taken:', time() - start_time)
       rank_zero_warn(
 
 
-    Epoch 9: 100%|██████████| 1/1 [00:00<00:00, 44.40it/s, loss=7.1e+04, v_num=44] 
+    Epoch 9: 100%|██████████| 1/1 [00:00<00:00, 44.40it/s, loss=7.1e+04, v_num=44]
 
     `Trainer.fit` stopped: `max_epochs=10` reached.
 
@@ -283,7 +282,7 @@ print('Time taken:', time() - start_time)
     Skip testing, no test dataset is provided.
     ==================== model results ====================
     Log-likelihood: [Training] -56230.62890625, [Validation] N/A, [Test] N/A
-    
+
     | Coefficient                      |   Estimation |   Std. Err. |       z-value |      Pr(>|z|) | Significance   |
     |:---------------------------------|-------------:|------------:|--------------:|--------------:|:---------------|
     | user_obs[item]_0                 | -0.0889893   | 139.667     |  -0.000637154 |   0.999492    |                |

@@ -87,7 +87,6 @@ import torch
 
 from torch_choice.data import ChoiceDataset, JointDataset, utils
 from torch_choice.model.nested_logit_model import NestedLogitModel
-from torch_choice import run
 print(torch.__version__)
 ```
 
@@ -104,7 +103,7 @@ if torch.cuda.is_available():
 else:
     print('Running tutorial on CPU')
     DEVICE = 'cpu'
-    
+
 ```
 
     Running tutorial on CPU
@@ -311,7 +310,7 @@ nest_dataset = ChoiceDataset(item_index=item_index.clone()).to(DEVICE)
 ### Item Level Dataset
 For simplicity, we treat each purchasing record as its own session. Moreover, we treat all observables as price observables (i.e., varying by both session and item).
 
-Since there are 7 observables in total, the resulted `price_obs` has shape (250, 7, 7) corresponding to `number_of_sessions` by `number_of_items` by `number_of_observables`. 
+Since there are 7 observables in total, the resulted `price_obs` has shape (250, 7, 7) corresponding to `number_of_sessions` by `number_of_items` by `number_of_observables`.
 
 
 ```python
@@ -443,7 +442,7 @@ Here we use the LBFGS optimizer since we are working on a small dataset and 8 co
 
 
 ```python
-run(model, dataset, num_epochs=1000, model_optimizer="LBFGS")
+model.fit(dataset, num_epochs=1000, model_optimizer="LBFGS")
 ```
 
     ==================== model received ====================
@@ -466,10 +465,10 @@ run(model, dataset, num_epochs=1000, model_optimizer="LBFGS")
     TPU available: False, using: 0 TPU cores
     IPU available: False, using: 0 IPUs
     HPU available: False, using: 0 HPUs
-    
+
       | Name  | Type             | Params
     -------------------------------------------
-    0 | model | NestedLogitModel | 8     
+    0 | model | NestedLogitModel | 8
     -------------------------------------------
     8         Trainable params
     0         Non-trainable params
@@ -487,7 +486,7 @@ run(model, dataset, num_epochs=1000, model_optimizer="LBFGS")
     Skip testing, no test dataset is provided.
     ==================== model results ====================
     Log-likelihood: [Training] -178.124755859375, [Validation] N/A, [Test] N/A
-    
+
     | Coefficient                |   Estimation |   Std. Err. |   z-value |    Pr(>|z|) | Significance   |
     |:---------------------------|-------------:|------------:|----------:|------------:|:---------------|
     | lambda_weight_0            |     0.585898 |   0.166624  |   3.51628 | 0.000437634 | ***            |
@@ -530,34 +529,34 @@ Coefficient names reported are slightly different in `Python` and `R`, please us
 | item_price_obs_6 |    int.cooling  |
 
 ```
-## 
+##
 ## Call:
-## mlogit(formula = depvar ~ ich + och + icca + occa + inc.room + 
-##     inc.cooling + int.cooling | 0, data = HC, nests = list(cooling = c("gcc", 
+## mlogit(formula = depvar ~ ich + och + icca + occa + inc.room +
+##     inc.cooling + int.cooling | 0, data = HC, nests = list(cooling = c("gcc",
 ##     "ecc", "erc", "hpc"), other = c("gc", "ec", "er")), un.nest.el = TRUE)
-## 
+##
 ## Frequencies of alternatives:choice
-##    ec   ecc    er   erc    gc   gcc   hpc 
-## 0.004 0.016 0.032 0.004 0.096 0.744 0.104 
-## 
+##    ec   ecc    er   erc    gc   gcc   hpc
+## 0.004 0.016 0.032 0.004 0.096 0.744 0.104
+##
 ## bfgs method
-## 11 iterations, 0h:0m:0s 
-## g'(-H)^-1g = 7.26E-06 
-## successive function values within tolerance limits 
-## 
+## 11 iterations, 0h:0m:0s
+## g'(-H)^-1g = 7.26E-06
+## successive function values within tolerance limits
+##
 ## Coefficients :
-##              Estimate Std. Error z-value  Pr(>|z|)    
+##              Estimate Std. Error z-value  Pr(>|z|)
 ## ich         -0.554878   0.144205 -3.8478 0.0001192 ***
 ## och         -0.857886   0.255313 -3.3601 0.0007791 ***
-## icca        -0.225079   0.144423 -1.5585 0.1191212    
-## occa        -1.089458   1.219821 -0.8931 0.3717882    
+## icca        -0.225079   0.144423 -1.5585 0.1191212
+## occa        -1.089458   1.219821 -0.8931 0.3717882
 ## inc.room    -0.378971   0.099631 -3.8038 0.0001425 ***
 ## inc.cooling  0.249575   0.059213  4.2149 2.499e-05 ***
-## int.cooling -6.000415   5.562423 -1.0787 0.2807030    
-## iv           0.585922   0.179708  3.2604 0.0011125 ** 
+## int.cooling -6.000415   5.562423 -1.0787 0.2807030
+## iv           0.585922   0.179708  3.2604 0.0011125 **
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
+##
 ## Log-Likelihood: -178.12
 ```
 
@@ -607,7 +606,7 @@ model = model.to(DEVICE)
 
 
 ```python
-run(model, dataset, num_epochs=1000, model_optimizer="LBFGS", learning_rate=0.3)
+model.fit(dataset, num_epochs=1000, model_optimizer="LBFGS", learning_rate=0.3)
 ```
 
     ==================== model received ====================
@@ -630,10 +629,10 @@ run(model, dataset, num_epochs=1000, model_optimizer="LBFGS", learning_rate=0.3)
     TPU available: False, using: 0 TPU cores
     IPU available: False, using: 0 IPUs
     HPU available: False, using: 0 HPUs
-    
+
       | Name  | Type             | Params
     -------------------------------------------
-    0 | model | NestedLogitModel | 8     
+    0 | model | NestedLogitModel | 8
     -------------------------------------------
     8         Trainable params
     0         Non-trainable params
@@ -651,7 +650,7 @@ run(model, dataset, num_epochs=1000, model_optimizer="LBFGS", learning_rate=0.3)
     Skip testing, no test dataset is provided.
     ==================== model results ====================
     Log-likelihood: [Training] -180.02308654785156, [Validation] N/A, [Test] N/A
-    
+
     | Coefficient                |   Estimation |   Std. Err. |   z-value |   Pr(>|z|) | Significance   |
     |:---------------------------|-------------:|------------:|----------:|-----------:|:---------------|
     | lambda_weight_0            |     1.3621   |    0.55502  |   2.45415 | 0.0141217  | *              |
@@ -693,34 +692,34 @@ You can use the table for converting coefficient names reported by `Python` and 
 | item_price_obs_6 |    int.cooling  |
 
 ```
-## 
+##
 ## Call:
-## mlogit(formula = depvar ~ ich + och + icca + occa + inc.room + 
-##     inc.cooling + int.cooling | 0, data = HC, nests = list(central = c("ec", 
+## mlogit(formula = depvar ~ ich + och + icca + occa + inc.room +
+##     inc.cooling + int.cooling | 0, data = HC, nests = list(central = c("ec",
 ##     "ecc", "gc", "gcc", "hpc"), room = c("er", "erc")), un.nest.el = TRUE)
-## 
+##
 ## Frequencies of alternatives:choice
-##    ec   ecc    er   erc    gc   gcc   hpc 
-## 0.004 0.016 0.032 0.004 0.096 0.744 0.104 
-## 
+##    ec   ecc    er   erc    gc   gcc   hpc
+## 0.004 0.016 0.032 0.004 0.096 0.744 0.104
+##
 ## bfgs method
-## 10 iterations, 0h:0m:0s 
-## g'(-H)^-1g = 5.87E-07 
-## gradient close to zero 
-## 
+## 10 iterations, 0h:0m:0s
+## g'(-H)^-1g = 5.87E-07
+## gradient close to zero
+##
 ## Coefficients :
-##              Estimate Std. Error z-value Pr(>|z|)  
+##              Estimate Std. Error z-value Pr(>|z|)
 ## ich          -1.13818    0.54216 -2.0993  0.03579 *
 ## och          -1.82532    0.93228 -1.9579  0.05024 .
-## icca         -0.33746    0.26934 -1.2529  0.21024  
-## occa         -2.06328    1.89726 -1.0875  0.27681  
+## icca         -0.33746    0.26934 -1.2529  0.21024
+## occa         -2.06328    1.89726 -1.0875  0.27681
 ## inc.room     -0.75722    0.34292 -2.2081  0.02723 *
 ## inc.cooling   0.41689    0.20742  2.0099  0.04444 *
 ## int.cooling -13.82487    7.94031 -1.7411  0.08167 .
 ## iv            1.36201    0.65393  2.0828  0.03727 *
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
+##
 ## Log-Likelihood: -180.02
 
 ```
@@ -755,7 +754,7 @@ model = model.to(DEVICE)
 
 
 ```python
-run(model, dataset, num_epochs=1000, model_optimizer="LBFGS", learning_rate=0.3)
+model.fit(dataset, num_epochs=1000, model_optimizer="LBFGS", learning_rate=0.3)
 ```
 
     ==================== model received ====================
@@ -778,10 +777,10 @@ run(model, dataset, num_epochs=1000, model_optimizer="LBFGS", learning_rate=0.3)
     TPU available: False, using: 0 TPU cores
     IPU available: False, using: 0 IPUs
     HPU available: False, using: 0 HPUs
-    
+
       | Name  | Type             | Params
     -------------------------------------------
-    0 | model | NestedLogitModel | 8     
+    0 | model | NestedLogitModel | 8
     -------------------------------------------
     8         Trainable params
     0         Non-trainable params
@@ -799,7 +798,7 @@ run(model, dataset, num_epochs=1000, model_optimizer="LBFGS", learning_rate=0.3)
     Skip testing, no test dataset is provided.
     ==================== model results ====================
     Log-likelihood: [Training] -180.26324462890625, [Validation] N/A, [Test] N/A
-    
+
     | Coefficient                |   Estimation |   Std. Err. |   z-value |    Pr(>|z|) | Significance   |
     |:---------------------------|-------------:|------------:|----------:|------------:|:---------------|
     | lambda_weight_0            |     0.956541 |   0.197062  |   4.854   | 1.20994e-06 | ***            |
@@ -841,34 +840,34 @@ You can use the table for converting coefficient names reported by `Python` and 
 | item_price_obs_6 |    int.cooling  |
 
 ```
-## 
+##
 ## Call:
-## mlogit(formula = depvar ~ ich + och + icca + occa + inc.room + 
-##     inc.cooling + int.cooling | 0, data = HC, nests = list(n1 = c("gcc", 
-##     "ecc", "erc"), n2 = c("hpc"), n3 = c("gc", "ec", "er")), 
+## mlogit(formula = depvar ~ ich + och + icca + occa + inc.room +
+##     inc.cooling + int.cooling | 0, data = HC, nests = list(n1 = c("gcc",
+##     "ecc", "erc"), n2 = c("hpc"), n3 = c("gc", "ec", "er")),
 ##     un.nest.el = TRUE)
-## 
+##
 ## Frequencies of alternatives:choice
-##    ec   ecc    er   erc    gc   gcc   hpc 
-## 0.004 0.016 0.032 0.004 0.096 0.744 0.104 
-## 
+##    ec   ecc    er   erc    gc   gcc   hpc
+## 0.004 0.016 0.032 0.004 0.096 0.744 0.104
+##
 ## bfgs method
-## 8 iterations, 0h:0m:0s 
-## g'(-H)^-1g = 3.71E-08 
-## gradient close to zero 
-## 
+## 8 iterations, 0h:0m:0s
+## g'(-H)^-1g = 3.71E-08
+## gradient close to zero
+##
 ## Coefficients :
-##               Estimate Std. Error z-value  Pr(>|z|)    
+##               Estimate Std. Error z-value  Pr(>|z|)
 ## ich          -0.838394   0.100546 -8.3384 < 2.2e-16 ***
 ## och          -1.331598   0.252069 -5.2827 1.273e-07 ***
-## icca         -0.256131   0.145564 -1.7596   0.07848 .  
-## occa         -1.405656   1.207281 -1.1643   0.24430    
+## icca         -0.256131   0.145564 -1.7596   0.07848 .
+## occa         -1.405656   1.207281 -1.1643   0.24430
 ## inc.room     -0.571352   0.077950 -7.3297 2.307e-13 ***
 ## inc.cooling   0.311355   0.056357  5.5247 3.301e-08 ***
-## int.cooling -10.413384   5.612445 -1.8554   0.06354 .  
+## int.cooling -10.413384   5.612445 -1.8554   0.06354 .
 ## iv            0.956544   0.180722  5.2929 1.204e-07 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
+##
 ## Log-Likelihood: -180.26
 ```
