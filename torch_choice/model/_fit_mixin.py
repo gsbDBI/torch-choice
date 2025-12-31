@@ -77,22 +77,29 @@ class ChoiceModelFitMixin:
             >>> output.train_ll
             -1874.3
             >>> output.coef_summary.head()
+            >>> print(output)
+            # markdown-formatted regression summary.
         """
         if dataset_train is None:
             raise ValueError("dataset_train must be provided.")
 
         backend_key = backend.lower()
+        # Normalize backend name once to keep the public API case-insensitive.
         if backend_key not in {"torch", "lightning"}:
             raise ValueError(f"Unsupported backend '{backend}'. Expected 'torch' or 'lightning'.")
 
         device_str = str(device) if device is not None else None
+        # If the user requested a device, move all datasets first (so their tensors are
+        # colocated with the model parameters during training/evaluation).
         dataset_train = self._maybe_move_dataset(dataset_train, device_str)
         dataset_val = self._maybe_move_dataset(dataset_val, device_str)
         dataset_test = self._maybe_move_dataset(dataset_test, device_str)
         if device_str is not None:
+            # Mirror dataset placement to avoid accidental CPU<->GPU mismatches.
             self.to(device_str)
 
         start_time = time.perf_counter()
+        # Resolve the actual device used downstream (training loop + LL evaluation).
         active_device = self._infer_active_device(device_str)
         if backend_key == "torch":
             backend_result = self._fit_with_torch_backend(
@@ -108,7 +115,7 @@ class ChoiceModelFitMixin:
                 device_hint=active_device,
                 **backend_kwargs,
             )
-        else:
+        elif backend_key == "lightning":
             backend_result = self._fit_with_lightning_backend(
                 dataset_train=dataset_train,
                 dataset_val=dataset_val,
@@ -121,9 +128,12 @@ class ChoiceModelFitMixin:
                 device_hint=active_device,
                 **backend_kwargs,
             )
+        else:
+            raise ValueError(f"Unsupported backend '{backend}'. Expected 'torch' or 'lightning'.")
 
         elapsed_time = time.perf_counter() - start_time
 
+        # Build regression-style summary + package metrics/model into EstimationOutput.
         return self._summarize_estimation(
             dataset_train=dataset_train,
             dataset_val=dataset_val,
@@ -219,12 +229,14 @@ class ChoiceModelFitMixin:
         scheduler_class = backend_kwargs.pop("scheduler_class", torch.optim.lr_scheduler.StepLR)
 
         if backend_kwargs:
+            # Remaining keys are most likely typos; warn rather than silently ignore.
             warnings.warn(
                 f"Unused torch backend kwargs: {sorted(backend_kwargs.keys())}",
                 stacklevel=2,
             )
 
         optimizer_class = getattr(torch.optim, model_optimizer, None)
+        # Resolve optimizer by string name (keeps the public API simple and flexible).
         if optimizer_class is None:
             raise ValueError(
                 f"Optimizer '{model_optimizer}' is not available in torch.optim."
@@ -232,12 +244,14 @@ class ChoiceModelFitMixin:
 
         optimizer_args = dict(lr=learning_rate, **optimizer_kwargs)
         if optimizer_class is torch.optim.LBFGS:
+            # LBFGS is a second-order method and uses a closure evaluated multiple times.
             optimizer_args.setdefault("max_iter", 20)
             optimizer_args.setdefault("history_size", 10)
         optimizer = optimizer_class(self.parameters(), **optimizer_args)
 
         scheduler = None
         if scheduler_class is not None:
+            # Default schedule: very infrequent step-down to keep training stable.
             scheduler_kwargs = scheduler_kwargs or {"step_size": 10000, "gamma": 0.7}
             scheduler = scheduler_class(optimizer, **scheduler_kwargs)
 
@@ -250,29 +264,35 @@ class ChoiceModelFitMixin:
         )
 
         if report_frequency is None:
+            # Default: ~10 progress updates across the run (at minimum once).
             report_frequency = max(num_epochs // 10, 1)
 
+        # Use a concrete device for moving batches/targets inside the training loop.
         training_device = self._infer_active_device(device_hint)
 
         for epoch in range(1, num_epochs + 1):
             epoch_loss = 0.0
             num_obs = 0
             for batch in train_loader:
+                # Support both ChoiceDataset batches and dict-of-datasets batches.
                 batch = self._move_batch_to_device(batch, training_device)
                 targets = self._get_item_index_from_batch(batch)
                 if torch.is_tensor(targets):
                     targets = targets.to(training_device)
 
                 def closure():
+                    # Closure is required by LBFGS so it can reevaluate the objective.
                     optimizer.zero_grad()
                     loss_val = self.loss(batch, targets)
                     loss_val.backward()
                     return loss_val
 
                 if optimizer_class is torch.optim.LBFGS:
+                    # For LBFGS, `step` drives repeated closure evaluations internally.
                     loss_value = closure()
                     optimizer.step(closure)
                 else:
+                    # Standard first-order optimizers: one forward/backward per batch.
                     loss_value = self.loss(batch, targets)
                     optimizer.zero_grad()
                     loss_value.backward()
@@ -282,6 +302,7 @@ class ChoiceModelFitMixin:
                 num_obs += int(targets.numel())
 
             if scheduler is not None:
+                # Step schedulers once per epoch (simple default).
                 scheduler.step()
 
             if report_frequency and (epoch % report_frequency == 0 or epoch == num_epochs):
@@ -410,16 +431,19 @@ class ChoiceModelFitMixin:
             def training_step(self, batch, batch_idx):
                 targets = self._get_targets(batch)
                 loss = self.model.loss(batch, targets)
+                # Log batch loss (useful for progress bars / debugging).
                 self.log("train_loss", loss, prog_bar=False, batch_size=int(targets.numel()))
                 return loss
 
             def validation_step(self, batch, batch_idx):
                 targets = self._get_targets(batch)
+                # Log-likelihood is the negative of the (positive) NLL.
                 ll = -self.model.negative_log_likelihood(batch, targets, is_train=False)
                 self.log("val_ll", ll, prog_bar=True, batch_size=int(targets.numel()))
 
             def test_step(self, batch, batch_idx):
                 targets = self._get_targets(batch)
+                # Mirror validation: report LL for test data.
                 ll = -self.model.negative_log_likelihood(batch, targets, is_train=False)
                 self.log("test_ll", ll, prog_bar=True, batch_size=int(targets.numel()))
 
@@ -439,6 +463,7 @@ class ChoiceModelFitMixin:
             shuffle=True,
             num_workers=num_workers,
         )
+        # Validation/test loaders should not shuffle so LL is deterministic.
         val_loader = (
             create_data_loader(
                 dataset_val,
@@ -472,6 +497,7 @@ class ChoiceModelFitMixin:
         if dataset_val is not None and not any(
             isinstance(cb, EarlyStopping) for cb in callbacks
         ):
+            # Add a sensible default early-stopping rule unless the user already did.
             callbacks = callbacks + [
                 EarlyStopping(monitor="val_ll", mode="max", patience=10, min_delta=0.001)
             ]
@@ -479,6 +505,7 @@ class ChoiceModelFitMixin:
 
         accelerator = trainer_kwargs.pop("accelerator", None)
         if accelerator is None:
+            # Best-effort inference of accelerator from the wrapped model's device.
             device = getattr(self, "device", None)
             if device is not None:
                 device_str = str(device)
@@ -497,10 +524,12 @@ class ChoiceModelFitMixin:
             rank_zero_info("Running PyTorch Lightning test loop.")
             trainer.test(lightning_module, test_loader)
 
+        # Lightning epochs are 0-indexed internally; add 1 for a human-readable count.
         epochs_ran = getattr(trainer, "current_epoch", num_epochs - 1) + 1
 
         self.eval()
         inference_device = self._infer_active_device(device_hint)
+        # Compute LL explicitly (instead of using Lightning logs) so metrics match the torch backend.
         train_ll = self._compute_dataset_log_likelihood(
             dataset_train,
             batch_size=batch_size,
@@ -539,6 +568,52 @@ class ChoiceModelFitMixin:
     # --------------------------------------------------------------------------------------------------
     # Shared helpers
     # --------------------------------------------------------------------------------------------------
+    def negative_log_likelihood(
+        self,
+        batch: BatchType,
+        y: torch.Tensor,
+        is_train: bool = True,
+    ) -> torch.Tensor:  # pragma: no cover
+        """Compute the (summed) negative log-likelihood for a batch.
+
+        This is the core objective used throughout this mixin:
+            - training/evaluation log-likelihood reporting
+            - Lightning backend validation/test logging
+
+        Subclasses are expected to implement this method.
+
+        Args:
+            batch: A batch returned by the DataLoader. In this codebase it is either a
+                :class:`~torch_choice.data.choice_dataset.ChoiceDataset` or a ``dict`` of
+                datasets (e.g. for :class:`~torch_choice.data.joint_dataset.JointDataset`).
+            y: A 1D integer tensor of chosen alternative indices.
+            is_train: Whether to run the model in training mode (and potentially keep
+                autograd graphs) for this call.
+
+        Returns:
+            A scalar tensor: negative log-likelihood summed over all observations.
+        """
+        raise NotImplementedError(
+            "negative_log_likelihood must be implemented by subclasses using ChoiceModelFitMixin."
+        )
+
+    def loss(
+        self,
+        batch: BatchType,
+        y: torch.Tensor,
+        is_train: bool = True,
+    ) -> torch.Tensor:  # pragma: no cover
+        """Training objective optimized by :meth:`fit`.
+
+        Most models implement this as ``negative_log_likelihood`` plus optional
+        regularization terms. By default, subclasses should override this (or at
+        least implement :meth:`negative_log_likelihood` and override this method to
+        call it).
+        """
+        raise NotImplementedError(
+            "loss must be implemented by subclasses using ChoiceModelFitMixin."
+        )
+
     def _get_item_index_from_batch(self, batch: BatchType) -> torch.Tensor:  # pragma: no cover
         """Extract target item indices from a training/eval batch.
 
@@ -597,13 +672,17 @@ class ChoiceModelFitMixin:
             A concrete :class:`torch.device` to use.
         """
         if device is not None:
+            # 1. The explicitly provided ``device`` argument, if not ``None``.
             return torch.device(device)
         model_device = getattr(self, "device", None)
         if model_device is not None:
+            # 2. ``self.device`` attribute, if present.
             return torch.device(model_device)
         try:
+            # 3. The device of the first parameter in ``self.parameters()``.
             return next(self.parameters()).device
         except (StopIteration, AttributeError):
+            # 4. CPU fallback.
             return torch.device("cpu")
 
     def _move_batch_to_device(
@@ -625,15 +704,20 @@ class ChoiceModelFitMixin:
         Notes:
             When ``batch`` is a ``dict``, values are moved in-place.
         """
+        # No device specified, return batch unchanged.
         if device is None:
             return batch
+        # ChoiceDataset has a built-in .to() method for device transfer.
         if isinstance(batch, ChoiceDataset):
             return batch.to(device)
+        # Handle dict-style batches by moving each tensor value individually.
         if isinstance(batch, dict):
             for key, value in batch.items():
                 if hasattr(value, "to"):
+                    # Mutate in-place so downstream code sees the moved tensors.
                     batch[key] = value.to(device)
             return batch
+        # Fallback: return batch as-is if type is unrecognized.
         return batch
 
     def _compute_dataset_log_likelihood(
@@ -662,6 +746,7 @@ class ChoiceModelFitMixin:
         eval_device = self._infer_active_device(device)
         dataloader = create_data_loader(
             dataset,
+            # `batch_size=-1` is treated as full-batch evaluation for convenience.
             batch_size=batch_size if batch_size != -1 else len(dataset),
             shuffle=False,
             num_workers=num_workers,
@@ -673,6 +758,7 @@ class ChoiceModelFitMixin:
                 targets = self._get_item_index_from_batch(batch)
                 if torch.is_tensor(targets):
                     targets = targets.to(eval_device)
+                # negative_log_likelihood returns NLL; negate it to get log-likelihood.
                 ll = -self.negative_log_likelihood(batch, targets, is_train=False)
                 total_ll += float(ll.detach().item())
         return total_ll
@@ -726,10 +812,13 @@ class ChoiceModelFitMixin:
             Standard error computation can fail (e.g. singular Hessian). In that case we
             warn and populate std/z/p columns with NaNs.
         """
+        # Work on a clone for Hessian-based std errors to avoid mutating/corrupting the training dataset.
         dataset_for_std = self._clone_dataset_for_std(dataset_train)
         dataset_for_std = self._maybe_move_dataset(dataset_for_std, device_hint)
+        # Snapshot fitted parameters for reporting (detached so it won't keep autograd graphs).
         mean_dict = {name: param.detach().clone() for name, param in self.named_parameters()}
 
+        # Compute Hessian/std errors on a deep-copied model to keep the fitted instance clean.
         model_clone = deepcopy(self)
         state_dict = deepcopy(self.state_dict())
         if "lambdas" in state_dict and "lambda_weight" in state_dict:
@@ -744,20 +833,28 @@ class ChoiceModelFitMixin:
             state_dict["lambdas"] = state_dict["lambda_weight"].detach().clone()
         model_clone.load_state_dict(state_dict, strict=True)
 
-        std_error_failed = False
         try:
+            # Hessian-based approximation; can fail if the Hessian is singular/ill-conditioned.
             std_dict = self._compute_parameter_std(model_clone, dataset_for_std)
         except (RuntimeError, torch.linalg.LinAlgError, IndexError) as err:
-            warnings.warn(
-                f"Failed to compute parameter standard errors due to: {err}. "
-                "The regression table will omit Std. Err./z/p values for this run. "
-                "Try training longer or adjusting regularization to avoid a singular Hessian.",
-                RuntimeWarning,
-                stacklevel=2,
-            )
+            if isinstance(err, NotImplementedError):
+                warnings.warn(
+                    f"Skipping standard error computation: {err}. "
+                    "The regression table will omit Std. Err./z/p values for this run.",
+                    RuntimeWarning,
+                    stacklevel=2,
+                )
+            else:
+                warnings.warn(
+                    f"Failed to compute parameter standard errors due to: {err}. "
+                    "The regression table will omit Std. Err./z/p values for this run. "
+                    "Try training longer or adjusting regularization to avoid a singular Hessian.",
+                    RuntimeWarning,
+                    stacklevel=2,
+                )
             std_dict = None
-            std_error_failed = True
 
+        # Convert raw parameter tensors into a tidy regression-style DataFrame.
         report = self._build_coefficient_report(mean_dict, std_dict)
 
         train_ll = backend_result.get("train_ll")
@@ -781,6 +878,7 @@ class ChoiceModelFitMixin:
         )
 
         if print_summary:
+            # EstimationOutput implements pretty-printing (markdown-ish) for interactive use.
             print(output)
 
         return output
@@ -806,6 +904,7 @@ class ChoiceModelFitMixin:
             raise ValueError("dataset_train is required for standard error calculation.")
         if hasattr(dataset, "clone"):
             try:
+                # Prefer dataset-native cloning to preserve any internal invariants/caches.
                 return dataset.clone()
             except Exception:
                 pass
@@ -829,26 +928,34 @@ class ChoiceModelFitMixin:
             the corresponding parameter tensor).
 
         Raises:
-            TypeError: If the model type is not supported for std-error computation.
+            NotImplementedError: If the model type is not supported for std-error computation.
         """
         from torch_choice.model.conditional_logit_model import ConditionalLogitModel
         from torch_choice.model.nested_logit_model import NestedLogitModel
 
         if isinstance(self, ConditionalLogitModel):
             def nll_loss(model):
+                # ConditionalLogitModel exposes logits; use cross-entropy as the summed NLL.
                 y_pred = model(dataset_for_std)
                 item_index = dataset_for_std.item_index.clone()
                 if getattr(model, "model_outside_option", False):
+                    # Convention: outside option encoded as -1; map it to the extra class at `num_items`.
                     outside_mask = item_index == -1
                     item_index[outside_mask] = model.num_items
                 return F.cross_entropy(y_pred, item_index, reduction="sum")
         elif isinstance(self, NestedLogitModel):
             def nll_loss(model):
+                # NestedLogitModel expects a dict-like batch; index the dataset into that format.
                 indices = torch.arange(len(dataset_for_std))
                 data = dataset_for_std[indices]
                 return model.negative_log_likelihood(data, data["item"].item_index)
         else:
-            raise TypeError("Unsupported model type for standard error computation.")
+            # Keep training usable for new model types: subclasses can override this
+            # method if they want Hessian-based standard errors.
+            raise NotImplementedError(
+                "Standard error computation is not implemented for this model type. "
+                "Override `_compute_parameter_std(...)` to enable it."
+            )
 
         return parameter_std(model_clone, nll_loss)
 
@@ -876,21 +983,26 @@ class ChoiceModelFitMixin:
         """
         rows = []
         for coef_name, mean_tensor in mean_dict.items():
+            # Flatten every parameter tensor into one row per scalar entry.
             mean_np = mean_tensor.detach().cpu().numpy().reshape(-1)
             if std_dict is not None and coef_name in std_dict:
                 std_np = std_dict[coef_name].detach().cpu().numpy().reshape(-1)
             else:
                 std_np = np.full_like(mean_np, np.nan, dtype=float)
 
+            # Make coefficient names more user-facing by stripping common ModuleDict prefixes/suffixes.
             clean_name = coef_name.replace("coef_dict.", "").replace(".coef", "")
             for idx, (mean_val, std_val) in enumerate(zip(mean_np, std_np)):
                 if np.isnan(std_val) or std_val == 0:
+                    # Missing/degenerate std errors -> keep z/p as NaN rather than divide-by-zero.
                     z_value = float("nan")
                     p_value = float("nan")
                 else:
                     z_value = mean_val / std_val
+                    # Two-sided normal approximation for p-value.
                     p_value = (1 - norm.cdf(abs(z_value))) * 2
                     if np.isfinite(p_value) and p_value < MIN_REPORTED_PVALUE:
+                        # Avoid printing "0" due to floating-point underflow.
                         p_value = MIN_REPORTED_PVALUE
                 rows.append(
                     {
@@ -903,6 +1015,7 @@ class ChoiceModelFitMixin:
                 )
         report = pd.DataFrame(rows).set_index("Coefficient")
         report["Significance"] = ""
+        # Common "star" thresholds used by R-style regression summaries.
         report.loc[report["Pr(>|z|)"] < 0.001, "Significance"] = "***"
         report.loc[
             (report["Pr(>|z|)"] >= 0.001) & (report["Pr(>|z|)"] < 0.01), "Significance"
