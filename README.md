@@ -120,7 +120,7 @@ model = torch_choice.model.ConditionalLogitModel(
     dataset=dataset,
     num_items=4).to(device)
 # fit the conditional logit model using the new sklearn-style API.
-output = model.fit(
+estimation = model.fit(
     dataset,
     num_epochs=500,
     learning_rate=0.003,
@@ -128,15 +128,18 @@ output = model.fit(
     model_optimizer="LBFGS",
     device=device,
 )
+# Pretty-print the regression table (also happens automatically unless print_summary=False).
+print(estimation)
 # Access estimation results programmatically.
-print(output.train_ll)
-print(output.coef_summary.head())
+print(estimation.train_ll)
+print(estimation.coef_summary.head())
 ```
 
 The ``fit`` method now returns an ``EstimationOutput`` object so you can inspect log-likelihoods,
-standard errors, and coefficient tables directly from Python. Legacy helpers `model.run(...)` and
-`torch_choice.run(...)` remain available and now simply forward to `model.fit(...)`, so existing
-scripts continue to work while you migrate.
+standard errors, and coefficient tables directly from Python. To suppress console output during
+training, pass `print_summary=False` to `fit`, and call `print(output)` later. Legacy helpers
+`model.run(...)` and `torch_choice.run(...)` remain available and now simply forward to
+`model.fit(...)`, so existing scripts continue to work while you migrate.
 ```
   | Name  | Type                  | Params
 ------------------------------------------------

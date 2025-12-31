@@ -19,6 +19,7 @@ def run(
     compute_std=True,
     return_final_training_log_likelihood=False,
     model_optimizer="Adam",
+    print_summary: bool = True,
 ):
     """Backward compatible functional runner."""
     warnings.warn(
@@ -53,4 +54,5 @@ def run(
         model_optimizer=model_optimizer,
         report_frequency=report_frequency,
         backend="torch",
+        print_summary=print_summary,
     )

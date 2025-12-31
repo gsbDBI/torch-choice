@@ -79,6 +79,7 @@ def run(
     device: Optional[str] = None,
     report_std: bool = True,
     compute_std: Optional[bool] = None,  # Legacy arg, ignored (equivalent to report_std)
+    print_summary: bool = True,
     **trainer_kwargs,
 ) -> Union[ConditionalLogitModel, NestedLogitModel]:
     """Backward compatible Lightning runner."""
@@ -109,6 +110,7 @@ def run(
         device=device,
         num_workers=num_workers,
         backend="lightning",
+        print_summary=print_summary,
         **trainer_kwargs,
     )
 
