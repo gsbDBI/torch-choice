@@ -112,6 +112,18 @@ run_experiment <- function(experiment_type, input_path, output_path, num_seeds) 
     stop("Invalid experiment type. Use 'items', 'records', 'params', or 'all'.")
   }
 
+  # Smoke-test mode: restrict to a single representative value per experiment.
+  # Enable by setting environment variable SMOKE_TEST=1.
+  if (Sys.getenv("SMOKE_TEST") == "1") {
+    if (experiment_type == "items") {
+      var_values <- c(10, 20)
+    } else if (experiment_type == "records") {
+      var_values <- c(3000, 5000)
+    } else if (experiment_type == "params") {
+      var_values <- c(3, 5)
+    }
+  }
+
   # Run experiment loops
   for (seed in 1:num_seeds) {
     # Set the seed for reproducibility for this iteration
