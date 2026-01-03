@@ -28,9 +28,9 @@ chmod +x run_benchmarking.sh
 
 By default, this creates a new timestamped run directory under `./runs/` and writes all outputs there (data, CSVs, figures). The script prints the chosen run directory at the start.
 
-### Quick smoke-test configuration (runs fast, produces CSV outputs)
+### Quick smoke-test configuration (run this first; runs fast, verify the computational environment, and produces CSV outputs)
 
-Set `SMOKE_TEST=1` to run a minimal configuration that still **executes** and writes output CSVs, so you can inspect them:
+Run this first to verify your environment before any full benchmark. Set `SMOKE_TEST=1` to run a minimal configuration that still **executes** and writes output CSVs, so you can inspect them:
 - Generates only a single representative dataset/value per experiment (items/records/params).
 - Runs only the corresponding small benchmark tasks.
 - The run directory is tagged with `smoke_` (e.g., `runs/smoke_<timestamp>`).
@@ -42,6 +42,16 @@ SMOKE_TEST=1 \
 ```
 
 > Note: uv is required; the script uses `uv run python` for all Python steps.
+
+Once the smoke test completes, rerun without `SMOKE_TEST=1` to execute the full benchmark grids.
+
+## Required R packages (manual install)
+
+Install the R dependencies yourself before running (the script will not auto-install them). Launch R, then run:
+
+```r
+install.packages(c("mlogit","tictoc","stringr"), repos="https://cloud.r-project.org")
+```
 
 ## Sequence of operations (what runs, in order)
 

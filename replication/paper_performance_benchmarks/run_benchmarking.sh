@@ -16,8 +16,9 @@
 # - The R step still uses your system `Rscript` on PATH.
 # - Verify R is installed:
 #     Rscript --version
-# - This script will auto-install required R packages (mlogit, tictoc, stringr) if missing.
-#   By default, it installs into R_LIB_PATH (see env vars below) so you don't need admin rights.
+# - This script expects required R packages (mlogit, tictoc, stringr) to be pre-installed.
+#   See replication/paper_performance_benchmarks/README.md for the install command:
+#   Rscript -e 'install.packages(c("mlogit","tictoc","stringr"), repos="https://cloud.r-project.org")'
 #
 # Usage:
 #   chmod +x run_benchmarking.sh
@@ -27,10 +28,6 @@
 #   RUN_PATH (recommended), or DATA_PATH / RESULTS_PATH / FIGURES_PATH
 #   NUM_RECORDS, NUM_SEEDS, NUM_EPOCHS, LEARNING_RATE, BATCH_SIZE, DEVICE
 #     DEVICE can be auto|cpu|cuda
-#   R_LIB_PATH
-#     Where to install R packages for this benchmark (default: ./r_libs under this folder).
-#   AUTO_INSTALL_R_PACKAGES
-#     AUTO_INSTALL_R_PACKAGES=1 (default) installs missing R packages automatically.
 #   SMOKE_TEST
 #     SMOKE_TEST=1 runs a small configuration that still produces CSV outputs
 #     (few representative values per experiment, not the full grids).
@@ -84,10 +81,6 @@ DATA_PATH="${DATA_PATH:-${RUN_PATH}/synthetic_data}"
 RESULTS_PATH="${RESULTS_PATH:-${RUN_PATH}/benchmark_results}"
 FIGURES_PATH="${FIGURES_PATH:-${RUN_PATH}/benchmark_figures}"
 
-# R package installation config.
-R_LIB_PATH="${R_LIB_PATH:-${SCRIPT_PATH}/r_libs}"
-AUTO_INSTALL_R_PACKAGES="${AUTO_INSTALL_R_PACKAGES:-1}"
-
 NUM_RECORDS="${NUM_RECORDS:-${DEFAULT_NUM_RECORDS}}"
 NUM_SEEDS="${NUM_SEEDS:-${DEFAULT_NUM_SEEDS}}"
 NUM_EPOCHS="${NUM_EPOCHS:-${DEFAULT_NUM_EPOCHS}}"
@@ -115,28 +108,13 @@ check_prereqs() {
     exit 1
   fi
 
-  mkdir -p "${R_LIB_PATH}"
-
-  # Check required R packages (mlogit, tictoc, stringr); install if missing.
-  missing_pkgs="$(env R_LIBS_USER=\"${R_LIB_PATH}\" Rscript -e 'pkgs <- c(\"mlogit\",\"tictoc\",\"stringr\"); missing <- pkgs[!sapply(pkgs, requireNamespace, quietly=TRUE)]; cat(missing, sep=\" \")' 2>/dev/null || true)"
+  # Check required R packages (mlogit, tictoc, stringr); fail fast if missing.
+  missing_pkgs="$(Rscript -e 'pkgs <- c(\"mlogit\",\"tictoc\",\"stringr\"); missing <- pkgs[!sapply(pkgs, requireNamespace, quietly=TRUE)]; cat(missing, sep=\" \")' 2>/dev/null || true)"
   if [[ -n "${missing_pkgs}" ]]; then
-    if [[ "${AUTO_INSTALL_R_PACKAGES}" != "1" ]]; then
-      echo "[ERROR] Missing required R packages: ${missing_pkgs}"
-      echo "Re-run with AUTO_INSTALL_R_PACKAGES=1, or install manually:"
-      echo "  env R_LIBS_USER=\"${R_LIB_PATH}\" Rscript -e 'install.packages(c(\"mlogit\",\"tictoc\",\"stringr\"), repos=\"https://cloud.r-project.org\")'"
-      exit 1
-    fi
-
-    echo "[INFO] Installing missing R packages into ${R_LIB_PATH}: ${missing_pkgs}"
-    echo "+ env R_LIBS_USER=\"${R_LIB_PATH}\" Rscript -e 'pkgs <- c(\"mlogit\",\"tictoc\",\"stringr\"); missing <- pkgs[!sapply(pkgs, requireNamespace, quietly=TRUE)]; if (length(missing)) { install.packages(missing, repos=\"https://cloud.r-project.org\") }'"
-    env R_LIBS_USER="${R_LIB_PATH}" Rscript -e 'pkgs <- c("mlogit","tictoc","stringr"); missing <- pkgs[!sapply(pkgs, requireNamespace, quietly=TRUE)]; if (length(missing)) { install.packages(missing, repos="https://cloud.r-project.org") }'
-  fi
-
-  # Verify packages are now available.
-  if ! env R_LIBS_USER="${R_LIB_PATH}" Rscript -e 'pkgs <- c("mlogit","tictoc","stringr"); missing <- pkgs[!sapply(pkgs, requireNamespace, quietly=TRUE)]; if (length(missing)) { stop(paste("Missing R packages after install:", paste(missing, collapse=", "))) }' >/dev/null; then
-    echo "[ERROR] Required R packages are still missing after attempted install."
-    echo "Try installing manually, or choose a different R_LIB_PATH:"
-    echo "  env R_LIBS_USER=\"${R_LIB_PATH}\" Rscript -e 'install.packages(c(\"mlogit\",\"tictoc\",\"stringr\"), repos=\"https://cloud.r-project.org\")'"
+    echo "[ERROR] Missing required R packages: ${missing_pkgs}"
+    echo "Install them manually, e.g.:"
+    echo "  Rscript -e 'install.packages(c(\"mlogit\",\"tictoc\",\"stringr\"), repos=\"https://cloud.r-project.org\")'"
+    echo "See replication/paper_performance_benchmarks/README.md for details."
     exit 1
   fi
 }
@@ -154,11 +132,12 @@ main() {
 
   GEN_EXTRA_ARGS=()
   TORCH_EXTRA_ARGS=()
-  R_ENV_PREFIX=(env "R_LIBS_USER=${R_LIB_PATH}")
   if [[ "${SMOKE_TEST}" == "1" ]]; then
     GEN_EXTRA_ARGS+=(--smoke-test)
     TORCH_EXTRA_ARGS+=(--smoke-test)
-    R_ENV_PREFIX+=("SMOKE_TEST=1")
+    R_ENV_PREFIX=(env "SMOKE_TEST=1")
+  else
+    R_ENV_PREFIX=()
   fi
 
   echo "[1/4] Generate synthetic data -> ${DATA_PATH}"

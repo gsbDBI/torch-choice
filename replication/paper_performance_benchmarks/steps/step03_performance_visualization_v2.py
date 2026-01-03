@@ -11,6 +11,7 @@ from typing import Dict, List, Optional, Tuple
 import matplotlib
 import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 from matplotlib.ticker import MaxNLocator, ScalarFormatter
 import pandas as pd
 
@@ -103,6 +104,65 @@ def _read_required(path: Path, label: str) -> Optional[pd.DataFrame]:
     return df
 
 
+def _load_and_prepare_df(csv_path: Path, parameter: str, label: str, missing_ax=None) -> Optional[pd.DataFrame]:
+    """Shared loading + normalization for benchmark CSVs."""
+    df = _read_required(csv_path, label=label)
+    if df is None:
+        if missing_ax is not None:
+            missing_ax.text(
+                0.5,
+                0.5,
+                f"Missing input\n{csv_path.name}",
+                transform=missing_ax.transAxes,
+                ha="center",
+                va="center",
+            )
+            missing_ax.set_axis_off()
+        return None
+
+    if "final_likelihood" in df.columns:
+        df["loss"] = -df["final_likelihood"]
+        df["formula"] = df["formula"].apply(parse_r_formula)
+    elif "best_loss" in df.columns:
+        df["loss"] = df["best_loss"]
+    else:
+        raise ValueError(
+            "Unrecognized data format. CSV must contain either 'final_likelihood' (R) or 'best_loss' (torch-choice)."
+        )
+
+    df[parameter] = pd.to_numeric(df[parameter])
+    df["parameter"] = pd.to_numeric(df[parameter])
+    df["formula_display"] = df["formula"].apply(generate_latex_representation_formula)
+    return df
+
+
+def attach_time_ratio(df: pd.DataFrame, parameter: str) -> Tuple[pd.DataFrame, float]:
+    """Attach time ratio (% of baseline) without losing absolute time."""
+    df = df.copy()
+    group_min = df.groupby("formula")[parameter].min()
+    unique_baselines = group_min.unique()
+    if len(unique_baselines) != 1:
+        raise ValueError(
+            f"Expected the same minimum '{parameter}' across all formulas, but got: {group_min.to_dict()}"
+        )
+    baseline_parameter_value = unique_baselines[0]
+    baseline_times = (
+        df[df[parameter] == baseline_parameter_value]
+        .groupby("formula")["time"]
+        .mean()
+        .reset_index()
+        .rename(columns={"time": "baseline_time"})
+    )
+    df = df.merge(baseline_times, on="formula", how="left", validate="m:1")
+    if df["baseline_time"].isnull().any():
+        raise ValueError(
+            "Some formulas do not have a baseline time. Check that each formula has at least one record with the "
+            f"minimum '{parameter}' value."
+        )
+    df["time_ratio_pct"] = df["time"] / df["baseline_time"] * 100
+    return df, baseline_parameter_value
+
+
 def transform_time_to_ratio(df: pd.DataFrame, baseline_parameter: str) -> Tuple[pd.DataFrame, float]:
     """Match the notebook: normalize time by the baseline time (min parameter) per formula."""
     group_min = df.groupby("formula")[baseline_parameter].min()
@@ -187,6 +247,102 @@ def plot_time_on_ax(
         edgecolor="black",
         loc="upper left",
     )
+    ax.figure.tight_layout()
+
+
+def plot_time_and_ratio_on_dual_axes(
+    ax,
+    df: pd.DataFrame,
+    param_display_name: str,
+    color_mapping: Dict,
+    baseline_parameter_value: float,
+    log_scale: bool,
+) -> None:
+    """Overlay absolute time and percentage time (vs baseline) on twin y-axes."""
+    ratio_ax = ax.twinx()
+
+    for formula in sorted(df["formula"].unique()):
+        sub_df = df[df["formula"] == formula]
+        stats = sub_df.groupby("parameter").agg({"time": ["mean", "std"]}).reset_index()
+        stats.columns = ["parameter", "mean_time", "std_time"]
+        stats = stats.sort_values("parameter")
+
+        ax.errorbar(
+            stats["parameter"],
+            stats["mean_time"],
+            yerr=stats["std_time"],
+            label=sub_df["formula_display"].iloc[0],
+            color=color_mapping[formula],
+            marker="o",
+            markersize=8,
+            linewidth=2.5,
+            capsize=5,
+            alpha=0.9,
+            markeredgewidth=1.5,
+        )
+
+    for formula in sorted(df["formula"].unique()):
+        sub_df = df[df["formula"] == formula]
+        stats = sub_df.groupby("parameter").agg({"time_ratio_pct": ["mean", "std"]}).reset_index()
+        stats.columns = ["parameter", "mean_ratio_pct", "std_ratio_pct"]
+        stats = stats.sort_values("parameter")
+
+        ratio_ax.errorbar(
+            stats["parameter"],
+            stats["mean_ratio_pct"],
+            yerr=stats["std_ratio_pct"],
+            color=color_mapping[formula],
+            linestyle="--",
+            marker="D",
+            markersize=7,
+            linewidth=2,
+            capsize=5,
+            alpha=0.9,
+            markeredgewidth=1.2,
+        )
+
+    ax.set_xlabel(param_display_name, fontsize=14, labelpad=10)
+    ax.set_ylabel("Time (seconds)", fontsize=14, labelpad=10)
+    if isinstance(baseline_parameter_value, (int, float)) and float(baseline_parameter_value).is_integer():
+        baseline_label = f"{int(baseline_parameter_value):,}"
+    else:
+        baseline_label = str(baseline_parameter_value)
+    ratio_ax.set_ylabel(f"Time Ratio (% of baseline {baseline_label})", fontsize=14, labelpad=10)
+
+    configure_axes(ax, log_scale)
+    if log_scale:
+        ratio_ax.set_xscale("log")
+        ratio_ax.xaxis.set_major_formatter(ScalarFormatter())
+    else:
+        ratio_ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+    ratio_ax.tick_params(axis="both", which="major", labelsize=12, width=1.5, length=5)
+    for spine in ratio_ax.spines.values():
+        spine.set_linewidth(1.5)
+    ratio_ax.grid(False)
+
+    legend1 = ax.legend(
+        title="Model Specification",
+        fontsize=12,
+        title_fontsize=13,
+        frameon=True,
+        shadow=False,
+        edgecolor="black",
+        loc="upper left",
+    )
+    metric_handles = [
+        Line2D([0], [0], color="black", linestyle="-", marker="o", label="Absolute Time"),
+        Line2D([0], [0], color="black", linestyle="--", marker="D", label="Time Ratio (%)"),
+    ]
+    legend2 = ratio_ax.legend(
+        handles=metric_handles,
+        title="Metric",
+        fontsize=10,
+        title_fontsize=11,
+        frameon=False,
+        loc="upper right",
+    )
+    ax.add_artist(legend1)
+    ratio_ax.add_artist(legend2)
     ax.figure.tight_layout()
 
 
@@ -294,34 +450,9 @@ def visualize_benchmarks_combined(
     """Notebook-equivalent visualization for a single CSV on a provided axis."""
     assert parameter in ["num_items", "num_params", "num_records"]
 
-    df = _read_required(csv_path, label=f"{plot_title} ({parameter})")
+    df = _load_and_prepare_df(csv_path, parameter=parameter, label=f"{plot_title} ({parameter})", missing_ax=time_ax)
     if df is None:
-        time_ax.text(
-            0.5,
-            0.5,
-            f"Missing input\n{csv_path.name}",
-            transform=time_ax.transAxes,
-            ha="center",
-            va="center",
-        )
-        time_ax.set_axis_off()
         return None, None
-
-    # Homogenize the experiment log data from R and torch-choice.
-    if "final_likelihood" in df.columns:
-        df["loss"] = -df["final_likelihood"]
-        df["formula"] = df["formula"].apply(parse_r_formula)
-    elif "best_loss" in df.columns:
-        df["loss"] = df["best_loss"]
-    else:
-        raise ValueError(
-            "Unrecognized data format. CSV must contain either 'final_likelihood' (R) or 'best_loss' (torch-choice)."
-        )
-
-    # Create consistent parameter column and formula display.
-    df[parameter] = pd.to_numeric(df[parameter])
-    df["parameter"] = pd.to_numeric(df[parameter])
-    df["formula_display"] = df["formula"].apply(generate_latex_representation_formula)
 
     # Time transformations.
     if report_ratio:
@@ -495,6 +626,67 @@ def visualize(
                 dpi=300,
             )
             plt.close(fig)
+
+    # Combined absolute + ratio twin-axis figures (per package, per parameter).
+    for parameter in ["num_items", "num_records", "num_params"]:
+        fig = plt.figure(tight_layout=False, figsize=(15, 8), dpi=300)
+        gs = gridspec.GridSpec(2, 2, height_ratios=[1, 1.2], hspace=0.3)
+        axes = [fig.add_subplot(gs[0, 0]), fig.add_subplot(gs[0, 1]), fig.add_subplot(gs[1, :])]
+
+        param_display_name = {
+            "num_records": "Number of Records",
+            "num_params": "Number of Latent Dimensions",
+            "num_items": "Number of Items",
+        }[parameter]
+
+        for i, (title, csv_path) in enumerate(
+            [
+                ("Torch-Choice Small Scale", torch_results / TORCH_FILES[parameter][0]),
+                ("R Small Scale", r_results / R_FILES[parameter]),
+                ("Torch-Choice Large Scale", torch_results / TORCH_FILES[parameter][1]),
+            ]
+        ):
+            ax = axes[i]
+            df = _load_and_prepare_df(csv_path, parameter=parameter, label=f"{title} ({parameter})", missing_ax=ax)
+            if df is None:
+                continue
+            df_with_ratio, baseline_parameter_value = attach_time_ratio(df, parameter)
+
+            unique_formulas = sorted(df_with_ratio["formula"].unique())
+            if sns is not None:
+                palette = sns.color_palette("deep", len(unique_formulas))
+                formula_color_mapping = {formula: palette[j] for j, formula in enumerate(unique_formulas)}
+            else:
+                colors = plt.rcParams["axes.prop_cycle"].by_key().get("color", ["C0", "C1", "C2", "C3"])
+                formula_color_mapping = {formula: colors[j % len(colors)] for j, formula in enumerate(unique_formulas)}
+
+            plot_time_and_ratio_on_dual_axes(
+                ax=ax,
+                df=df_with_ratio,
+                param_display_name=param_display_name,
+                color_mapping=formula_color_mapping,
+                baseline_parameter_value=baseline_parameter_value,
+                log_scale=False,
+            )
+            if title:
+                gpu_info = ""
+                if "gpu_name" in df_with_ratio.columns:
+                    non_null_gpu_names = df_with_ratio["gpu_name"].dropna().unique()
+                    if len(non_null_gpu_names) == 0:
+                        gpu_info = " - GPU: N/A"
+                    elif len(non_null_gpu_names) == 1:
+                        gpu_info = f" - GPU: {non_null_gpu_names[0]}"
+                    else:
+                        raise ValueError(f"Inconsistent GPU models in benchmarks, got {df_with_ratio['gpu_name'].unique()}")
+                ax.set_title(f"{title} - Time Benchmark{gpu_info}", fontsize=16)
+
+        plt.subplots_adjust(top=0.95, bottom=0.1)
+        fig.savefig(
+            output_path / f"combined_{parameter}_time_cost_benchmark.pdf",
+            bbox_inches="tight",
+            dpi=300,
+        )
+        plt.close(fig)
 
     # Likelihood alignment table(s) (extra output vs notebook; requested for validation).
     alignment_frames: List[pd.DataFrame] = []
