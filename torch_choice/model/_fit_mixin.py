@@ -821,16 +821,13 @@ class ChoiceModelFitMixin:
         # Compute Hessian/std errors on a deep-copied model to keep the fitted instance clean.
         model_clone = deepcopy(self)
         state_dict = deepcopy(self.state_dict())
-        if "lambdas" in state_dict and "lambda_weight" in state_dict:
-            lambdas = state_dict["lambdas"]
-            lambda_weight = state_dict["lambda_weight"]
-            if not torch.allclose(lambdas, lambda_weight):
-                raise ValueError(
-                    "NestedLogitModel state dict mismatch between lambdas and lambda_weight."
-                )
-        elif "lambda_weight" in state_dict:
-            # NestedLogitModel in some configurations only stores lambda_weight.
-            state_dict["lambdas"] = state_dict["lambda_weight"].detach().clone()
+        # NestedLogitModel creates a `lambdas` alias during forward() via
+        # `self.lambdas = self.lambda_weight`. This may appear in state_dict but
+        # not in the cloned model (deepcopy happens before forward runs on clone).
+        # Remove the alias from state_dict if the clone doesn't have it.
+        clone_param_names = set(name for name, _ in model_clone.named_parameters())
+        if "lambdas" in state_dict and "lambdas" not in clone_param_names:
+            del state_dict["lambdas"]
         model_clone.load_state_dict(state_dict, strict=True)
 
         try:
