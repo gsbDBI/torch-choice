@@ -146,7 +146,7 @@ main() {
     --experiments "${GENERATE_EXPERIMENTS_ARR[@]}" \
     --num-records "${NUM_RECORDS}" \
     --skip-plots \
-    "${GEN_EXTRA_ARGS[@]}"
+    ${GEN_EXTRA_ARGS[@]+"${GEN_EXTRA_ARGS[@]}"}
 
   echo "[2/4] Benchmark Torch-Choice -> ${RESULTS_PATH}"
   ${PYTHON_CMD} "${SCRIPT_PATH}/paper_performance_benchmark.py" torch-choice \
@@ -158,10 +158,10 @@ main() {
     --num-epochs "${NUM_EPOCHS}" \
     --learning-rate "${LEARNING_RATE}" \
     --batch-size "${BATCH_SIZE}" \
-    "${TORCH_EXTRA_ARGS[@]}"
+    ${TORCH_EXTRA_ARGS[@]+"${TORCH_EXTRA_ARGS[@]}"}
 
   echo "[3/4] Benchmark R (mlogit) -> ${RESULTS_PATH}"
-  "${R_ENV_PREFIX[@]}" Rscript "${SCRIPT_PATH}/run_mlogit_experiments.R" \
+  ${R_ENV_PREFIX[@]+"${R_ENV_PREFIX[@]}"} Rscript "${SCRIPT_PATH}/run_mlogit_experiments.R" \
     "${R_EXPERIMENT_TYPE}" \
     "${DATA_PATH}" \
     "${RESULTS_PATH}" \
