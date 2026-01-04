@@ -23,11 +23,25 @@ Notes:
 - If you do not want to use uv, follow the package installation instructions in `install.md` (conda/pip) and then return here; ensure the environment you activate matches the one used to run the scripts.
 
 ## Demo Code from the Paper
-Use the console-friendly script `paper_demo.py` in this `replication` directory to reproduce the demonstrations from the paper. Prefer running via uv so the right environment is used:
+Use the `run_paper_demo.sh` script in this `replication` directory to reproduce the demonstrations from the paper and automatically launch TensorBoard afterward:
+```bash
+bash replication/run_paper_demo.sh
+```
+
+The script runs the demo and then starts TensorBoard to visualize training logs. Available options:
+- `--skip-training` — Quick smoke test without model fitting
+- `--num-epochs N` — Number of training epochs (default: 1000)
+- `--tensorboard-logdir <dir>` — Directory for logs (default: `lightning_logs`)
+- `--tensorboard-port <port>` — TensorBoard port (default: 6006)
+- `--no-tensorboard` — Skip launching TensorBoard after the demo
+
+Training uses LBFGS on the Mode Canada dataset and can take several minutes on CPU.
+
+Alternatively, you can run the Python script directly (TensorBoard will not auto-launch):
 ```bash
 uv run python replication/paper_demo.py
 ```
-Add `--skip-training` to avoid the model fit, or `--num-epochs N` to change training length. Training uses LBFGS on the Mode Canada dataset; it can take several minutes on CPU. To monitor logs, pass `--tensorboard-logdir <dir>` (defaults to `lightning_logs`) and open TensorBoard manually (`uv run tensorboard --logdir <dir>`).
+
 The original notebook (`paper_demo.ipynb`) is still available for interactive exploration.
 
 ## Code for Performance Benchmarks

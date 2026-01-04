@@ -4,6 +4,18 @@ This folder lets you replay the benchmarking pipeline used in the paper. It is s
 
 > Timing is hardware-dependent (CPU/GPU/cores/RAM). The paper’s reported wall-clock numbers will not reproduce exactly on different machines; relative trends should still match.
 
+## Runtime expectations
+
+A full end-to-end run of the benchmarking pipeline can take **around ~20 hours** to finish on a typical workstation. The runtime is usually dominated by the **R/mlogit** benchmarks (step 3), which are substantially slower than the Torch-Choice runs.
+
+## Required R packages (manual install)
+
+Install the R dependencies yourself before running (the script will not auto-install them). Launch R, then run:
+
+```r
+install.packages(c("mlogit","tictoc","stringr"), repos="https://cloud.r-project.org")
+```
+
 ## Recommended Python setup (uv)
 
 From the **repo root**, create the Python environment with uv and install dependencies:
@@ -13,12 +25,6 @@ From the **repo root**, create the Python environment with uv and install depend
 ```
 
 Then run the benchmarking script via uv (uv is required for the Python steps):
-
-```bash
-uv run bash replication/paper_performance_benchmarks/run_benchmarking.sh
-```
-
-## Quickstart (one command)
 
 ```bash
 cd replication/paper_performance_benchmarks
@@ -44,14 +50,6 @@ SMOKE_TEST=1 \
 > Note: uv is required; the script uses `uv run python` for all Python steps.
 
 Once the smoke test completes, rerun without `SMOKE_TEST=1` to execute the full benchmark grids.
-
-## Required R packages (manual install)
-
-Install the R dependencies yourself before running (the script will not auto-install them). Launch R, then run:
-
-```r
-install.packages(c("mlogit","tictoc","stringr"), repos="https://cloud.r-project.org")
-```
 
 ## Sequence of operations (what runs, in order)
 
@@ -89,6 +87,8 @@ The benchmarking pipeline is **four sequential steps**. Each step consumes the o
      - `likelihood_alignment.csv` (combined summary)
 
 To keep runs organized, prefer setting `RUN_PATH` (and optionally device/seeds/epochs) without editing the script:
+
+This benchmarking script will generate the synthetic datasets with around 3.1G on disk.
 
 ```bash
 RUN_PATH=/tmp/bench_run \

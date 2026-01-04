@@ -1,0 +1,7 @@
+parameter,num_params,formula,torch_best_loss,torch_log_likelihood,r_final_likelihood,loglik_delta_r_minus_torch,torch_seeds,r_seeds
+num_params,3,(item_latents|constant),4283.8436279296875,-4283.8436279296875,-3883.43716109446,400.40646683522755,2,2
+num_params,3,(user_latents|item),9611.51953125,-9611.51953125,-3417.54256854823,6193.97696270177,2,2
+num_params,3,(user_latents|item) + (item_latents|constant),12869.93310546875,-12869.93310546875,-3406.72625172745,9463.2068537413,2,2
+num_params,5,(item_latents|constant),5909.927734375,-5909.927734375,-3881.49380259214,2028.4339317828599,2,2
+num_params,5,(user_latents|item),11545.8115234375,-11545.8115234375,-3292.27836126084,8253.53316217666,2,2
+num_params,5,(user_latents|item) + (item_latents|constant),15436.59912109375,-15436.59912109375,-3285.32642125361,12151.27269984014,2,2

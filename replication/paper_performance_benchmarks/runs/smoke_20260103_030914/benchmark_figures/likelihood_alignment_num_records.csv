@@ -1,0 +1,10 @@
+parameter,num_records,formula,torch_best_loss,torch_log_likelihood,r_final_likelihood,loglik_delta_r_minus_torch,torch_seeds,r_seeds
+num_records,1000,(item_latents|constant),7675.057861328125,-7675.057861328125,,,2.0,
+num_records,1000,(user_latents|item),15466.34326171875,-15466.34326171875,,,2.0,
+num_records,1000,(user_latents|item) + (item_latents|constant),17518.751220703125,-17518.751220703125,,,2.0,
+num_records,3000,(item_latents|constant),,,-3337.7313097238,,,2.0
+num_records,3000,(user_latents|item),,,-2801.4116961077,,,2.0
+num_records,3000,(user_latents|item) + (item_latents|constant),,,-2792.06848959135,,,2.0
+num_records,5000,(item_latents|constant),,,-3337.7313097238,,,2.0
+num_records,5000,(user_latents|item),,,-2801.4116961077,,,2.0
+num_records,5000,(user_latents|item) + (item_latents|constant),,,-2792.06848959135,,,2.0

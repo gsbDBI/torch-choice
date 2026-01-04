@@ -571,7 +571,8 @@ def main() -> None:
         "Figure 1 (TensorBoard Curve)",
         "Generated logs can be visualized exactly like Figure 1 once you launch TensorBoard.",
     )
-    launch_tensorboard(args.tensorboard_logdir, args.tensorboard_port)
+    print(f"[TensorBoard] Logs saved to '{args.tensorboard_logdir}'.")
+    print(f"[TensorBoard] To visualize, run: uv run tensorboard --logdir {args.tensorboard_logdir} --port {args.tensorboard_port}")
 
     print_subsection("Conditional Logit Post-Estimation")
     print_paper_reference(
