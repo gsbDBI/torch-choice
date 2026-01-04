@@ -556,7 +556,7 @@ def main() -> None:
     )
     args.tensorboard_logdir.mkdir(parents=True, exist_ok=True)
     start = time.perf_counter()
-    model.fit(
+    result = model.fit(
         dataset_mode_canada,
         batch_size=-1,
         learning_rate=0.01,
@@ -564,6 +564,7 @@ def main() -> None:
         model_optimizer="LBFGS",
         backend="lightning",
         default_root_dir=str(args.tensorboard_logdir),
+        print_summary=False,  # We will print manually below.
     )
     duration = time.perf_counter() - start
     print(f"[Training] Completed in {duration:.2f} seconds.")
@@ -573,6 +574,25 @@ def main() -> None:
     )
     print(f"[TensorBoard] Logs saved to '{args.tensorboard_logdir}'.")
     print(f"[TensorBoard] To visualize, run: uv run tensorboard --logdir {args.tensorboard_logdir} --port {args.tensorboard_port}")
+
+    print_subsection("Programmatic Access to Estimation Results")
+    print_paper_reference(
+        "Section 4.1.4 (EstimationOutput)",
+        "Demonstrates that `model.fit()` returns an `EstimationOutput` object for programmatic access to all results.",
+    )
+    print("[EstimationOutput] The `model.fit()` method returns an EstimationOutput object.")
+    print("[EstimationOutput] Use `print(result)` to display a formatted regression table:")
+    print(result)
+    print("\n[EstimationOutput] Access log-likelihood programmatically:")
+    print(f"result.train_ll = {result.train_ll}")
+    print(f"result.val_ll = {result.val_ll}")
+    print(f"result.test_ll = {result.test_ll}")
+    print("\n[EstimationOutput] Access coefficient summary as a pandas DataFrame:")
+    print(f"result.coef_summary.head() =\n{result.coef_summary.head()}")
+    print("\n[EstimationOutput] Access raw coefficient tensors via result.mean_dict:")
+    for name, tensor in result.mean_dict.items():
+        print(f"  {name}: shape={tuple(tensor.shape)}")
+    print("\n[EstimationOutput] Convert all results to a dictionary with result.to_dict().")
 
     print_subsection("Conditional Logit Post-Estimation")
     print_paper_reference(
@@ -641,7 +661,7 @@ def main() -> None:
     nested_logdir = args.tensorboard_logdir / "nested_logit"
     nested_logdir.mkdir(parents=True, exist_ok=True)
     nested_start = time.perf_counter()
-    nested_model.fit(
+    nested_result = nested_model.fit(
         nested_joint_dataset,
         batch_size=256,
         learning_rate=0.05,
@@ -649,9 +669,19 @@ def main() -> None:
         model_optimizer="Adam",
         backend="lightning",
         default_root_dir=str(nested_logdir),
+        print_summary=False,  # We will print manually below.
     )
     nested_duration = time.perf_counter() - nested_start
     print(f"[Nested Logit] Training completed in {nested_duration:.2f} seconds.")
+
+    print_subsection("Nested Logit Estimation Results")
+    print_paper_reference(
+        "Section 4.2.3 (EstimationOutput)",
+        "NestedLogitModel.fit() also returns an EstimationOutput object with the same interface as CLM.",
+    )
+    print("[EstimationOutput] Nested logit model estimation results via `print(nested_result)`:")
+    print(nested_result)
+    print(f"\n[EstimationOutput] nested_result.train_ll = {nested_result.train_ll}")
 
     print_subsection("Nested Logit Post-Estimation")
     print_paper_reference(
