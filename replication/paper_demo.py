@@ -1,5 +1,22 @@
 #!/usr/bin/env python3
-"""Console-friendly replication script for the Torch-Choice paper demo."""
+"""Console-friendly replication script for the Torch-Choice paper demo.
+
+This file is intentionally "literate": it contains dense inline comments that
+cross-reference the Torch-Choice manuscript so readers can jump between the code
+and the corresponding discussion, equations, and code snippets in the paper.
+
+Paper source (LaTeX):
+- `torch-choice-paper/ms.tex` (main entry point; includes all sections)
+- `torch-choice-paper/sections/data_management.tex` (ChoiceDataset / data structures)
+- `torch-choice-paper/sections/conditional_logit_model.tex` (Conditional Logit Model)
+- `torch-choice-paper/sections/nested_logit_model.tex` (Nested Logit Model)
+- `torch-choice-paper/sections/benchmark.tex` (performance benchmarks)
+
+Comment conventions used below:
+- "Paper: <title>" refers to a manuscript section/subsection heading.
+- "Paper label: eq:..., fig:..., tab:..." refers to the LaTeX ``\\label{...}``
+  identifier in the manuscript source.
+"""
 
 from __future__ import annotations
 
@@ -26,10 +43,18 @@ from torch_choice.utils.easy_data_wrapper import EasyDatasetWrapper
 warnings.filterwarnings("ignore")
 SECTION_LINE = "=" * 80
 SUBSECTION_LINE = "-" * 80
+
+# Paper: Nested logit model -> "Optimization and Model Estimation" uses the
+# "House Cooling" dataset as a running empirical example (a classic Train dataset).
 HOUSE_COOLING_URL = (
     "https://raw.githubusercontent.com/gsbDBI/torch-choice/main/tutorials/public_datasets/HC.csv"
 )
+# Paper: Nested logit model (House Cooling example) encodes the seven alternatives
+# (cooling systems) as short string identifiers; we keep the same ordering/encoding.
 HOUSE_COOLING_ITEM_NAMES = ["ec", "ecc", "er", "erc", "gc", "gcc", "hpc"]
+# Paper: Nested logit model -> House Cooling item-level model uses a "price_obs"
+# observable. Here `HOUSE_COOLING_FEATURE_COLUMNS` are the raw columns that become
+# the multi-dimensional tensor `price_obs` fed into `ChoiceDataset(..., price_obs=...)`.
 HOUSE_COOLING_FEATURE_COLUMNS = [
     "ich",
     "och",
@@ -44,6 +69,17 @@ HOUSE_COOLING_FEATURE_COLUMNS = [
 def build_house_cooling_joint_dataset() -> tuple[JointDataset, dict[int, list[int]], dict[str, int]]:
     """Build the joint dataset + default two-nest mapping for the House Cooling example.
 
+    Paper: Nested logit model -> "Dataset Preparation" explains why nested logit uses a
+    `JointDataset` with *two* `ChoiceDataset` objects:
+    - a **nest-level** dataset (treat nests as "items" at the upper level), and
+    - an **item-level** dataset (choices among items within the chosen nest).
+
+    Paper: Nested logit model -> "Optimization and Model Estimation" shows the exact
+    construction pattern we mirror here:
+    - `nest_dataset = ChoiceDataset(item_index=item_index.clone())`
+    - `item_dataset = ChoiceDataset(item_index=item_index, price_obs=price_obs)`
+    - `dataset = JointDataset(nest=nest_dataset, item=item_dataset)`
+
     Returns:
         - JointDataset with `nest` (choice indices) and `item` (choice indices + `price_obs`) datasets.
         - nest_to_item mapping (nest_id -> list[item_id]) aligned with HOUSE_COOLING_ITEM_NAMES encoding.
@@ -52,6 +88,8 @@ def build_house_cooling_joint_dataset() -> tuple[JointDataset, dict[int, list[in
     replication_dir = Path(__file__).resolve().parent
     local_csv_path = replication_dir.parent / "tutorials/public_datasets/HC.csv"
 
+    # Paper: Nested logit model (House Cooling example). We prefer a local copy to avoid
+    # network dependence during replication, but fall back to the public URL if needed.
     if local_csv_path.exists():
         df = pd.read_csv(local_csv_path, index_col=0)
     else:
@@ -62,7 +100,11 @@ def build_house_cooling_joint_dataset() -> tuple[JointDataset, dict[int, list[in
     item_names = HOUSE_COOLING_ITEM_NAMES
     encoder = dict(zip(item_names, range(len(item_names))))
 
-    # The chosen alternative per house (session).
+    # Paper: Nested logit model (House Cooling dataset).
+    # - `idx.id1` is the "choice situation" index (a.k.a. session).
+    # - `idx.id2` is the alternative label (one of the 7 system types).
+    # - `depvar == True` flags the chosen alternative within each session.
+    # We convert chosen alternative labels into integer indices `item_index = (i^(n))_{n=1}^N`.
     chosen_items = (
         df[df["depvar"] == True]  # noqa: E712 - compare to True explicitly for clarity
         .sort_values(by="idx.id1")["idx.id2"]
@@ -72,7 +114,12 @@ def build_house_cooling_joint_dataset() -> tuple[JointDataset, dict[int, list[in
 
     num_sessions = int(len(item_index))
 
-    # Session-item observables (installation/operating costs + interactions).
+    # Paper: Nested logit model -> House Cooling example uses `price_obs` as an item-level
+    # observable (fed into `item_formula="(price_obs|constant)"`).
+    #
+    # `utils.pivot3d(...)` converts the long table (session × item rows) into a tensor with
+    # shape (num_sessions, num_items, num_features), matching the paper's tensor-shape
+    # conventions (Paper: Data structures, Table label: tab:tensor-shape).
     price_obs = utils.pivot3d(
         df,
         dim0="idx.id1",
@@ -80,13 +127,16 @@ def build_house_cooling_joint_dataset() -> tuple[JointDataset, dict[int, list[in
         values=HOUSE_COOLING_FEATURE_COLUMNS,
     )
 
-    # Align with the manuscript snippet: a nest dataset with only item_index, and an item dataset
-    # with item_index + price_obs.
+    # Paper: Nested logit model -> "Optimization and Model Estimation" code block.
+    # Nest-level dataset: only needs the chosen alternative indices (interpreted as chosen nest
+    # indices at the upper level); item-level dataset carries both indices and observables.
     nest_dataset = ChoiceDataset(item_index=item_index.clone())
     item_dataset = ChoiceDataset(item_index=item_index, price_obs=price_obs)
     dataset = JointDataset(nest=nest_dataset, item=item_dataset)
 
-    # Default two-nest split used in the docs/tests: cooling vs no-cooling.
+    # Paper: Nested logit model -> "Model Specification" requires `nest_to_item: k -> I_k`,
+    # i.e., a partition of items into nests. Here we use the two-nest split adopted by the
+    # tutorial/paper demo: (roughly) "cooling" vs "no-cooling" systems.
     nest_to_item = {
         0: ["gcc", "ecc", "erc", "hpc"],
         1: ["gc", "ec", "er"],
@@ -134,7 +184,11 @@ def set_seed(seed: int = 42) -> None:
 
 
 def clone_choice_dataset(dataset: ChoiceDataset) -> ChoiceDataset:
-    """Clone a ChoiceDataset while gracefully falling back to deepcopy if needed."""
+    """Clone a ChoiceDataset while gracefully falling back to deepcopy if needed.
+
+    Paper: Data structures -> "Functionalities of the choice dataset" demonstrates
+    `dataset.clone()` and explains why modifying a subset/clone should not affect the original.
+    """
     try:
         return dataset.clone()
     except AssertionError as err:
@@ -143,6 +197,10 @@ def clone_choice_dataset(dataset: ChoiceDataset) -> ChoiceDataset:
 
 
 def patch_choice_dataset_helpers() -> None:
+    # Replication robustness helper (not part of the manuscript narrative).
+    # Some historical versions of `ChoiceDataset.to_dict()` used private keys like `_num_items`.
+    # This patch makes the demo script tolerant to those serialized dictionaries when users run
+    # the demo across library versions.
     if getattr(ChoiceDataset, "_replication_patch_applied", False):
         return
 
@@ -169,6 +227,8 @@ def patch_choice_dataset_helpers() -> None:
 
 def launch_tensorboard(logdir: Path, port: int) -> None:
     print_section("TensorBoard")
+    # Paper: Conditional logit model -> "Model Estimation" discusses TensorBoard logging and
+    # shows an illustrative curve (Paper label: fig:tensorboard-example).
     cmd = ["tensorboard", "--logdir", str(logdir), "--port", str(port)]
     try:
         proc = subprocess.Popen(
@@ -215,6 +275,9 @@ def main() -> None:
     patch_choice_dataset_helpers()
 
     print_section("Torch-Choice Manuscript Crosswalk")
+    # Paper: the manuscript is written in LaTeX; the main entry is `torch-choice-paper/ms.tex`.
+    # This script follows the same ordering as the paper: data structures -> models -> (optional)
+    # performance notes, and prints lightweight pointers to help you keep code and PDF in sync.
     print_paper_reference(
         "Overview",
         "Script mirrors the 'Torch-Choice: A PyTorch Package for Large-Scale Choice Modeling with Python' manuscript in "
@@ -228,6 +291,8 @@ def main() -> None:
 
     # === Package versions (matches notebook cell order) ============================================
     print_section("Package Versions")
+    # Paper: while the manuscript focuses on concepts/APIs, reproducibility benefits from logging
+    # versions (especially for optimization backends and tensor semantics).
     print(f"np.__version__={np.__version__}")
     print(f"pd.__version__={pd.__version__}")
     print(f"torch.__version__={torch.__version__}")
@@ -242,6 +307,9 @@ def main() -> None:
         raise FileNotFoundError(f"Cannot find car_choice.csv at {csv_path}.")
     car_choice = pd.read_csv(csv_path)
     print_section("Data Structure")
+    # Paper: Data structures -> "Constructing a choice dataset, method 1: EasyDataWrapper class"
+    # uses the synthetic car-choice dataset to motivate `EasyDatasetWrapper` and observable
+    # naming/availability handling.
     print_paper_reference(
         "Section 3 (Data Structures)",
         "Car-choice example corresponds to the EasyDataWrapper walk-through in Section 3.1 of the manuscript.",
@@ -250,6 +318,9 @@ def main() -> None:
 
     # Method 1: observables derived from columns.
     print_subsection("Adding Observables, Method 1: Columns")
+    # Paper: `torch-choice-paper/sections/easy_data.tex` -> "Adding Observables, Method 1".
+    # The wrapper infers tensor shapes and builds `ChoiceDataset` following the naming rules in
+    # Paper: Data structures (Table label: tab:tensor-shape).
     print_paper_reference(
         "Section 3.1 / Listing (EasyDataWrapper)",
         "Matches the first code listing that pipes the long-form car-choice table into `EasyDatasetWrapper`.",
@@ -272,6 +343,9 @@ def main() -> None:
 
     # Method 2: provide observables as separate data frames.
     print_subsection("Adding Observables, Method 2: Separate DataFrames")
+    # Paper: `torch-choice-paper/sections/easy_data.tex` -> "Adding Observables, Method 2".
+    # The point of splitting observables into separate DataFrames is memory efficiency: user/item
+    # characteristics need not be duplicated per (record, item) row.
     print_paper_reference(
         "Section 3.1 (Manual Observables Table)",
         "Replicates the second listing where gender/income/speed/discount are supplied via auxiliary DataFrames.",
@@ -300,6 +374,8 @@ def main() -> None:
 
     # Method 3: mix columns and data frames.
     print_subsection("Adding Observables, Method 3: Mixed Inputs")
+    # Paper: `torch-choice-paper/sections/easy_data.tex` ends by showing that column-based and
+    # table-based observable inputs can be mixed while producing identical `ChoiceDataset`s.
     print_paper_reference(
         "Section 3.1 (Hybrid Wrapper Inputs)",
         "Mirrors the discussion about mixing column names and pre-aggregated tables when building EasyDatasetWrapper inputs.",
@@ -321,6 +397,9 @@ def main() -> None:
 
     # === Constructing a Choice Dataset from tensors ===============================================
     print_section("Constructing a Choice Dataset from Tensors")
+    # Paper: Data structures -> "Constructing a choice dataset, method 2: building from tensors".
+    # We reproduce the synthetic-data recipe from Paper label: eq:random-obs-data, and we use
+    # the same (U, I, S, N) notation in the variable names below for easy cross-reading.
     print_paper_reference(
         "Section 3.2 / Equation \\eqref{eq:random-obs-data}",
         "Synthetic tensor shapes (U=10, I=4, S=500, N=10,000) follow the Gaussian sampling recipe in that equation.",
@@ -339,6 +418,8 @@ def main() -> None:
     item_index = torch.LongTensor(np.random.choice(num_items, size=N))
     user_index = torch.LongTensor(np.random.choice(num_users, size=N))
     session_index = torch.LongTensor(np.random.choice(num_sessions, size=N))
+    # Paper: Data structures -> `item_availability` is the binary matrix A with shape (S, I)
+    # (see the constructor bullet list right after the tensor-construction code block).
     item_availability = torch.ones(num_sessions, num_items).bool()
     dataset = ChoiceDataset(
         item_index=item_index,
@@ -360,6 +441,8 @@ def main() -> None:
 
     # === Functionalities of the Choice Dataset ====================================================
     print_section("Choice Dataset Functionalities")
+    # Paper: Data structures -> "Functionalities of the choice dataset" shows these exact
+    # operations: querying `num_*`, cloning, moving across devices, `x_dict`, and safe subsetting.
     print_paper_reference(
         "Section 3.3 (ChoiceDataset API)",
         "Correlates with the manuscript section that reviews `dataset.num_*`, cloning, device transfers, and batching.",
@@ -370,6 +453,7 @@ def main() -> None:
     print(f"len(dataset)={len(dataset)}")
 
     print_subsection("Cloning Behavior")
+    # Paper: Data structures -> cloning/subsetting is designed to be in-place safe.
     print_paper_reference(
         "Section 3.3 (Cloning Listing)",
         "Matches the code block demonstrating that modifying a clone leaves the original dataset unchanged.",
@@ -381,6 +465,8 @@ def main() -> None:
     print(f"dataset.item_index[:10]={dataset.item_index[:10]}")
 
     print_subsection("Device Movement")
+    # Paper: Data structures -> `dataset.to(device)` moves *all* tensors; `_check_device_consistency()`
+    # is a guardrail that prevents subtle bugs and is part of why GPU acceleration is safe to use.
     print_paper_reference(
         "Section 3.3 (Device Transfers)",
         "This mirrors the CPU→GPU transfer example right before the `_check_device_consistency()` listing.",
@@ -401,6 +487,8 @@ def main() -> None:
         )
 
         print_subsection("Device Consistency Error Demonstration")
+        # Paper: Data structures -> the manuscript intentionally demonstrates the error thrown
+        # when tensors live on mixed devices, motivating consistent `.to(...)` usage.
         print_paper_reference(
             "Section 3.3 (Intentional Device Error)",
             "Same try/except setup discussed around the `_check_device_consistency()` error message.",
@@ -416,6 +504,8 @@ def main() -> None:
         dataset = dataset_cuda.to("cpu")
 
     print_subsection("Observables Dictionary Shapes")
+    # Paper: Data structures -> the long-format "view" is `dataset.x_dict` (Paper: `x_dict`
+    # discussion). Each tensor is broadcasted to shape (N, I, *) to align with CLM/NLM utilities.
     print_paper_reference(
         "Table 1 / Section 3.2",
         "`dataset.x_dict` shapes correspond to the tensor naming and dimension rules summarized in Table 1.",
@@ -425,6 +515,8 @@ def main() -> None:
             print(f"dict.{key}.shape={tuple(value.shape)}")
 
     print_subsection("Mini-batch Extraction")
+    # Paper: Data structures -> `__getitem__` creates clones so that in-place mutation of a batch
+    # does not mutate the parent dataset (a property used throughout model training loops).
     print_paper_reference(
         "Section 3.3 (Mini-batch Example)",
         "Recreates the five-record sampling example that highlights in-place safety for subsets.",
@@ -446,6 +538,8 @@ def main() -> None:
     print(f"id(dataset.item_index[indices])={id(dataset.item_index[indices])}")
 
     print_subsection("JointDataset Demonstration")
+    # Paper: Data structures -> "Chaining multiple datasets with JointDataset" introduces this
+    # container as the way to keep multiple `ChoiceDataset`s indexed consistently.
     print_paper_reference(
         "Section 3.4 (Chaining datasets)",
         "Demonstrates the same `JointDataset(item=..., nest=...)` example that prefaces the nested logit discussion.",
@@ -456,6 +550,8 @@ def main() -> None:
     print(f"joint_dataset={joint_dataset}")
 
     print_subsection("DataLoader Consistency Checks")
+    # Paper: Data structures -> "Using PyTorch data loader for the training loop" shows how
+    # advanced users can build custom training loops using `Sampler` and `DataLoader`.
     print_paper_reference(
         "Section 3.5 (PyTorch DataLoader)",
         "Aligns with the sampler/DataLoader walkthrough for researchers customizing training loops.",
@@ -486,6 +582,10 @@ def main() -> None:
         return
 
     print_section("Conditional Logit Model")
+    # Paper: Conditional logit model section defines the CLM via:
+    # - general linear utility form (Paper label: eq:genearl-utility-clm)
+    # - multinomial logit probability (Paper label: eq:clm-softmax)
+    # - IIA property (Paper label: eq:clm-iia)
     print_paper_reference(
         "Section 4.1 (Conditional Logit)",
         "Implements the specification around Equations \\eqref{eq:genearl-utility-clm}, \\eqref{eq:clm-softmax}, "
@@ -495,6 +595,8 @@ def main() -> None:
     print(f"[Mode Canada] dataset={dataset_mode_canada}")
 
     print_subsection("Formula-based Specification")
+    # Paper: Conditional logit model -> "Initialize CLM with R-like Formula and Dataset"
+    # provides the exact formula used below and interprets each term as an (observable|variation).
     print_paper_reference(
         "Section 4.1.1 (Formula interface)",
         "Matches the `formula='(itemsession_cost_freq_ovt|constant)+...'` snippet shown in the manuscript.",
@@ -506,6 +608,8 @@ def main() -> None:
     )
 
     print_subsection("Dictionary-based Specification")
+    # Paper: Conditional logit model -> "Initialize CLM with Dictionaries" shows this alternative
+    # interface, useful for programmatically generating model families.
     print_paper_reference(
         "Section 4.1.2 (Dictionary interface)",
         "Explicitly replays the `coef_variation_dict` / `num_param_dict` example in the paper.",
@@ -527,6 +631,8 @@ def main() -> None:
     )
 
     print_subsection("Dictionary Specification with Regularization")
+    # Paper: Conditional logit model -> "Optimization and Regularization" (Paper label:
+    # eq:regularized-loglikelihood) describes adding L1/L2 penalties via constructor args.
     print_paper_reference(
         "Section 4.1.3 / Equation \\eqref{eq:regularized-loglikelihood}",
         "Highlights how the same model can include L1 regularization with weight λ=0.5.",
@@ -550,6 +656,9 @@ def main() -> None:
     )
 
     print_subsection("Training via model.fit")
+    # Paper: Conditional logit model -> "Model Estimation" shows the `fit()` call signature and
+    # explains `batch_size=-1` (full batch), optimizer choice (LBFGS vs Adam), and TensorBoard logs
+    # (Paper label: fig:tensorboard-example).
     print_paper_reference(
         "Section 4.1.4 (Model Estimation)",
         "Corresponds to the `model.fit(..., model_optimizer=\"LBFGS\")` example and the timing note in the manuscript.",
@@ -576,6 +685,8 @@ def main() -> None:
     print(f"[TensorBoard] To visualize, run: uv run tensorboard --logdir {args.tensorboard_logdir} --port {args.tensorboard_port}")
 
     print_subsection("Programmatic Access to Estimation Results")
+    # Paper: Conditional logit model -> `fit()` returns an `EstimationOutput` with both a pretty
+    # regression table and structured accessors (train_ll, coef_summary, mean_dict, ...).
     print_paper_reference(
         "Section 4.1.4 (EstimationOutput)",
         "Demonstrates that `model.fit()` returns an `EstimationOutput` object for programmatic access to all results.",
@@ -595,6 +706,9 @@ def main() -> None:
     print("\n[EstimationOutput] Convert all results to a dictionary with result.to_dict().")
 
     print_subsection("Conditional Logit Post-Estimation")
+    # Paper: Conditional logit model -> "Post-Estimation" introduces `get_coefficient()` and
+    # relates coefficient names back to the stylized utility specification (Paper label:
+    # eq:clm-post-estimation-example).
     print_paper_reference(
         "Section 4.1.5 (Post-Estimation)",
         "Pulls the same coefficients retrieved via `model.get_coefficient(...)` following Equation "
@@ -609,6 +723,11 @@ def main() -> None:
 
     # === Nested Logit Model =====================================================================
     print_section("Nested Logit Model")
+    # Paper: Nested logit model section extends CLM by allowing correlation within nests.
+    # Key derivations/identities referenced in the manuscript include:
+    # - utility decomposition (Paper label: eq:nlm-utility-decomposition)
+    # - likelihood decomposition (Paper label: eq:nlm-likelihood-decomposition)
+    # - log-likelihood objective (Paper label: eq:nested-likelihood)
     print_paper_reference(
         "Section 4.2 (Nested Logit)",
         "Demonstrates the two-level specification linked to Equations \\eqref{eq:nlm-utility-decomposition}, "
@@ -629,6 +748,11 @@ def main() -> None:
     print(f"[House Cooling] joint_dataset={nested_joint_dataset}")
 
     print_subsection("Nested Logit Specification via Formulas")
+    # Paper: Nested logit model -> "Model Specification" explains the two formulas:
+    # - `nest_formula` models W_{uks} (upper/nest level) and treats nests as "items".
+    # - `item_formula` models T_{uis} (lower/item level) and matches CLM specification rules.
+    # Here we use the minimal House Cooling setup showcased in the manuscript:
+    #   nest_formula="(1|item)" and item_formula="(price_obs|constant)".
     print_paper_reference(
         "Section 4.2.2 (Formulas)",
         "Uses the formula interface described in the manuscript's Nested Logit section. "
@@ -640,7 +764,7 @@ def main() -> None:
         nest_formula="(1|item)",
         item_formula="(price_obs|constant)",
         dataset=nested_joint_dataset,
-        shared_lambda=False,
+        shared_lambda=True,
     )
     nested_model_regularized = NestedLogitModel(
         nest_to_item=nest_to_item,
@@ -654,6 +778,8 @@ def main() -> None:
     print("[Nested Logit] Created regularized variant with L2 penalty (not trained here).")
 
     print_subsection("Training Nested Logit Model")
+    # Paper: Nested logit model -> "Optimization and Model Estimation" uses Adam-based training
+    # and illustrates that `NestedLogitModel.fit(...)` mirrors the CLM `fit()` API.
     print_paper_reference(
         "Section 4.2.3 (Training)",
         "Mirrors the Adam-based training recipe and TensorBoard logging mentioned for the nested model.",
@@ -663,11 +789,10 @@ def main() -> None:
     nested_start = time.perf_counter()
     nested_result = nested_model.fit(
         nested_joint_dataset,
-        batch_size=256,
-        learning_rate=0.05,
-        num_epochs=min(200, args.num_epochs),
+        batch_size=-1,
+        learning_rate=0.01,
+        num_epochs=min(5000, args.num_epochs),
         model_optimizer="Adam",
-        backend="lightning",
         default_root_dir=str(nested_logdir),
         print_summary=False,  # We will print manually below.
     )
@@ -675,6 +800,8 @@ def main() -> None:
     print(f"[Nested Logit] Training completed in {nested_duration:.2f} seconds.")
 
     print_subsection("Nested Logit Estimation Results")
+    # Paper: Nested logit model -> "Optimization and Model Estimation" notes that `fit()` returns
+    # an `EstimationOutput` (same interface as CLM).
     print_paper_reference(
         "Section 4.2.3 (EstimationOutput)",
         "NestedLogitModel.fit() also returns an EstimationOutput object with the same interface as CLM.",
@@ -684,6 +811,8 @@ def main() -> None:
     print(f"\n[EstimationOutput] nested_result.train_ll = {nested_result.train_ll}")
 
     print_subsection("Nested Logit Post-Estimation")
+    # Paper: Nested logit model -> "Post-Estimation" extends `get_coefficient()` with a `level`
+    # argument (except for `lambda`, which is global/shared depending on `shared_lambda`).
     print_paper_reference(
         "Section 4.2.4 (Post-Estimation)",
         "Demonstrates `get_coefficient(..., level=...)` as described in the manuscript. "

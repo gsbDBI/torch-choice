@@ -283,19 +283,10 @@ We highly recommend users to go through [tutorials](https://github.com/gsbDBI/to
 
 ## Paper Replication Script
 
-The replication material that accompanies the paper now ships as a **single executable script** in this repository:
+For full replication instructions of results demonstrated in the paper (environment setup, running the paper demo, and performance benchmarks), see
+[`replication/paper_replication_guideline.md`](replication/paper_replication_guideline.md).
 
-```bash
-uv run python replication/paper_demo.py
-```
-
-- Mirrors every section of the original `replication/paper_demo.ipynb` with console-friendly logging.
-- Accepts `--skip-training` for quick smoke tests, `--num-epochs` to control the conditional logit fit (defaults to the paper's 1000 epochs), and `--tensorboard-port`/`--tensorboard-logdir` to control the automatic TensorBoard launch.
-- Prints a helpful URL (or fallback instructions) if the `tensorboard` command is available.
-
-This script removes the need for a separate `requirements.txt` when using `uv`, and makes it easy to regenerate every table reported in the paper from the command line.
-
-## Reproducibility
+## Reproducibility and Randomness
 The `torch-choice` package is built upon several dependencies that introduce randomness, you would need to fix random seeds for these packages for reproducibility:
 
 ```python

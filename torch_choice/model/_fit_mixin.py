@@ -1024,4 +1024,3 @@ class ChoiceModelFitMixin:
             (report["Pr(>|z|)"] >= 0.05) & (report["Pr(>|z|)"] < 0.1), "Significance"
         ] = "."
         return report
-
