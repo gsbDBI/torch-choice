@@ -376,3 +376,4 @@ data/MNIST/raw/train-labels-idx1-ubyte
 data/MNIST/raw/train-labels-idx1-ubyte.gz
 
 **/synthetic_data/
+replication/paper_performance_benchmarks/runs
