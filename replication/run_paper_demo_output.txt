@@ -1,0 +1,724 @@
+==============================================================================
+Running paper_demo.py
+==============================================================================
+Command: uv run python replication/paper_demo.py --tensorboard-logdir lightning_logs --tensorboard-port 6006 --num-epochs 1000
+
+
+================================================================================
+Torch-Choice Manuscript Crosswalk
+================================================================================
+[Paper Ref | Overview] Script mirrors the 'Torch-Choice: A PyTorch Package for Large-Scale Choice Modeling with Python' manuscript in `torch-choice-paper/ms.tex`.
+[Paper Ref | Reading Guide] Keep the PDF open while running this script: Sections 3 (data), 4 (models), and 5 (benchmarks) line up with the blocks below.
+
+================================================================================
+Package Versions
+================================================================================
+np.__version__=1.26.4
+pd.__version__=2.3.3
+torch.__version__=2.9.1+cu128
+torch_choice.__version__=1.0.6
+[Setup] Random seed set to 42.
+
+================================================================================
+Data Structure
+================================================================================
+[Paper Ref | Section 3 (Data Structures)] Car-choice example corresponds to the EasyDataWrapper walk-through in Section 3.1 of the manuscript.
+
+--------------------------------------------------------------------------------
+car_choice.head()
+--------------------------------------------------------------------------------
+ record_id  session_id  consumer_id      car  purchase  gender    income  speed  discount  price
+         1           1            1 American         1       1 46.699997     10      0.94     90
+         1           1            1 Japanese         0       1 46.699997      8      0.94    110
+         1           1            1 European         0       1 46.699997      7      0.94     50
+         1           1            1   Korean         0       1 46.699997      8      0.94     10
+         2           2            2 American         1       1 26.100000     10      0.95    100
+
+--------------------------------------------------------------------------------
+Adding Observables, Method 1: Columns
+--------------------------------------------------------------------------------
+[Paper Ref | Section 3.1 / Listing (EasyDataWrapper)] Matches the first code listing that pipes the long-form car-choice table into `EasyDatasetWrapper`.
+Creating choice dataset from stata format data-frames...
+Note: choice sets of different sizes found in different purchase records: {'size 4': 'occurrence 505', 'size 3': 'occurrence 380'}
+Finished Creating Choice Dataset.
+* purchase record index range: [1 2 3] ... [883 884 885]
+* Space of 4 items:
+                   0         1         2       3
+item name  American  European  Japanese  Korean
+* Number of purchase records/cases: 885.
+* Preview of main data frame:
+      record_id  session_id  consumer_id  ... speed  discount  price
+0             1           1            1  ...    10      0.94     90
+1             1           1            1  ...     8      0.94    110
+2             1           1            1  ...     7      0.94     50
+3             1           1            1  ...     8      0.94     10
+4             2           2            2  ...    10      0.95    100
+...         ...         ...          ...  ...   ...       ...    ...
+3155        884         884          884  ...     8      0.89    100
+3156        884         884          884  ...     7      0.89     40
+3157        885         885          885  ...    10      0.81    100
+3158        885         885          885  ...     8      0.81     50
+3159        885         885          885  ...     7      0.81     40
+
+[3160 rows x 10 columns]
+* Preview of ChoiceDataset:
+ChoiceDataset(num_items=4, num_users=885, num_sessions=885, label=[], item_index=[885], user_index=[885], session_index=[885], item_availability=[885, 4], item_speed=[4, 1], user_gender=[885, 1], user_income=[885, 1], session_discount=[885, 1], itemsession_price=[885, 4, 1], device=cpu)
+[EasyDatasetWrapper] dataset_from_columns=ChoiceDataset(num_items=4, num_users=885, num_sessions=885, label=[], item_index=[885], user_index=[885], session_index=[885], item_availability=[885, 4], item_speed=[4, 1], user_gender=[885, 1], user_income=[885, 1], session_discount=[885, 1], itemsession_price=[885, 4, 1], device=cpu)
+
+--------------------------------------------------------------------------------
+Adding Observables, Method 2: Separate DataFrames
+--------------------------------------------------------------------------------
+[Paper Ref | Section 3.1 (Manual Observables Table)] Replicates the second listing where gender/income/speed/discount are supplied via auxiliary DataFrames.
+Creating choice dataset from stata format data-frames...
+Note: choice sets of different sizes found in different purchase records: {'size 4': 'occurrence 505', 'size 3': 'occurrence 380'}
+Finished Creating Choice Dataset.
+[EasyDatasetWrapper] Method 2 matches Method 1.
+
+--------------------------------------------------------------------------------
+Adding Observables, Method 3: Mixed Inputs
+--------------------------------------------------------------------------------
+[Paper Ref | Section 3.1 (Hybrid Wrapper Inputs)] Mirrors the discussion about mixing column names and pre-aggregated tables when building EasyDatasetWrapper inputs.
+Creating choice dataset from stata format data-frames...
+Note: choice sets of different sizes found in different purchase records: {'size 4': 'occurrence 505', 'size 3': 'occurrence 380'}
+Finished Creating Choice Dataset.
+[EasyDatasetWrapper] Mixed input method also matches.
+
+================================================================================
+Constructing a Choice Dataset from Tensors
+================================================================================
+[Paper Ref | Section 3.2 / Equation \eqref{eq:random-obs-data}] Synthetic tensor shapes (U=10, I=4, S=500, N=10,000) follow the Gaussian sampling recipe in that equation.
+[Synthetic Dataset] dataset=ChoiceDataset(num_items=4, num_users=10, num_sessions=500, label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], itemsession_obs=[500, 4, 12], useritem_obs=[10, 4, 32], usersession_obs=[10, 500, 10], usersessionitem_obs=[10, 500, 4, 8], device=cpu)
+
+================================================================================
+Choice Dataset Functionalities
+================================================================================
+[Paper Ref | Section 3.3 (ChoiceDataset API)] Correlates with the manuscript section that reviews `dataset.num_*`, cloning, device transfers, and batching.
+dataset.num_users=10
+dataset.num_items=4
+dataset.num_sessions=500
+len(dataset)=10000
+
+--------------------------------------------------------------------------------
+Cloning Behavior
+--------------------------------------------------------------------------------
+[Paper Ref | Section 3.3 (Cloning Listing)] Matches the code block demonstrating that modifying a clone leaves the original dataset unchanged.
+dataset.item_index[:10]=tensor([2, 3, 0, 2, 2, 3, 0, 0, 2, 1])
+dataset_cloned.item_index[:10]=tensor([99, 99, 99, 99, 99, 99, 99, 99, 99, 99])
+dataset.item_index[:10]=tensor([2, 3, 0, 2, 2, 3, 0, 0, 2, 1])
+
+--------------------------------------------------------------------------------
+Device Movement
+--------------------------------------------------------------------------------
+[Paper Ref | Section 3.3 (Device Transfers)] This mirrors the CPU→GPU transfer example right before the `_check_device_consistency()` listing.
+dataset.device=cpu
+dataset.user_index.device=cpu
+dataset.session_index.device=cpu
+dataset_cuda.device=cuda:0
+dataset_cuda.item_index.device=cuda:0
+dataset_cuda.user_index.device=cuda:0
+dataset_cuda.session_index.device=cuda:0
+[Paper Ref | Section 5 (Benchmarking)] Keeping tensors on the same device is what enables the GPU speed-ups reported in Section 5.
+
+--------------------------------------------------------------------------------
+Device Consistency Error Demonstration
+--------------------------------------------------------------------------------
+[Paper Ref | Section 3.3 (Intentional Device Error)] Same try/except setup discussed around the `_check_device_consistency()` error message.
+[Device Consistency] Expected error with mixed devices:
+  ("Found tensors on different devices: {device(type='cuda', index=0), device(type='cpu')}.", 'Use dataset.to() method to align devices.')
+
+--------------------------------------------------------------------------------
+Observables Dictionary Shapes
+--------------------------------------------------------------------------------
+[Paper Ref | Table 1 / Section 3.2] `dataset.x_dict` shapes correspond to the tensor naming and dimension rules summarized in Table 1.
+dict.user_obs.shape=(10000, 4, 128)
+dict.item_obs.shape=(10000, 4, 64)
+dict.session_obs.shape=(10000, 4, 10)
+dict.itemsession_obs.shape=(10000, 4, 12)
+dict.useritem_obs.shape=(10000, 4, 32)
+dict.usersession_obs.shape=(10000, 4, 10)
+dict.usersessionitem_obs.shape=(10000, 4, 8)
+
+--------------------------------------------------------------------------------
+Mini-batch Extraction
+--------------------------------------------------------------------------------
+[Paper Ref | Section 3.3 (Mini-batch Example)] Recreates the five-record sampling example that highlights in-place safety for subsets.
+indices=tensor([7119, 9650, 5466, 1073, 8419])
+subset=ChoiceDataset(num_items=4, num_users=10, num_sessions=500, label=[], item_index=[5], user_index=[5], session_index=[5], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], itemsession_obs=[500, 4, 12], useritem_obs=[10, 4, 32], usersession_obs=[10, 500, 10], usersessionitem_obs=[10, 500, 4, 8], device=cpu)
+dataset.item_index[indices]=tensor([2, 2, 1, 2, 3])
+[Mini-batch] After modifying subset.item_index, original dataset remains unchanged.
+subset.item_index=tensor([3, 3, 2, 3, 4])
+dataset.item_index[indices]=tensor([2, 2, 1, 2, 3])
+[Mini-batch] subset.item_obs[0, 0] vs dataset.item_obs[0, 0]:
+subset.item_obs[0, 0]=0.7051464319229126
+dataset.item_obs[0, 0]=-0.294853538274765
+id(subset.item_index)=133696169942688
+id(dataset.item_index[indices])=133696169945168
+
+--------------------------------------------------------------------------------
+JointDataset Demonstration
+--------------------------------------------------------------------------------
+[Paper Ref | Section 3.4 (Chaining datasets)] Demonstrates the same `JointDataset(item=..., nest=...)` example that prefaces the nested logit discussion.
+joint_dataset=JointDataset with 2 sub-datasets: (
+	item: ChoiceDataset(num_items=4, num_users=10, num_sessions=500, label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], itemsession_obs=[500, 4, 12], useritem_obs=[10, 4, 32], usersession_obs=[10, 500, 10], usersessionitem_obs=[10, 500, 4, 8], device=cpu)
+	nest: ChoiceDataset(num_items=4, num_users=10, num_sessions=500, label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], itemsession_obs=[500, 4, 12], useritem_obs=[10, 4, 32], usersession_obs=[10, 500, 10], usersessionitem_obs=[10, 500, 4, 8], device=cpu)
+)
+
+--------------------------------------------------------------------------------
+DataLoader Consistency Checks
+--------------------------------------------------------------------------------
+[Paper Ref | Section 3.5 (PyTorch DataLoader)] Aligns with the sampler/DataLoader walkthrough for researchers customizing training loops.
+item_obs.shape=torch.Size([4, 64])
+item_obs_all.shape=torch.Size([10000, 4, 64])
+batch.x_dict['item_obs'].shape=torch.Size([32, 4, 64])
+
+--------------------------------------------------------------------------------
+dataset.x_dict Shapes (post DataLoader check)
+--------------------------------------------------------------------------------
+dict.user_obs.shape=(10000, 4, 128)
+dict.item_obs.shape=(10000, 4, 64)
+dict.session_obs.shape=(10000, 4, 10)
+dict.itemsession_obs.shape=(10000, 4, 12)
+dict.useritem_obs.shape=(10000, 4, 32)
+dict.usersession_obs.shape=(10000, 4, 10)
+dict.usersessionitem_obs.shape=(10000, 4, 8)
+dataset.__len__() returns 10000
+
+================================================================================
+Conditional Logit Model
+================================================================================
+[Paper Ref | Section 4.1 (Conditional Logit)] Implements the specification around Equations \eqref{eq:genearl-utility-clm}, \eqref{eq:clm-softmax}, and \eqref{eq:clm-iia} for the Mode Canada case study.
+[Mode Canada] dataset=ChoiceDataset(num_items=4, num_users=1, num_sessions=2779, label=[], item_index=[2779], user_index=[], session_index=[2779], item_availability=[], itemsession_cost_freq_ovt=[2779, 4, 3], session_income=[2779, 1], itemsession_ivt=[2779, 4, 1], device=cpu)
+
+--------------------------------------------------------------------------------
+Formula-based Specification
+--------------------------------------------------------------------------------
+[Paper Ref | Section 4.1.1 (Formula interface)] Matches the `formula='(itemsession_cost_freq_ovt|constant)+...'` snippet shown in the manuscript.
+
+--------------------------------------------------------------------------------
+Dictionary-based Specification
+--------------------------------------------------------------------------------
+[Paper Ref | Section 4.1.2 (Dictionary interface)] Explicitly replays the `coef_variation_dict` / `num_param_dict` example in the paper.
+
+--------------------------------------------------------------------------------
+Dictionary Specification with Regularization
+--------------------------------------------------------------------------------
+[Paper Ref | Section 4.1.3 / Equation \eqref{eq:regularized-loglikelihood}] Highlights how the same model can include L1 regularization with weight λ=0.5.
+
+--------------------------------------------------------------------------------
+Training via model.fit
+--------------------------------------------------------------------------------
+[Paper Ref | Section 4.1.4 (Model Estimation)] Corresponds to the `model.fit(..., model_optimizer="LBFGS")` example and the timing note in the manuscript.
+
+[Training] Completed in 17.74 seconds.
+[Paper Ref | Figure 1 (TensorBoard Curve)] Generated logs can be visualized exactly like Figure 1 once you launch TensorBoard.
+[TensorBoard] Logs saved to 'lightning_logs'.
+[TensorBoard] To visualize, run: uv run tensorboard --logdir lightning_logs --port 6006
+
+--------------------------------------------------------------------------------
+Programmatic Access to Estimation Results
+--------------------------------------------------------------------------------
+[Paper Ref | Section 4.1.4 (EstimationOutput)] Demonstrates that `model.fit()` returns an `EstimationOutput` object for programmatic access to all results.
+[EstimationOutput] The `model.fit()` method returns an EstimationOutput object.
+[EstimationOutput] Use `print(result)` to display a formatted regression table:
+==================== model results ====================
+Log-likelihood: [Training] -1874.638, [Validation] None, [Test] None
+
+| Coefficient                           |   Estimation |   Std. Err. |    z-value | Pr(>|z|)   | Significance   |
+|:--------------------------------------|-------------:|------------:|-----------:|:-----------|:---------------|
+| itemsession_cost_freq_ovt[constant]_0 | -0.0372948   |  0.00709518 |  -5.256    | 1.469e-07  | ***            |
+| itemsession_cost_freq_ovt[constant]_1 |  0.0934485   |  0.00509612 |  18.337    | < 2e-16    | ***            |
+| itemsession_cost_freq_ovt[constant]_2 | -0.042776    |  0.00322202 | -13.276    | < 2e-16    | ***            |
+| session_income[item]_0                | -0.0862387   |  0.018302   |  -4.712    | 2.453e-06  | ***            |
+| session_income[item]_1                | -0.0269129   |  0.00384874 |  -6.993    | 2.697e-12  | ***            |
+| session_income[item]_2                | -0.0370588   |  0.00406315 |  -9.121    | < 2e-16    | ***            |
+| itemsession_ivt[item-full]_0          |  0.059378    |  0.0100868  |   5.887    | 3.940e-09  | ***            |
+| itemsession_ivt[item-full]_1          | -0.00634744  |  0.00428099 |  -1.483    | 0.138      |                |
+| itemsession_ivt[item-full]_2          | -0.00583245  |  0.00189438 |  -3.079    | 0.002      | **             |
+| itemsession_ivt[item-full]_3          | -0.00137824  |  0.00118698 |  -1.161    | 0.246      |                |
+| intercept[item]_0                     |  3.91833e-09 |  1.26826    |   3.09e-09 | 1.000      |                |
+| intercept[item]_1                     |  1.32592     |  0.703734   |   1.884    | 0.060      | .              |
+| intercept[item]_2                     |  2.81914     |  0.618203   |   4.56     | 5.110e-06  | ***            |
+Significance codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+[EstimationOutput] Access log-likelihood programmatically:
+result.train_ll = -1874.63818359375
+result.val_ll = None
+result.test_ll = None
+
+[EstimationOutput] Access coefficient summary as a pandas DataFrame:
+result.coef_summary.head() =
+                                       Estimation  ...  Significance
+Coefficient                                        ...
+itemsession_cost_freq_ovt[constant]_0   -0.037295  ...           ***
+itemsession_cost_freq_ovt[constant]_1    0.093449  ...           ***
+itemsession_cost_freq_ovt[constant]_2   -0.042776  ...           ***
+session_income[item]_0                  -0.086239  ...           ***
+session_income[item]_1                  -0.026913  ...           ***
+
+[5 rows x 5 columns]
+
+[EstimationOutput] Access raw coefficient tensors via result.mean_dict:
+  coef_dict.itemsession_cost_freq_ovt[constant].coef: shape=(3,)
+  coef_dict.session_income[item].coef: shape=(3, 1)
+  coef_dict.itemsession_ivt[item-full].coef: shape=(4, 1)
+  coef_dict.intercept[item].coef: shape=(3, 1)
+
+[EstimationOutput] Convert all results to a dictionary with result.to_dict().
+
+--------------------------------------------------------------------------------
+Conditional Logit Post-Estimation
+--------------------------------------------------------------------------------
+[Paper Ref | Section 4.1.5 (Post-Estimation)] Pulls the same coefficients retrieved via `model.get_coefficient(...)` following Equation \eqref{eq:clm-post-estimation-example}.
+[CLM] intercept[item] shape=(3, 1) sample=tensor([[3.9183e-09],
+        [1.3259e+00],
+        [2.8191e+00]])
+[CLM] session_income[item] shape=(3, 1) sample=tensor([[-0.0862],
+        [-0.0269],
+        [-0.0371]])
+[CLM] itemsession_cost_freq_ovt[constant]=tensor([-0.0373,  0.0934, -0.0428])
+
+================================================================================
+Nested Logit Model
+================================================================================
+[Paper Ref | Section 4.2 (Nested Logit)] Demonstrates the two-level specification linked to Equations \eqref{eq:nlm-utility-decomposition}, \eqref{eq:nlm-likelihood-decomposition}, and \eqref{eq:nested-likelihood}.
+
+--------------------------------------------------------------------------------
+House Cooling Dataset
+--------------------------------------------------------------------------------
+[Paper Ref | Section 4.2 (Empirical Example)] Uses the House Cooling dataset from Train & Croissant / Appendix tutorial to ground the nested logit discussion.
+No `session_index` is provided, assume each choice instance is in its own session.
+No `session_index` is provided, assume each choice instance is in its own session.
+[House Cooling] Summary: 250 sessions, 7 items, 250 observed choices.
+[House Cooling] joint_dataset=JointDataset with 2 sub-datasets: (
+	nest: ChoiceDataset(num_items=7, num_users=1, num_sessions=250, label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], device=cpu)
+	item: ChoiceDataset(num_items=7, num_users=1, num_sessions=250, label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cpu)
+)
+
+--------------------------------------------------------------------------------
+Nested Logit Specification via Formulas
+--------------------------------------------------------------------------------
+[Paper Ref | Section 4.2.2 (Formulas)] Uses the formula interface described in the manuscript's Nested Logit section. For the House Cooling run we keep a minimal spec: nest intercepts via `(1|item)` and a constant coefficient on the item observable `price_obs`.
+[Nested Logit] Created regularized variant with L2 penalty (not trained here).
+
+--------------------------------------------------------------------------------
+Training Nested Logit Model
+--------------------------------------------------------------------------------
+[Paper Ref | Section 4.2.3 (Training)] Mirrors the Adam-based training recipe and TensorBoard logging mentioned for the nested model.
+[fit-torch] Epoch 100/1000 - avg loss per obs: 0.820332
+[fit-torch] Epoch 200/1000 - avg loss per obs: 0.758884
+[fit-torch] Epoch 300/1000 - avg loss per obs: 0.748071
+[fit-torch] Epoch 400/1000 - avg loss per obs: 0.742308
+[fit-torch] Epoch 500/1000 - avg loss per obs: 0.738567
+[fit-torch] Epoch 600/1000 - avg loss per obs: 0.736001
+[fit-torch] Epoch 700/1000 - avg loss per obs: 0.734100
+[fit-torch] Epoch 800/1000 - avg loss per obs: 0.732562
+[fit-torch] Epoch 900/1000 - avg loss per obs: 0.731219
+[fit-torch] Epoch 1000/1000 - avg loss per obs: 0.729981
+[fit-torch] Training log-likelihood: -182.492264
+[Nested Logit] Training completed in 2.21 seconds.
+
+--------------------------------------------------------------------------------
+Nested Logit Estimation Results
+--------------------------------------------------------------------------------
+[Paper Ref | Section 4.2.3 (EstimationOutput)] NestedLogitModel.fit() also returns an EstimationOutput object with the same interface as CLM.
+[EstimationOutput] Nested logit model estimation results via `print(nested_result)`:
+==================== model results ====================
+Log-likelihood: [Training] -182.492, [Validation] None, [Test] None
+
+| Coefficient                |   Estimation |   Std. Err. |   z-value |   Pr(>|z|) | Significance   |
+|:---------------------------|-------------:|------------:|----------:|-----------:|:---------------|
+| lambda_weight_0            |     0.332282 |   0.12679   |     2.621 |  0.009     | **             |
+| nest_intercept[item]_0     |    -1.04452  | 181.407     |    -0.006 |  0.995     |                |
+| item_price_obs[constant]_0 |    -0.317104 |   0.115103  |    -2.755 |  0.006     | **             |
+| item_price_obs[constant]_1 |    -0.488279 |   0.18387   |    -2.656 |  0.008     | **             |
+| item_price_obs[constant]_2 |    -0.404398 |   0.11187   |    -3.615 |  0.0003005 | ***            |
+| item_price_obs[constant]_3 |    -0.644406 |   0.969098  |    -0.665 |  0.506     |                |
+| item_price_obs[constant]_4 |    -0.213612 |   0.0778006 |    -2.746 |  0.006     | **             |
+| item_price_obs[constant]_5 |     0.222461 |   0.0452981 |     4.911 |  9.06e-07  | ***            |
+| item_price_obs[constant]_6 |     0.899528 | 181.459     |     0.005 |  0.996     |                |
+Significance codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+[EstimationOutput] nested_result.train_ll = -182.4922637939453
+
+--------------------------------------------------------------------------------
+Nested Logit Post-Estimation
+--------------------------------------------------------------------------------
+[Paper Ref | Section 4.2.4 (Post-Estimation)] Demonstrates `get_coefficient(..., level=...)` as described in the manuscript. Note: coefficients are only retrievable if they were included in the corresponding formula.
+[Nested Logit] lambda coefficients=tensor([0.3323])
+[Nested Logit] nest intercepts shape=(1, 1) values=tensor([[-1.0445]])
+[Nested Logit] item-level user intercepts not available (not included in item_formula; add `(1|user)` if you want to estimate them).
+
+==============================================================================
+paper_demo.py completed successfully
+==============================================================================
+
+==============================================================================
+Launching TensorBoard
+==============================================================================
+Starting TensorBoard on port 6006...
+Open http://localhost:6006/ in your browser.
+
+Press Ctrl+C to stop TensorBoard.
+
+==============================================================================
+Running paper_demo.py
+==============================================================================
+Command: uv run python replication/paper_demo.py --tensorboard-logdir lightning_logs --tensorboard-port 6006 --num-epochs 1000
+
+
+================================================================================
+Torch-Choice Manuscript Crosswalk
+================================================================================
+[Paper Ref | Overview] Script mirrors the 'Torch-Choice: A PyTorch Package for Large-Scale Choice Modeling with Python' manuscript in `torch-choice-paper/ms.tex`.
+[Paper Ref | Reading Guide] Keep the PDF open while running this script: Sections 3 (data), 4 (models), and 5 (benchmarks) line up with the blocks below.
+
+================================================================================
+Package Versions
+================================================================================
+np.__version__=1.26.4
+pd.__version__=2.3.3
+torch.__version__=2.9.1+cu128
+torch_choice.__version__=1.0.6
+[Setup] Random seed set to 42.
+
+================================================================================
+Data Structure
+================================================================================
+[Paper Ref | Section 3 (Data Structures)] Car-choice example corresponds to the EasyDataWrapper walk-through in Section 3.1 of the manuscript.
+
+--------------------------------------------------------------------------------
+car_choice.head()
+--------------------------------------------------------------------------------
+ record_id  session_id  consumer_id      car  purchase  gender    income  speed  discount  price
+         1           1            1 American         1       1 46.699997     10      0.94     90
+         1           1            1 Japanese         0       1 46.699997      8      0.94    110
+         1           1            1 European         0       1 46.699997      7      0.94     50
+         1           1            1   Korean         0       1 46.699997      8      0.94     10
+         2           2            2 American         1       1 26.100000     10      0.95    100
+
+--------------------------------------------------------------------------------
+Adding Observables, Method 1: Columns
+--------------------------------------------------------------------------------
+[Paper Ref | Section 3.1 / Listing (EasyDataWrapper)] Matches the first code listing that pipes the long-form car-choice table into `EasyDatasetWrapper`.
+Creating choice dataset from stata format data-frames...
+Note: choice sets of different sizes found in different purchase records: {'size 4': 'occurrence 505', 'size 3': 'occurrence 380'}
+Finished Creating Choice Dataset.
+* purchase record index range: [1 2 3] ... [883 884 885]
+* Space of 4 items:
+                   0         1         2       3
+item name  American  European  Japanese  Korean
+* Number of purchase records/cases: 885.
+* Preview of main data frame:
+      record_id  session_id  consumer_id  ... speed  discount  price
+0             1           1            1  ...    10      0.94     90
+1             1           1            1  ...     8      0.94    110
+2             1           1            1  ...     7      0.94     50
+3             1           1            1  ...     8      0.94     10
+4             2           2            2  ...    10      0.95    100
+...         ...         ...          ...  ...   ...       ...    ...
+3155        884         884          884  ...     8      0.89    100
+3156        884         884          884  ...     7      0.89     40
+3157        885         885          885  ...    10      0.81    100
+3158        885         885          885  ...     8      0.81     50
+3159        885         885          885  ...     7      0.81     40
+
+[3160 rows x 10 columns]
+* Preview of ChoiceDataset:
+ChoiceDataset(num_items=4, num_users=885, num_sessions=885, label=[], item_index=[885], user_index=[885], session_index=[885], item_availability=[885, 4], item_speed=[4, 1], user_gender=[885, 1], user_income=[885, 1], session_discount=[885, 1], itemsession_price=[885, 4, 1], device=cpu)
+[EasyDatasetWrapper] dataset_from_columns=ChoiceDataset(num_items=4, num_users=885, num_sessions=885, label=[], item_index=[885], user_index=[885], session_index=[885], item_availability=[885, 4], item_speed=[4, 1], user_gender=[885, 1], user_income=[885, 1], session_discount=[885, 1], itemsession_price=[885, 4, 1], device=cpu)
+
+--------------------------------------------------------------------------------
+Adding Observables, Method 2: Separate DataFrames
+--------------------------------------------------------------------------------
+[Paper Ref | Section 3.1 (Manual Observables Table)] Replicates the second listing where gender/income/speed/discount are supplied via auxiliary DataFrames.
+Creating choice dataset from stata format data-frames...
+Note: choice sets of different sizes found in different purchase records: {'size 4': 'occurrence 505', 'size 3': 'occurrence 380'}
+Finished Creating Choice Dataset.
+[EasyDatasetWrapper] Method 2 matches Method 1.
+
+--------------------------------------------------------------------------------
+Adding Observables, Method 3: Mixed Inputs
+--------------------------------------------------------------------------------
+[Paper Ref | Section 3.1 (Hybrid Wrapper Inputs)] Mirrors the discussion about mixing column names and pre-aggregated tables when building EasyDatasetWrapper inputs.
+Creating choice dataset from stata format data-frames...
+Note: choice sets of different sizes found in different purchase records: {'size 4': 'occurrence 505', 'size 3': 'occurrence 380'}
+Finished Creating Choice Dataset.
+[EasyDatasetWrapper] Mixed input method also matches.
+
+================================================================================
+Constructing a Choice Dataset from Tensors
+================================================================================
+[Paper Ref | Section 3.2 / Equation \eqref{eq:random-obs-data}] Synthetic tensor shapes (U=10, I=4, S=500, N=10,000) follow the Gaussian sampling recipe in that equation.
+[Synthetic Dataset] dataset=ChoiceDataset(num_items=4, num_users=10, num_sessions=500, label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], itemsession_obs=[500, 4, 12], useritem_obs=[10, 4, 32], usersession_obs=[10, 500, 10], usersessionitem_obs=[10, 500, 4, 8], device=cpu)
+
+================================================================================
+Choice Dataset Functionalities
+================================================================================
+[Paper Ref | Section 3.3 (ChoiceDataset API)] Correlates with the manuscript section that reviews `dataset.num_*`, cloning, device transfers, and batching.
+dataset.num_users=10
+dataset.num_items=4
+dataset.num_sessions=500
+len(dataset)=10000
+
+--------------------------------------------------------------------------------
+Cloning Behavior
+--------------------------------------------------------------------------------
+[Paper Ref | Section 3.3 (Cloning Listing)] Matches the code block demonstrating that modifying a clone leaves the original dataset unchanged.
+dataset.item_index[:10]=tensor([2, 3, 0, 2, 2, 3, 0, 0, 2, 1])
+dataset_cloned.item_index[:10]=tensor([99, 99, 99, 99, 99, 99, 99, 99, 99, 99])
+dataset.item_index[:10]=tensor([2, 3, 0, 2, 2, 3, 0, 0, 2, 1])
+
+--------------------------------------------------------------------------------
+Device Movement
+--------------------------------------------------------------------------------
+[Paper Ref | Section 3.3 (Device Transfers)] This mirrors the CPU→GPU transfer example right before the `_check_device_consistency()` listing.
+dataset.device=cpu
+dataset.user_index.device=cpu
+dataset.session_index.device=cpu
+dataset_cuda.device=cuda:0
+dataset_cuda.item_index.device=cuda:0
+dataset_cuda.user_index.device=cuda:0
+dataset_cuda.session_index.device=cuda:0
+[Paper Ref | Section 5 (Benchmarking)] Keeping tensors on the same device is what enables the GPU speed-ups reported in Section 5.
+
+--------------------------------------------------------------------------------
+Device Consistency Error Demonstration
+--------------------------------------------------------------------------------
+[Paper Ref | Section 3.3 (Intentional Device Error)] Same try/except setup discussed around the `_check_device_consistency()` error message.
+[Device Consistency] Expected error with mixed devices:
+  ("Found tensors on different devices: {device(type='cuda', index=0), device(type='cpu')}.", 'Use dataset.to() method to align devices.')
+
+--------------------------------------------------------------------------------
+Observables Dictionary Shapes
+--------------------------------------------------------------------------------
+[Paper Ref | Table 1 / Section 3.2] `dataset.x_dict` shapes correspond to the tensor naming and dimension rules summarized in Table 1.
+dict.user_obs.shape=(10000, 4, 128)
+dict.item_obs.shape=(10000, 4, 64)
+dict.session_obs.shape=(10000, 4, 10)
+dict.itemsession_obs.shape=(10000, 4, 12)
+dict.useritem_obs.shape=(10000, 4, 32)
+dict.usersession_obs.shape=(10000, 4, 10)
+dict.usersessionitem_obs.shape=(10000, 4, 8)
+
+--------------------------------------------------------------------------------
+Mini-batch Extraction
+--------------------------------------------------------------------------------
+[Paper Ref | Section 3.3 (Mini-batch Example)] Recreates the five-record sampling example that highlights in-place safety for subsets.
+indices=tensor([7119, 9650, 5466, 1073, 8419])
+subset=ChoiceDataset(num_items=4, num_users=10, num_sessions=500, label=[], item_index=[5], user_index=[5], session_index=[5], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], itemsession_obs=[500, 4, 12], useritem_obs=[10, 4, 32], usersession_obs=[10, 500, 10], usersessionitem_obs=[10, 500, 4, 8], device=cpu)
+dataset.item_index[indices]=tensor([2, 2, 1, 2, 3])
+[Mini-batch] After modifying subset.item_index, original dataset remains unchanged.
+subset.item_index=tensor([3, 3, 2, 3, 4])
+dataset.item_index[indices]=tensor([2, 2, 1, 2, 3])
+[Mini-batch] subset.item_obs[0, 0] vs dataset.item_obs[0, 0]:
+subset.item_obs[0, 0]=0.7051464319229126
+dataset.item_obs[0, 0]=-0.294853538274765
+id(subset.item_index)=131966776663552
+id(dataset.item_index[indices])=131966776665872
+
+--------------------------------------------------------------------------------
+JointDataset Demonstration
+--------------------------------------------------------------------------------
+[Paper Ref | Section 3.4 (Chaining datasets)] Demonstrates the same `JointDataset(item=..., nest=...)` example that prefaces the nested logit discussion.
+joint_dataset=JointDataset with 2 sub-datasets: (
+	item: ChoiceDataset(num_items=4, num_users=10, num_sessions=500, label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], itemsession_obs=[500, 4, 12], useritem_obs=[10, 4, 32], usersession_obs=[10, 500, 10], usersessionitem_obs=[10, 500, 4, 8], device=cpu)
+	nest: ChoiceDataset(num_items=4, num_users=10, num_sessions=500, label=[], item_index=[10000], user_index=[10000], session_index=[10000], item_availability=[500, 4], user_obs=[10, 128], item_obs=[4, 64], session_obs=[500, 10], itemsession_obs=[500, 4, 12], useritem_obs=[10, 4, 32], usersession_obs=[10, 500, 10], usersessionitem_obs=[10, 500, 4, 8], device=cpu)
+)
+
+--------------------------------------------------------------------------------
+DataLoader Consistency Checks
+--------------------------------------------------------------------------------
+[Paper Ref | Section 3.5 (PyTorch DataLoader)] Aligns with the sampler/DataLoader walkthrough for researchers customizing training loops.
+item_obs.shape=torch.Size([4, 64])
+item_obs_all.shape=torch.Size([10000, 4, 64])
+batch.x_dict['item_obs'].shape=torch.Size([32, 4, 64])
+
+--------------------------------------------------------------------------------
+dataset.x_dict Shapes (post DataLoader check)
+--------------------------------------------------------------------------------
+dict.user_obs.shape=(10000, 4, 128)
+dict.item_obs.shape=(10000, 4, 64)
+dict.session_obs.shape=(10000, 4, 10)
+dict.itemsession_obs.shape=(10000, 4, 12)
+dict.useritem_obs.shape=(10000, 4, 32)
+dict.usersession_obs.shape=(10000, 4, 10)
+dict.usersessionitem_obs.shape=(10000, 4, 8)
+dataset.__len__() returns 10000
+
+================================================================================
+Conditional Logit Model
+================================================================================
+[Paper Ref | Section 4.1 (Conditional Logit)] Implements the specification around Equations \eqref{eq:genearl-utility-clm}, \eqref{eq:clm-softmax}, and \eqref{eq:clm-iia} for the Mode Canada case study.
+[Mode Canada] dataset=ChoiceDataset(num_items=4, num_users=1, num_sessions=2779, label=[], item_index=[2779], user_index=[], session_index=[2779], item_availability=[], itemsession_cost_freq_ovt=[2779, 4, 3], session_income=[2779, 1], itemsession_ivt=[2779, 4, 1], device=cpu)
+
+--------------------------------------------------------------------------------
+Formula-based Specification
+--------------------------------------------------------------------------------
+[Paper Ref | Section 4.1.1 (Formula interface)] Matches the `formula='(itemsession_cost_freq_ovt|constant)+...'` snippet shown in the manuscript.
+
+--------------------------------------------------------------------------------
+Dictionary-based Specification
+--------------------------------------------------------------------------------
+[Paper Ref | Section 4.1.2 (Dictionary interface)] Explicitly replays the `coef_variation_dict` / `num_param_dict` example in the paper.
+
+--------------------------------------------------------------------------------
+Dictionary Specification with Regularization
+--------------------------------------------------------------------------------
+[Paper Ref | Section 4.1.3 / Equation \eqref{eq:regularized-loglikelihood}] Highlights how the same model can include L1 regularization with weight λ=0.5.
+
+--------------------------------------------------------------------------------
+Training via model.fit
+--------------------------------------------------------------------------------
+[Paper Ref | Section 4.1.4 (Model Estimation)] Corresponds to the `model.fit(..., model_optimizer="LBFGS")` example and the timing note in the manuscript.
+
+[Training] Completed in 18.48 seconds.
+[Paper Ref | Figure 1 (TensorBoard Curve)] Generated logs can be visualized exactly like Figure 1 once you launch TensorBoard.
+[TensorBoard] Logs saved to 'lightning_logs'.
+[TensorBoard] To visualize, run: uv run tensorboard --logdir lightning_logs --port 6006
+
+--------------------------------------------------------------------------------
+Programmatic Access to Estimation Results
+--------------------------------------------------------------------------------
+[Paper Ref | Section 4.1.4 (EstimationOutput)] Demonstrates that `model.fit()` returns an `EstimationOutput` object for programmatic access to all results.
+[EstimationOutput] The `model.fit()` method returns an EstimationOutput object.
+[EstimationOutput] Use `print(result)` to display a formatted regression table:
+==================== model results ====================
+Log-likelihood: [Training] -1874.638, [Validation] None, [Test] None
+
+| Coefficient                           |   Estimation |   Std. Err. |    z-value | Pr(>|z|)   | Significance   |
+|:--------------------------------------|-------------:|------------:|-----------:|:-----------|:---------------|
+| itemsession_cost_freq_ovt[constant]_0 | -0.0372948   |  0.00709518 |  -5.256    | 1.469e-07  | ***            |
+| itemsession_cost_freq_ovt[constant]_1 |  0.0934485   |  0.00509612 |  18.337    | < 2e-16    | ***            |
+| itemsession_cost_freq_ovt[constant]_2 | -0.042776    |  0.00322202 | -13.276    | < 2e-16    | ***            |
+| session_income[item]_0                | -0.0862387   |  0.018302   |  -4.712    | 2.453e-06  | ***            |
+| session_income[item]_1                | -0.0269129   |  0.00384874 |  -6.993    | 2.697e-12  | ***            |
+| session_income[item]_2                | -0.0370588   |  0.00406315 |  -9.121    | < 2e-16    | ***            |
+| itemsession_ivt[item-full]_0          |  0.059378    |  0.0100868  |   5.887    | 3.940e-09  | ***            |
+| itemsession_ivt[item-full]_1          | -0.00634744  |  0.00428099 |  -1.483    | 0.138      |                |
+| itemsession_ivt[item-full]_2          | -0.00583245  |  0.00189438 |  -3.079    | 0.002      | **             |
+| itemsession_ivt[item-full]_3          | -0.00137824  |  0.00118698 |  -1.161    | 0.246      |                |
+| intercept[item]_0                     |  3.91833e-09 |  1.26826    |   3.09e-09 | 1.000      |                |
+| intercept[item]_1                     |  1.32592     |  0.703734   |   1.884    | 0.060      | .              |
+| intercept[item]_2                     |  2.81914     |  0.618203   |   4.56     | 5.110e-06  | ***            |
+Significance codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+[EstimationOutput] Access log-likelihood programmatically:
+result.train_ll = -1874.63818359375
+result.val_ll = None
+result.test_ll = None
+
+[EstimationOutput] Access coefficient summary as a pandas DataFrame:
+result.coef_summary.head() =
+                                       Estimation  ...  Significance
+Coefficient                                        ...
+itemsession_cost_freq_ovt[constant]_0   -0.037295  ...           ***
+itemsession_cost_freq_ovt[constant]_1    0.093449  ...           ***
+itemsession_cost_freq_ovt[constant]_2   -0.042776  ...           ***
+session_income[item]_0                  -0.086239  ...           ***
+session_income[item]_1                  -0.026913  ...           ***
+
+[5 rows x 5 columns]
+
+[EstimationOutput] Access raw coefficient tensors via result.mean_dict:
+  coef_dict.itemsession_cost_freq_ovt[constant].coef: shape=(3,)
+  coef_dict.session_income[item].coef: shape=(3, 1)
+  coef_dict.itemsession_ivt[item-full].coef: shape=(4, 1)
+  coef_dict.intercept[item].coef: shape=(3, 1)
+
+[EstimationOutput] Convert all results to a dictionary with result.to_dict().
+
+--------------------------------------------------------------------------------
+Conditional Logit Post-Estimation
+--------------------------------------------------------------------------------
+[Paper Ref | Section 4.1.5 (Post-Estimation)] Pulls the same coefficients retrieved via `model.get_coefficient(...)` following Equation \eqref{eq:clm-post-estimation-example}.
+[CLM] intercept[item] shape=(3, 1) sample=tensor([[3.9183e-09],
+        [1.3259e+00],
+        [2.8191e+00]])
+[CLM] session_income[item] shape=(3, 1) sample=tensor([[-0.0862],
+        [-0.0269],
+        [-0.0371]])
+[CLM] itemsession_cost_freq_ovt[constant]=tensor([-0.0373,  0.0934, -0.0428])
+
+================================================================================
+Nested Logit Model
+================================================================================
+[Paper Ref | Section 4.2 (Nested Logit)] Demonstrates the two-level specification linked to Equations \eqref{eq:nlm-utility-decomposition}, \eqref{eq:nlm-likelihood-decomposition}, and \eqref{eq:nested-likelihood}.
+
+--------------------------------------------------------------------------------
+House Cooling Dataset
+--------------------------------------------------------------------------------
+[Paper Ref | Section 4.2 (Empirical Example)] Uses the House Cooling dataset from Train & Croissant / Appendix tutorial to ground the nested logit discussion.
+No `session_index` is provided, assume each choice instance is in its own session.
+No `session_index` is provided, assume each choice instance is in its own session.
+[House Cooling] Summary: 250 sessions, 7 items, 250 observed choices.
+[House Cooling] joint_dataset=JointDataset with 2 sub-datasets: (
+	nest: ChoiceDataset(num_items=7, num_users=1, num_sessions=250, label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], device=cpu)
+	item: ChoiceDataset(num_items=7, num_users=1, num_sessions=250, label=[], item_index=[250], user_index=[], session_index=[250], item_availability=[], price_obs=[250, 7, 7], device=cpu)
+)
+
+--------------------------------------------------------------------------------
+Nested Logit Specification via Formulas
+--------------------------------------------------------------------------------
+[Paper Ref | Section 4.2.2 (Formulas)] Uses the formula interface described in the manuscript's Nested Logit section. For the House Cooling run we keep a minimal spec: nest intercepts via `(1|item)` and a constant coefficient on the item observable `price_obs`.
+[Nested Logit] Created regularized variant with L2 penalty (not trained here).
+
+--------------------------------------------------------------------------------
+Training Nested Logit Model
+--------------------------------------------------------------------------------
+[Paper Ref | Section 4.2.3 (Training)] Mirrors the Adam-based training recipe and TensorBoard logging mentioned for the nested model.
+[fit-torch] Epoch 100/1000 - avg loss per obs: 0.820332
+[fit-torch] Epoch 200/1000 - avg loss per obs: 0.758884
+[fit-torch] Epoch 300/1000 - avg loss per obs: 0.748071
+[fit-torch] Epoch 400/1000 - avg loss per obs: 0.742308
+[fit-torch] Epoch 500/1000 - avg loss per obs: 0.738567
+[fit-torch] Epoch 600/1000 - avg loss per obs: 0.736001
+[fit-torch] Epoch 700/1000 - avg loss per obs: 0.734100
+[fit-torch] Epoch 800/1000 - avg loss per obs: 0.732562
+[fit-torch] Epoch 900/1000 - avg loss per obs: 0.731219
+[fit-torch] Epoch 1000/1000 - avg loss per obs: 0.729981
+[fit-torch] Training log-likelihood: -182.492264
+[Nested Logit] Training completed in 2.14 seconds.
+
+--------------------------------------------------------------------------------
+Nested Logit Estimation Results
+--------------------------------------------------------------------------------
+[Paper Ref | Section 4.2.3 (EstimationOutput)] NestedLogitModel.fit() also returns an EstimationOutput object with the same interface as CLM.
+[EstimationOutput] Nested logit model estimation results via `print(nested_result)`:
+==================== model results ====================
+Log-likelihood: [Training] -182.492, [Validation] None, [Test] None
+
+| Coefficient                |   Estimation |   Std. Err. |   z-value |   Pr(>|z|) | Significance   |
+|:---------------------------|-------------:|------------:|----------:|-----------:|:---------------|
+| lambda_weight_0            |     0.332282 |   0.12679   |     2.621 |  0.009     | **             |
+| nest_intercept[item]_0     |    -1.04452  | 181.407     |    -0.006 |  0.995     |                |
+| item_price_obs[constant]_0 |    -0.317104 |   0.115103  |    -2.755 |  0.006     | **             |
+| item_price_obs[constant]_1 |    -0.488279 |   0.18387   |    -2.656 |  0.008     | **             |
+| item_price_obs[constant]_2 |    -0.404398 |   0.11187   |    -3.615 |  0.0003005 | ***            |
+| item_price_obs[constant]_3 |    -0.644406 |   0.969098  |    -0.665 |  0.506     |                |
+| item_price_obs[constant]_4 |    -0.213612 |   0.0778006 |    -2.746 |  0.006     | **             |
+| item_price_obs[constant]_5 |     0.222461 |   0.0452981 |     4.911 |  9.06e-07  | ***            |
+| item_price_obs[constant]_6 |     0.899528 | 181.459     |     0.005 |  0.996     |                |
+Significance codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+[EstimationOutput] nested_result.train_ll = -182.4922637939453
+
+--------------------------------------------------------------------------------
+Nested Logit Post-Estimation
+--------------------------------------------------------------------------------
+[Paper Ref | Section 4.2.4 (Post-Estimation)] Demonstrates `get_coefficient(..., level=...)` as described in the manuscript. Note: coefficients are only retrievable if they were included in the corresponding formula.
+[Nested Logit] lambda coefficients=tensor([0.3323])
+[Nested Logit] nest intercepts shape=(1, 1) values=tensor([[-1.0445]])
+[Nested Logit] item-level user intercepts not available (not included in item_formula; add `(1|user)` if you want to estimate them).
+
+==============================================================================
+paper_demo.py completed successfully
+==============================================================================
+
+==============================================================================
+Launching TensorBoard
+==============================================================================
+Starting TensorBoard on port 6006...
+Open http://localhost:6006/ in your browser.
+
+Press Ctrl+C to stop TensorBoard.
+
