@@ -89,7 +89,7 @@ BATCH_SIZE="${BATCH_SIZE:-}"  # Empty string signals auto-detection; set explici
 DEVICE="${DEVICE:-auto}"  # auto|cpu|cuda
 
 # Reduce CUDA memory fragmentation on smaller GPUs.
-export PYTORCH_CUDA_ALLOC_CONF="${PYTORCH_CUDA_ALLOC_CONF:-expandable_segments:True}"
+export PYTORCH_ALLOC_CONF="${PYTORCH_ALLOC_CONF:-expandable_segments:True}"
 
 # Optional: restrict experiments for quicker smoke tests.
 GENERATE_EXPERIMENTS="${GENERATE_EXPERIMENTS:-${DEFAULT_GENERATE_EXPERIMENTS}}"  # space-separated list or "all"
