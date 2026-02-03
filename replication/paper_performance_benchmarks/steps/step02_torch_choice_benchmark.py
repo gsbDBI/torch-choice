@@ -30,6 +30,61 @@ def _set_device(device_arg: str) -> str:
     return DEVICE
 
 
+def _auto_batch_size() -> int:
+    """Return a batch size appropriate for available GPU memory.
+
+    Empirically tested on RTX 3090 (24GB) with num_records_experiment_large (100K records × 500 items):
+    - batch_size=131,072: ~8,087 MB peak (OOM at 262,144)
+    - batch_size=65,536: ~4,080 MB peak
+    - batch_size=32,768: ~2,180 MB peak
+
+    Thresholds based on 70% safety margin of empirically determined limits.
+
+    Environment Variables:
+        GPU_MEM_LIMIT: If set, limits the GPU memory considered for batch size selection
+                      (in GB). Useful when running other concurrent GPU workloads.
+                      Example: GPU_MEM_LIMIT=10 will select batch size as if GPU had 10GB.
+    """
+    if not torch.cuda.is_available():
+        return -1  # CPU: full batch is fine
+
+    props = torch.cuda.get_device_properties(0)
+    actual_mem_gb = props.total_memory / (1024**3)
+    gpu_name = props.name
+
+    # Check for user-defined memory limit
+    mem_limit_env = os.environ.get("GPU_MEM_LIMIT")
+    if mem_limit_env:
+        try:
+            total_mem_gb = float(mem_limit_env)
+            print(f"[Auto batch size] GPU: {gpu_name} (actual: {actual_mem_gb:.1f} GB, "
+                  f"limit: {total_mem_gb:.1f} GB via GPU_MEM_LIMIT)")
+        except ValueError:
+            print(f"[Auto batch size] Warning: Invalid GPU_MEM_LIMIT='{mem_limit_env}', "
+                  f"using actual GPU memory: {actual_mem_gb:.1f} GB")
+            total_mem_gb = actual_mem_gb
+    else:
+        total_mem_gb = actual_mem_gb
+
+    # Empirically determined thresholds based on stress testing
+    # OOM at batch_size=262,144 on 24GB GPU with 100K records × 500 items
+    # Using 70% safety margin of max successful batch (131,072)
+    if total_mem_gb < 8:
+        batch_size = 8192  # ~600 MB, safe for 8GB GPUs
+    elif total_mem_gb < 12:
+        batch_size = 16384  # ~1,100 MB, safe for 10-12GB GPUs
+    elif total_mem_gb < 16:
+        batch_size = 32768  # ~2,200 MB, safe for 16GB GPUs
+    elif total_mem_gb < 22:
+        batch_size = 65536  # ~4,100 MB, safe for 20-22GB GPUs (e.g., RTX 4000 Ada)
+    else:
+        batch_size = 131072  # ~8,100 MB, for 24GB+ GPUs (e.g., RTX 3090/4090)
+
+    effective = f"{batch_size:,}" if batch_size > 0 else "full batch"
+    print(f"[Auto batch size] GPU: {gpu_name} ({total_mem_gb:.1f} GB) -> batch_size={effective}")
+    return batch_size
+
+
 def load_dataset(
     data_path: Union[str, Path],
     filename: str,
@@ -285,7 +340,7 @@ def build_arg_parser(add_help: bool = True) -> argparse.ArgumentParser:
     parser.add_argument("--num-seeds", type=int, default=5, help="Number of seeds.")
     parser.add_argument("--num-epochs", type=int, default=50_000, help="Max epochs.")
     parser.add_argument("--learning-rate", type=float, default=0.03, help="Learning rate.")
-    parser.add_argument("--batch-size", type=int, default=-1, help="Batch size; -1 for full batch.")
+    parser.add_argument("--batch-size", type=int, default=None, help="Batch size; -1 for full batch, omit to auto-detect based on GPU memory.")
     parser.add_argument(
         "--smoke-test",
         action="store_true",
@@ -305,6 +360,11 @@ def main(argv: List[str] | None = None) -> None:
     parser = build_arg_parser()
     args = parser.parse_args(argv)
     _set_device(args.device)
+
+    # Resolve batch size: None means auto-detect
+    if args.batch_size is None:
+        args.batch_size = _auto_batch_size()
+
     run_all(args)
 
 

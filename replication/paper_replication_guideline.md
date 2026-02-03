@@ -78,6 +78,11 @@ export BATCH_SIZE=32768
 
 # Force full-batch training (use with caution)
 export BATCH_SIZE=-1
+
+# Limit GPU memory usage (value in GB)
+# Useful when running other GPU workloads concurrently
+# This makes the benchmark behave as if your GPU has less memory than it actually does
+# export GPU_MEM_LIMIT=10  # Use only 10GB of GPU memory
 ```
 
 **If you still encounter OOM errors**, you can:

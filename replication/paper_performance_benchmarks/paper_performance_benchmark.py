@@ -50,6 +50,9 @@ def main(argv: List[str] | None = None) -> None:
         )
     elif args.command == "torch-choice":
         _step02_torch_choice_benchmark._set_device(args.device)
+        # Resolve batch size: None means auto-detect
+        if args.batch_size is None:
+            args.batch_size = _step02_torch_choice_benchmark._auto_batch_size()
         _step02_torch_choice_benchmark.run_all(args)
     elif args.command == "visualize":
         _step03_performance_visualization_v2.visualize(
