@@ -85,8 +85,11 @@ NUM_RECORDS="${NUM_RECORDS:-${DEFAULT_NUM_RECORDS}}"
 NUM_SEEDS="${NUM_SEEDS:-${DEFAULT_NUM_SEEDS}}"
 NUM_EPOCHS="${NUM_EPOCHS:-${DEFAULT_NUM_EPOCHS}}"
 LEARNING_RATE="${LEARNING_RATE:-0.01}"
-BATCH_SIZE="${BATCH_SIZE:--1}"
+BATCH_SIZE="${BATCH_SIZE:-}"  # Empty string signals auto-detection; set explicit value to override.
 DEVICE="${DEVICE:-auto}"  # auto|cpu|cuda
+
+# Reduce CUDA memory fragmentation on smaller GPUs.
+export PYTORCH_CUDA_ALLOC_CONF="${PYTORCH_CUDA_ALLOC_CONF:-expandable_segments:True}"
 
 # Optional: restrict experiments for quicker smoke tests.
 GENERATE_EXPERIMENTS="${GENERATE_EXPERIMENTS:-${DEFAULT_GENERATE_EXPERIMENTS}}"  # space-separated list or "all"
@@ -157,7 +160,7 @@ main() {
     --num-seeds "${NUM_SEEDS}" \
     --num-epochs "${NUM_EPOCHS}" \
     --learning-rate "${LEARNING_RATE}" \
-    --batch-size "${BATCH_SIZE}" \
+    ${BATCH_SIZE:+--batch-size "${BATCH_SIZE}"} \
     ${TORCH_EXTRA_ARGS[@]+"${TORCH_EXTRA_ARGS[@]}"}
 
   echo "[3/4] Benchmark R (mlogit) -> ${RESULTS_PATH}"
