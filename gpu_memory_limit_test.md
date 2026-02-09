@@ -15,14 +15,6 @@ This guide focuses on the PyTorch steps only (stages 1 and 2). R and the visuali
 - CUDA drivers installed
 - Internet connection for downloading packages
 
-> **Quick Start:**
-> ```bash
-> export SMOKE_TEST=1
-> export DEVICE=cuda
-> export SKIP_R=1
-> uv run bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
-> ```
-
 ---
 
 ## Step 1: Install uv (Python Package Manager)
