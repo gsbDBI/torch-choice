@@ -89,9 +89,10 @@ uv run bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
 This runs the complete benchmarking suite with the full data grids (up to 3 M records, 5 seeds, 50 K epochs). Use `GPU_MEM_LIMIT` to simulate a smaller GPU if your hardware has more memory than the target configuration.
 
 ```bash
-export SMOKE_TEST=0
-export DEVICE=cuda
-export SKIP_R=1
+export SMOKE_TEST=0  # run the full benchmark.
+export DEVICE=cuda  # run on GPU.
+export SKIP_R=1  # GPU stress test only needs PyTorch, no R.
+export NUM_SEEDS=1  # only need to set 1 seed for the GPU stress test.
 export GPU_MEM_LIMIT=10  # Behave as if GPU has 10GB
 uv run bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
 ```
