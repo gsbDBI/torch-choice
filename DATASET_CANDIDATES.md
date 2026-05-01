@@ -93,7 +93,14 @@ When evaluating candidates, judge against:
 | F3 | **Cracker** (mlogit) | cran/mlogit | CPG / brand panel | GPL-2 | 3,292 occasions × 4 brands × ~136 HHs | Sister to Yogurt; brand loyalty / state dep. | Jain–Vilcassim–Chintagunta JBES 1994 |
 | F4 | **Game** (mlogit) | cran/mlogit | Gaming platforms (ranked) | GPL-2 | 91 resp × 6 platforms (full rankings) | Rank-ordered / exploded logit demo | Fok et al. *J Appl Econ* 2012 |
 | F5 | MTC Work Mode (1990 SF Bay) | larch package | Urban transport | GPLv3 (data: public domain) | 5,029 trips × 6 modes | 6-alt MNL with avail mask; SIM canonical | Daly 1987 |
-| F6 | **Mas–Pallais Alt Work Arrangements** | openICPSR `113162` | Labor / WTP | AEA standard | ~7k applicants × 2 alt | ⭐ Cleanest published WTP table; labor-econ DCE | Mas & Pallais AER 2017 |
+| F6 | **Mas–Pallais Alt Work Arrangements** † | openICPSR `113162` | Labor / WTP | AEA standard | ~7k applicants × 2 alt | ⭐ Cleanest published WTP table; labor-econ DCE | Mas & Pallais AER 2017 |
+
+† **Deferred**: tried to build `tutorials/mas_pallais/` (April 2026) but openICPSR's
+download path is auth-walled and Cloudflare-protected, blocking scripted access
+even with a Researcher Passport. A synthetic-DGP fallback was prototyped but
+removed because a tutorial that doesn't fit the actual paper's data isn't
+worth shipping. Picking this up requires a manual one-time download by someone
+with login credentials.
 | F7 | **Fosgerau IPDL on cereal** | openICPSR `194501` | RTE cereal demand | AEA standard | ~2k market-product (Nevo data) | 2024 IPDL vs BLP/RCL benchmark | Fosgerau et al. AEJ:Micro 2024 |
 | F8 | Abaluck–Gruber Medicare Part D | openICPSR `112428` | Health insurance | AEA standard | ~3k enrollees × dozens of plans | Iconic premium-vs-OOP weight decomp | Abaluck & Gruber AER 2011 |
 | F9 | Ho–Pakes Hospital Choices | openICPSR `112712` | Healthcare | AEA standard | ~150k CA births × ~250 hospitals | CL baseline + moment-inequality contrast | Ho & Pakes AER 2014 |

@@ -383,6 +383,13 @@ replication/paper_performance_benchmarks/runs
 # HC, car_choice) are unaffected; only the downloads/ subdir is ignored.
 tutorials/public_datasets/downloads/
 
+# LPMC dataset is fetched on demand by tutorials/lpmc/load_lpmc.py from the
+# EPFL ChoiceModels MOOC asset URL. We don't redistribute it (academic-use
+# license, ~12 MB).
+tutorials/lpmc/lpmc.dat
+tutorials/lpmc/lpmc.csv
+tutorials/lpmc/mlogit_stderr.log
+
 # Per-user Claude Code settings; the project-level skills under .claude/skills/
 # are tracked.
 .claude/settings.local.json

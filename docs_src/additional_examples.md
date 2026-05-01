@@ -16,7 +16,7 @@ and contains:
 - a cached `mlogit_output.json` (so readers without R can still see the numbers),
 - the executed notebook with cell outputs.
 
-## Verification summary across 8 datasets
+## Verification summary across 10 datasets
 
 For each dataset we report:
 - **Log-likelihood (LL)** match between the two packages
@@ -27,11 +27,13 @@ For each dataset we report:
 | Dataset | mlogit LL | tc LL | LL diff | Est max abs | Est max % | SE max abs | SE max % |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | [yogurt](https://github.com/gsbDBI/torch-choice/blob/main/tutorials/yogurt/yogurt.ipynb) | -2656.8879 | -2656.8879 | 6.2e-5 | 3.86e-5 | 0.0022% | 1.78e-6 | 0.0009% |
+| [cracker](https://github.com/gsbDBI/torch-choice/blob/main/tutorials/cracker/cracker.ipynb) | -3347.7133 | -3347.7134 | 8.9e-5 | 2.50e-4 | 0.0178% | 5.28e-6 | 0.0066% |
 | [electricity](https://github.com/gsbDBI/torch-choice/blob/main/tutorials/electricity/electricity.ipynb) | -4958.6491 | -4958.6494 | 2.9e-4 | 1.86e-4 | 0.0037% | 1.26e-6 | 0.0008% |
 | [nox](https://github.com/gsbDBI/torch-choice/blob/main/tutorials/nox/nox.ipynb) | -1064.8147 | -1064.8147 | 2.2e-5 | 5.95e-6 | 0.0007% | 2.18e-7 | 0.0002% |
 | [risky_transport](https://github.com/gsbDBI/torch-choice/blob/main/tutorials/risky_transport/risky_transport.ipynb) | -1722.3061 | -1722.3060 | 9.9e-5 | 3.65e-6 | 0.0009% | 4.68e-8 | 0.0001% |
 | [brownstone_train_car](https://github.com/gsbDBI/torch-choice/blob/main/tutorials/brownstone_train_car/brownstone_train_car.ipynb) | -7080.8290 | -7080.8291 | 1.0e-4 | 1.13e-5 | 0.0071% | 2.03e-7 | 0.0003% |
 | [travel_mode](https://github.com/gsbDBI/torch-choice/blob/main/tutorials/travel_mode/travel_mode.ipynb) | -172.4680 | -172.4680 | **4.1e-11** | 6.84e-6 | 0.0013% | 1.42e-6 | 0.0001% |
+| [lpmc](https://github.com/gsbDBI/torch-choice/blob/main/tutorials/lpmc/lpmc.ipynb) | -67929.3618 | -67929.3594 | 2.4e-3 | 6.92e-5 | 0.0016% | 5.31e-7 | 0.0007% |
 | [japanese_fdi](https://github.com/gsbDBI/torch-choice/blob/main/tutorials/japanese_fdi/japanese_fdi.ipynb) (nested) | -1726.9810 | -1726.9810 | 3.5e-5 | 2.67e-4 | 0.0315% | 8.75e-2 | 9.43% |
 | [swiss_route_choice](https://github.com/gsbDBI/torch-choice/blob/main/tutorials/swiss_route_choice/swiss_route_choice.ipynb) | -1665.6885 | -1665.6885 | 2.0e-5 | 7.58e-6 | 0.0008% | 1.65e-7 | 0.0004% |
 
@@ -50,11 +52,13 @@ inclusive-value parameters.
 | Dataset | Domain | Reference | Notable feature |
 |---|---|---|---|
 | yogurt | CPG / brand choice (panel of 100 households × ~24 occasions) | Jain–Vilcassim–Chintagunta, JBES 1994 | Wide-format brand prices and feature dummies; classic mixed-logit motivating example |
+| cracker | CPG / brand choice (panel scanner data, 4 cracker brands) | Jain–Vilcassim–Chintagunta, JBES 1994 | Sister to yogurt — different category; brand-loyalty / state-dependence framing |
 | electricity | Energy retail / SP supplier choice (panel) | Train, *Discrete Choice Methods* Ch. 6 | Wide-per-row SP design with 4 hypothetical suppliers per task |
 | nox | Environmental policy / pollution-control technology | Fowlie, AER 2010 | Explicit `available` mask; regime × cost interactions reproduce Fowlie's identification |
 | risky_transport | Development econ / transport mode + risk | Léon & Miguel, AEJ-Applied 2017 | Availability variation; framed for value-of-statistical-life estimation |
 | brownstone_train_car | Vehicle adoption SP (6 alternatives × 11 attributes) | Brownstone & Train, JoE 1999 | Wide-format reshape with 70 columns; high-dimensional attribute space |
 | travel_mode | Inter-city transportation (Greene textbook) | Greene, *Econometric Analysis* Ch. 19 | Tiny (210 individuals × 4 modes); float64 + LBFGS strong-Wolfe needed for stable fit |
+| lpmc | Urban transportation (London, multimodal RP) | Hillel et al., 2018 / 2021 | **81k trips × 4 modes** — the package's GPU-scale showcase; loader script (license-respectful) |
 | japanese_fdi | Firm location / FDI (Europe) | Head & Mayer, RES 2004 | **Nested logit**: 50 NUTS1 regions within 9 country nests |
 | swiss_route_choice | Inter-urban rail SP route choice | Axhausen et al., Transp Policy 2008 | Apollo workhorse for VTTS; binary route choice, panel SP |
 

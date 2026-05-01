@@ -13,11 +13,13 @@ nav:
     - Additional Examples:
         - Overview: additional_examples.md
         - Yogurt (CPG / brand choice): yogurt.md
+        - Cracker (CPG / brand choice): cracker.md
         - Electricity (energy retail SP): electricity.md
         - NOx (pollution-control technology): nox.md
         - Risky Transport (Léon-Miguel VSL): risky_transport.md
         - Brownstone-Train Car (vehicle adoption): brownstone_train_car.md
         - Travel Mode (Greene Ch.19): travel_mode.md
+        - LPMC (London Passenger Mode Choice): lpmc.md
         - Japanese FDI (nested logit): japanese_fdi.md
         - Swiss Route Choice (Apollo SP): swiss_route_choice.md
     - Post Estimation: post_estimation_demos.md
