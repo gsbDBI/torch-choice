@@ -104,8 +104,6 @@ model = ConditionalLogitModel(
 
 ```python
 model.fit(data.choice_dataset, num_epochs=5000, learning_rate=0.01, batch_size=-1)
-# Need a regression-style summary with standard errors? You can still call
-# torch_choice.utils.run_helper.run(model, ...) which now forwards to model.fit(...).
 ```
 
     ==================== received model ====================
@@ -120,7 +118,7 @@ model.fit(data.choice_dataset, num_epochs=5000, learning_rate=0.01, batch_size=-
       )
     )
     Conditional logistic discrete choice model, expects input features:
-
+    
     X[itemsession_cost] with 1 parameters, with constant level variation.
     X[itemsession_freq] with 1 parameters, with constant level variation.
     X[itemsession_ovt] with 1 parameters, with constant level variation.
@@ -143,15 +141,15 @@ model.fit(data.choice_dataset, num_epochs=5000, learning_rate=0.01, batch_size=-
     Epoch 5000: Log-likelihood=-1880.450439453125
     ==================== model results ====================
     Training Epochs: 5000
-
+    
     Learning Rate: 0.01
-
+    
     Batch Size: 2779 out of 2779 observations in total
-
+    
     Final Log-likelihood: -1880.450439453125
-
+    
     Coefficients:
-
+    
     | Coefficient        |   Estimation |   Std. Err. |
     |:-------------------|-------------:|------------:|
     | itemsession_cost_0 | -0.0395517   |  0.00698674 |
@@ -183,7 +181,7 @@ model.fit(data.choice_dataset, num_epochs=5000, learning_rate=0.01, batch_size=-
       )
     )
     Conditional logistic discrete choice model, expects input features:
-
+    
     X[itemsession_cost] with 1 parameters, with constant level variation.
     X[itemsession_freq] with 1 parameters, with constant level variation.
     X[itemsession_ovt] with 1 parameters, with constant level variation.
@@ -203,22 +201,22 @@ summary(ml.MC1)
 R output:
 ```
 Call:
-mlogit(formula = choice ~ cost + freq + ovt | income | ivt, data = MC,
+mlogit(formula = choice ~ cost + freq + ovt | income | ivt, data = MC, 
     reflevel = "air", method = "nr")
 
 Frequencies of alternatives:choice
-      air       bus       car     train
-0.3738755 0.0035984 0.4559194 0.1666067
+      air       bus       car     train 
+0.3738755 0.0035984 0.4559194 0.1666067 
 
 nr method
-9 iterations, 0h:0m:0s
-g'(-H)^-1g = 0.00014
-successive function values within tolerance limits
+9 iterations, 0h:0m:0s 
+g'(-H)^-1g = 0.00014 
+successive function values within tolerance limits 
 
 Coefficients :
-                    Estimate Std. Error  z-value  Pr(>|z|)
-(Intercept):bus    0.6983381  1.2802466   0.5455 0.5854292
-(Intercept):car    1.8441129  0.7085089   2.6028 0.0092464 **
+                    Estimate Std. Error  z-value  Pr(>|z|)    
+(Intercept):bus    0.6983381  1.2802466   0.5455 0.5854292    
+(Intercept):car    1.8441129  0.7085089   2.6028 0.0092464 ** 
 (Intercept):train  3.2741952  0.6244152   5.2436 1.575e-07 ***
 cost              -0.0333389  0.0070955  -4.6986 2.620e-06 ***
 freq               0.0925297  0.0050976  18.1517 < 2.2e-16 ***
@@ -227,13 +225,13 @@ income:bus        -0.0890867  0.0183471  -4.8556 1.200e-06 ***
 income:car        -0.0279930  0.0038726  -7.2286 4.881e-13 ***
 income:train      -0.0381466  0.0040831  -9.3426 < 2.2e-16 ***
 ivt:air            0.0595097  0.0100727   5.9080 3.463e-09 ***
-ivt:bus           -0.0067835  0.0044334  -1.5301 0.1259938
+ivt:bus           -0.0067835  0.0044334  -1.5301 0.1259938    
 ivt:car           -0.0064603  0.0018985  -3.4029 0.0006668 ***
-ivt:train         -0.0014504  0.0011875  -1.2214 0.2219430
+ivt:train         -0.0014504  0.0011875  -1.2214 0.2219430    
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Log-Likelihood: -1874.3
-McFadden R^2:  0.35443
+McFadden R^2:  0.35443 
 Likelihood ratio test : chisq = 2058.1 (p.value = < 2.22e-16)
 ```

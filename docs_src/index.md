@@ -22,7 +22,7 @@ $$
 P_{uis} = \frac{e^{\mu_{uis}}}{\Sigma_{j \in A_{us}}e^{\mu_{ujs}}}
 $$
 
-where,
+where, 
 
 $$\mu_{uis} = \alpha + \beta X + \gamma W + \dots$$
 
@@ -39,7 +39,7 @@ where $\epsilon$ is an unobserved random error term.
 If we assume iid extreme value type 1 errors for $\epsilon_{uis}$, this leads to the above logistic probabilities of user $u$ choosing item $i$ in session $s$, as shown by [McFadden](https://en.wikipedia.org/wiki/Choice_modelling), and as often studied in Econometrics.
 
 ## Package
-We implement a fully flexible setup, where we allow
+We implement a fully flexible setup, where we allow 
 1. coefficients ($\alpha$, $\beta$, $\gamma$, $\dots$) to be constant, user-specific (i.e., $\alpha=\alpha_u$), item-specific (i.e., $\alpha=\alpha_i$), session-specific (i.e., $\alpha=\alpha_t$), or (session, item)-specific (i.e., $\alpha=\alpha_{ti}$). For example, specifying $\alpha$ to be item-specific is equivalent to adding an item-level fixed effect.
 2. Observables ($X$, $Y$, $\dots$) to be constant, user-specific, item-specific, session-specific, or (session, item) (such as price) and (session, user) (such as income) specific as well.
 3. Specifying availability sets $A_{us}$
@@ -104,13 +104,14 @@ this is equivalent to the functional form described in the previous section
 ```python
 # load packages.
 import pandas as pd
-import torch_choice
+from torch_choice.utils import EasyDatasetWrapper
+from torch_choice.model import ConditionalLogitModel
 
 # load data.
-df = pd.read_csv('https://raw.githubusercontent.com/gsbDBI/torch-choice/main/tutorials/public_datasets/ModeCanada.csv?token=GHSAT0AAAAAABRGHCCSNNQARRMU63W7P7F4YWYP5HA').query('noalt == 4').reset_index(drop=True)
+df = pd.read_csv('https://raw.githubusercontent.com/gsbDBI/torch-choice/refs/heads/main/tutorials/public_datasets/ModeCanada.csv').query('noalt == 4').reset_index(drop=True)
 
 # format data.
-data = torch_choice.utils.easy_data_wrapper.EasyDatasetWrapper(
+data = EasyDatasetWrapper(
     main_data=df,
     purchase_record_column='case',
     choice_column='choice',
@@ -121,18 +122,16 @@ data = torch_choice.utils.easy_data_wrapper.EasyDatasetWrapper(
     price_observable_columns=['cost', 'freq', 'ovt', 'ivt'])
 
 # define the conditional logit model.
-model = torch_choice.model.ConditionalLogitModel(
-    coef_variation_dict={'price_cost': 'constant',
-                         'price_freq': 'constant',
-                         'price_ovt': 'constant',
+model = ConditionalLogitModel(
+    coef_variation_dict={'itemsession_cost': 'constant',
+                         'itemsession_freq': 'constant',
+                         'itemsession_ovt': 'constant',
                          'session_income': 'item',
-                         'price_ivt': 'item-full',
+                         'itemsession_ivt': 'item-full',
                          'intercept': 'item'},
     num_items=4)
-# fit the conditional logit model with the sklearn-style API.
+# fit the conditional logit model.
 model.fit(data.choice_dataset, num_epochs=5000, learning_rate=0.01, batch_size=-1)
-# Legacy helper torch_choice.utils.run_helper.run(...) now forwards to model.fit(...)
-# and remains available for older codebases.
 ```
 
 ## Mode Canada with R
@@ -166,8 +165,3 @@ Overall, the `torch-choice` package offers the following features:
 
 4. Setting up the PyTorch training pipelines can be frustrating. We provide easy-to-use [PyTorch lightning](https://www.pytorchlightning.ai) wrapper of models to free researchers from the hassle from setting up PyTorch optimizers and training loops.
 
-
-
-```python
-
-```

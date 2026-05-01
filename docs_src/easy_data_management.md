@@ -1260,7 +1260,7 @@ Lastly, let's compare the `price_dealer` variable. Since there are NAN-values in
 
 ```python
 # rearrange columns to align it with the internal encoding scheme of the data wrapper.
-X = df.pivot('consumerid', 'car', 'dealers')[['American', 'European', 'Japanese', 'Korean']]
+X = df.pivot(index='consumerid', columns='car', values='dealers')[['American', 'European', 'Japanese', 'Korean']]
 ```
 
 
