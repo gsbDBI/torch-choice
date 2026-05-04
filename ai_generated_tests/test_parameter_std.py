@@ -37,7 +37,7 @@ class TestParameterStdHessian(unittest.TestCase):
         std_dict = parameter_std(model, loss_fn)
         std = std_dict['coef_dict.param.coef'].reshape(-1)
 
-        expected = torch.sqrt(1.0 / diagonal)
+        expected = torch.sqrt(1.0 / diagonal).to(std.dtype)
         self.assertTrue(torch.allclose(std, expected, atol=1e-5, rtol=1e-5))
 
     def test_2d_diagonal_hessian(self):
@@ -48,7 +48,7 @@ class TestParameterStdHessian(unittest.TestCase):
         std_dict = parameter_std(model, loss_fn)
         std = std_dict['coef_dict.param.coef'].reshape(-1)
 
-        expected = torch.sqrt(1.0 / diagonal)
+        expected = torch.sqrt(1.0 / diagonal).to(std.dtype)
         self.assertTrue(torch.allclose(std, expected, atol=1e-5, rtol=1e-5))
 
 

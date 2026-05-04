@@ -45,11 +45,18 @@ class ChoiceDataset(torch.utils.data.Dataset):
                 (2) or the item reviewed by the user. In the later case, we need the `label` tensor to specify the rating score.
                 NOTE: The support for second case is under-development, currently, we are only supporting binary label.
 
-            num_items (Optional[int]): the number of items in the dataset. If `None` is provided (default), the number of items will be inferred from the number of unique numbers in `item_index`.
+            num_items (Optional[int]): the number of items in the dataset. Required whenever
+                `item_obs` or `useritem_obs` is provided so its leading dimension can be validated.
+                Always pass this explicitly: inferring from `item_index.unique()` is unsafe under
+                train/val/test splits, where some items may be absent from a particular fold and
+                would silently yield the wrong embedding-table size.
 
-            num_users (Optional[int]): the number of users in the dataset. If `None` is provided (default), the number of users will be inferred from the number of unique numbers in `user_index`.
+            num_users (Optional[int]): the number of users in the dataset. Required whenever
+                `user_obs` or `useritem_obs` is provided. Same caveat as `num_items` — do not rely
+                on inference from `user_index` under data splits.
 
-            num_sessions (Optional[int]): the number of sessions in the dataset. If `None` is provided (default), the number of sessions will be inferred from the number of unique numbers in `session_index`.
+            num_sessions (Optional[int]): the number of sessions in the dataset. Recommended
+                whenever `session_obs` or `price_obs` is provided. Same caveat about splits applies.
 
             label (Optional[torch.LongTensor], optional): a tensor of shape (batch_size) indicating the label for prediction in
                 each choice instance. While you want to predict the item bought, you can leave the `label` argument

@@ -47,6 +47,9 @@ class TestChoiceDataset(unittest.TestCase):
         return ChoiceDataset(
             # pre-specified keywords of __init__
             item_index=self.item_index,  # required.
+            num_users=self.num_users,
+            num_items=self.num_items,
+            num_sessions=self.num_sessions,
             # optional:
             user_index=self.user_index,
             session_index=self.session_index,
@@ -62,6 +65,9 @@ class TestChoiceDataset(unittest.TestCase):
         dataset = ChoiceDataset(
             # pre-specified keywords of __init__
             item_index=self.item_index,  # required.
+            num_users=self.num_users,
+            num_items=self.num_items,
+            num_sessions=self.num_sessions,
             # optional:
             user_index=self.user_index,
             session_index=self.session_index,
