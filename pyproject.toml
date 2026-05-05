@@ -99,8 +99,6 @@ Repository = "https://github.com/gsbDBI/torch-choice"
 "Bug Tracker" = "https://github.com/gsbDBI/torch-choice/issues"
 
 [project.scripts]
-# Main benchmark script
-torch-choice-benchmark = "replication.paper_performance_benchmarks.run_torch_choice:main"
 # Test runner
 torch-choice-test = "ai_generated_tests.run_all_tests:main"
 
