@@ -11,20 +11,16 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: main
-          
+
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
-          python-version: '3.x'
+          python-version: '3.12'
 
-      - name: Install dependencies
+      - name: Install package with dev extras
         run: |
           python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then cat requirements.txt | xargs -n 1 -L 1 pip install; fi
-          pip install pytest
-      
-      - name: Install the package
-        run: python setup.py install --user
-      
+          pip install ".[dev]"
+
       - name: Test with pytest
         run: pytest
