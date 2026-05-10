@@ -1,5 +1,4 @@
 # Replication Material
-Thank you for your interest in our paper and for taking the time to replicate the results.
 
 The replication material consists of two parts: demonstrations from the paper and code for running performance benchmarks.
 
@@ -54,6 +53,46 @@ For transparency, we ship the paper's reference benchmark artifacts in `replicat
 ### Runtime expectations
 
 A full end-to-end run of the benchmarking pipeline can take **around ~20 hours** to finish on a typical workstation (16 cores, 128GiB RAM, NVIDIA GeForce RTX 3090 GPU). The runtime is usually dominated by the **R/mlogit** benchmarks (step 3), which are substantially slower than the Torch-Choice runs.
+
+### GPU memory considerations
+
+The benchmark automatically selects a batch size based on your GPU's available VRAM. These thresholds were empirically determined by stress testing with the largest experiment configuration (100K records × 500 items):
+
+| GPU VRAM | Auto Batch Size | Est. Memory Usage |
+|----------|-----------------|-------------------|
+| < 8 GB   | 8,192           | ~600 MB           |
+| 8–12 GB  | 16,384          | ~1,100 MB         |
+| 12–16 GB | 32,768          | ~2,200 MB         |
+| 16–22 GB | 65,536          | ~4,100 MB         |
+| ≥ 22 GB  | 131,072         | ~8,100 MB         |
+
+**Empirical limits found:**
+- OOM at batch_size=262,144 on 24GB GPU (using ~17GB)
+- Max safe batch: 131,072 on 24GB GPU (using ~8.1GB, 70% safety margin)
+
+**Overriding auto-detection:**
+
+```bash
+# Force a specific batch size
+export BATCH_SIZE=32768
+
+# Force full-batch training (use with caution)
+export BATCH_SIZE=-1
+
+# Limit GPU memory usage (value in GB)
+# Useful when running other GPU workloads concurrently
+# This makes the benchmark behave as if your GPU has less memory than it actually does
+# export GPU_MEM_LIMIT=10  # Use only 10GB of GPU memory
+```
+
+**If you still encounter OOM errors**, you can:
+1. Set a smaller `BATCH_SIZE` (e.g., 4096)
+2. Ensure the expandable-segments allocator is enabled (set by default in the wrapper). `PYTORCH_ALLOC_CONF` is the canonical name on PyTorch ≥ 2.5; `PYTORCH_CUDA_ALLOC_CONF` is the backward-compatible alias still honored by older builds. Setting both is the safest portable choice:
+   ```bash
+   export PYTORCH_ALLOC_CONF=expandable_segments:True
+   export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+   ```
+3. Fall back to CPU: `export DEVICE=cpu`
 
 ### Required R packages
 The R runtime and packages are not included in the installation process (i.e., the uv setup script does not install them), the user is expected to install them manually. The following benchmarking script assumes that you have already setup the R environment with the required packages.

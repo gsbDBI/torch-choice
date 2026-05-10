@@ -87,17 +87,20 @@ def generate_latex_representation_formula(input_formula: str) -> str:
 
 
 def _read_required(path: Path, label: str) -> Optional[pd.DataFrame]:
-    """Read a CSV; fail fast normally, but in SMOKE_TEST tolerate missing/empty."""
-    is_smoke = os.environ.get("SMOKE_TEST") == "1"
+    """Read a CSV; fail fast on full runs, tolerate missing/empty under SMOKE_TEST or SKIP_R."""
+    is_lenient = (
+        os.environ.get("SMOKE_TEST") == "1"
+        or os.environ.get("SKIP_R") == "1"
+    )
     if not path.exists():
-        if is_smoke:
-            print(f"[WARN] Skipping missing {label} (SMOKE_TEST=1): {path}")
+        if is_lenient:
+            print(f"[WARN] Skipping missing {label}: {path}")
             return None
         raise FileNotFoundError(f"Missing required input: {label} at {path}")
     df = pd.read_csv(path, low_memory=False)
     if df.empty:
-        if is_smoke:
-            print(f"[WARN] Skipping empty {label} (SMOKE_TEST=1): {path}")
+        if is_lenient:
+            print(f"[WARN] Skipping empty {label}: {path}")
             return None
         raise ValueError(f"{label} at {path} is empty.")
 

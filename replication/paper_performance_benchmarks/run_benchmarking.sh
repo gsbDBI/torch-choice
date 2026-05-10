@@ -31,8 +31,12 @@
 #   SMOKE_TEST
 #     SMOKE_TEST=1 runs a small configuration that still produces CSV outputs
 #     (few representative values per experiment, not the full grids).
+#   SKIP_R
+#     SKIP_R=1 skips the R benchmark and visualization steps (PyTorch only).
+#     Useful for GPU memory testing when R is not needed.
 # Example:
 #   RUN_PATH=/tmp/bench_run DEVICE=cuda ./run_benchmarking.sh
+#   SKIP_R=1 DEVICE=cuda ./run_benchmarking.sh  # PyTorch only
 
 set -euo pipefail
 
@@ -85,8 +89,21 @@ NUM_RECORDS="${NUM_RECORDS:-${DEFAULT_NUM_RECORDS}}"
 NUM_SEEDS="${NUM_SEEDS:-${DEFAULT_NUM_SEEDS}}"
 NUM_EPOCHS="${NUM_EPOCHS:-${DEFAULT_NUM_EPOCHS}}"
 LEARNING_RATE="${LEARNING_RATE:-0.01}"
-BATCH_SIZE="${BATCH_SIZE:--1}"
+BATCH_SIZE="${BATCH_SIZE:-}"  # Empty string signals auto-detection; set explicit value to override.
 DEVICE="${DEVICE:-auto}"  # auto|cpu|cuda
+
+# Reduce CUDA memory fragmentation on smaller GPUs.
+# `PYTORCH_ALLOC_CONF` is the canonical name as of PyTorch >= 2.5 (the allocator
+# config now spans CUDA / XPU / HIP via the `backend:` option), while
+# `PYTORCH_CUDA_ALLOC_CONF` is the backward-compatible alias still honored by
+# older builds. We export both so the setting takes effect regardless of the
+# user's PyTorch version, matching the recommendation embedded in the OOM error
+# message itself.
+export PYTORCH_ALLOC_CONF="${PYTORCH_ALLOC_CONF:-expandable_segments:True}"
+export PYTORCH_CUDA_ALLOC_CONF="${PYTORCH_CUDA_ALLOC_CONF:-expandable_segments:True}"
+
+# Skip R benchmark (PyTorch only mode).
+SKIP_R="${SKIP_R:-0}"
 
 # Optional: restrict experiments for quicker smoke tests.
 GENERATE_EXPERIMENTS="${GENERATE_EXPERIMENTS:-${DEFAULT_GENERATE_EXPERIMENTS}}"  # space-separated list or "all"
@@ -101,21 +118,24 @@ check_prereqs() {
     exit 1
   fi
 
-  if ! command -v Rscript >/dev/null 2>&1; then
-    echo "[ERROR] 'Rscript' not found on PATH."
-    echo "Install R and ensure Rscript is available, then re-run."
-    echo "Verify with: Rscript --version"
-    exit 1
-  fi
+  # Only check R if not skipping R benchmark.
+  if [[ "${SKIP_R}" != "1" ]]; then
+    if ! command -v Rscript >/dev/null 2>&1; then
+      echo "[ERROR] 'Rscript' not found on PATH."
+      echo "Install R and ensure Rscript is available, then re-run."
+      echo "Verify with: Rscript --version"
+      exit 1
+    fi
 
-  # Check required R packages (mlogit, tictoc, stringr); fail fast if missing.
-  missing_pkgs="$(Rscript -e 'pkgs <- c(\"mlogit\",\"tictoc\",\"stringr\"); missing <- pkgs[!sapply(pkgs, requireNamespace, quietly=TRUE)]; cat(missing, sep=\" \")' 2>/dev/null || true)"
-  if [[ -n "${missing_pkgs}" ]]; then
-    echo "[ERROR] Missing required R packages: ${missing_pkgs}"
-    echo "Install them manually, e.g.:"
-    echo "  Rscript -e 'install.packages(c(\"mlogit\",\"tictoc\",\"stringr\"), repos=\"https://cloud.r-project.org\")'"
-    echo "See replication/paper_performance_benchmarks/README.md for details."
-    exit 1
+    # Check required R packages (mlogit, tictoc, stringr); fail fast if missing.
+    missing_pkgs="$(Rscript -e 'pkgs <- c(\"mlogit\",\"tictoc\",\"stringr\"); missing <- pkgs[!sapply(pkgs, requireNamespace, quietly=TRUE)]; cat(missing, sep=" ")' 2>/dev/null || true)"
+    if [[ -n "${missing_pkgs}" ]]; then
+      echo "[ERROR] Missing required R packages: ${missing_pkgs}"
+      echo "Install them manually, e.g.:"
+      echo "  Rscript -e 'install.packages(c(\"mlogit\",\"tictoc\",\"stringr\"), repos=\"https://cloud.r-project.org\")'"
+      echo "See replication/paper_performance_benchmarks/README.md for details."
+      exit 1
+    fi
   fi
 }
 
@@ -126,6 +146,9 @@ main() {
   echo "Run directory: ${RUN_PATH}"
   if [[ "${SMOKE_TEST}" == "1" ]]; then
     echo "Mode: SMOKE_TEST=1 (reduced representative values per experiment; produces CSV outputs)"
+  fi
+  if [[ "${SKIP_R}" == "1" ]]; then
+    echo "Mode: SKIP_R=1 (PyTorch only, skipping R benchmarks)"
   fi
 
   check_prereqs
@@ -157,21 +180,26 @@ main() {
     --num-seeds "${NUM_SEEDS}" \
     --num-epochs "${NUM_EPOCHS}" \
     --learning-rate "${LEARNING_RATE}" \
-    --batch-size "${BATCH_SIZE}" \
+    ${BATCH_SIZE:+--batch-size "${BATCH_SIZE}"} \
     ${TORCH_EXTRA_ARGS[@]+"${TORCH_EXTRA_ARGS[@]}"}
 
-  echo "[3/4] Benchmark R (mlogit) -> ${RESULTS_PATH}"
-  ${R_ENV_PREFIX[@]+"${R_ENV_PREFIX[@]}"} Rscript "${SCRIPT_PATH}/run_mlogit_experiments.R" \
-    "${R_EXPERIMENT_TYPE}" \
-    "${DATA_PATH}" \
-    "${RESULTS_PATH}" \
-    "${NUM_SEEDS}"
+  if [[ "${SKIP_R}" != "1" ]]; then
+    echo "[3/4] Benchmark R (mlogit) -> ${RESULTS_PATH}"
+    ${R_ENV_PREFIX[@]+"${R_ENV_PREFIX[@]}"} Rscript "${SCRIPT_PATH}/run_mlogit_experiments.R" \
+      "${R_EXPERIMENT_TYPE}" \
+      "${DATA_PATH}" \
+      "${RESULTS_PATH}" \
+      "${NUM_SEEDS}"
 
-  echo "[4/4] Visualize results -> ${FIGURES_PATH}"
-  ${PYTHON_CMD} "${SCRIPT_PATH}/paper_performance_benchmark.py" visualize \
-    --torch-results "${RESULTS_PATH}" \
-    --r-results "${RESULTS_PATH}" \
-    --output-path "${FIGURES_PATH}"
+    echo "[4/4] Visualize results -> ${FIGURES_PATH}"
+    ${PYTHON_CMD} "${SCRIPT_PATH}/paper_performance_benchmark.py" visualize \
+      --torch-results "${RESULTS_PATH}" \
+      --r-results "${RESULTS_PATH}" \
+      --output-path "${FIGURES_PATH}"
+  else
+    echo "[3/4] Skipping R benchmark (SKIP_R=1)"
+    echo "[4/4] Skipping visualization (requires R results)"
+  fi
 
   echo "Done."
   echo "  Data   : ${DATA_PATH}"
