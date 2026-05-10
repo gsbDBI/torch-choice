@@ -60,12 +60,19 @@ done
 
 cd "$REPO_ROOT"
 
+# Silence the experimental-feature warning emitted by `uv run`. Our
+# pyproject.toml uses `[tool.uv.extra-build-dependencies]` to make `torch`
+# available at build time for `torch-scatter` (a hard build-time requirement
+# of that package). The benchmark wrapper already passes this flag; we do
+# the same here so the demo run is warning-free.
+UV_RUN="uv run --preview-features extra-build-dependencies"
+
 echo "=============================================================================="
 echo "Running paper_demo.py"
 echo "=============================================================================="
 
 # Build the command
-DEMO_CMD="uv run python replication/paper_demo.py"
+DEMO_CMD="$UV_RUN python replication/paper_demo.py"
 DEMO_CMD="$DEMO_CMD --tensorboard-logdir $TENSORBOARD_LOGDIR"
 DEMO_CMD="$DEMO_CMD --tensorboard-port $TENSORBOARD_PORT"
 DEMO_CMD="$DEMO_CMD --num-epochs $NUM_EPOCHS"
@@ -104,7 +111,7 @@ if [ "$NO_TENSORBOARD" = true ]; then
     echo ""
     echo "[Info] TensorBoard launch skipped (--no-tensorboard flag set)."
     echo "To view logs manually, run:"
-    echo "  uv run tensorboard --logdir $TENSORBOARD_LOGDIR --port $TENSORBOARD_PORT"
+    echo "  $UV_RUN tensorboard --logdir $TENSORBOARD_LOGDIR --port $TENSORBOARD_PORT"
     exit 0
 fi
 
@@ -114,11 +121,11 @@ echo "Launching TensorBoard"
 echo "=============================================================================="
 
 # Check if tensorboard is available
-if ! uv run python -c "import tensorboard" 2>/dev/null; then
+if ! $UV_RUN python -c "import tensorboard" 2>/dev/null; then
     echo "[Warning] TensorBoard not found in the environment."
     echo "To install TensorBoard, run: uv pip install tensorboard"
     echo "To view logs manually after installation:"
-    echo "  uv run tensorboard --logdir $TENSORBOARD_LOGDIR --port $TENSORBOARD_PORT"
+    echo "  $UV_RUN tensorboard --logdir $TENSORBOARD_LOGDIR --port $TENSORBOARD_PORT"
     exit 0
 fi
 
@@ -129,5 +136,5 @@ echo "Press Ctrl+C to stop TensorBoard."
 echo ""
 
 # Run TensorBoard in foreground so user can Ctrl+C to stop
-uv run tensorboard --logdir "$TENSORBOARD_LOGDIR" --port "$TENSORBOARD_PORT"
+$UV_RUN tensorboard --logdir "$TENSORBOARD_LOGDIR" --port "$TENSORBOARD_PORT"
 
