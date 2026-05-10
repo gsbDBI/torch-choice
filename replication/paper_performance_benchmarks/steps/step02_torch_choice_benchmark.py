@@ -45,8 +45,11 @@ def _auto_batch_size() -> int:
                       (in GB). Useful when running other concurrent GPU workloads.
                       Example: GPU_MEM_LIMIT=10 will select batch size as if GPU had 10GB.
     """
-    if not torch.cuda.is_available():
-        return -1  # CPU: full batch is fine
+    # Respect the active device: if the user explicitly chose CPU (or CUDA isn't
+    # available), use full batch. Tiering only applies when we are actually
+    # training on a CUDA GPU.
+    if DEVICE != "cuda" or not torch.cuda.is_available():
+        return -1
 
     props = torch.cuda.get_device_properties(0)
     actual_mem_gb = props.total_memory / (1024**3)

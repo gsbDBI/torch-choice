@@ -89,7 +89,7 @@ export BATCH_SIZE=-1
 1. Set a smaller `BATCH_SIZE` (e.g., 4096)
 2. Ensure the expandable-segments allocator is enabled (set by default in the wrapper):
    ```bash
-   export PYTORCH_ALLOC_CONF=expandable_segments:True
+   export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
    ```
 3. Fall back to CPU: `export DEVICE=cpu`
 
