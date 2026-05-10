@@ -93,10 +93,13 @@ BATCH_SIZE="${BATCH_SIZE:-}"  # Empty string signals auto-detection; set explici
 DEVICE="${DEVICE:-auto}"  # auto|cpu|cuda
 
 # Reduce CUDA memory fragmentation on smaller GPUs.
-# `PYTORCH_CUDA_ALLOC_CONF` is the universally-supported legacy name (honored on
-# all PyTorch versions); the newer alias `PYTORCH_ALLOC_CONF` is silently ignored
-# on PyTorch < 2.5, so we set the legacy name to match the recommendation embedded
-# in the OOM error message itself.
+# `PYTORCH_ALLOC_CONF` is the canonical name as of PyTorch >= 2.5 (the allocator
+# config now spans CUDA / XPU / HIP via the `backend:` option), while
+# `PYTORCH_CUDA_ALLOC_CONF` is the backward-compatible alias still honored by
+# older builds. We export both so the setting takes effect regardless of the
+# user's PyTorch version, matching the recommendation embedded in the OOM error
+# message itself.
+export PYTORCH_ALLOC_CONF="${PYTORCH_ALLOC_CONF:-expandable_segments:True}"
 export PYTORCH_CUDA_ALLOC_CONF="${PYTORCH_CUDA_ALLOC_CONF:-expandable_segments:True}"
 
 # Skip R benchmark (PyTorch only mode).

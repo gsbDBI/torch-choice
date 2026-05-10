@@ -87,8 +87,9 @@ export BATCH_SIZE=-1
 
 **If you still encounter OOM errors**, you can:
 1. Set a smaller `BATCH_SIZE` (e.g., 4096)
-2. Ensure the expandable-segments allocator is enabled (set by default in the wrapper):
+2. Ensure the expandable-segments allocator is enabled (set by default in the wrapper). `PYTORCH_ALLOC_CONF` is the canonical name on PyTorch ≥ 2.5; `PYTORCH_CUDA_ALLOC_CONF` is the backward-compatible alias still honored by older builds. Setting both is the safest portable choice:
    ```bash
+   export PYTORCH_ALLOC_CONF=expandable_segments:True
    export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
    ```
 3. Fall back to CPU: `export DEVICE=cpu`
