@@ -140,9 +140,14 @@ else
 fi
 
 echo -e "${BLUE}[INFO]${NC} Installing ${SPEC} from PyPI..."
-# --no-deps because every prerequisite was already resolved in step 3.
-uv pip install --no-deps "${SPEC}"
-echo -e "${GREEN}[SUCCESS]${NC} ${SPEC} installed from PyPI."
+# --no-deps  : every prerequisite was already resolved in step 3.
+# --python   : explicitly target .venv. Sourcing .venv/bin/activate sets
+#              VIRTUAL_ENV, but some environments (notably Colab) ship a uv
+#              build that defaults `uv pip install` to system Python anyway.
+#              Passing the venv python path leaves no ambiguity about where
+#              the package lands.
+uv pip install --python .venv/bin/python --no-deps "${SPEC}"
+echo -e "${GREEN}[SUCCESS]${NC} ${SPEC} installed from PyPI into .venv."
 
 # Lock the venv against further auto-syncs. From here on, `uv run` would
 # otherwise notice pyproject.toml's [project] declaring "torch-choice" and
