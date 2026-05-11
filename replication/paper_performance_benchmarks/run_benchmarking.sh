@@ -43,6 +43,14 @@ set -euo pipefail
 # Resolve this script's directory (path) to anchor relative paths.
 SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Prevent `uv run` from auto-syncing the local project before each command.
+# In a stripped replication archive (no torch_choice/ source), an autosync
+# would build an empty wheel from pyproject.toml metadata and overwrite the
+# PyPI-installed torch-choice in .venv. Safe to set in dev/source checkouts
+# too: the editable install survives across uv run calls without needing
+# a fresh sync each time.
+export UV_NO_SYNC=1
+
 # uv is required for the Python steps.
 if ! command -v uv >/dev/null 2>&1; then
   echo "[ERROR] 'uv' is required but was not found. Install uv and retry."

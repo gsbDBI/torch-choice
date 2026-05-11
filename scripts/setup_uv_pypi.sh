@@ -135,6 +135,13 @@ echo -e "${BLUE}[INFO]${NC} Installing ${SPEC} from PyPI..."
 uv pip install --no-deps "${SPEC}"
 echo -e "${GREEN}[SUCCESS]${NC} ${SPEC} installed from PyPI."
 
+# Lock the venv against further auto-syncs. From here on, `uv run` would
+# otherwise notice pyproject.toml's [project] declaring "torch-choice" and
+# rebuild/reinstall the (sourceless) local project on every invocation,
+# overwriting the PyPI install we just laid down above with an empty
+# wheel built from pyproject.toml metadata alone.
+export UV_NO_SYNC=1
+
 # ---------------------------------------------------------------------------
 # Step 5: import-level verification
 # ---------------------------------------------------------------------------

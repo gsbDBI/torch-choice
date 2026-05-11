@@ -60,6 +60,14 @@ done
 
 cd "$REPO_ROOT"
 
+# Prevent `uv run` from auto-syncing the local project before each command.
+# In a stripped replication archive (no torch_choice/ source), an autosync
+# would build an empty wheel from pyproject.toml metadata and overwrite the
+# PyPI-installed torch-choice in .venv. Safe to set in dev/source checkouts
+# too: the editable install survives across uv run calls without needing
+# a fresh sync each time.
+export UV_NO_SYNC=1
+
 # Silence the experimental-feature warning emitted by `uv run`. Our
 # pyproject.toml uses `[tool.uv.extra-build-dependencies]` to make `torch`
 # available at build time for `torch-scatter` (a hard build-time requirement
