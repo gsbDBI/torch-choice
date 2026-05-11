@@ -91,6 +91,15 @@ echo -e "${BLUE}[INFO]${NC} Creating .venv with Python 3.12..."
 uv venv --python 3.12
 echo -e "${GREEN}[SUCCESS]${NC} Virtual environment created at $(pwd)/.venv"
 
+# Activate the venv so subsequent commands target it. uv pip install does NOT
+# auto-detect the project venv — it follows VIRTUAL_ENV, then conda env, then
+# falls back to system Python. Without this activation, stage B's
+# `uv pip install --no-deps torch-choice==...` would install into the system
+# Python (e.g. /usr) and leave the .venv without torch-choice.
+# shellcheck source=/dev/null
+source .venv/bin/activate
+echo -e "${GREEN}[SUCCESS]${NC} Virtual environment activated (VIRTUAL_ENV=${VIRTUAL_ENV})"
+
 # ---------------------------------------------------------------------------
 # Step 3: install prerequisites declared in pyproject.toml
 # ---------------------------------------------------------------------------
