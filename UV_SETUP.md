@@ -48,13 +48,13 @@ The setup script will:
 
 **Option A.2: Install torch-choice from PyPI instead of local source**
 
-Use `setup_uv_pypi.sh` if you want the *published* version of `torch-choice` instead of an editable install from your local checkout. This is the right script for replicators reproducing a JOSS submission, or for anyone who just wants the package installed from PyPI in a fresh `.venv/`.
+Use `setup_uv_pypi.sh` if you want the *published* version of `torch-choice` instead of an editable install from your local checkout. This is the right script for replicators reproducing a specific paper or archived release, or for anyone who just wants the package installed from PyPI in a fresh `.venv/`.
 
 ```bash
 # Install whatever's currently latest on PyPI (default)
 ./scripts/setup_uv_pypi.sh
 
-# Pin to a specific version (e.g. for replicating a paper or JOSS submission)
+# Pin to a specific version (e.g. for replicating a paper or archived release)
 ./scripts/setup_uv_pypi.sh 1.0.7
 
 # Use a narrower set of extras

@@ -18,8 +18,8 @@ Starting December 2025, we support and prefer using [uv](https://docs.astral.sh/
 **Recommended for replication (install from PyPI, pinned to the submitted version):**
 
 ```bash
-# Installs the exact torch-choice version archived with the JOSS submission
-# (1.0.7), along with all replication dependencies, into a fresh .venv.
+# Installs the exact torch-choice version archived with this paper (1.0.7),
+# along with all replication dependencies, into a fresh .venv.
 bash ./scripts/setup_uv_pypi.sh 1.0.7
 ```
 
@@ -34,7 +34,7 @@ This pins `torch-choice` to the published v1.0.7 release on PyPI regardless of w
 bash ./scripts/setup_uv.sh complete
 ```
 
-The `setup_uv.sh` script installs `torch-choice` in editable mode from the local source — appropriate for development, but for replication of a specific paper / JOSS version we recommend `setup_uv_pypi.sh 1.0.7` above.
+The `setup_uv.sh` script installs `torch-choice` in editable mode from the local source — appropriate for development, but for replication of a specific archived version of the paper we recommend `setup_uv_pypi.sh 1.0.7` above.
 
 **Traditional Method**: You can also use either `conda` or a Python virtual environment with `pip` to run the code. To install the published release: `pip install torch-choice==1.0.7` (plus the optional dependencies in `pyproject.toml`'s `[complete]` extra).
 

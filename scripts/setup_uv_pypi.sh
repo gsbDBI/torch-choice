@@ -4,8 +4,7 @@
 # Unlike setup_uv.sh (which installs torch-choice in *editable mode* from
 # local source — the developer workflow), this script installs torch-choice
 # from PyPI at a fixed version. That makes it the right choice for
-# replicators or anyone who wants to reproduce the exact environment archived
-# with the JOSS submission.
+# replicators or anyone who wants to reproduce a specific archived release.
 #
 # Usage:
 #   bash ./scripts/setup_uv_pypi.sh                       # default: latest from PyPI
@@ -15,9 +14,8 @@
 #   TORCH_CHOICE_EXTRA=benchmarks bash ./scripts/setup_uv_pypi.sh    # narrower extras
 #
 # With no arguments, this script installs the latest published torch-choice
-# from PyPI. To reproduce the environment archived with a specific JOSS or
-# paper submission, pass the version explicitly — e.g. `1.0.7` for the
-# release archived with the JOSS submission.
+# from PyPI. To reproduce the environment archived with a specific paper or
+# release, pass the version explicitly — e.g. `1.0.7`.
 
 set -e
 
@@ -26,8 +24,8 @@ set -e
 # ---------------------------------------------------------------------------
 
 # Default: install whatever is currently latest on PyPI. Replicators
-# reproducing a specific submission should pass the version explicitly
-# (e.g. `bash ./scripts/setup_uv_pypi.sh 1.0.7` for the JOSS submission).
+# reproducing a specific paper or archived release should pass the version
+# explicitly (e.g. `bash ./scripts/setup_uv_pypi.sh 1.0.7`).
 DEFAULT_VERSION="latest"
 
 # Resolution: positional arg > env var > hard-coded default.
@@ -164,6 +162,6 @@ else
     echo "  • Pinned to torch-choice @ ${VERSION}."
     echo "  • To upgrade to latest:    bash ./scripts/setup_uv_pypi.sh latest"
 fi
-echo "  • Replicators reproducing the JOSS submission should pass: 1.0.7"
+echo "  • Replicators reproducing a specific archived release should pass that version explicitly."
 echo
 echo -e "${GREEN}[SUCCESS]${NC} All done."

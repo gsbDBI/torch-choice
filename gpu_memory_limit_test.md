@@ -180,7 +180,7 @@ A reading within roughly ±20 % of the expected value is normal — `nvidia-smi`
 
 ## Two artifacts worth archiving
 
-If you're using this guide to back a JOSS reviewer response or to validate a release, save:
+If you're using this guide to back a peer-review response or to validate a release, save:
 
 1. The `[Auto batch size] ...` log line printed at the start of the benchmark (proves auto-detection fired with the right tier).
 2. The full `gpu_metrics.csv` file (lets the reading be re-verified later, not just the single peak number).
