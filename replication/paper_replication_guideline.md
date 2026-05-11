@@ -37,7 +37,7 @@ Either method gives you the same `torch-choice 1.0.7` from PyPI; subsequent step
 ## Demo Code from the Paper
 Use the `run_paper_demo.sh` script in this `replication` directory to reproduce the demonstrations from the paper and automatically launch TensorBoard afterward:
 ```bash
-uv run bash ./replication/run_paper_demo.sh
+bash ./replication/run_paper_demo.sh
 ```
 
 The script runs the demo Python script `replication/paper_demo.py` and then starts TensorBoard to visualize training logs. Available options:
@@ -120,7 +120,7 @@ After setting up the Python and R environments, you can run a quick smoke-test t
 
 ```bash
 export SMOKE_TEST=1
-uv run bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
+bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
 ```
 The smoke test should only take a few minutes to complete on a typical workstation.
 
@@ -129,7 +129,7 @@ After verifying the setup with the smoke test, you can run the full benchmark.
 ```bash
 # Enable the full benchmark by disabling the smoke test
 export SMOKE_TEST=0
-uv run bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
+bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
 ```
 
 By default, the benchmarking script creates a new timestamped run directory under `./replication/paper_performance_benchmarks/runs/` and writes all outputs there (data, CSVs, figures). The script prints the chosen run directory at the start.

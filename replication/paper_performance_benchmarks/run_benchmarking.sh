@@ -122,7 +122,12 @@ check_prereqs() {
   # Fail fast before spending time generating data / training models.
   if ! command -v python >/dev/null 2>&1; then
     echo "[ERROR] 'python' not found on PATH."
-    echo "If you are using uv, run: uv run bash ${SCRIPT_PATH}/run_benchmarking.sh"
+    echo "If you are using uv, activate the project venv first:"
+    echo "  source .venv/bin/activate"
+    echo "  bash ${SCRIPT_PATH}/run_benchmarking.sh"
+    echo "Do NOT invoke this script via 'uv run bash ...' — the outer uv run"
+    echo "would trigger a project auto-sync that overwrites the PyPI-installed"
+    echo "torch-choice in .venv with an empty wheel built from pyproject.toml."
     exit 1
   fi
 

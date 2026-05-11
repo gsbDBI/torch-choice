@@ -120,7 +120,7 @@ export DEVICE=cuda    # run on GPU
 export SKIP_R=1       # GPU stress test only needs PyTorch, no R
 export GPU_MEM_LIMIT=10  # behave as if the GPU has 10 GB
 
-uv run bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
+bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
 
 kill $MONITOR_PID
 ```
@@ -139,7 +139,7 @@ export SKIP_R=1       # GPU stress test only needs PyTorch, no R
 export NUM_SEEDS=1    # one seed is enough for a memory stress test
 export GPU_MEM_LIMIT=10  # behave as if the GPU has 10 GB
 
-uv run bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
+bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
 
 kill $MONITOR_PID
 ```
