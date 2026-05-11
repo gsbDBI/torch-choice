@@ -46,6 +46,23 @@ The setup script will:
 - Install torch-choice from local source in editable mode
 - Verify the installation
 
+**Option A.2: Install torch-choice from PyPI instead of local source**
+
+Use `setup_uv_pypi.sh` if you want the *published* version of `torch-choice` instead of an editable install from your local checkout. This is the right script for replicators reproducing a JOSS submission, or for anyone who just wants the package installed from PyPI in a fresh `.venv/`.
+
+```bash
+# Install whatever's currently latest on PyPI (default)
+./scripts/setup_uv_pypi.sh
+
+# Pin to a specific version (e.g. for replicating a paper or JOSS submission)
+./scripts/setup_uv_pypi.sh 1.0.7
+
+# Use a narrower set of extras
+TORCH_CHOICE_EXTRA=benchmarks ./scripts/setup_uv_pypi.sh
+```
+
+The only practical difference from Option A is the install spec: `setup_uv.sh` runs `uv pip install -e ".[complete]"` (editable, local source); `setup_uv_pypi.sh` runs `uv pip install "torch-choice[complete]==<VERSION>"` (PyPI). Everything else — the `.venv` creation, the verification steps, the smoke-test model fit — is identical.
+
 **Option B: Manual installation**
 ```bash
 # Create virtual environment

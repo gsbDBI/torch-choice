@@ -86,6 +86,15 @@ Then paste the Python code from the **Quick Example: Transportation Choice Datas
 ### Installation from Pip
 Simply run `pip install torch-choice` to install the package. This will install the latest *stable* version of the package.
 
+For a one-shot setup that also creates a uv-managed virtual environment and installs all optional dependencies (notebooks, benchmarks, tensorboard, etc.) from PyPI, use:
+
+```bash
+bash ./scripts/setup_uv_pypi.sh           # latest from PyPI (default)
+bash ./scripts/setup_uv_pypi.sh 1.0.7     # pin a specific version (e.g. for replication)
+```
+
+This is the right script when you want the *published* package rather than an editable install from local source. See `UV_SETUP.md` for details.
+
 ### Installation from Source
 For those who wish to leverage the latest features, you can install `torch-choice` from GitHub source.
 

@@ -6,7 +6,8 @@ The replication material consists of two parts: demonstrations from the paper an
 
 The replication material is driven by three entrypoint scripts (run from the repo root):
 
-- `scripts/setup_uv.sh`: creates a local Python environment in `.venv` and installs `torch-choice` from source with the replication dependencies.
+- `scripts/setup_uv.sh`: creates a local Python environment in `.venv` and installs `torch-choice` from local source (editable mode) with the replication dependencies.
+- `scripts/setup_uv_pypi.sh`: same `.venv` setup, but installs `torch-choice` from PyPI at a chosen version (recommended for replication — see below).
 - `replication/run_paper_demo.sh`: runs the paper demo (`replication/paper_demo.py`) and (optionally) launches TensorBoard to visualize training logs.
 - `replication/paper_performance_benchmarks/run_benchmarking.sh`: runs the computational speed benchmarks end-to-end (generate synthetic data → Torch-Choice → R/mlogit → visualize).
 
@@ -14,16 +15,28 @@ The replication material is driven by three entrypoint scripts (run from the rep
 
 Starting December 2025, we support and prefer using [uv](https://docs.astral.sh/uv/) for environment management. It is fast, reliable, and handles Python version management automatically.
 
-Preferred (uv):
+**Recommended for replication (install from PyPI, pinned to the submitted version):**
+
 ```bash
-# From the repo root, run the helper to create `.venv` and install the Python dependencies needed for the replication material.
+# Installs the exact torch-choice version archived with the JOSS submission
+# (1.0.7), along with all replication dependencies, into a fresh .venv.
+bash ./scripts/setup_uv_pypi.sh 1.0.7
+```
+
+This pins `torch-choice` to the published v1.0.7 release on PyPI regardless of which version the repository's source tree currently shows, so the replication results are reproducible against a known, immutable artifact. Without a version argument, `setup_uv_pypi.sh` installs the latest published release instead.
+
+**Alternative (install from local source, editable mode):**
+
+```bash
+# From the repo root, create `.venv` and install torch-choice from the local
+# checkout (useful if you are also developing torch-choice or want a specific
+# unreleased commit).
 bash ./scripts/setup_uv.sh complete
 ```
-The script checks that uv is installed (and prints install instructions if it is missing), creates `.venv`, and installs `torch-choice` in editable mode with dependencies.
 
-**Traditional Method**: You can also use either `conda` or a Python virtual environment with `pip` to run the code. You will need to install the software listed in the `requirements.txt` file to fulfill the dependencies required by the `torch-choice` package.
-Please refer to our installation guide to set up the package. The package can be installed via two methods: from PyPI or from source code.
-Since we continuously update the package, if you are replicating the code presented in the paper and have received the source code in the replication package, we strongly recommend installing from source to ensure consistency and avoid potential discrepancies from newer package versions.
+The `setup_uv.sh` script installs `torch-choice` in editable mode from the local source — appropriate for development, but for replication of a specific paper / JOSS version we recommend `setup_uv_pypi.sh 1.0.7` above.
+
+**Traditional Method**: You can also use either `conda` or a Python virtual environment with `pip` to run the code. To install the published release: `pip install torch-choice==1.0.7` (plus the optional dependencies in `pyproject.toml`'s `[complete]` extra).
 
 ## Demo Code from the Paper
 Use the `run_paper_demo.sh` script in this `replication` directory to reproduce the demonstrations from the paper and automatically launch TensorBoard afterward:
