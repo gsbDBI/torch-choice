@@ -6,6 +6,20 @@
 # from PyPI at a fixed version. That makes it the right choice for
 # replicators or anyone who wants to reproduce a specific archived release.
 #
+# Install strategy: two-stage.
+#   1. Use the local pyproject.toml to resolve and install all prerequisites
+#      (torch, numpy, pandas, torch-scatter, tensorboard, etc.) into the
+#      .venv. The pyproject.toml's [tool.uv.extra-build-dependencies] hint
+#      keeps torch in scope during torch-scatter's PEP 517 build, avoiding
+#      the "ModuleNotFoundError: No module named 'torch'" failure that
+#      otherwise occurs in a one-shot install.
+#   2. Install torch-choice itself from PyPI on top of those prerequisites.
+#
+# A minimal replication archive can be produced by running
+# `create_minimal_replication_release.sh` from the repo root — it preserves
+# pyproject.toml (which this script needs in step 1) while excluding the
+# package source (which would otherwise shadow the PyPI install).
+#
 # Usage:
 #   bash ./scripts/setup_uv_pypi.sh                       # default: latest from PyPI
 #   bash ./scripts/setup_uv_pypi.sh 1.0.7                 # pin a specific version (replicator path)
@@ -78,20 +92,51 @@ uv venv --python 3.12
 echo -e "${GREEN}[SUCCESS]${NC} Virtual environment created at $(pwd)/.venv"
 
 # ---------------------------------------------------------------------------
-# Step 3: install torch-choice from PyPI
+# Step 3: install prerequisites declared in pyproject.toml
+# ---------------------------------------------------------------------------
+# We deliberately install in two stages:
+#   (a) the dependency tree declared in pyproject.toml's [project.dependencies]
+#       and [project.optional-dependencies.${EXTRA}] — this is the
+#       "prerequisites" step, and it benefits from the
+#       [tool.uv.extra-build-dependencies] hint in pyproject.toml, which makes
+#       torch available at build time so torch-scatter's C++ extension
+#       compiles without the "ModuleNotFoundError: No module named 'torch'"
+#       failure that bites a one-shot install.
+#   (b) torch-choice itself, fetched from PyPI at the pinned version
+#       (the next step).
+#
+# `uv sync --no-install-project` installs every resolved dependency but skips
+# building the local "torch-choice" project — which is exactly what we want,
+# because we're going to install the published torch-choice from PyPI on top.
+
+if [[ ! -f pyproject.toml ]]; then
+    echo -e "${RED}[ERROR]${NC} pyproject.toml is required but was not found in CWD."
+    echo "        Run this script from a torch-choice repo root or a"
+    echo "        replication archive built via create_minimal_replication_release.sh"
+    echo "        (which preserves pyproject.toml for this step)."
+    exit 1
+fi
+
+echo -e "${BLUE}[INFO]${NC} Installing prerequisites from pyproject.toml [${EXTRA}] extras..."
+uv sync --extra "${EXTRA}" --no-install-project
+echo -e "${GREEN}[SUCCESS]${NC} Prerequisites installed."
+
+# ---------------------------------------------------------------------------
+# Step 4: install torch-choice itself from PyPI
 # ---------------------------------------------------------------------------
 if [[ "${VERSION}" == "latest" ]]; then
-    SPEC="torch-choice[${EXTRA}]"
+    SPEC="torch-choice"
 else
-    SPEC="torch-choice[${EXTRA}]==${VERSION}"
+    SPEC="torch-choice==${VERSION}"
 fi
 
 echo -e "${BLUE}[INFO]${NC} Installing ${SPEC} from PyPI..."
-uv pip install "${SPEC}"
-echo -e "${GREEN}[SUCCESS]${NC} ${SPEC} installed."
+# --no-deps because every prerequisite was already resolved in step 3.
+uv pip install --no-deps "${SPEC}"
+echo -e "${GREEN}[SUCCESS]${NC} ${SPEC} installed from PyPI."
 
 # ---------------------------------------------------------------------------
-# Step 4: import-level verification
+# Step 5: import-level verification
 # ---------------------------------------------------------------------------
 echo -e "${BLUE}[INFO]${NC} Verifying imports..."
 if ! uv run python -c "import torch_choice; print(f'torch-choice version: {torch_choice.__version__}')"; then
@@ -105,7 +150,7 @@ fi
 echo -e "${GREEN}[SUCCESS]${NC} torch-choice and PyTorch import OK."
 
 # ---------------------------------------------------------------------------
-# Step 5: end-to-end smoke test — fit a small ConditionalLogitModel
+# Step 6: end-to-end smoke test — fit a small ConditionalLogitModel
 # ---------------------------------------------------------------------------
 echo
 echo -e "${BLUE}[INFO]${NC} Running a small torch-choice model to validate the install..."
