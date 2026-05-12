@@ -105,6 +105,36 @@ For those who wish to leverage the latest features, you can install `torch-choic
 
 [The installation page](https://gsbdbi.github.io/torch-choice/install/) provides more details on installation.
 
+## Building a Portable Replication Package
+
+If you are distributing the replication material that accompanies a paper or a JSS-style submission, the package itself (`torch_choice/`) should not be bundled with the replication archive — replicators install `torch-choice` once from PyPI (`pip install torch-choice==<version>`) and run the replication scripts against that installed copy. This keeps the two artifacts cleanly separated and avoids shipping duplicate or potentially-stale package source alongside the data and scripts.
+
+The helper `scripts/create_minimal_replication_release.sh` builds the stripped replication archive from a clone of this repository:
+
+```bash
+# From the repo root:
+bash ./scripts/create_minimal_replication_release.sh /path/to/output-dir
+```
+
+The output directory contains only:
+
+- `replication/` — paper demo + Section 5 benchmark pipeline
+- `scripts/setup_uv_pypi.sh` — installs `torch-choice` from PyPI into a fresh `.venv`
+- `scripts/monitor_gpu.sh` — used by the GPU memory verification appendix
+- `pyproject.toml` — kept so `setup_uv_pypi.sh` can resolve the full dependency tree (including the `[tool.uv.extra-build-dependencies]` hint for `torch-scatter`)
+- `README.md`, `UV_SETUP.md`, `gpu_memory_limit_test.md`, `LICENSE`
+- `replication/paper_replication_guideline.md` — the step-by-step walkthrough a replicator follows
+
+The package source (`torch_choice/`, `torch_choice.egg-info/`, `setup.py`, `uv.lock`), developer-only material (`tests/`, `ai_generated_tests/`, `docs/`, `tutorials/`), and the editable-source install path (`scripts/setup_uv.sh`) are all excluded by design.
+
+Once the output directory is built, you can zip and ship it directly:
+
+```bash
+zip -r torch-choice-replication.zip /path/to/output-dir
+```
+
+A replicator who downloads the zip then runs `bash ./scripts/setup_uv_pypi.sh 1.0.7` followed by the walkthrough in `replication/paper_replication_guideline.md`. The full walkthrough is reproduced in that document — including the optional GPU memory tuning section that explains how `GPU_MEM_LIMIT` lets users share a GPU with other workloads.
+
 ## Quick Example: Transportation Choice Dataset
 In this demonstration, we set up a minimal example of fitting a conditional logit model using our package. We provide equivalent R code as well for reference, to aid in replicating from R to this package. We are modelling people's choices on transportation modes using the publicly available `ModeCanada` dataset.
 More information about the [ModeCanada: Mode Choice for the Montreal-Toronto Corridor](https://www.rdocumentation.org/packages/mlogit/versions/1.1-1/topics/ModeCanada).

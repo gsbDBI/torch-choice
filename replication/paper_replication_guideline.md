@@ -1,36 +1,27 @@
 # Replication Material — Step-by-Step Walkthrough
 
-This guide walks you through reproducing the empirical results in *Torch-Choice: A PyTorch Package for Large-Scale Choice Modeling with Python* end-to-end on a fresh Linux machine with an NVIDIA GPU. The procedure has two parts:
+This guide walks you through reproducing the empirical results in *Torch-Choice: A PyTorch Package for Large-Scale Choice Modeling with Python* end-to-end on a Linux machine with an NVIDIA GPU. You can easily obtain one from a cloud platform such as Google Cloud, AWS, or Azure.
+
+The procedure has two parts:
 
 1. **Paper demo replication** (Sections 4.1.4 and 4.2.3 of the manuscript) — fits a conditional logit model on ModeCanada and a nested logit model on House Cooling, and reproduces the coefficient tables.
-2. **GPU memory test** — verifies that the package runs cleanly on a small (10 GB) GPU, the empirical claim documented in our response to reviewer comments about memory requirements.
+2. **Performance benchmarks** (Section 5 of the manuscript) — runs the full `torch-choice` vs `mlogit` (R) benchmark grid across sweeps in records, parameters, and items, and regenerates Figures 1–3.
 
-Total wall-clock: **~30 minutes** end-to-end.
-
----
-
-## Quick start (one command)
-
-If you just want to verify everything works, the entire procedure below is bundled in a single helper script:
-
-```bash
-# On the GPU machine, no prior clone needed:
-bash <(curl -sSL https://raw.githubusercontent.com/gsbDBI/torch-choice/main/scripts/run_full_replication_test.sh)
-```
-
-It bootstraps from a fresh clone, installs the package from PyPI, runs both the paper demo and the GPU memory test, and archives logs + a GPU metrics CSV under `/tmp/torch-choice-full-replication-test/evidence/`. Skip ahead to the [Reference numbers](#reference-numbers) section to see what the artifacts should contain.
-
-The rest of this document walks through the same procedure manually, one step at a time, for users who want fine-grained control or are diagnosing a problem.
+Total wall-clock: **paper demo ≈ 10 minutes**, **full benchmark ≈ 20 hours** (dominated by R/mlogit). A smoke-test configuration of the benchmark runs in a few minutes if you just want to verify the pipeline before committing to the full run.
 
 ---
 
 ## Prerequisites
 
-- A Linux machine with an NVIDIA GPU and working CUDA drivers (any modern GPU works; the GPU memory test uses `GPU_MEM_LIMIT` to simulate a smaller card).
-- `nvidia-smi` on `PATH` (used for memory monitoring).
-- Internet access (for downloading the package and dependencies).
+- A Linux machine with an NVIDIA GPU and working CUDA drivers (any modern GPU works).
+- `nvidia-smi` on `PATH`.
+- Internet access for downloading the package and dependencies.
+- **R** with the `mlogit`, `tictoc`, and `stringr` packages installed (needed for Step 5, the Section 5 benchmark). Install them once with:
 
-You do **not** need R installed unless you want to run the full Section 5 benchmark grid (Step 8 below, optional).
+  ```r
+  # Inside an R session:
+  install.packages(c("mlogit","tictoc","stringr"), repos="https://cloud.r-project.org")
+  ```
 
 ---
 
@@ -47,36 +38,42 @@ uv --version
 
 ---
 
-## Step 2: Clone the repository
+## Step 2: Get the replication material
+
+There are two ways to get the replication material onto your machine. Pick whichever matches your situation.
+
+### Path A (default): you already have the replication archive
+
+If you received the replication material directly — for example, as a JSS-style submission attachment, a paper's supplementary materials zip, or a download link from the authors — simply extract it and `cd` into it. You can skip ahead to Step 3.
+
+```bash
+# Adjust the filename/path to whatever you received:
+unzip torch-choice-replication.zip
+cd torch-choice-replication
+```
+
+After `cd`, `ls` should show: `gpu_memory_limit_test.md`, `LICENSE`, `pyproject.toml`, `README.md`, `replication/`, `scripts/`, `UV_SETUP.md`. There is **no** `torch_choice/` directory — that's by design (the package itself comes from PyPI in Step 3).
+
+### Path B (alternative): build the archive from the public GitHub repository
+
+If you do not have the archive, you can build it yourself from the public source repository. This produces an identical archive to what Path A would have given you.
 
 ```bash
 git clone https://github.com/gsbDBI/torch-choice.git
 cd torch-choice
-```
-
-**Expected output:** `Cloning into 'torch-choice'...` followed by the clone progress. The current directory should be `.../torch-choice` after running these commands.
-
----
-
-## Step 3: Build the minimal replication archive
-
-The replication material is meant to be self-contained: it should not include a copy of the `torch_choice` package source (that comes from PyPI in the next step). The `create_minimal_replication_release.sh` helper builds a stripped archive containing only what a replicator needs.
-
-```bash
 bash ./scripts/create_minimal_replication_release.sh /tmp/torch-choice-replication
 cd /tmp/torch-choice-replication
 ```
 
-**Expected output:**
+**Expected output:** `Cloning into 'torch-choice'...`, then `[DONE] Minimal replication release built at: /tmp/torch-choice-replication`. After the final `cd`, the listing should match Path A above.
 
-- `[DONE] Minimal replication release built at: /tmp/torch-choice-replication`
-- After `cd`, `ls` should show: `gpu_memory_limit_test.md`, `LICENSE`, `pyproject.toml`, `README.md`, `replication/`, `scripts/`, `UV_SETUP.md` (no `torch_choice/` directory — that's what we want).
+The `create_minimal_replication_release.sh` helper copies the replication scripts, docs, and `pyproject.toml` (for dependency resolution) into the target directory, deliberately excluding the package source (`torch_choice/`), build artifacts, and developer-only material (`tests/`, `docs/`, `tutorials/`, etc.). See the [File layout](#file-layout-in-the-replication-archive) section at the end of this document for the full kept/excluded list.
 
 ---
 
-## Step 4: Install torch-choice from PyPI
+## Step 3: Install torch-choice from PyPI
 
-This is the load-bearing step. The `setup_uv_pypi.sh` helper does three things: creates a fresh `.venv`, installs all dependencies via `uv sync` (which reads `pyproject.toml`), and installs `torch-choice==1.0.7` from PyPI on top.
+This is the load-bearing setup step. The `setup_uv_pypi.sh` helper does three things: creates a fresh `.venv`, installs all dependencies via `uv sync` (which reads `pyproject.toml`), and installs `torch-choice==1.0.7` from PyPI on top.
 
 ```bash
 bash ./scripts/setup_uv_pypi.sh 1.0.7
@@ -89,7 +86,7 @@ bash ./scripts/setup_uv_pypi.sh 1.0.7
 - `[SUCCESS] Virtual environment activated (VIRTUAL_ENV=/tmp/torch-choice-replication/.venv)`
 - `[SUCCESS] Prerequisites installed.`
 - `[SUCCESS] torch-choice==1.0.7 installed from PyPI into .venv.`
-- `[SUCCESS] Quick model run completed.` (a smoke fit on ModeCanada to verify the install)
+- `[SUCCESS] Quick model run completed.`
 - `[SUCCESS] All done.`
 
 **Verify the install location:**
@@ -106,11 +103,11 @@ deactivate
 
 The reported `location` must be under `/tmp/torch-choice-replication/.venv/lib/python3.12/site-packages/torch_choice/` (not the local repo or `/usr/...`). If the location is wrong, the install used the wrong Python environment.
 
-**Alternative install without uv:** If you prefer plain pip/conda, run `pip install "torch-choice[complete]==1.0.7"` inside any Python 3.10+ environment. All subsequent steps work identically.
+**Alternative install without uv:** if you prefer plain pip/conda, run `pip install "torch-choice[complete]==1.0.7"` inside any Python 3.10+ environment. All subsequent steps work identically.
 
 ---
 
-## Step 5: Reproduce the paper demo
+## Step 4: Reproduce the paper demo
 
 This step reproduces the coefficient tables in Sections 4.1.4 (Mode Canada CLM) and 4.2.3 (House Cooling NLM) of the manuscript.
 
@@ -151,163 +148,137 @@ Log-likelihood: [Training] -182.492, ...
 
 **What to verify:**
 
-- **CLM training log-likelihood ≈ −1874.34** (paper: −1874.343)
-- **NLM training log-likelihood ≈ −182.49** (paper: −182.492)
-- All `***`-significant coefficients match the manuscript's signs and magnitudes within ~5%
-- Same significance pattern (i.e., what is `***` in the paper is `***` in your run)
+- **CLM training log-likelihood ≈ −1874.34** (manuscript: −1874.343)
+- **NLM training log-likelihood ≈ −182.49** (manuscript: −182.492)
+- All `***`-significant coefficients match the manuscript's signs and magnitudes within ~5%.
+- Same significance pattern (what is `***` in the manuscript is `***` in your run).
 
-Small numerical differences (typically < 5% on the highly significant rows) come from Adam being a first-order optimizer; the conditional logit intercepts are identified up to a constant, so they may differ by a normalization shift while still implying the same choice probabilities.
-
----
-
-## Step 6: Run the GPU memory test
-
-This step verifies the small-GPU claim. We use `GPU_MEM_LIMIT=10` to make the auto-batch-size logic behave as if the GPU has only 10 GB, regardless of the actual hardware.
-
-### 6a. Sanity-check the tier selection (5 seconds)
-
-```bash
-source .venv/bin/activate
-GPU_MEM_LIMIT=10 python -c "
-import sys; sys.path.insert(0, 'replication/paper_performance_benchmarks/steps')
-import step02_torch_choice_benchmark as m
-m._set_device('cuda')
-print('selected:', m._auto_batch_size())
-"
-deactivate
-```
-
-**Expected output:**
-
-```
-[Auto batch size] GPU: <name> (actual: <real> GB, limit: 10.0 GB via GPU_MEM_LIMIT)
-[Auto batch size] GPU: <name> (10.0 GB) -> batch_size=16,384
-selected: 16384
-```
-
-If `selected` is anything other than `16384`, the tier logic regressed — stop and investigate before continuing.
-
-### 6b. Run the targeted large-grid memory test (~20 min)
-
-In one shell:
-
-```bash
-# Background a GPU memory monitor that writes one row/sec to a CSV
-bash ./scripts/monitor_gpu.sh ./gpu_metrics_10gb.csv &
-MONITOR_PID=$!
-
-# Run the benchmark with the simulated 10 GB cap. NUM_SEEDS=1 cuts runtime
-# without losing memory information. GENERATE_EXPERIMENTS=full_dataset
-# tells the data-generation step to produce the file the large grid reads.
-GPU_MEM_LIMIT=10 SMOKE_TEST=0 SKIP_R=1 DEVICE=cuda \
-NUM_SEEDS=1 \
-GENERATE_EXPERIMENTS=full_dataset \
-TORCH_EXPERIMENT_NAME=num_records_experiment_large \
-  bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
-
-kill $MONITOR_PID
-```
-
-**Wall-clock:** ~20 minutes (3 min generating the 3M-record synthetic dataset, then training across 8 sample sizes × 3 formulas × 1 seed).
-
-**Important pitfalls:**
-
-- **Use plain `bash <wrapper>`, NOT `uv run bash <wrapper>`.** An outer `uv run` triggers a project auto-sync that overwrites the PyPI-installed `torch-choice` in `.venv` with an empty wheel built from `pyproject.toml`. The wrapper handles its own `uv run python` internally and exports `UV_NO_SYNC=1` for those.
-- **Use `GENERATE_EXPERIMENTS=full_dataset`, NOT `num_records_experiment_large`.** The data-generation step and the benchmark step use different names for the same dataset — the generator's name is `full_dataset`, the benchmark's sweep name is `num_records_experiment_large`. Mismatched names silently produce zero output files, then the benchmark crashes with a missing-file error.
-
-### 6c. Extract the peak GPU memory
-
-```bash
-awk -F',' 'NR>1 { gsub(/ MiB/, "", $3); if ($3+0 > max) max=$3+0 } END { print "peak GPU memory used:", max, "MiB" }' gpu_metrics_10gb.csv
-```
-
-**Expected output:** `peak GPU memory used: ~1,100 MiB` on RTX-3090-class hardware (somewhat higher on newer architectures — see the [Reference numbers](#reference-numbers) section for details). The headline takeaway is that the peak stays well under the 10 GB simulated ceiling, even with auto-batch=16,384.
+Small numerical differences (typically < 5% on the highly significant rows) come from Adam being a first-order optimizer; the conditional logit intercepts are identified only up to a constant, so they may differ by a normalization shift while still implying the same choice probabilities.
 
 ---
 
-## Step 7: Capture evidence
+## Step 5: Reproduce the Section 5 performance benchmarks
 
-If you're using this run to back a peer-review response or to validate a release, archive these four artifacts:
+This step runs the full performance-benchmark pipeline that produced Figures 1–3 of the manuscript. The pipeline:
 
-```bash
-mkdir -p ~/replication_evidence
-# Demo training table (Step 5)
-cp /tmp/torch-choice-replication/lightning_logs ~/replication_evidence/  # or copy the printed table from the terminal
-# Auto-batch line (Step 6a/6b)
-grep -m1 -- "-> batch_size=" /path/to/your/benchmark.log > ~/replication_evidence/auto_batch.txt
-# Peak memory output (Step 6c)
-awk -F',' 'NR>1 { gsub(/ MiB/, "", $3); if ($3+0 > max) max=$3+0 } END { print "peak GPU memory used:", max, "MiB" }' gpu_metrics_10gb.csv > ~/replication_evidence/peak_memory.txt
-# Full per-second metrics CSV
-cp gpu_metrics_10gb.csv ~/replication_evidence/
-```
+1. Generates synthetic user/item latents and simulates choices (~3M-record full dataset plus smaller grids).
+2. Times `torch-choice` across experiment grids (records / parameters / items).
+3. Times R's `mlogit` on equivalent CSV inputs.
+4. Renders the side-by-side comparison PDFs.
 
-These are the artifacts a reviewer (or future-you) can re-inspect to verify the replication.
+### 5a. Smoke test (recommended first, ~3 minutes)
 
----
-
-## Step 8: (Optional) Run the full Section 5 performance benchmarks
-
-The replication archive also includes the full performance-benchmark pipeline used to generate Figures 1–3 of the manuscript. This pipeline compares `torch-choice` against R's `mlogit` across sweeps over records / parameters / items. **It is not required to verify the paper's empirical claims** — the steps above already do that — but it is here if you want to reproduce the figures.
-
-**Prerequisites for this step:**
-
-```r
-# Inside R:
-install.packages(c("mlogit","tictoc","stringr"), repos="https://cloud.r-project.org")
-```
-
-**Runtime:** ~20 hours on a typical workstation (16 cores, 128 GB RAM, RTX 3090). The runtime is dominated by R/mlogit step (3), not by `torch-choice`.
-
-**Quick smoke test first** (verifies the pipeline runs end-to-end with reduced grids; few minutes):
+Run a reduced-grid version end-to-end to verify the pipeline before committing to the full run:
 
 ```bash
 export SMOKE_TEST=1
 bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
 ```
 
-**Full run:**
+**Expected output:** the script prints `[1/4] Generate synthetic data ...`, `[2/4] Benchmark Torch-Choice ...`, `[3/4] Benchmark R (mlogit) ...`, `[4/4] Visualize results ...`, then ends with `Done.` and the three output paths. A `runs/smoke_<timestamp>/` directory should now exist with CSV outputs in `benchmark_results/`.
+
+### 5b. Full run (~20 hours)
 
 ```bash
 export SMOKE_TEST=0
 bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
 ```
 
-By default, each run writes to a timestamped directory under `./replication/paper_performance_benchmarks/runs/<timestamp>/` containing the synthetic datasets (`synthetic_data/`), benchmark CSVs (`benchmark_results/`), and figures (`benchmark_figures/`).
+**Wall-clock:** ~20 hours on a typical workstation (16 cores, 128 GB RAM, RTX 3090). The runtime is dominated by R/mlogit's step (3), not by `torch-choice`. We measured this on the reference hardware; you will see different absolute numbers on different machines but the *relative* trends (the actual claim of the paper's Section 5) should be the same.
+
+**Output:** a timestamped directory under `./replication/paper_performance_benchmarks/runs/<timestamp>/` containing:
+
+- `synthetic_data/` — `.pt` datasets for `torch-choice` and `.csv` long-format datasets for R/mlogit
+- `benchmark_results/` — one CSV per task: `torch_choice_performance_{task}.csv` and `R_performance_{type}.csv`
+- `benchmark_figures/` — the PDFs that correspond to Figures 1–3 of the manuscript
+
+For comparison, the reference outputs from the run we conducted while writing the paper are shipped in `replication/paper_performance_benchmarks/benchmark_results_aurora_20250428/` (CSVs) and `benchmark_figures_20250428/` (PDFs). Each reference CSV records the hardware/software metadata of that run (CPU, GPU, Python, PyTorch, R, package versions, date) for transparency.
+
+### 5c. GPU memory & batch size — auto-detection and manual tuning
+
+The benchmark trains hundreds of models. To keep peak GPU memory predictable across heterogeneous hardware, `torch-choice` selects an effective `batch_size` automatically based on the GPU's available VRAM:
+
+| Detected VRAM | Auto `batch_size` | Peak GPU memory (RTX-3090 reference) |
+|---------------|-------------------|--------------------------------------|
+| < 8 GB        | 8,192             | ~600 MiB                             |
+| 8–12 GB       | 16,384            | ~1,100 MiB                           |
+| 12–16 GB      | 32,768            | ~2,200 MiB                           |
+| 16–22 GB      | 65,536            | ~4,100 MiB                           |
+| ≥ 22 GB       | 131,072           | ~8,100 MiB                           |
+
+**Default behavior — no action needed.** The script reads the actual GPU memory via `torch.cuda.get_device_properties(0).total_memory` at startup and picks the appropriate tier. On a standalone GPU you can run the full benchmark with no extra configuration.
+
+**Manual tuning via `GPU_MEM_LIMIT`.** Export `GPU_MEM_LIMIT=<N>` (in GB) to make the auto-tier logic behave as if the GPU had only `<N>` GB. Three common reasons to use this:
+
+- **Sharing the GPU with another process.** If you have a 24 GB card but another job is using ~14 GB of it, set `GPU_MEM_LIMIT=10` so the benchmark picks the 10 GB tier (`batch_size=16,384`) and stays out of the way.
+- **Reproducing the small-GPU code path on a larger card.** Useful for CI validation or when verifying the package's claim that it runs cleanly on a 10 GB GPU (the empirical claim documented in our response to reviewer comments — see `gpu_memory_limit_test.md` for the detailed verification recipe).
+- **Forcing a specific batch size for runtime comparisons.** `BATCH_SIZE=<N>` is also accepted as a direct override and bypasses the tier table entirely.
+
+Examples:
+
+```bash
+# Default — auto-detect from actual GPU size (recommended for most users).
+bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
+
+# Reserve memory for another process: behave as if the GPU has 10 GB.
+GPU_MEM_LIMIT=10 bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
+
+# Force a specific batch size regardless of GPU memory.
+BATCH_SIZE=32768 bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
+```
+
+If you ever see an out-of-memory error during the benchmark, drop the effective tier by one notch — either `GPU_MEM_LIMIT=<smaller>` or `BATCH_SIZE=<smaller>`. The full set of memory-related knobs (allocator config, `expandable_segments`, CPU fallback) is documented in `gpu_memory_limit_test.md`.
+
+### 5d. Skipping R (Python-only benchmarks)
+
+If you don't have R installed and only want to time `torch-choice`, set `SKIP_R=1`:
+
+```bash
+SKIP_R=1 SMOKE_TEST=0 bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
+```
+
+This runs steps 1 (generate) and 2 (`torch-choice` timing) only, skipping the R benchmarks and the visualization step (which requires R output). Useful for sanity-checking the `torch-choice` half of Section 5 without the 20-hour R run. **Note**: doing this means you cannot regenerate the comparison figures in Section 5.
 
 ---
 
-## Reference numbers
+## Step 6: Capture evidence
 
-### Paper demo (Step 5)
+If you're using this run to back a peer-review response or to validate a release, archive these artifacts:
 
-| Quantity | Value |
-|---|---:|
-| CLM training log-likelihood (ModeCanada, 50,000 Adam epochs) | **−1874.343** |
-| NLM training log-likelihood (House Cooling, 1,000 Adam epochs) | **−182.492** |
-| CLM number of coefficients | 13 |
-| NLM `lambda_weight_0` | 0.332 |
+```bash
+mkdir -p ~/replication_evidence
+
+# Paper demo: the regression tables (Step 4)
+# Copy the printed tables from the terminal, or grep them out of the run log
+# if you redirected output to a file.
+
+# Section 5 benchmark: the timestamped run directory (Step 5b)
+cp -a ./replication/paper_performance_benchmarks/runs/<your_timestamp>/ \
+       ~/replication_evidence/benchmark_run/
+```
+
+The contents of `runs/<timestamp>/benchmark_results/` are the source-of-truth CSVs that produced the manuscript figures; keeping them alongside the rendered PDFs and the printed demo tables gives a future reader everything they need to verify the empirical claims.
+
+---
+
+## Reference numbers (paper demo)
+
+The benchmark wall-clock numbers depend on your hardware and are not expected to match the manuscript values exactly; the *relative* speed-ups (`torch-choice` versus R `mlogit`) are the actual claim. The paper demo's coefficient table, in contrast, should match closely:
+
+| Quantity                                                       | Value         |
+| -------------------------------------------------------------- | ------------- |
+| CLM training log-likelihood (ModeCanada, 50,000 Adam epochs)   | **−1874.343** |
+| NLM training log-likelihood (House Cooling, 1,000 Adam epochs) | **−182.492**  |
+| CLM number of coefficients                                     | 13            |
+| NLM `lambda_weight_0`                                          | 0.332         |
 
 Coefficient signs and significance levels should match the manuscript tables exactly. Magnitudes should match to within ~5% on `***`-significant rows.
-
-### GPU memory test (Step 6)
-
-Empirical table (RTX 3090 + PyTorch 2.5.x baseline; newer architectures may consume somewhat more):
-
-| `GPU_MEM_LIMIT` | Auto `batch_size` | Expected peak |
-|-----------------|-------------------|---------------|
-| 6  (< 8 GB)     | 8,192             | ~600 MiB      |
-| **10 (8–12 GB)**| **16,384**        | **~1,100 MiB**|
-| 14 (12–16 GB)   | 32,768            | ~2,200 MiB    |
-| 18 (16–22 GB)   | 65,536            | ~4,100 MiB    |
-| 24 (≥ 22 GB)    | 131,072           | ~8,100 MiB    |
-
-A reading within ±20% of the table value is normal (`nvidia-smi` samples once per second and may miss exact peaks). On Blackwell-class GPUs with CUDA 13, we observe peaks ~1,800 MiB at the 10 GB tier — higher than the RTX 3090 baseline but still well under the 10 GB ceiling.
 
 ---
 
 ## Common pitfalls
 
-These are the three sharp edges the test procedure has hit in practice:
+Three sharp edges the test procedure has hit in practice:
 
 ### 1. `uv run bash <wrapper>` clobbers the PyPI install
 
@@ -330,22 +301,24 @@ rm -rf torch_choice.egg-info
 
 ### 2. Generator and benchmark use different names for the same dataset
 
-If you restrict the generate step to a benchmark-style name (e.g. `GENERATE_EXPERIMENTS=num_records_experiment_large`), the generator silently produces nothing — its `ALL_EXPERIMENTS` set uses different names. Mapping:
+If you ever restrict the benchmark to a single experiment (via `TORCH_EXPERIMENT_NAME=...`) and also restrict generation (via `GENERATE_EXPERIMENTS=...`), the two CLIs use different vocabularies for the same dataset. The generator's `ALL_EXPERIMENTS` set uses these names:
 
 | Benchmark experiment (`TORCH_EXPERIMENT_NAME`) | Generate experiment (`GENERATE_EXPERIMENTS`) |
-|---|---|
-| `num_records_experiment_small`  | `num_records_experiment_small` |
-| `num_records_experiment_large`  | **`full_dataset`** |
-| `num_params_experiment_small`   | `num_params_experiment_small` |
-| `num_params_experiment_large`   | **`full_dataset`** (shared) |
-| `num_items_experiment_small`    | `num_items_experiment_small` |
-| `num_items_experiment_large`    | `num_items_experiment_large` |
+| ---------------------------------------------- | -------------------------------------------- |
+| `num_records_experiment_small`                 | `num_records_experiment_small`               |
+| `num_records_experiment_large`                 | **`full_dataset`**                           |
+| `num_params_experiment_small`                  | `num_params_experiment_small`                |
+| `num_params_experiment_large`                  | **`full_dataset`** (shared)                  |
+| `num_items_experiment_small`                   | `num_items_experiment_small`                 |
+| `num_items_experiment_large`                   | `num_items_experiment_large`                 |
+
+The default (`GENERATE_EXPERIMENTS=all`) generates everything, so most replicators never hit this. It only bites if you set `GENERATE_EXPERIMENTS` to a benchmark-style name.
 
 **Diagnostic signal:** the generate step finishes without printing any `[Saved] ...` lines, then the benchmark crashes with `FileNotFoundError: ... simulated_choice_data_<name>_seed_42.pt`.
 
 ### 3. LBFGS produces NaN on PyTorch ≥ 2.11
 
-Earlier drafts of the demo used `model_optimizer="LBFGS"`, which is numerically unstable on this small dataset starting in PyTorch 2.11 (produces NaN values on both CPU and GPU). The current demo uses `model_optimizer="Adam"` with `learning_rate=0.0005` for 50,000 epochs, which is stable across all PyTorch versions and reaches a marginally tighter training fit than the original LBFGS recipe.
+Earlier drafts of `paper_demo.py` used `model_optimizer="LBFGS"`, which is numerically unstable on this small dataset starting in PyTorch 2.11 (produces NaN values on both CPU and GPU). The current demo uses `model_optimizer="Adam"` with `learning_rate=0.0005` for 50,000 epochs, which is stable across all PyTorch versions and reaches a marginally tighter training fit than the original LBFGS recipe.
 
 **Diagnostic signal:** if you somehow run the LBFGS path and see a coefficient table full of `nan` and `inf`, switch to Adam.
 
@@ -353,33 +326,32 @@ Earlier drafts of the demo used `model_optimizer="LBFGS"`, which is numerically 
 
 ## File layout in the replication archive
 
-After Step 3, the replication archive contains:
+After Step 2, the archive contains:
 
 ```
 torch-choice-replication/
 ├── LICENSE
 ├── README.md
 ├── UV_SETUP.md
-├── gpu_memory_limit_test.md            # detailed GPU memory test guide
-├── pyproject.toml                       # dependency manifest (used by setup_uv_pypi.sh)
+├── gpu_memory_limit_test.md             # appendix: detailed GPU memory verification
+├── pyproject.toml                        # dependency manifest (used by setup_uv_pypi.sh)
 ├── replication/
-│   ├── car_choice.csv                   # sample dataset used in Section 3
-│   ├── paper_demo.py                    # demo script reproducing Sections 4.1.4 + 4.2.3
-│   ├── paper_demo.ipynb                 # same demo as a Jupyter notebook
-│   ├── paper_replication_guideline.md   # this file
-│   ├── paper_performance_benchmarks/    # Section 5 benchmark pipeline
+│   ├── car_choice.csv                    # sample dataset used in Section 3
+│   ├── paper_demo.py                     # Section 4 demo (CLM + NLM)
+│   ├── paper_demo.ipynb                  # same demo as a Jupyter notebook
+│   ├── paper_replication_guideline.md    # this file
+│   ├── paper_performance_benchmarks/     # Section 5 benchmark pipeline
 │   │   ├── run_benchmarking.sh
 │   │   ├── paper_performance_benchmark.py
 │   │   ├── run_mlogit_experiments.R
-│   │   ├── steps/                       # step01 (generate) / step02 (torch-choice) / step03 (visualize)
-│   │   ├── benchmark_results_aurora_20250428/  # reference CSVs from the paper run
-│   │   └── benchmark_figures_20250428/         # reference PDFs
-│   ├── run_paper_demo.sh                # Section 4 demo wrapper
-│   └── run_paper_demo_output.txt        # reference output for cross-checking
+│   │   ├── steps/                        # step01 (generate) / step02 (torch-choice) / step03 (visualize)
+│   │   ├── benchmark_results_aurora_20250428/   # reference CSVs from the paper run
+│   │   └── benchmark_figures_20250428/          # reference PDFs
+│   ├── run_paper_demo.sh                 # Section 4 demo wrapper
+│   └── run_paper_demo_output.txt         # reference output for cross-checking
 └── scripts/
-    ├── setup_uv_pypi.sh                 # Step 4 (install torch-choice from PyPI)
-    ├── monitor_gpu.sh                   # GPU memory monitor used in Step 6b
-    └── (run_full_replication_test.sh)   # the all-in-one entry point (in the source clone, not this archive)
+    ├── setup_uv_pypi.sh                  # Step 3 (install torch-choice from PyPI)
+    └── monitor_gpu.sh                    # GPU memory monitor (used by gpu_memory_limit_test.md)
 ```
 
-`torch_choice/` is *not* present — that's by design. The package source comes from PyPI in Step 4.
+`torch_choice/` is *not* present — that's by design. The package source comes from PyPI in Step 3.
