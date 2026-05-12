@@ -27,17 +27,25 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 uv --version
 ```
 
-## Step 2: Clone the repository
+## Step 2: Clone the repository and build the minimal replication archive
+
+This guide tests the *replication archive* scenario: torch-choice installed from PyPI, no local package source. The `create_minimal_replication_release.sh` helper builds that archive from a fresh clone.
 
 ```bash
 git clone https://github.com/gsbDBI/torch-choice.git
 cd torch-choice
+bash ./scripts/create_minimal_replication_release.sh /tmp/torch-choice-replication
+cd /tmp/torch-choice-replication
 ```
 
-## Step 3: Set up the Python environment and verify GPU visibility
+You should now be in a directory containing only the replication essentials: `replication/`, `scripts/`, `pyproject.toml`, the docs, and `LICENSE`. No `torch_choice/` source — that comes from PyPI in Step 3.
+
+## Step 3: Install torch-choice from PyPI
+
+`setup_uv_pypi.sh` creates a `.venv`, installs the dependency tree from `pyproject.toml` (`uv sync --no-install-project`), and then installs torch-choice itself from PyPI on top (`uv pip install --python .venv/bin/python --no-deps "torch-choice==1.0.7"`).
 
 ```bash
-./scripts/setup_uv.sh complete
+bash ./scripts/setup_uv_pypi.sh 1.0.7
 
 uv run python -c "
 import torch
@@ -48,7 +56,7 @@ if torch.cuda.is_available():
 "
 ```
 
-**Expected:** `CUDA available: True` plus the card's name and total memory.
+**Expected:** The setup script ends with `[SUCCESS] Setup complete!` and a smoke-test model fit. The CUDA verification then prints `CUDA available: True` plus the card's name and total memory.
 
 ---
 
@@ -57,12 +65,14 @@ if torch.cuda.is_available():
 Before launching the real benchmark, confirm that `_auto_batch_size()` picks the expected batch size for the simulated GPU. This catches plumbing regressions in seconds, instead of after a multi-minute training run.
 
 ```bash
-GPU_MEM_LIMIT=10 uv run python -c "
+source .venv/bin/activate
+GPU_MEM_LIMIT=10 python -c "
 import sys; sys.path.insert(0, 'replication/paper_performance_benchmarks/steps')
 import step02_torch_choice_benchmark as m
 m._set_device('cuda')
 print('selected:', m._auto_batch_size())
 "
+deactivate
 ```
 
 **Expected:**
@@ -99,6 +109,8 @@ If the printed `batch_size` doesn't match the row for your `GPU_MEM_LIMIT`, the 
 | `BATCH_SIZE` | *(auto)* | Batch size for training. Leave unset for VRAM-based auto-detection. |
 | `NUM_SEEDS` | `5` (`2` in smoke) | Number of random seeds per experiment. For a stress test, `1` is sufficient. |
 | `NUM_EPOCHS` | `50000` (`5` in smoke) | Max training epochs (early stopping applies). |
+| `GENERATE_EXPERIMENTS` | `all` | Which experiments the data-generation step (step01) should create. Use `full_dataset` to generate only the large-grid file. |
+| `TORCH_EXPERIMENT_NAME` | `all` | Which benchmark experiment(s) (step02) to run. Use `num_records_experiment_large` to sweep the large-grid records range. |
 
 ### Recommended pattern: start the monitor first
 
@@ -106,7 +118,7 @@ The monitor must run during the benchmark — start it before, kill it after. Th
 
 ```bash
 # Background the monitor (writes one row/sec to gpu_metrics.csv)
-bash ./scripts/monitor_gpu.sh ./gpu_metrics.csv &
+bash ./scripts/monitor_gpu.sh ./gpu_metrics_10gb.csv &
 MONITOR_PID=$!
 ```
 
@@ -115,12 +127,8 @@ MONITOR_PID=$!
 A few-minute end-to-end check of the full pipeline.
 
 ```bash
-export SMOKE_TEST=1   # short run with reduced grids and epochs
-export DEVICE=cuda    # run on GPU
-export SKIP_R=1       # GPU stress test only needs PyTorch, no R
-export GPU_MEM_LIMIT=10  # behave as if the GPU has 10 GB
-
-bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
+GPU_MEM_LIMIT=10 SMOKE_TEST=1 SKIP_R=1 DEVICE=cuda \
+  bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
 
 kill $MONITOR_PID
 ```
@@ -128,26 +136,40 @@ kill $MONITOR_PID
 **Runtime:** a few minutes
 **Output:** `replication/paper_performance_benchmarks/runs/smoke_<timestamp>/`
 
-### Option B: full PyTorch benchmark
+Note: the smoke test uses tiny grids (3K–7K records × 10–30 items × 3–5 params, 5 epochs), so peak memory will be much smaller than the headline numbers in Step 6's table (a few hundred MiB). It verifies the pipeline runs, not the empirical peak.
 
-Complete benchmark with the full grids under the simulated small-GPU configuration. For the GPU memory test only, a single seed is enough — `NUM_SEEDS=1` cuts runtime by 5× without losing any information about peak memory.
+### Option B: targeted large-grid run (the headline-number test)
+
+This is what produces the **~1,100 MiB peak** number that backs the small-GPU claim. It runs only the `num_records_experiment_large` benchmark (which sweeps 8 sample sizes from 3K to 100K records on the full 500-item / 30-param simulated dataset), with one seed, on the simulated 10 GB cap.
 
 ```bash
-export SMOKE_TEST=0   # run the full benchmark
-export DEVICE=cuda    # run on GPU
-export SKIP_R=1       # GPU stress test only needs PyTorch, no R
-export NUM_SEEDS=1    # one seed is enough for a memory stress test
-export GPU_MEM_LIMIT=10  # behave as if the GPU has 10 GB
-
-bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
+GPU_MEM_LIMIT=10 SMOKE_TEST=0 SKIP_R=1 DEVICE=cuda \
+NUM_SEEDS=1 \
+GENERATE_EXPERIMENTS=full_dataset \
+TORCH_EXPERIMENT_NAME=num_records_experiment_large \
+  bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
 
 kill $MONITOR_PID
 ```
 
-**Runtime (with `SKIP_R=1` and `NUM_SEEDS=1`):** roughly 20–30 minutes on a typical workstation. (The ~20 hr figure quoted in the main replication guideline is for the *with-R*, all-seeds pipeline; R/mlogit dominates that runtime, and `SKIP_R=1` removes it entirely.)
+**Runtime:** roughly 20–30 minutes on a typical workstation (2–3 min generating the 3M-record synthetic dataset, then 24 training runs across 8 sample sizes × 3 formulas, most early-stopping in seconds).
 **Output:** `replication/paper_performance_benchmarks/runs/<timestamp>/`
 
-For interactive use where you prefer two terminals: run `bash ./scripts/monitor_gpu.sh ./gpu_metrics.csv` in terminal 1 (Ctrl+C to stop) and the benchmark in terminal 2 — same result.
+> **Why `GENERATE_EXPERIMENTS=full_dataset` rather than `num_records_experiment_large`?** The benchmark step and the generate step use different names for the same dataset: step01 calls it `full_dataset` (it's the 3M-record source file), step02 calls it `num_records_experiment_large` (it's the records sweep that reads that file). You set the generator to produce the dataset (`full_dataset`) and the benchmark to consume it (`num_records_experiment_large`).
+
+### Option C: full benchmark (every experiment, every sample size)
+
+Same as Option B but without the experiment restrictions — runs the entire small + large grid plus the params and items sweeps. Takes 1–2 hours with `SKIP_R=1` and `NUM_SEEDS=1`.
+
+```bash
+GPU_MEM_LIMIT=10 SMOKE_TEST=0 SKIP_R=1 DEVICE=cuda \
+NUM_SEEDS=1 \
+  bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
+
+kill $MONITOR_PID
+```
+
+For interactive use where you prefer two terminals: run `bash ./scripts/monitor_gpu.sh ./gpu_metrics_10gb.csv` in terminal 1 (Ctrl+C to stop) and the benchmark in terminal 2 — same result.
 
 The monitor CSV columns are: `timestamp`, `gpu_name`, `memory_used_mb`, `memory_total_mb`, `utilization_percent`.
 
@@ -158,10 +180,10 @@ The monitor CSV columns are: `timestamp`, `gpu_name`, `memory_used_mb`, `memory_
 Extract the peak memory observed during the run with one `awk` line:
 
 ```bash
-awk -F',' 'NR>1 { gsub(/ MiB/, "", $3); if ($3+0 > max) max=$3+0 } END { print "peak GPU memory used:", max, "MiB" }' gpu_metrics.csv
+awk -F',' 'NR>1 { gsub(/ MiB/, "", $3); if ($3+0 > max) max=$3+0 } END { print "peak GPU memory used:", max, "MiB" }' gpu_metrics_10gb.csv
 ```
 
-### Expected peak by simulated GPU size
+### Expected peak by simulated GPU size (Option B / Option C runs only)
 
 | `GPU_MEM_LIMIT` | Auto `batch_size` | Expected peak memory |
 |-----------------|-------------------|----------------------|
@@ -174,7 +196,52 @@ awk -F',' 'NR>1 { gsub(/ MiB/, "", $3); if ($3+0 > max) max=$3+0 } END { print "
 A reading within roughly ±20 % of the expected value is normal — `nvidia-smi` samples once per second and may miss exact peaks, and other processes on the card add small offsets.
 
 - **Peak much higher than expected (e.g. > 2×):** auto-detection probably didn't fire — check that the run log starts with a `[Auto batch size] ... -> batch_size=<N>` line and that `<N>` matches the tier table above. Also check that no other process is sharing the GPU.
-- **Peak lower than expected:** fine — PyTorch's allocator was more conservative than the empirical worst-case used to derive the table.
+- **Peak lower than expected:** fine — PyTorch's allocator was more conservative than the empirical worst-case used to derive the table. The Option A smoke-test peak will be much lower than the table values because smoke-test grids are tiny.
+
+---
+
+## Common pitfalls (and how to spot them)
+
+The replication-archive scenario has two sharp edges worth knowing about, both of which manifest as confusing failures during Step 5.
+
+### 1. Do not invoke the run wrapper with `uv run bash`
+
+`bash ./replication/paper_performance_benchmarks/run_benchmarking.sh` — **correct**.
+`uv run bash ./replication/paper_performance_benchmarks/run_benchmarking.sh` — **wrong**.
+
+The wrapper internally calls `uv run python` for its actual work and exports `UV_NO_SYNC=1` to keep those calls from auto-syncing the local project. But an *outer* `uv run` runs *before* the wrapper has a chance to export anything, and that outer `uv run` will detect `pyproject.toml`'s `[project] name = "torch-choice"`, build an empty wheel from the metadata alone (since the replication archive has no `torch_choice/` source), and **overwrite the PyPI-installed torch-choice in `.venv`** with the empty wheel.
+
+If you see these three lines at the start of the wrapper output, the outer `uv run` clobbered the install:
+
+```
+Built torch-choice @ file:///<archive-dir>
+Uninstalled 1 package in <N>ms
+Installed 1 package in <N>ms
+```
+
+Recovery: re-install torch-choice from PyPI before retrying.
+
+```bash
+uv pip install --python .venv/bin/python --no-deps "torch-choice==1.0.7" --force-reinstall
+rm -rf torch_choice.egg-info
+```
+
+### 2. Generator and benchmark use different names for the same data
+
+If you restrict the generate step to a benchmark-style name like `GENERATE_EXPERIMENTS=num_records_experiment_large`, the generator will silently produce nothing — its `ALL_EXPERIMENTS` set uses different names. The mapping you need:
+
+| Benchmark experiment (`TORCH_EXPERIMENT_NAME`) | Generate experiment (`GENERATE_EXPERIMENTS`) |
+|---|---|
+| `num_records_experiment_small`  | `num_records_experiment_small` |
+| `num_records_experiment_large`  | **`full_dataset`** |
+| `num_params_experiment_small`   | `num_params_experiment_small` |
+| `num_params_experiment_large`   | **`full_dataset`** |
+| `num_items_experiment_small`    | `num_items_experiment_small` |
+| `num_items_experiment_large`    | `num_items_experiment_large` |
+
+You can spot a naming mismatch in two ways:
+- The generate step prints `[Done] Finished generating synthetic datasets.` but no `[Saved] ...` lines before it.
+- The benchmark step crashes with `FileNotFoundError: [Errno 2] No such file or directory: '.../simulated_choice_data_full_dataset_seed_42.pt'`.
 
 ---
 
@@ -183,4 +250,4 @@ A reading within roughly ±20 % of the expected value is normal — `nvidia-smi`
 If you're using this guide to back a peer-review response or to validate a release, save:
 
 1. The `[Auto batch size] ...` log line printed at the start of the benchmark (proves auto-detection fired with the right tier).
-2. The full `gpu_metrics.csv` file (lets the reading be re-verified later, not just the single peak number).
+2. The full `gpu_metrics_10gb.csv` file (lets the reading be re-verified later, not just the single peak number).
