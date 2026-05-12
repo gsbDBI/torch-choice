@@ -18,6 +18,21 @@ This guide focuses on stages 1 and 2 only. R/mlogit and the visualization stage 
 
 Any GPU size works — `GPU_MEM_LIMIT` (used in Step 5) simulates a smaller card, so you can verify the small-GPU path on, say, a 24 GB workstation without finding a real 10 GB box.
 
+> **Shortcut:** for a fully unattended end-to-end run that bootstraps from a fresh clone, installs the package from PyPI, reproduces the paper demo (Section 4.1.4 CLM + 4.2.3 NLM), and runs the GPU memory test in one go, use:
+>
+> ```bash
+> # On the GPU machine, no prior clone needed:
+> bash <(curl -sSL https://raw.githubusercontent.com/gsbDBI/torch-choice/main/scripts/run_full_replication_test.sh)
+> ```
+>
+> Or, if you have a clone already:
+>
+> ```bash
+> bash ./scripts/run_full_replication_test.sh
+> ```
+>
+> The script archives all logs, the GPU metrics CSV, and the demo training table under `${WORK_DIR}/evidence/`. Total wall-clock: ~30 min. The rest of this document walks through the same steps manually for users who want fine-grained control.
+
 ---
 
 ## Step 1: Install uv
