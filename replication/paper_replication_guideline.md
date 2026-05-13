@@ -1,11 +1,11 @@
-# Replication Material — Step-by-Step Walkthrough
+# Replication Material: Step-by-Step Walkthrough
 
 This guide walks you through reproducing the empirical results in *Torch-Choice: A PyTorch Package for Large-Scale Choice Modeling with Python* end-to-end on a Linux machine with an NVIDIA GPU. You can easily obtain one from a cloud platform such as Google Cloud, AWS, or Azure.
 
 The procedure has two parts:
 
-1. **Paper demo replication** (Sections 4.1.4 and 4.2.3 of the manuscript) — fits a conditional logit model on ModeCanada and a nested logit model on House Cooling, and reproduces the coefficient tables.
-2. **Performance benchmarks** (Section 5 of the manuscript) — runs the full `torch-choice` vs `mlogit` (R) benchmark grid across sweeps in records, parameters, and items, and regenerates Figures 1–3.
+1. **Paper demo replication** (Sections 4.1.4 and 4.2.3 of the manuscript): fits a conditional logit model on ModeCanada and a nested logit model on House Cooling, and reproduces the coefficient tables.
+2. **Performance benchmarks** (Section 5 of the manuscript): runs the full `torch-choice` vs `mlogit` (R) benchmark grid across sweeps in records, parameters, and items, and regenerates Figures 1–3.
 
 Total wall-clock: **paper demo ≈ 10 minutes**, **full benchmark ≈ 20 hours** (dominated by R/mlogit). A smoke-test configuration of the benchmark runs in a few minutes if you just want to verify the pipeline before committing to the full run.
 
@@ -44,7 +44,7 @@ There are two ways to get the replication material onto your machine. Pick which
 
 ### Path A (default): you already have the replication archive
 
-If you received the replication material directly — for example, as a JSS-style submission attachment, a paper's supplementary materials zip, or a download link from the authors — simply extract it and `cd` into it. You can skip ahead to Step 3.
+If you received the replication material directly, for example as a JSS-style submission attachment, a paper's supplementary materials zip, or a download link from the authors, simply extract it and `cd` into it. You can skip ahead to Step 3.
 
 ```bash
 # Adjust the filename/path to whatever you received:
@@ -52,7 +52,7 @@ unzip torch-choice-replication.zip
 cd torch-choice-replication
 ```
 
-After `cd`, `ls` should show: `gpu_memory_limit_test.md`, `LICENSE`, `pyproject.toml`, `README.md`, `replication/`, `scripts/`, `UV_SETUP.md`. There is **no** `torch_choice/` directory — that's by design (the package itself comes from PyPI in Step 3).
+After `cd`, `ls` should show: `gpu_memory_limit_test.md`, `LICENSE`, `pyproject.toml`, `README.md`, `replication/`, `scripts/`, `UV_SETUP.md`. There is **no** `torch_choice/` directory. That's by design (the package itself comes from PyPI in Step 3).
 
 ### Path B (alternative): build the archive from the public GitHub repository
 
@@ -188,13 +188,13 @@ bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
 
 **Output:** a timestamped directory under `./replication/paper_performance_benchmarks/runs/<timestamp>/` containing:
 
-- `synthetic_data/` — `.pt` datasets for `torch-choice` and `.csv` long-format datasets for R/mlogit
-- `benchmark_results/` — one CSV per task: `torch_choice_performance_{task}.csv` and `R_performance_{type}.csv`
-- `benchmark_figures/` — the PDFs that correspond to Figures 1–3 of the manuscript
+- `synthetic_data/`: `.pt` datasets for `torch-choice` and `.csv` long-format datasets for R/mlogit
+- `benchmark_results/`: one CSV per task: `torch_choice_performance_{task}.csv` and `R_performance_{type}.csv`
+- `benchmark_figures/`: the PDFs that correspond to Figures 1–3 of the manuscript
 
 For comparison, the reference outputs from the run we conducted while writing the paper are shipped in `replication/paper_performance_benchmarks/benchmark_results_aurora_20250428/` (CSVs) and `benchmark_figures_20250428/` (PDFs). Each reference CSV records the hardware/software metadata of that run (CPU, GPU, Python, PyTorch, R, package versions, date) for transparency.
 
-### 5c. GPU memory & batch size — auto-detection and manual tuning
+### 5c. GPU memory & batch size: auto-detection and manual tuning
 
 The benchmark trains hundreds of models. To keep peak GPU memory predictable across heterogeneous hardware, `torch-choice` selects an effective `batch_size` automatically based on the GPU's available VRAM:
 
@@ -206,18 +206,18 @@ The benchmark trains hundreds of models. To keep peak GPU memory predictable acr
 | 16–22 GB      | 65,536            | ~4,100 MiB                           |
 | ≥ 22 GB       | 131,072           | ~8,100 MiB                           |
 
-**Default behavior — no action needed.** The script reads the actual GPU memory via `torch.cuda.get_device_properties(0).total_memory` at startup and picks the appropriate tier. On a standalone GPU you can run the full benchmark with no extra configuration.
+**Default behavior: no action needed.** The script reads the actual GPU memory via `torch.cuda.get_device_properties(0).total_memory` at startup and picks the appropriate tier. On a standalone GPU you can run the full benchmark with no extra configuration.
 
 **Manual tuning via `GPU_MEM_LIMIT`.** Export `GPU_MEM_LIMIT=<N>` (in GB) to make the auto-tier logic behave as if the GPU had only `<N>` GB. Three common reasons to use this:
 
 - **Sharing the GPU with another process.** If you have a 24 GB card but another job is using ~14 GB of it, set `GPU_MEM_LIMIT=10` so the benchmark picks the 10 GB tier (`batch_size=16,384`) and stays out of the way.
-- **Reproducing the small-GPU code path on a larger card.** Useful for CI validation or when verifying the package's claim that it runs cleanly on a 10 GB GPU (the empirical claim documented in our response to reviewer comments — see `gpu_memory_limit_test.md` for the detailed verification recipe).
+- **Reproducing the small-GPU code path on a larger card.** Useful for CI validation or when verifying the package's claim that it runs cleanly on a 10 GB GPU (the empirical claim documented in our response to reviewer comments; see `gpu_memory_limit_test.md` for the detailed verification recipe).
 - **Forcing a specific batch size for runtime comparisons.** `BATCH_SIZE=<N>` is also accepted as a direct override and bypasses the tier table entirely.
 
 Examples:
 
 ```bash
-# Default — auto-detect from actual GPU size (recommended for most users).
+# Default: auto-detect from actual GPU size (recommended for most users).
 bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
 
 # Reserve memory for another process: behave as if the GPU has 10 GB.
@@ -227,7 +227,7 @@ GPU_MEM_LIMIT=10 bash ./replication/paper_performance_benchmarks/run_benchmarkin
 BATCH_SIZE=32768 bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
 ```
 
-If you ever see an out-of-memory error during the benchmark, drop the effective tier by one notch — either `GPU_MEM_LIMIT=<smaller>` or `BATCH_SIZE=<smaller>`. The full set of memory-related knobs (allocator config, `expandable_segments`, CPU fallback) is documented in `gpu_memory_limit_test.md`.
+If you ever see an out-of-memory error during the benchmark, drop the effective tier by one notch: either `GPU_MEM_LIMIT=<smaller>` or `BATCH_SIZE=<smaller>`. The full set of memory-related knobs (allocator config, `expandable_segments`, CPU fallback) is documented in `gpu_memory_limit_test.md`.
 
 ### 5d. Skipping R (Python-only benchmarks)
 
@@ -282,7 +282,7 @@ Three sharp edges the test procedure has hit in practice:
 
 ### 1. `uv run bash <wrapper>` clobbers the PyPI install
 
-When you invoke the run wrappers, use **plain `bash`**, not `uv run bash`. The wrapper internally uses `uv run python` with `UV_NO_SYNC=1` exported, which protects it from auto-sync. But an outer `uv run` runs *before* the wrapper's environment is set up, and that outer call will detect `pyproject.toml`'s `[project] name = "torch-choice"` and build an empty wheel from the metadata (since the replication archive has no `torch_choice/` source) — installing it over the PyPI version we want.
+When you invoke the run wrappers, use **plain `bash`**, not `uv run bash`. The wrapper internally uses `uv run python` with `UV_NO_SYNC=1` exported, which protects it from auto-sync. But an outer `uv run` runs *before* the wrapper's environment is set up, and that outer call will detect `pyproject.toml`'s `[project] name = "torch-choice"` and build an empty wheel from the metadata (since the replication archive has no `torch_choice/` source), installing it over the PyPI version we want.
 
 **Diagnostic signal:** if you see this triplet at the start of a wrapper run, the trap was sprung:
 
@@ -354,4 +354,4 @@ torch-choice-replication/
     └── monitor_gpu.sh                    # GPU memory monitor (used by gpu_memory_limit_test.md)
 ```
 
-`torch_choice/` is *not* present — that's by design. The package source comes from PyPI in Step 3.
+`torch_choice/` is *not* present. That's by design. The package source comes from PyPI in Step 3.
