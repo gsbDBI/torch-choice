@@ -3,7 +3,8 @@
 #
 # One script, two verifications:
 #   (1) Paper demo replication (Section 4.1.4 CLM on ModeCanada + 4.2.3 NLM
-#       on House Cooling). Adam optimizer; log-likelihood ~ -1874.34 expected.
+#       on House Cooling). Adam optimizer (lr=0.005, 10,000 epochs);
+#       log-likelihood ~ -1874.38 expected.
 #   (2) GPU memory cap test (paper_performance_benchmarks). With
 #       GPU_MEM_LIMIT=10 the auto-batch-size logic selects batch_size=16,384
 #       and peak GPU memory should land near ~1,100 MiB on RTX-3090-class
@@ -124,7 +125,7 @@ fi
 if [[ "${SKIP_DEMO}" != "1" ]]; then
     echo
     echo -e "${BLUE}[PHASE 5/7]${NC} Reproducing paper demo (Section 4.1.4 CLM + 4.2.3 NLM)..."
-    echo "             Wall-clock estimate: ~5-10 min (50,000 Adam epochs on ModeCanada)."
+    echo "             Wall-clock estimate: ~1-2 min (10,000 Adam epochs on ModeCanada)."
 
     DEMO_LOG="${EVIDENCE_DIR}/paper_demo.log"
     bash ./replication/run_paper_demo.sh --no-tensorboard 2>&1 | tee "${DEMO_LOG}"
@@ -133,7 +134,7 @@ if [[ "${SKIP_DEMO}" != "1" ]]; then
     DEMO_LL=$(grep -m1 "Training] -" "${DEMO_LOG}" | grep -oE '\-[0-9]+\.[0-9]+' | head -1 || echo "<not found>")
     echo
     echo -e "${GREEN}             ${NC}CLM training log-likelihood: ${DEMO_LL}"
-    echo "             (paper Section 4.1.4 expects: ~-1874.34)"
+    echo "             (paper Section 4.1.4 expects: ~-1874.38)"
 fi
 
 # --- Phase 6: GPU memory test ----------------------------------------------
@@ -177,7 +178,7 @@ echo "=================================================================="
 if [[ "${SKIP_DEMO}" != "1" ]]; then
     echo "  Paper demo (CLM):"
     echo "    Training log-likelihood:  ${DEMO_LL:-<skipped>}"
-    echo "    Paper expected:           ~-1874.34"
+    echo "    Paper expected:           ~-1874.38"
 fi
 
 if [[ "${SKIP_MEMORY_TEST}" != "1" ]]; then

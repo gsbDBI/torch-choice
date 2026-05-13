@@ -1,13 +1,15 @@
 # Replication Material: Step-by-Step Walkthrough
 
-This guide walks you through reproducing the empirical results in *Torch-Choice: A PyTorch Package for Large-Scale Choice Modeling with Python* end-to-end on a Linux machine with an NVIDIA GPU. You can easily obtain one from a cloud platform such as Google Cloud, AWS, or Azure.
+This guide provides a step-by-step walkthrough for reproducing the empirical results from *Torch-Choice: A PyTorch Package for Large-Scale Choice Modeling with Python* on a Linux machine equipped with an NVIDIA GPU. If you do not have a suitable machine, you can easily access a GPU instance through cloud providers such as Google Cloud, AWS, or Azure. The latest replication package automatically adjusts the batch size according to available GPU memory so it should work on any GPU-equipped machine.
 
 The procedure has two parts:
 
-1. **Paper demo replication** (Sections 4.1.4 and 4.2.3 of the manuscript): fits a conditional logit model on ModeCanada and a nested logit model on House Cooling, and reproduces the coefficient tables.
-2. **Performance benchmarks** (Section 5 of the manuscript): runs the full `torch-choice` vs `mlogit` (R) benchmark grid across sweeps in records, parameters, and items, and regenerates Figures 1–3.
+1. **Paper demo replication**: we provide a executable Python script including all the commands we demonstrated in the paper manuscript, including operations for dataset management and model estiamtion, including fitting a conditional logit model on ModeCanada and a nested logit model on House Cooling, and reproduces the coefficient tables.
+2. **Performance benchmarks** (Section 5 of the manuscript): runs the full `torch-choice` vs `mlogit` (R) benchmark copmaring computational runtime for different approaches on the grid across sweeps in records, parameters, and items, and regenerates Figures 1–3.
 
-Total wall-clock: **paper demo ≈ 10 minutes**, **full benchmark ≈ 20 hours** (dominated by R/mlogit). A smoke-test configuration of the benchmark runs in a few minutes if you just want to verify the pipeline before committing to the full run.
+Total wall-clock: **paper demo ~1–2 minutes**, **full benchmark ≈ 20 hours** (dominated by R/mlogit, we offer a knob to run the PyTorch only part). The actual runtime depends on your hardware configuration.
+
+A smoke-test configuration of the benchmark runs in a few minutes if you just want to verify the pipeline before committing to the full run.
 
 ---
 
@@ -16,8 +18,7 @@ Total wall-clock: **paper demo ≈ 10 minutes**, **full benchmark ≈ 20 hours**
 - A Linux machine with an NVIDIA GPU and working CUDA drivers (any modern GPU works).
 - `nvidia-smi` on `PATH`.
 - Internet access for downloading the package and dependencies.
-- **R** with the `mlogit`, `tictoc`, and `stringr` packages installed (needed for Step 5, the Section 5 benchmark). Install them once with:
-
+- **R** with the `mlogit`, `tictoc`, and `stringr` packages installed. The R installation is only needed for Step 5 (the Section 5 benchmark). Install them once with:
   ```r
   # Inside an R session:
   install.packages(c("mlogit","tictoc","stringr"), repos="https://cloud.r-project.org")
@@ -44,7 +45,7 @@ There are two ways to get the replication material onto your machine. Pick which
 
 ### Path A (default): you already have the replication archive
 
-If you received the replication material directly, for example as a JSS-style submission attachment, a paper's supplementary materials zip, or a download link from the authors, simply extract it and `cd` into it. You can skip ahead to Step 3.
+If you received the replication material directly, for example as a submission attachment, a paper's supplementary materials zip, or a download link from the authors, simply extract it and `cd` into it. You can skip ahead to Step 3.
 
 ```bash
 # Adjust the filename/path to whatever you received:
@@ -61,11 +62,13 @@ If you do not have the archive, you can build it yourself from the public source
 ```bash
 git clone https://github.com/gsbDBI/torch-choice.git
 cd torch-choice
-bash ./scripts/create_minimal_replication_release.sh /tmp/torch-choice-replication
-cd /tmp/torch-choice-replication
+# you can change the directory based on your local file system.
+bash ./scripts/create_minimal_replication_release.sh /content/torch-choice-replication
+cd /content/torch-choice-replication
+# you can delete the original torch-choice repo, we will work on the torch-choice-replication folder from now on.
 ```
 
-**Expected output:** `Cloning into 'torch-choice'...`, then `[DONE] Minimal replication release built at: /tmp/torch-choice-replication`. After the final `cd`, the listing should match Path A above.
+**Expected output:** `Cloning into 'torch-choice'...`, then `[DONE] Minimal replication release built at: <replication-dir>`, where `<replication-dir>` is the directory you chose above. After the final `cd`, the listing should match Path A above.
 
 The `create_minimal_replication_release.sh` helper copies the replication scripts, docs, and `pyproject.toml` (for dependency resolution) into the target directory, deliberately excluding the package source (`torch_choice/`), build artifacts, and developer-only material (`tests/`, `docs/`, `tutorials/`, etc.). See the [File layout](#file-layout-in-the-replication-archive) section at the end of this document for the full kept/excluded list.
 
@@ -83,7 +86,7 @@ bash ./scripts/setup_uv_pypi.sh 1.0.7
 
 **Expected output (success signals):**
 
-- `[SUCCESS] Virtual environment activated (VIRTUAL_ENV=/tmp/torch-choice-replication/.venv)`
+- `[SUCCESS] Virtual environment activated (VIRTUAL_ENV=<replication-dir>/.venv)`
 - `[SUCCESS] Prerequisites installed.`
 - `[SUCCESS] torch-choice==1.0.7 installed from PyPI into .venv.`
 - `[SUCCESS] Quick model run completed.`
@@ -101,57 +104,21 @@ print('location:', torch_choice.__file__)
 deactivate
 ```
 
-The reported `location` must be under `/tmp/torch-choice-replication/.venv/lib/python3.12/site-packages/torch_choice/` (not the local repo or `/usr/...`). If the location is wrong, the install used the wrong Python environment.
+The reported `location` must be under `<replication-dir>/.venv/lib/python3.12/site-packages/torch_choice/` (not the local repo or `/usr/...`). If the location is wrong, the install used the wrong Python environment.
 
 **Alternative install without uv:** if you prefer plain pip/conda, run `pip install "torch-choice[complete]==1.0.7"` inside any Python 3.10+ environment. All subsequent steps work identically.
 
 ---
 
-## Step 4: Reproduce the paper demo
+## Step 4: Reproduce demo code used in the manuscript
 
-This step reproduces the coefficient tables in Sections 4.1.4 (Mode Canada CLM) and 4.2.3 (House Cooling NLM) of the manuscript.
+This step runs `paper_demo.py`, which walks through the manuscript's main data-setup and model-estimation examples, then fits the Mode Canada conditional logit model and the House Cooling nested logit model used for the Section 4 coefficient tables.
 
 ```bash
 bash ./replication/run_paper_demo.sh --no-tensorboard
 ```
 
-**Wall-clock:** ~5–10 minutes (50,000 Adam epochs on the small ModeCanada dataset).
-
-**Expected output:** at the end of the run, two regression tables.
-
-For the **conditional logit model (Section 4.1.4)**:
-
-```
-Log-likelihood: [Training] -1874.343, [Validation] None, [Test] None
-
-| Coefficient                           |   Estimation |   Std. Err. |   z-value | Pr(>|z|)   | Significance |
-|:--------------------------------------|-------------:|------------:|----------:|:-----------|:-------------|
-| itemsession_cost_freq_ovt[constant]_0 |  -0.0334045  |  0.00709508 |    -4.708 | 2.500e-06  | ***          |
-| itemsession_cost_freq_ovt[constant]_1 |   0.0925443  |  0.00509738 |    18.155 | < 2e-16    | ***          |
-| itemsession_cost_freq_ovt[constant]_2 |  -0.0430018  |  0.00322449 |   -13.336 | < 2e-16    | ***          |
-| session_income[item]_0                |  -0.0890672  |  0.0183458  |    -4.855 | 1.205e-06  | ***          |
-| session_income[item]_1                |  -0.0279754  |  0.00387223 |    -7.225 | 5.025e-13  | ***          |
-| session_income[item]_2                |  -0.0381287  |  0.00408253 |    -9.339 | < 2e-16    | ***          |
-| itemsession_ivt[item-full]_0          |   0.059507   |  0.0100726  |     5.908 | 3.466e-09  | ***          |
-| itemsession_ivt[item-full]_2          |  -0.00645034 |  0.00189833 |    -3.398 | 6.790e-04  | ***          |
-| ... (remaining rows match the manuscript Section 4.1.4 table) |
-```
-
-For the **nested logit model (Section 4.2.3)**:
-
-```
-Log-likelihood: [Training] -182.492, ...
-| lambda_weight_0   |  0.332282 | ...
-| item_price_obs[constant]_0 | -0.317104 | ...
-| ... (matches Section 4.2.3 table)
-```
-
-**What to verify:**
-
-- **CLM training log-likelihood ≈ −1874.34** (manuscript: −1874.343)
-- **NLM training log-likelihood ≈ −182.49** (manuscript: −182.492)
-- All `***`-significant coefficients match the manuscript's signs and magnitudes within ~5%.
-- Same significance pattern (what is `***` in the manuscript is `***` in your run).
+**Wall-clock:** ~1–2 minutes (10,000 Adam epochs on the small ModeCanada dataset; ~10 seconds on a fast CPU, slightly less on GPU).
 
 Small numerical differences (typically < 5% on the highly significant rows) come from Adam being a first-order optimizer; the conditional logit intercepts are identified only up to a constant, so they may differ by a normalization shift while still implying the same choice probabilities.
 
@@ -159,10 +126,10 @@ Small numerical differences (typically < 5% on the highly significant rows) come
 
 ## Step 5: Reproduce the Section 5 performance benchmarks
 
-This step runs the full performance-benchmark pipeline that produced Figures 1–3 of the manuscript. The pipeline:
+This step runs the full performance-benchmark grid that produced Figures 1–3 of the manuscript. Here, "grid" means the collection of benchmark cases formed by varying the number of records, model parameters, and choice items. The pipeline:
 
-1. Generates synthetic user/item latents and simulates choices (~3M-record full dataset plus smaller grids).
-2. Times `torch-choice` across experiment grids (records / parameters / items).
+1. Generates synthetic user/item latents and simulates choices (~3M-record full dataset plus smaller datasets for the grid cases).
+2. Times `torch-choice` across the benchmark grid.
 3. Times R's `mlogit` on equivalent CSV inputs.
 4. Renders the side-by-side comparison PDFs.
 
@@ -198,13 +165,15 @@ For comparison, the reference outputs from the run we conducted while writing th
 
 The benchmark trains hundreds of models. To keep peak GPU memory predictable across heterogeneous hardware, `torch-choice` selects an effective `batch_size` automatically based on the GPU's available VRAM:
 
+
 | Detected VRAM | Auto `batch_size` | Peak GPU memory (RTX-3090 reference) |
-|---------------|-------------------|--------------------------------------|
+| ------------- | ----------------- | ------------------------------------ |
 | < 8 GB        | 8,192             | ~600 MiB                             |
 | 8–12 GB       | 16,384            | ~1,100 MiB                           |
 | 12–16 GB      | 32,768            | ~2,200 MiB                           |
 | 16–22 GB      | 65,536            | ~4,100 MiB                           |
 | ≥ 22 GB       | 131,072           | ~8,100 MiB                           |
+
 
 **Default behavior: no action needed.** The script reads the actual GPU memory via `torch.cuda.get_device_properties(0).total_memory` at startup and picks the appropriate tier. On a standalone GPU you can run the full benchmark with no extra configuration.
 
@@ -265,14 +234,16 @@ The contents of `runs/<timestamp>/benchmark_results/` are the source-of-truth CS
 
 The benchmark wall-clock numbers depend on your hardware and are not expected to match the manuscript values exactly; the *relative* speed-ups (`torch-choice` versus R `mlogit`) are the actual claim. The paper demo's coefficient table, in contrast, should match closely:
 
+
 | Quantity                                                       | Value         |
 | -------------------------------------------------------------- | ------------- |
-| CLM training log-likelihood (ModeCanada, 50,000 Adam epochs)   | **−1874.343** |
-| NLM training log-likelihood (House Cooling, 1,000 Adam epochs) | **−182.492**  |
+| CLM training log-likelihood (ModeCanada, 10,000 Adam epochs)   | **−1874.376** |
+| NLM training log-likelihood (House Cooling, 5,000 Adam epochs) | **−178.149**  |
 | CLM number of coefficients                                     | 13            |
-| NLM `lambda_weight_0`                                          | 0.332         |
+| NLM `lambda_weight_0`                                          | 0.571         |
 
-Coefficient signs and significance levels should match the manuscript tables exactly. Magnitudes should match to within ~5% on `***`-significant rows.
+
+Coefficient signs and significance levels should match the manuscript tables exactly. Magnitudes should match to within ~5% on `*`**-significant rows.
 
 ---
 
@@ -282,7 +253,7 @@ Three sharp edges the test procedure has hit in practice:
 
 ### 1. `uv run bash <wrapper>` clobbers the PyPI install
 
-When you invoke the run wrappers, use **plain `bash`**, not `uv run bash`. The wrapper internally uses `uv run python` with `UV_NO_SYNC=1` exported, which protects it from auto-sync. But an outer `uv run` runs *before* the wrapper's environment is set up, and that outer call will detect `pyproject.toml`'s `[project] name = "torch-choice"` and build an empty wheel from the metadata (since the replication archive has no `torch_choice/` source), installing it over the PyPI version we want.
+When you invoke the run wrappers, use **plain `bash*`*, not `uv run bash`. The wrapper internally uses `uv run python` with `UV_NO_SYNC=1` exported, which protects it from auto-sync. But an outer `uv run` runs *before* the wrapper's environment is set up, and that outer call will detect `pyproject.toml`'s `[project] name = "torch-choice"` and build an empty wheel from the metadata (since the replication archive has no `torch_choice/` source), installing it over the PyPI version we want.
 
 **Diagnostic signal:** if you see this triplet at the start of a wrapper run, the trap was sprung:
 
@@ -303,14 +274,16 @@ rm -rf torch_choice.egg-info
 
 If you ever restrict the benchmark to a single experiment (via `TORCH_EXPERIMENT_NAME=...`) and also restrict generation (via `GENERATE_EXPERIMENTS=...`), the two CLIs use different vocabularies for the same dataset. The generator's `ALL_EXPERIMENTS` set uses these names:
 
+
 | Benchmark experiment (`TORCH_EXPERIMENT_NAME`) | Generate experiment (`GENERATE_EXPERIMENTS`) |
 | ---------------------------------------------- | -------------------------------------------- |
 | `num_records_experiment_small`                 | `num_records_experiment_small`               |
-| `num_records_experiment_large`                 | **`full_dataset`**                           |
+| `num_records_experiment_large`                 | `**full_dataset**`                           |
 | `num_params_experiment_small`                  | `num_params_experiment_small`                |
-| `num_params_experiment_large`                  | **`full_dataset`** (shared)                  |
+| `num_params_experiment_large`                  | `**full_dataset**` (shared)                  |
 | `num_items_experiment_small`                   | `num_items_experiment_small`                 |
 | `num_items_experiment_large`                   | `num_items_experiment_large`                 |
+
 
 The default (`GENERATE_EXPERIMENTS=all`) generates everything, so most replicators never hit this. It only bites if you set `GENERATE_EXPERIMENTS` to a benchmark-style name.
 
@@ -318,7 +291,7 @@ The default (`GENERATE_EXPERIMENTS=all`) generates everything, so most replicato
 
 ### 3. LBFGS produces NaN on PyTorch ≥ 2.11
 
-Earlier drafts of `paper_demo.py` used `model_optimizer="LBFGS"`, which is numerically unstable on this small dataset starting in PyTorch 2.11 (produces NaN values on both CPU and GPU). The current demo uses `model_optimizer="Adam"` with `learning_rate=0.0005` for 50,000 epochs, which is stable across all PyTorch versions and reaches a marginally tighter training fit than the original LBFGS recipe.
+Earlier drafts of `paper_demo.py` used `model_optimizer="LBFGS"`, which is numerically unstable on this small dataset starting in PyTorch 2.11 (produces NaN values on both CPU and GPU). The current demo uses `model_optimizer="Adam"` with `learning_rate=0.005` for 10,000 epochs, which is stable across all PyTorch versions and reaches a marginally tighter training fit than the original LBFGS recipe (log-lik −1874.376 vs LBFGS's −1874.64).
 
 **Diagnostic signal:** if you somehow run the LBFGS path and see a coefficient table full of `nan` and `inf`, switch to Adam.
 

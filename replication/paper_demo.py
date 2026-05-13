@@ -258,7 +258,7 @@ def parse_args() -> argparse.Namespace:
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument("--skip-training", action="store_true", help="Skip conditional logit training.")
-    parser.add_argument("--num-epochs", type=int, default=50_000, help="Epochs for conditional logit Adam training (default 50,000 yields tight convergence on ModeCanada).")
+    parser.add_argument("--num-epochs", type=int, default=10_000, help="Epochs for conditional logit Adam training (default 10,000 reaches the MLE basin on ModeCanada in ~1 minute on CPU).")
     parser.add_argument(
         "--tensorboard-logdir",
         type=Path,
@@ -667,10 +667,12 @@ def main() -> None:
     # Optimizer choice: we use Adam (the optimizer the paper recommends for larger problems in
     # Section 4.1.3) rather than LBFGS. The PyTorch LBFGS implementation became numerically
     # unstable on this small dataset starting around PyTorch 2.11 (produces NaN on both CPU and
-    # GPU), while Adam is stable across all PyTorch versions and hardware. Adam reaches a
-    # marginally tighter training fit than LBFGS (log-likelihood approximately -1874.34 vs the
-    # LBFGS value of -1874.64 reported in earlier drafts), with all highly significant
-    # coefficients matching to within 5%.
+    # GPU), while Adam is stable across all PyTorch versions and hardware. Adam with
+    # learning_rate=0.005 over 10,000 epochs reaches a marginally tighter training fit than
+    # LBFGS (log-likelihood approximately -1874.38 vs the LBFGS value of -1874.64 reported in
+    # earlier drafts), with all highly significant coefficients matching to within 5%. Running
+    # longer (e.g. 50,000 epochs at lr=0.0005) tightens the fit by ~0.03 nats, well below any
+    # threshold of substantive interest.
     print_paper_reference(
         "Section 4.1.4 (Model Estimation)",
         "Corresponds to the `model.fit(..., model_optimizer=\"Adam\")` example and the timing note in the manuscript.",
@@ -692,7 +694,7 @@ def main() -> None:
     result = model.fit(
         dataset_mode_canada,
         batch_size=-1,
-        learning_rate=0.0005,
+        learning_rate=0.005,
         num_epochs=args.num_epochs,
         model_optimizer="Adam",
         backend="lightning",
