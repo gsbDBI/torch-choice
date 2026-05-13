@@ -7,7 +7,7 @@ The procedure has two parts:
 1. **Paper demo replication**: we provide a executable Python script including all the commands we demonstrated in the paper manuscript, including operations for dataset management and model estiamtion, including fitting a conditional logit model on ModeCanada and a nested logit model on House Cooling, and reproduces the coefficient tables.
 2. **Performance benchmarks** (Section 5 of the manuscript): runs the full `torch-choice` vs `mlogit` (R) benchmark copmaring computational runtime for different approaches on the grid across sweeps in records, parameters, and items, and regenerates Figures 1–3.
 
-Total wall-clock: **paper demo ~1–2 minutes**, **full benchmark ≈ 20 hours** (dominated by R/mlogit, we offer a knob to run the PyTorch only part). The actual runtime depends on your hardware configuration.
+Total wall-clock: **paper demo ≈ 5–10 minutes**, **full benchmark ≈ 20 hours** (dominated by R/mlogit, we offer a knob to run the PyTorch only part, you can set `SKIP_R=1` to skip the R part). The actual runtime depends on your hardware configuration.
 
 A smoke-test configuration of the benchmark runs in a few minutes if you just want to verify the pipeline before committing to the full run.
 
@@ -18,10 +18,10 @@ A smoke-test configuration of the benchmark runs in a few minutes if you just wa
 - A Linux machine with an NVIDIA GPU and working CUDA drivers (any modern GPU works).
 - `nvidia-smi` on `PATH`.
 - Internet access for downloading the package and dependencies.
-- **R** with the `mlogit`, `tictoc`, and `stringr` packages installed. The R installation is only needed for Step 5 (the Section 5 benchmark). Install them once with:
-  ```r
-  # Inside an R session:
-  install.packages(c("mlogit","tictoc","stringr"), repos="https://cloud.r-project.org")
+- **R** with the `mlogit`, `tictoc`, and `stringr` packages installed. The R installation is only needed for Step 5 (the Section 5 benchmark). If `R` is already installed, install the packages from the command line with:
+
+  ```bash
+  Rscript -e 'install.packages(c("mlogit","tictoc","stringr"), repos="https://cloud.r-project.org")'
   ```
 
 ---
@@ -118,7 +118,7 @@ This step runs `paper_demo.py`, which walks through the manuscript's main data-s
 bash ./replication/run_paper_demo.sh --no-tensorboard
 ```
 
-**Wall-clock:** ~1–2 minutes (10,000 Adam epochs on the small ModeCanada dataset; ~10 seconds on a fast CPU, slightly less on GPU).
+**Wall-clock:** ~5–10 minutes (50,000 Adam epochs on the small ModeCanada dataset). The longer recipe converges deeply enough into the MLE basin that the resulting log-likelihood and coefficients match the manuscript table to high precision across a wide variety of hardware (CPU, MPS, CUDA, different PyTorch versions).
 
 Small numerical differences (typically < 5% on the highly significant rows) come from Adam being a first-order optimizer; the conditional logit intercepts are identified only up to a constant, so they may differ by a normalization shift while still implying the same choice probabilities.
 
@@ -141,6 +141,14 @@ Run a reduced-grid version end-to-end to verify the pipeline before committing t
 export SMOKE_TEST=1
 bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
 ```
+
+If you do not have R installed, run the Python-only smoke test instead:
+
+```bash
+SKIP_R=1 SMOKE_TEST=1 bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
+```
+
+This skips the R `mlogit` benchmark and the comparison-figure rendering, but still verifies data generation and the `torch-choice` benchmark path.
 
 **Expected output:** the script prints `[1/4] Generate synthetic data ...`, `[2/4] Benchmark Torch-Choice ...`, `[3/4] Benchmark R (mlogit) ...`, `[4/4] Visualize results ...`, then ends with `Done.` and the three output paths. A `runs/smoke_<timestamp>/` directory should now exist with CSV outputs in `benchmark_results/`.
 
@@ -237,10 +245,10 @@ The benchmark wall-clock numbers depend on your hardware and are not expected to
 
 | Quantity                                                       | Value         |
 | -------------------------------------------------------------- | ------------- |
-| CLM training log-likelihood (ModeCanada, 10,000 Adam epochs)   | **−1874.376** |
-| NLM training log-likelihood (House Cooling, 5,000 Adam epochs) | **−178.149**  |
+| CLM training log-likelihood (ModeCanada, 50,000 Adam epochs)   | **−1874.343** |
+| NLM training log-likelihood (House Cooling, 5,000 Adam epochs) | **−178.244**  |
 | CLM number of coefficients                                     | 13            |
-| NLM `lambda_weight_0`                                          | 0.571         |
+| NLM `lambda_weight_0`                                          | 0.559         |
 
 
 Coefficient signs and significance levels should match the manuscript tables exactly. Magnitudes should match to within ~5% on `*`**-significant rows.
@@ -291,7 +299,7 @@ The default (`GENERATE_EXPERIMENTS=all`) generates everything, so most replicato
 
 ### 3. LBFGS produces NaN on PyTorch ≥ 2.11
 
-Earlier drafts of `paper_demo.py` used `model_optimizer="LBFGS"`, which is numerically unstable on this small dataset starting in PyTorch 2.11 (produces NaN values on both CPU and GPU). The current demo uses `model_optimizer="Adam"` with `learning_rate=0.005` for 10,000 epochs, which is stable across all PyTorch versions and reaches a marginally tighter training fit than the original LBFGS recipe (log-lik −1874.376 vs LBFGS's −1874.64).
+Earlier drafts of `paper_demo.py` used `model_optimizer="LBFGS"`, which is numerically unstable on this small dataset starting in PyTorch 2.11 (produces NaN values on both CPU and GPU). The current demo uses `model_optimizer="Adam"` with `learning_rate=0.0005` for 50,000 epochs, which is stable across all PyTorch versions and reaches a marginally tighter training fit than the original LBFGS recipe (log-lik −1874.343 vs LBFGS's −1874.64). A shorter recipe (10,000 epochs at lr=0.005) reaches a very similar basin on CPU but is hardware-sensitive — accumulated float32 drift over fewer, larger steps can produce ~2 nat differences in the final log-lik on MPS/CUDA — so we use the longer recipe by default for cross-hardware reproducibility.
 
 **Diagnostic signal:** if you somehow run the LBFGS path and see a coefficient table full of `nan` and `inf`, switch to Adam.
 

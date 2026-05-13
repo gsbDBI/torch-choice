@@ -258,7 +258,7 @@ def parse_args() -> argparse.Namespace:
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument("--skip-training", action="store_true", help="Skip conditional logit training.")
-    parser.add_argument("--num-epochs", type=int, default=10_000, help="Epochs for conditional logit Adam training (default 10,000 reaches the MLE basin on ModeCanada in ~1 minute on CPU).")
+    parser.add_argument("--num-epochs", type=int, default=50_000, help="Epochs for conditional logit Adam training (default 50,000 yields tight, hardware-independent convergence on ModeCanada).")
     parser.add_argument(
         "--tensorboard-logdir",
         type=Path,
@@ -667,12 +667,14 @@ def main() -> None:
     # Optimizer choice: we use Adam (the optimizer the paper recommends for larger problems in
     # Section 4.1.3) rather than LBFGS. The PyTorch LBFGS implementation became numerically
     # unstable on this small dataset starting around PyTorch 2.11 (produces NaN on both CPU and
-    # GPU), while Adam is stable across all PyTorch versions and hardware. Adam with
-    # learning_rate=0.005 over 10,000 epochs reaches a marginally tighter training fit than
-    # LBFGS (log-likelihood approximately -1874.38 vs the LBFGS value of -1874.64 reported in
-    # earlier drafts), with all highly significant coefficients matching to within 5%. Running
-    # longer (e.g. 50,000 epochs at lr=0.0005) tightens the fit by ~0.03 nats, well below any
-    # threshold of substantive interest.
+    # GPU), while Adam is stable across all PyTorch versions and hardware. We use a small
+    # learning rate (0.0005) over 50,000 epochs for cross-hardware reproducibility: shorter
+    # recipes (e.g. lr=0.005 for 10,000 epochs) reach essentially the same basin on CPU but
+    # the larger steps can accumulate float32 drift across devices, producing log-likelihood
+    # differences of ~2 nats between CPU and MPS/CUDA. The 50K/lr=0.0005 recipe converges
+    # deeply enough that hardware-specific noise is averaged out. Final training
+    # log-likelihood is approximately -1874.34 (vs the LBFGS value of -1874.64 reported in
+    # earlier drafts), with all highly significant coefficients matching to within 5%.
     print_paper_reference(
         "Section 4.1.4 (Model Estimation)",
         "Corresponds to the `model.fit(..., model_optimizer=\"Adam\")` example and the timing note in the manuscript.",
@@ -694,7 +696,7 @@ def main() -> None:
     result = model.fit(
         dataset_mode_canada,
         batch_size=-1,
-        learning_rate=0.005,
+        learning_rate=0.0005,
         num_epochs=args.num_epochs,
         model_optimizer="Adam",
         backend="lightning",
