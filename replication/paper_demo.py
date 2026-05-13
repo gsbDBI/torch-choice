@@ -183,6 +183,14 @@ def set_seed(seed: int = 42) -> None:
     print(f"[Setup] Random seed set to {seed}.")
 
 
+def progress_bar_enabled() -> bool:
+    """Return whether the Lightning training progress bar should be shown."""
+    value = os.environ.get("PAPER_DEMO_PROGRESS_BAR")
+    if value is None:
+        return True
+    return value.strip().lower() not in {"0", "false", "no", "off"}
+
+
 def clone_choice_dataset(dataset: ChoiceDataset) -> ChoiceDataset:
     """Clone a ChoiceDataset while gracefully falling back to deepcopy if needed.
 
@@ -691,7 +699,6 @@ def main() -> None:
         dataset=dataset_mode_canada,
         num_items=4,
     )
-
     start = time.perf_counter()
     result = model.fit(
         dataset_mode_canada,
@@ -701,6 +708,7 @@ def main() -> None:
         model_optimizer="Adam",
         backend="lightning",
         default_root_dir=str(args.tensorboard_logdir),
+        enable_progress_bar=progress_bar_enabled(),
         print_summary=False,  # We will print manually below.
     )
     duration = time.perf_counter() - start
