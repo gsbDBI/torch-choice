@@ -702,7 +702,7 @@ def main() -> None:
         dataset_mode_canada,
         batch_size=-1,
         learning_rate=0.01,
-        num_epochs=args.num_epochs,
+        num_epochs=1000,
         model_optimizer="LBFGS",
         backend="lightning",
         default_root_dir=str(args.tensorboard_logdir),
@@ -825,7 +825,7 @@ def main() -> None:
         nested_joint_dataset,
         batch_size=-1,
         learning_rate=0.01,
-        num_epochs=min(5000, args.num_epochs),
+        num_epochs=5000,
         model_optimizer="Adam",
         default_root_dir=str(nested_logdir),
         print_summary=False,  # We will print manually below.
