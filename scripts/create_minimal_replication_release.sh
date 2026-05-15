@@ -38,6 +38,24 @@
 #   paper_performance_benchmarks/            Top-level duplicate of reference
 #                                            results (the canonical copy lives
 #                                            under replication/)
+#   replication/paper_performance_benchmarks_legacy/
+#                                            Historical earlier-iteration
+#                                            scripts superseded by the current
+#                                            run_benchmarking.sh; not referenced
+#                                            from the replication guideline
+#   replication/paper_performance_benchmarks/runs/
+#                                            Local working state from prior
+#                                            benchmark executions; replicators
+#                                            create their own runs/<timestamp>/
+#                                            when they run the pipeline.
+#                                            (Paper-time canonical references
+#                                            live in benchmark_results_aurora_*
+#                                            and benchmark_figures_*.)
+#   __pycache__/, .ipynb_checkpoints/,
+#   lightning_logs/, .DS_Store               Transient artifacts that any local
+#                                            run (or macOS Finder) may leave
+#                                            behind; pruned defensively even
+#                                            when absent today
 #   requirements.txt,
 #   requirements_complete.txt                Deprecated (superseded by
 #                                            pyproject.toml extras)
@@ -84,6 +102,20 @@ echo -e "${BLUE}[INFO]${NC} Copying replication essentials..."
 
 # Directories
 cp -a replication                  "${OUTPUT_DIR}/replication"
+
+# Drop historical-only content that the replication guideline never references.
+rm -rf "${OUTPUT_DIR}/replication/paper_performance_benchmarks_legacy"
+
+# Drop local working state from prior benchmark executions; replicators
+# generate their own runs/<timestamp>/ when they execute the pipeline.
+rm -rf "${OUTPUT_DIR}/replication/paper_performance_benchmarks/runs"
+
+# Defensive sweep: prune transient artifacts that any local execution (or
+# macOS Finder) may have left in the source tree. Safe no-ops when absent.
+find "${OUTPUT_DIR}" -type d \
+    \( -name __pycache__ -o -name .ipynb_checkpoints -o -name lightning_logs \) \
+    -prune -exec rm -rf {} + 2>/dev/null || true
+find "${OUTPUT_DIR}" -name .DS_Store -delete 2>/dev/null || true
 
 # Setup / install scripts
 cp -a scripts/setup_uv_pypi.sh     "${OUTPUT_DIR}/scripts/setup_uv_pypi.sh"
