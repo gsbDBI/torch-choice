@@ -1,6 +1,6 @@
 # Replication Material
 
-This guide provides a step-by-step walkthrough for reproducing the empirical results from *Torch-Choice: A PyTorch Package for Large-Scale Choice Modeling with Python* on a Linux machine equipped with an NVIDIA GPU. If you do not have a suitable machine, you can easily access a GPU instance through cloud providers such as Google Cloud, AWS, or Azure. We recommend using the terminal feature on Google Colab, which has already set up the Python and R runtime. There is no minimal requirement for the GPU memory, the latest replication package automatically adjusts  the batch size according to available GPU memory so it should work on any GPU-equipped machine.
+This guide provides a step-by-step walkthrough for reproducing the empirical results from *Torch-Choice: A PyTorch Package for Large-Scale Choice Modeling with Python* on a Linux machine equipped with an NVIDIA GPU. If you do not have a suitable machine, you can easily access a GPU instance through cloud providers such as Google Cloud, AWS, or Azure. We recommend using the terminal feature on Google Colab, which has already set up the Python and R runtime. There is no strict minimum GPU-memory requirement: the replication scripts automatically choose a batch size based on available GPU memory, so the benchmark should run on most CUDA-enabled NVIDIA GPUs.
 
 The procedure has two parts:
 
