@@ -1,7 +1,7 @@
 ==============================================================================
 Running paper_demo.py
 ==============================================================================
-Command: uv run --preview-features extra-build-dependencies python replication/paper_demo.py --tensorboard-logdir lightning_logs --tensorboard-port 6006 --num-epochs 50000
+Command: uv run --preview-features extra-build-dependencies python replication/paper_demo.py --tensorboard-logdir lightning_logs --tensorboard-port 6006 --num-epochs 1000
 
 
 ================================================================================
@@ -156,8 +156,8 @@ dataset.item_index[indices]=tensor([2, 2, 1, 2, 3])
 [Mini-batch] subset.item_obs[0, 0] vs dataset.item_obs[0, 0]:
 subset.item_obs[0, 0]=0.7051464319229126
 dataset.item_obs[0, 0]=-0.294853538274765
-id(subset.item_index)=5024672704
-id(dataset.item_index[indices])=5025622816
+id(subset.item_index)=5098302960
+id(dataset.item_index[indices])=5099317648
 
 --------------------------------------------------------------------------------
 JointDataset Demonstration
@@ -212,9 +212,9 @@ Dictionary Specification with Regularization
 --------------------------------------------------------------------------------
 Training via model.fit
 --------------------------------------------------------------------------------
-[Paper Ref | Section 4.1.4 (Model Estimation)] Corresponds to the `model.fit(..., model_optimizer="Adam")` example and the timing note in the manuscript.
+[Paper Ref | Section 4.1.4 (Model Estimation)] Corresponds to the `model.fit(..., model_optimizer="LBFGS")` example and the timing note in the manuscript.
 [Setup] Random seed set to 42.
-[Training] Completed in 65.81 seconds.
+[Training] Completed in 4.53 seconds.
 [Paper Ref | Figure 1 (TensorBoard Curve)] Generated logs can be visualized exactly like Figure 1 once you launch TensorBoard.
 [TensorBoard] Logs saved to 'lightning_logs'.
 [TensorBoard] To visualize, run: uv run tensorboard --logdir lightning_logs --port 6006
@@ -230,19 +230,19 @@ Log-likelihood: [Training] -1874.343, [Validation] None, [Test] None
 
 | Coefficient                           |   Estimation |   Std. Err. |   z-value | Pr(>|z|)   | Significance   |
 |:--------------------------------------|-------------:|------------:|----------:|:-----------|:---------------|
-| itemsession_cost_freq_ovt[constant]_0 |  -0.0333397  |  0.00709547 |    -4.699 | 2.618e-06  | ***            |
-| itemsession_cost_freq_ovt[constant]_1 |   0.09253    |  0.00509757 |    18.152 | < 2e-16    | ***            |
-| itemsession_cost_freq_ovt[constant]_2 |  -0.0430035  |  0.00322472 |   -13.336 | < 2e-16    | ***            |
-| session_income[item]_0                |  -0.0890866  |  0.0183469  |    -4.856 | 1.200e-06  | ***            |
-| session_income[item]_1                |  -0.0279929  |  0.00387255 |    -7.229 | 4.883e-13  | ***            |
+| itemsession_cost_freq_ovt[constant]_0 |  -0.0333398  |  0.00709548 |    -4.699 | 2.618e-06  | ***            |
+| itemsession_cost_freq_ovt[constant]_1 |   0.0925306  |  0.00509758 |    18.152 | < 2e-16    | ***            |
+| itemsession_cost_freq_ovt[constant]_2 |  -0.0430032  |  0.0032247  |   -13.336 | < 2e-16    | ***            |
+| session_income[item]_0                |  -0.0890907  |  0.0183473  |    -4.856 | 1.199e-06  | ***            |
+| session_income[item]_1                |  -0.0279934  |  0.00387256 |    -7.229 | 4.878e-13  | ***            |
 | session_income[item]_2                |  -0.0381464  |  0.00408307 |    -9.343 | < 2e-16    | ***            |
-| itemsession_ivt[item-full]_0          |   0.0595098  |  0.0100728  |     5.908 | 3.463e-09  | ***            |
-| itemsession_ivt[item-full]_1          |  -0.00678365 |  0.00443335 |    -1.53  | 0.126      |                |
-| itemsession_ivt[item-full]_2          |  -0.00646027 |  0.00189848 |    -3.403 | 6.668e-04  | ***            |
-| itemsession_ivt[item-full]_3          |  -0.00145033 |  0.00118748 |    -1.221 | 0.222      |                |
-| intercept[item]_0                     |   0.698252   |  1.28023    |     0.545 | 0.585      |                |
-| intercept[item]_1                     |   1.84399    |  0.708503   |     2.603 | 0.009      | **             |
-| intercept[item]_2                     |   3.27409    |  0.62441    |     5.243 | 1.576e-07  | ***            |
+| itemsession_ivt[item-full]_0          |   0.0595084  |  0.0100727  |     5.908 | 3.465e-09  | ***            |
+| itemsession_ivt[item-full]_1          |  -0.00678461 |  0.00443362 |    -1.53  | 0.126      |                |
+| itemsession_ivt[item-full]_2          |  -0.00646049 |  0.00189848 |    -3.403 | 6.666e-04  | ***            |
+| itemsession_ivt[item-full]_3          |  -0.00145055 |  0.00118748 |    -1.222 | 0.222      |                |
+| intercept[item]_0                     |   0.698515   |  1.28026    |     0.546 | 0.585      |                |
+| intercept[item]_1                     |   1.84405    |  0.708508   |     2.603 | 0.009      | **             |
+| intercept[item]_2                     |   3.27411    |  0.624413   |     5.243 | 1.576e-07  | ***            |
 Significance codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 [EstimationOutput] Access log-likelihood programmatically:
@@ -255,9 +255,9 @@ result.coef_summary.head() =
                                        Estimation  ...  Significance
 Coefficient                                        ...              
 itemsession_cost_freq_ovt[constant]_0   -0.033340  ...           ***
-itemsession_cost_freq_ovt[constant]_1    0.092530  ...           ***
-itemsession_cost_freq_ovt[constant]_2   -0.043004  ...           ***
-session_income[item]_0                  -0.089087  ...           ***
+itemsession_cost_freq_ovt[constant]_1    0.092531  ...           ***
+itemsession_cost_freq_ovt[constant]_2   -0.043003  ...           ***
+session_income[item]_0                  -0.089091  ...           ***
 session_income[item]_1                  -0.027993  ...           ***
 
 [5 rows x 5 columns]
@@ -274,8 +274,8 @@ session_income[item]_1                  -0.027993  ...           ***
 Conditional Logit Post-Estimation
 --------------------------------------------------------------------------------
 [Paper Ref | Section 4.1.5 (Post-Estimation)] Pulls the same coefficients retrieved via `model.get_coefficient(...)` following Equation \eqref{eq:clm-post-estimation-example}.
-[CLM] intercept[item] shape=(3, 1) sample=tensor([[0.6983],
-        [1.8440],
+[CLM] intercept[item] shape=(3, 1) sample=tensor([[0.6985],
+        [1.8441],
         [3.2741]])
 [CLM] session_income[item] shape=(3, 1) sample=tensor([[-0.0891],
         [-0.0280],
@@ -309,18 +309,18 @@ Nested Logit Specification via Formulas
 Training Nested Logit Model
 --------------------------------------------------------------------------------
 [Paper Ref | Section 4.2.3 (Training)] Mirrors the Adam-based training recipe and TensorBoard logging mentioned for the nested model.
-[fit-torch] Epoch 500/5000 - avg loss per obs: 0.733846
-[fit-torch] Epoch 1000/5000 - avg loss per obs: 0.720859
-[fit-torch] Epoch 1500/5000 - avg loss per obs: 0.718014
-[fit-torch] Epoch 2000/5000 - avg loss per obs: 0.715999
-[fit-torch] Epoch 2500/5000 - avg loss per obs: 0.714769
-[fit-torch] Epoch 3000/5000 - avg loss per obs: 0.714089
-[fit-torch] Epoch 3500/5000 - avg loss per obs: 0.713699
-[fit-torch] Epoch 4000/5000 - avg loss per obs: 0.713424
-[fit-torch] Epoch 4500/5000 - avg loss per obs: 0.713188
-[fit-torch] Epoch 5000/5000 - avg loss per obs: 0.712977
-[fit-torch] Training log-likelihood: -178.244034
-[Nested Logit] Training completed in 2.57 seconds.
+[fit-torch] Epoch 100/1000 - avg loss per obs: 1.365863
+[fit-torch] Epoch 200/1000 - avg loss per obs: 0.852823
+[fit-torch] Epoch 300/1000 - avg loss per obs: 0.756704
+[fit-torch] Epoch 400/1000 - avg loss per obs: 0.726782
+[fit-torch] Epoch 500/1000 - avg loss per obs: 0.720146
+[fit-torch] Epoch 600/1000 - avg loss per obs: 0.718488
+[fit-torch] Epoch 700/1000 - avg loss per obs: 0.717507
+[fit-torch] Epoch 800/1000 - avg loss per obs: 0.716780
+[fit-torch] Epoch 900/1000 - avg loss per obs: 0.716232
+[fit-torch] Epoch 1000/1000 - avg loss per obs: 0.715806
+[fit-torch] Training log-likelihood: -178.950684
+[Nested Logit] Training completed in 0.52 seconds.
 
 --------------------------------------------------------------------------------
 Nested Logit Estimation Results
@@ -328,29 +328,29 @@ Nested Logit Estimation Results
 [Paper Ref | Section 4.2.3 (EstimationOutput)] NestedLogitModel.fit() also returns an EstimationOutput object with the same interface as CLM.
 [EstimationOutput] Nested logit model estimation results via `print(nested_result)`:
 ==================== model results ====================
-Log-likelihood: [Training] -178.244, [Validation] None, [Test] None
+Log-likelihood: [Training] -178.951, [Validation] None, [Test] None
 
 | Coefficient                |   Estimation |   Std. Err. |   z-value |   Pr(>|z|) | Significance   |
 |:---------------------------|-------------:|------------:|----------:|-----------:|:---------------|
-| lambda_weight_0            |     0.558725 |   0.161396  |     3.462 |  0.0005365 | ***            |
-| nest_intercept[item]_0     |     0.740015 | inf         |     0     |  1         |                |
-| item_price_obs[constant]_0 |    -0.529193 |   0.140243  |    -3.773 |  0.000161  | ***            |
-| item_price_obs[constant]_1 |    -0.818975 |   0.230733  |    -3.549 |  0.000386  | ***            |
-| item_price_obs[constant]_2 |    -0.259439 |   0.110894  |    -2.34  |  0.019     | *              |
-| item_price_obs[constant]_3 |    -1.46601  |   1.03753   |    -1.413 |  0.158     |                |
-| item_price_obs[constant]_4 |    -0.36082  |   0.0973647 |    -3.706 |  0.0002107 | ***            |
-| item_price_obs[constant]_5 |     0.246175 |   0.0510729 |     4.82  |  1.435e-06 | ***            |
-| item_price_obs[constant]_6 |    -2.95104  | inf         |    -0     |  1         |                |
+| lambda_weight_0            |    0.640207  |   0.17982   |     3.56  |  0.0003705 | ***            |
+| nest_intercept[item]_0     |   -0.0534727 | inf         |    -0     |  1         |                |
+| item_price_obs[constant]_0 |   -0.59925   |   0.151744  |    -3.949 |  7.845e-05 | ***            |
+| item_price_obs[constant]_1 |   -0.934702  |   0.254721  |    -3.67  |  0.000243  | ***            |
+| item_price_obs[constant]_2 |   -0.328705  |   0.119663  |    -2.747 |  0.006     | **             |
+| item_price_obs[constant]_3 |   -2.34793   |   1.1156    |    -2.105 |  0.035     | *              |
+| item_price_obs[constant]_4 |   -0.408279  |   0.105256  |    -3.879 |  0.0001049 | ***            |
+| item_price_obs[constant]_5 |    0.268174  |   0.0570057 |     4.704 |  2.547e-06 | ***            |
+| item_price_obs[constant]_6 |   -1.41612   | inf         |    -0     |  1         |                |
 Significance codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-[EstimationOutput] nested_result.train_ll = -178.24403381347656
+[EstimationOutput] nested_result.train_ll = -178.95068359375
 
 --------------------------------------------------------------------------------
 Nested Logit Post-Estimation
 --------------------------------------------------------------------------------
 [Paper Ref | Section 4.2.4 (Post-Estimation)] Demonstrates `get_coefficient(..., level=...)` as described in the manuscript. Note: coefficients are only retrievable if they were included in the corresponding formula.
-[Nested Logit] lambda coefficients=tensor([0.5587])
-[Nested Logit] nest intercepts shape=(1, 1) values=tensor([[0.7400]])
+[Nested Logit] lambda coefficients=tensor([0.6402])
+[Nested Logit] nest intercepts shape=(1, 1) values=tensor([[-0.0535]])
 [Nested Logit] item-level user intercepts not available (not included in item_formula; add `(1|user)` if you want to estimate them).
 
 ==============================================================================

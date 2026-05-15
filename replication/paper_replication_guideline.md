@@ -1,13 +1,13 @@
-# Replication Material: Step-by-Step Walkthrough
+# Replication Material
 
-This guide provides a step-by-step walkthrough for reproducing the empirical results from *Torch-Choice: A PyTorch Package for Large-Scale Choice Modeling with Python* on a Linux machine equipped with an NVIDIA GPU. If you do not have a suitable machine, you can easily access a GPU instance through cloud providers such as Google Cloud, AWS, or Azure. The latest replication package automatically adjusts the batch size according to available GPU memory so it should work on any GPU-equipped machine.
+This guide provides a step-by-step walkthrough for reproducing the empirical results from *Torch-Choice: A PyTorch Package for Large-Scale Choice Modeling with Python* on a Linux machine equipped with an NVIDIA GPU. If you do not have a suitable machine, you can easily access a GPU instance through cloud providers such as Google Cloud, AWS, or Azure. We recommend using the termiinal feature on Google Colab, which has already setup the Python and R runtime. The latest replication package automatically adjusts the batch size according to available GPU memory so it should work on any GPU-equipped machine.
 
 The procedure has two parts:
 
 1. **Paper demo replication**: we provide a executable Python script including all the commands we demonstrated in the paper manuscript, including operations for dataset management and model estiamtion, including fitting a conditional logit model on ModeCanada and a nested logit model on House Cooling, and reproduces the coefficient tables.
 2. **Performance benchmarks** (Section 5 of the manuscript): runs the full `torch-choice` vs `mlogit` (R) benchmark copmaring computational runtime for different approaches on the grid across sweeps in records, parameters, and items, and regenerates Figures 1–3.
 
-Total wall-clock: **paper demo ≈ 5–10 minutes**, **full benchmark ≈ 20 hours** (dominated by R/mlogit, we offer a knob to run the PyTorch only part, you can set `SKIP_R=1` to skip the R part). The actual runtime depends on your hardware configuration.
+Total wall-clock: **paper demo ≈ 10 seconds**, **full benchmark ≈ 20 hours** (dominated by R/mlogit, we offer a knob to run the PyTorch only part, you can set `SKIP_R=1` to skip the R part). The actual runtime depends on your hardware configuration.
 
 A smoke-test configuration of the benchmark runs in a few minutes if you just want to verify the pipeline before committing to the full run.
 
@@ -19,7 +19,6 @@ A smoke-test configuration of the benchmark runs in a few minutes if you just wa
 - `nvidia-smi` on `PATH`.
 - Internet access for downloading the package and dependencies.
 - **R** with the `mlogit`, `tictoc`, and `stringr` packages installed. The R installation is only needed for Step 5 (the Section 5 benchmark). If `R` is already installed, install the packages from the command line with:
-
   ```bash
   Rscript -e 'install.packages(c("mlogit","tictoc","stringr"), repos="https://cloud.r-project.org")'
   ```
@@ -118,7 +117,21 @@ This step runs `paper_demo.py`, which walks through the manuscript's main data-s
 bash ./replication/run_paper_demo.sh --no-tensorboard
 ```
 
-**Wall-clock:** ~5–10 minutes (50,000 Adam epochs on the small ModeCanada dataset). The longer recipe converges deeply enough into the MLE basin that the resulting log-likelihood and coefficients match the manuscript table to high precision across a wide variety of hardware (CPU, MPS, CUDA, different PyTorch versions).
+The PyTorch Lightning progress bar is enabled by default. In terminal-in-browser environments such as Google Colab, frequent progress-bar updates can make the browser sluggish. To disable the Lightning progress bar, set `PAPER_DEMO_PROGRESS_BAR=0` (without setting the flag, the progress bar is enabled):
+
+```bash
+PAPER_DEMO_PROGRESS_BAR=0 bash ./replication/run_paper_demo.sh --no-tensorboard
+```
+
+If you are running from a browser-backed terminal such as Google Colab and the training output (e.g., the progress bar) is too noisy, redirect both stdout and stderr to a temporary log file:
+
+```bash
+bash ./replication/run_paper_demo.sh --no-tensorboard > /tmp/paper_demo_output.txt 2>&1
+```
+
+You can inspect the saved output afterward in text editor.
+
+**Wall-clock:** ~10 seconds (1,000 LBFGS epochs on the small ModeCanada dataset). LBFGS is a second-order (quasi-Newton) optimizer that converges to the MLE in very few iterations on this problem, with cross-hardware-reproducible coefficients (matches the manuscript table to ~10⁻⁵ on slopes across CPU/MPS/CUDA and PyTorch 2.11+).
 
 Small numerical differences (typically < 5% on the highly significant rows) come from Adam being a first-order optimizer; the conditional logit intercepts are identified only up to a constant, so they may differ by a normalization shift while still implying the same choice probabilities.
 
@@ -135,14 +148,15 @@ This step runs the full performance-benchmark grid that produced Figures 1–3 o
 
 ### 5a. Smoke test (recommended first, ~3 minutes)
 
-Run a reduced-grid version end-to-end to verify the pipeline before committing to the full run:
+Run a reduced-grid version end-to-end to verify the pipeline before committing to the full run,
 
 ```bash
-export SMOKE_TEST=1
-bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
+SMOKE_TEST=1 bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
 ```
 
-If you do not have R installed, run the Python-only smoke test instead:
+`SMOKE_TEST=1` swaps in smaller defaults (`NUM_RECORDS=50000` vs `3000000`, `NUM_SEEDS=2` vs `5`, `NUM_EPOCHS=5` vs `50000`), restricts the grid to the `_small` experiment variants, and prefixes the run directory name with `smoke_`.
+
+If you do **not** have R installed and prefer running the Python-only smoke test instead:
 
 ```bash
 SKIP_R=1 SMOKE_TEST=1 bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
@@ -155,9 +169,30 @@ This skips the R `mlogit` benchmark and the comparison-figure rendering, but sti
 ### 5b. Full run (~20 hours)
 
 ```bash
-export SMOKE_TEST=0
-bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
+SMOKE_TEST=0 bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
 ```
+
+If you want to run the full Python-only benchmark without R:
+
+```bash
+SKIP_R=1 SMOKE_TEST=0 bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
+```
+
+This skips the R `mlogit` benchmark and the comparison-figure rendering. It only demonstrates how `torch-choice` scales as the data size changes, without an explicit comparison to R. **Caveat:** because the Section 5 figures are built from the R output, you cannot regenerate them when `SKIP_R=1`.
+
+To speed up either mode, lower `NUM_SEEDS`, the number of random-seed repetitions per timing point (default `2` for smoke, `5` for full). For a faster exploratory run:
+
+```bash
+NUM_SEEDS=1 SMOKE_TEST=1 bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
+```
+
+or, for the full grid with fewer repeats:
+
+```bash
+NUM_SEEDS=1  SMOKE_TEST=0 bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
+```
+
+Using fewer seeds is useful for debugging or checking that the pipeline runs, but the timing curves will be noisier than the manuscript/release results.
 
 **Wall-clock:** ~20 hours on a typical workstation (16 cores, 128 GB RAM, RTX 3090). The runtime is dominated by R/mlogit's step (3), not by `torch-choice`. We measured this on the reference hardware; you will see different absolute numbers on different machines but the *relative* trends (the actual claim of the paper's Section 5) should be the same.
 
@@ -187,9 +222,9 @@ The benchmark trains hundreds of models. To keep peak GPU memory predictable acr
 
 **Manual tuning via `GPU_MEM_LIMIT`.** Export `GPU_MEM_LIMIT=<N>` (in GB) to make the auto-tier logic behave as if the GPU had only `<N>` GB. Three common reasons to use this:
 
-- **Sharing the GPU with another process.** If you have a 24 GB card but another job is using ~14 GB of it, set `GPU_MEM_LIMIT=10` so the benchmark picks the 10 GB tier (`batch_size=16,384`) and stays out of the way.
-- **Reproducing the small-GPU code path on a larger card.** Useful for CI validation or when verifying the package's claim that it runs cleanly on a 10 GB GPU (the empirical claim documented in our response to reviewer comments; see `gpu_memory_limit_test.md` for the detailed verification recipe).
-- **Forcing a specific batch size for runtime comparisons.** `BATCH_SIZE=<N>` is also accepted as a direct override and bypasses the tier table entirely.
+- Sharing the GPU with another process. If you have a 24 GB card but another job is using ~14 GB of it, set `GPU_MEM_LIMIT=10` so the benchmark picks the 10 GB tier (`batch_size=16,384`) and stays out of the way.
+- Reproducing the small-GPU code path on a larger card. Useful for CI validation or when verifying the package's claim that it runs cleanly on a 10 GB GPU (the empirical claim documented in our response to reviewer comments; see `gpu_memory_limit_test.md` for the detailed verification recipe).
+- Forcing a specific batch size for runtime comparisons. `BATCH_SIZE=<N>` is also accepted as a direct override and bypasses the tier table entirely.
 
 Examples:
 
@@ -206,19 +241,9 @@ BATCH_SIZE=32768 bash ./replication/paper_performance_benchmarks/run_benchmarkin
 
 If you ever see an out-of-memory error during the benchmark, drop the effective tier by one notch: either `GPU_MEM_LIMIT=<smaller>` or `BATCH_SIZE=<smaller>`. The full set of memory-related knobs (allocator config, `expandable_segments`, CPU fallback) is documented in `gpu_memory_limit_test.md`.
 
-### 5d. Skipping R (Python-only benchmarks)
-
-If you don't have R installed and only want to time `torch-choice`, set `SKIP_R=1`:
-
-```bash
-SKIP_R=1 SMOKE_TEST=0 bash ./replication/paper_performance_benchmarks/run_benchmarking.sh
-```
-
-This runs steps 1 (generate) and 2 (`torch-choice` timing) only, skipping the R benchmarks and the visualization step (which requires R output). Useful for sanity-checking the `torch-choice` half of Section 5 without the 20-hour R run. **Note**: doing this means you cannot regenerate the comparison figures in Section 5.
-
 ---
 
-## Step 6: Capture evidence
+## Step 6: Save replication outputs
 
 If you're using this run to back a peer-review response or to validate a release, archive these artifacts:
 
@@ -245,19 +270,19 @@ The benchmark wall-clock numbers depend on your hardware and are not expected to
 
 | Quantity                                                       | Value         |
 | -------------------------------------------------------------- | ------------- |
-| CLM training log-likelihood (ModeCanada, 50,000 Adam epochs)   | **−1874.343** |
-| NLM training log-likelihood (House Cooling, 5,000 Adam epochs) | **−178.244**  |
+| CLM training log-likelihood (ModeCanada, 1,000 LBFGS epochs)   | **−1874.343** |
+| NLM training log-likelihood (House Cooling, 5,000 Adam epochs) | **−178.951**  |
 | CLM number of coefficients                                     | 13            |
-| NLM `lambda_weight_0`                                          | 0.559         |
+| NLM `lambda_weight_0`                                          | 0.640         |
 
 
-Coefficient signs and significance levels should match the manuscript tables exactly. Magnitudes should match to within ~5% on `*`**-significant rows.
+Coefficient signs and significance levels should match the manuscript tables exactly. Magnitudes should match to within ~5% on `*`-significant rows.
 
 ---
 
 ## Common pitfalls
 
-Three sharp edges the test procedure has hit in practice:
+Two sharp edges the test procedure has hit in practice:
 
 ### 1. `uv run bash <wrapper>` clobbers the PyPI install
 
@@ -296,12 +321,6 @@ If you ever restrict the benchmark to a single experiment (via `TORCH_EXPERIMENT
 The default (`GENERATE_EXPERIMENTS=all`) generates everything, so most replicators never hit this. It only bites if you set `GENERATE_EXPERIMENTS` to a benchmark-style name.
 
 **Diagnostic signal:** the generate step finishes without printing any `[Saved] ...` lines, then the benchmark crashes with `FileNotFoundError: ... simulated_choice_data_<name>_seed_42.pt`.
-
-### 3. LBFGS produces NaN on PyTorch ≥ 2.11
-
-Earlier drafts of `paper_demo.py` used `model_optimizer="LBFGS"`, which is numerically unstable on this small dataset starting in PyTorch 2.11 (produces NaN values on both CPU and GPU). The current demo uses `model_optimizer="Adam"` with `learning_rate=0.0005` for 50,000 epochs, which is stable across all PyTorch versions and reaches a marginally tighter training fit than the original LBFGS recipe (log-lik −1874.343 vs LBFGS's −1874.64). A shorter recipe (10,000 epochs at lr=0.005) reaches a very similar basin on CPU but is hardware-sensitive — accumulated float32 drift over fewer, larger steps can produce ~2 nat differences in the final log-lik on MPS/CUDA — so we use the longer recipe by default for cross-hardware reproducibility.
-
-**Diagnostic signal:** if you somehow run the LBFGS path and see a coefficient table full of `nan` and `inf`, switch to Adam.
 
 ---
 

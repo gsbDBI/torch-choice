@@ -12,7 +12,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 # Default values
 TENSORBOARD_LOGDIR="${TENSORBOARD_LOGDIR:-lightning_logs}"
 TENSORBOARD_PORT="${TENSORBOARD_PORT:-6006}"
-NUM_EPOCHS="${NUM_EPOCHS:-50000}"
+NUM_EPOCHS="${NUM_EPOCHS:-1000}"
 SKIP_TRAINING="${SKIP_TRAINING:-false}"
 
 # Parse command line arguments
@@ -43,7 +43,7 @@ while [[ $# -gt 0 ]]; do
             echo ""
             echo "Options:"
             echo "  --skip-training        Skip model training (quick smoke test)"
-            echo "  --num-epochs N         Number of training epochs for the conditional logit Adam fit (default: 50000)"
+            echo "  --num-epochs N         Number of training epochs for the conditional logit LBFGS fit (default: 1000)"
             echo "  --tensorboard-logdir   Directory for TensorBoard logs (default: lightning_logs)"
             echo "  --tensorboard-port     Port for TensorBoard (default: 6006)"
             echo "  --no-tensorboard       Do not launch TensorBoard after running the demo"
