@@ -143,7 +143,7 @@ model = torch_choice.model.ConditionalLogitModel(
     num_param_dict={'var_1': 300, 'var_2': 500, 'var_3': 700, 'var_4': 900},
     num_items=4,
     num_users=10,
-    weight_initialization={'var_1': 'a-non-existing-distribution',
+    weight_initialization={'var_1': 'normal',
                            'var_2': 'normal',
                            'var_3': 'zero'})
 ```
@@ -223,7 +223,7 @@ model = torch_choice.model.NestedLogitModel(
     item_coef_variation_dict={'var_3': 'item-full', 'var_4': 'user'},
     item_num_param_dict={'var_3': 700, 'var_4': 900},
     num_users=100,
-    # 
+    #
     nest_weight_initialization={'var_1': 'uniform', 'var_2': 'zero'},
     item_weight_initialization={'var_4': 'uniform'}   # <-- var_3 is missing, it is initialized to Gaussian by default.
 )

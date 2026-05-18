@@ -74,6 +74,9 @@ You can construct a choice set using the following code, which manage all inform
 dataset = ChoiceDataset(
     # pre-specified keywords of __init__
     item_index=item_index,  # required.
+    num_items=num_items,
+    num_users=num_users,
+    num_sessions=num_sessions,
     # optional:
     user_index=user_index,
     session_index=session_index,
@@ -162,7 +165,7 @@ print("all good!")
     all good!
 
 
-
+    
 
 
 # Build a CLM Model
@@ -171,11 +174,12 @@ print("all good!")
 ```python
 from time import time
 from torch_choice.model import ConditionalLogitModel
+from torch_choice import run
 ```
 
 
 ```python
-model = model = ConditionalLogitModel(
+model = ConditionalLogitModel(
     formula='(user_obs|item) + (item_obs|user) + (useritem_obs|constant) + (session_obs|item) + (price_obs|constant) + (usersessionitem_obs|constant) + (intercept|item)',
     dataset=dataset,
     num_users=num_users,
@@ -202,7 +206,7 @@ model
       )
     )
     Conditional logistic discrete choice model, expects input features:
-
+    
     X[user_obs[item]] with 128 parameters, with item level variation.
     X[item_obs[user]] with 64 parameters, with user level variation.
     X[useritem_obs[constant]] with 32 parameters, with constant level variation.
@@ -217,7 +221,7 @@ model
 
 ```python
 start_time = time()
-model.fit(dataset, num_epochs=10, learning_rate=0.01, model_optimizer="Adam", batch_size=-1)
+run(model, dataset, num_epochs=10, learning_rate=0.01, model_optimizer="Adam", batch_size=-1)
 print('Time taken:', time() - start_time)
 ```
 
@@ -240,7 +244,7 @@ print('Time taken:', time() - start_time)
       )
     )
     Conditional logistic discrete choice model, expects input features:
-
+    
     X[user_obs[item]] with 128 parameters, with item level variation.
     X[item_obs[user]] with 64 parameters, with user level variation.
     X[useritem_obs[constant]] with 32 parameters, with constant level variation.
@@ -259,10 +263,10 @@ print('Time taken:', time() - start_time)
       rank_zero_warn(
     /Users/tianyudu/miniforge3/envs/dev/lib/python3.9/site-packages/pytorch_lightning/trainer/configuration_validator.py:108: PossibleUserWarning: You defined a `validation_step` but have no `val_dataloader`. Skipping val loop.
       rank_zero_warn(
-
+    
       | Name  | Type                  | Params
     ------------------------------------------------
-    0 | model | ConditionalLogitModel | 1.1 K
+    0 | model | ConditionalLogitModel | 1.1 K 
     ------------------------------------------------
     1.1 K     Trainable params
     0         Non-trainable params
@@ -272,7 +276,7 @@ print('Time taken:', time() - start_time)
       rank_zero_warn(
 
 
-    Epoch 9: 100%|██████████| 1/1 [00:00<00:00, 44.40it/s, loss=7.1e+04, v_num=44]
+    Epoch 9: 100%|██████████| 1/1 [00:00<00:00, 44.40it/s, loss=7.1e+04, v_num=44] 
 
     `Trainer.fit` stopped: `max_epochs=10` reached.
 
@@ -282,7 +286,7 @@ print('Time taken:', time() - start_time)
     Skip testing, no test dataset is provided.
     ==================== model results ====================
     Log-likelihood: [Training] -56230.62890625, [Validation] N/A, [Test] N/A
-
+    
     | Coefficient                      |   Estimation |   Std. Err. |       z-value |      Pr(>|z|) | Significance   |
     |:---------------------------------|-------------:|------------:|--------------:|--------------:|:---------------|
     | user_obs[item]_0                 | -0.0889893   | 139.667     |  -0.000637154 |   0.999492    |                |

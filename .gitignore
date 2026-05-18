@@ -377,3 +377,22 @@ data/MNIST/raw/train-labels-idx1-ubyte.gz
 
 **/synthetic_data/
 replication/paper_performance_benchmarks/runs
+
+# Downloaded external datasets — large, not redistributable, fetched on demand.
+# The three CSVs already tracked at tutorials/public_datasets/ (ModeCanada,
+# HC, car_choice) are unaffected; only the downloads/ subdir is ignored.
+tutorials/public_datasets/downloads/
+
+# LPMC dataset is fetched on demand by tutorials/lpmc/load_lpmc.py from the
+# EPFL ChoiceModels MOOC asset URL. We don't redistribute it (academic-use
+# license, ~12 MB).
+tutorials/lpmc/lpmc.dat
+tutorials/lpmc/lpmc.csv
+tutorials/lpmc/mlogit_stderr.log
+
+# Per-user Claude Code settings; the project-level skills under .claude/skills/
+# are tracked.
+.claude/settings.local.json
+
+# Stray PyTorch Lightning checkpoints from notebook re-runs.
+checkpoints/

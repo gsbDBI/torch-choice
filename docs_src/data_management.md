@@ -119,7 +119,7 @@ The first step is to randomly generate the purchase records using the following 
 user_obs = torch.randn(num_users, 128)
 # generate 64 features for each user, e.g., quality.
 item_obs = torch.randn(num_items, 64)
-# generate 10 features for each session, e.g., weekday indicator. 
+# generate 10 features for each session, e.g., weekday indicator.
 session_obs = torch.randn(num_sessions, 10)
 # generate 12 features for each session user pair, e.g., the budget of that user at the shopping day.
 price_obs = torch.randn(num_sessions, num_items, 12)
@@ -148,6 +148,9 @@ You can construct a choice set using the following code, which manage all inform
 dataset = ChoiceDataset(
     # pre-specified keywords of __init__
     item_index=item_index,  # required.
+    num_items=num_items,
+    num_users=num_users,
+    num_sessions=num_sessions,
     # optional:
     user_index=user_index,
     session_index=session_index,
@@ -394,9 +397,16 @@ dataset._check_device_consistency()
 
 
 ```python
-# # NOTE: this cell will result errors, this is intentional.
-dataset.item_index = dataset.item_index.to('cpu')
-dataset._check_device_consistency()
+# NOTE: this cell intentionally demonstrates device inconsistency and now safely handles the expected error.
+original_device = dataset.device
+try:
+    dataset.item_index = dataset.item_index.to('cpu')
+    dataset._check_device_consistency()
+except Exception as exc:
+    print(f"Expected device mismatch detected: {exc}")
+finally:
+    dataset = dataset.to(original_device)
+
 ```
 
 

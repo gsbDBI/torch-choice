@@ -509,7 +509,9 @@ class ChoiceModelFitMixin:
             device = getattr(self, "device", None)
             if device is not None:
                 device_str = str(device)
-                accelerator = "cuda" if "cuda" in device_str else device_str
+                # Lightning expects accelerator names without device indices
+                # (e.g. "mps", not "mps:0"); strip any ":idx" suffix.
+                accelerator = "cuda" if "cuda" in device_str else device_str.split(":", 1)[0]
         if accelerator is not None:
             trainer_defaults["accelerator"] = accelerator
 
@@ -529,6 +531,9 @@ class ChoiceModelFitMixin:
 
         self.eval()
         inference_device = self._infer_active_device(device_hint)
+        # Lightning may move the model back to CPU during teardown; restore
+        # it to the requested device so the LL evaluation isn't a CPU/GPU mix.
+        self.to(inference_device)
         # Compute LL explicitly (instead of using Lightning logs) so metrics match the torch backend.
         train_ll = self._compute_dataset_log_likelihood(
             dataset_train,
@@ -814,12 +819,19 @@ class ChoiceModelFitMixin:
         """
         # Work on a clone for Hessian-based std errors to avoid mutating/corrupting the training dataset.
         dataset_for_std = self._clone_dataset_for_std(dataset_train)
-        dataset_for_std = self._maybe_move_dataset(dataset_for_std, device_hint)
+        # The Hessian-based std uses float64 internally for numerical stability; MPS
+        # doesn't support float64, so fall back to CPU for this one-off computation.
+        std_device = device_hint
+        if std_device is not None and "mps" in str(std_device):
+            std_device = "cpu"
+        dataset_for_std = self._maybe_move_dataset(dataset_for_std, std_device)
         # Snapshot fitted parameters for reporting (detached so it won't keep autograd graphs).
         mean_dict = {name: param.detach().clone() for name, param in self.named_parameters()}
 
         # Compute Hessian/std errors on a deep-copied model to keep the fitted instance clean.
         model_clone = deepcopy(self)
+        if std_device is not None:
+            model_clone.to(std_device)
         state_dict = deepcopy(self.state_dict())
         # NestedLogitModel creates a `lambdas` alias during forward() via
         # `self.lambdas = self.lambda_weight`. This may appear in state_dict but

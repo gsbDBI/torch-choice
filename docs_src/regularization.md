@@ -129,7 +129,7 @@ train_conditional_logit_model(regularization=None, regularization_weight=None)
       )
     )
     Conditional logistic discrete choice model, expects input features:
-
+    
     X[price_cost_freq_ovt] with 3 parameters, with constant level variation.
     X[session_income] with 1 parameters, with item level variation.
     X[price_ivt] with 1 parameters, with item-full level variation.
@@ -151,15 +151,15 @@ train_conditional_logit_model(regularization=None, regularization_weight=None)
     Test set log-likelihood:  -554.70849609375
     ==================== model results ====================
     Training Epochs: 50000
-
+    
     Learning Rate: 0.003
-
+    
     Batch Size: 1945 out of 1945 observations in total
-
+    
     Final Log-likelihood: -1322.495849609375
-
+    
     Coefficients:
-
+    
     | Coefficient           |   Estimation |   Std. Err. |
     |:----------------------|-------------:|------------:|
     | price_cost_freq_ovt_0 |  -0.0308257  |  0.00839731 |
@@ -193,7 +193,7 @@ train_conditional_logit_model(regularization='L1', regularization_weight=5)
       )
     )
     Conditional logistic discrete choice model, expects input features:
-
+    
     X[price_cost_freq_ovt] with 3 parameters, with constant level variation.
     X[session_income] with 1 parameters, with item level variation.
     X[price_ivt] with 1 parameters, with item-full level variation.
@@ -215,15 +215,15 @@ train_conditional_logit_model(regularization='L1', regularization_weight=5)
     Test set log-likelihood:  -556.6971435546875
     ==================== model results ====================
     Training Epochs: 50000
-
+    
     Learning Rate: 0.003
-
+    
     Batch Size: 1945 out of 1945 observations in total
-
+    
     Final Log-likelihood: -1333.43359375
-
+    
     Coefficients:
-
+    
     | Coefficient           |   Estimation |   Std. Err. |
     |:----------------------|-------------:|------------:|
     | price_cost_freq_ovt_0 | -0.0485882   |  0.0084985  |
@@ -257,7 +257,7 @@ train_conditional_logit_model(regularization='L2', regularization_weight=5)
       )
     )
     Conditional logistic discrete choice model, expects input features:
-
+    
     X[price_cost_freq_ovt] with 3 parameters, with constant level variation.
     X[session_income] with 1 parameters, with item level variation.
     X[price_ivt] with 1 parameters, with item-full level variation.
@@ -279,15 +279,15 @@ train_conditional_logit_model(regularization='L2', regularization_weight=5)
     Test set log-likelihood:  -555.1453857421875
     ==================== model results ====================
     Training Epochs: 50000
-
+    
     Learning Rate: 0.003
-
+    
     Batch Size: 1945 out of 1945 observations in total
-
+    
     Final Log-likelihood: -1327.34765625
-
+    
     Coefficients:
-
+    
     | Coefficient           |   Estimation |   Std. Err. |
     |:----------------------|-------------:|------------:|
     | price_cost_freq_ovt_0 |  -0.0482729  |  0.0083645  |
@@ -321,7 +321,7 @@ train_conditional_logit_model(regularization='L1', regularization_weight=1E5)
       )
     )
     Conditional logistic discrete choice model, expects input features:
-
+    
     X[price_cost_freq_ovt] with 3 parameters, with constant level variation.
     X[session_income] with 1 parameters, with item level variation.
     X[price_ivt] with 1 parameters, with item-full level variation.
@@ -343,15 +343,15 @@ train_conditional_logit_model(regularization='L1', regularization_weight=1E5)
     Test set log-likelihood:  -1136.294921875
     ==================== model results ====================
     Training Epochs: 50000
-
+    
     Learning Rate: 0.003
-
+    
     Batch Size: 1945 out of 1945 observations in total
-
+    
     Final Log-likelihood: -2677.46826171875
-
+    
     Coefficients:
-
+    
     | Coefficient           |   Estimation |   Std. Err. |
     |:----------------------|-------------:|------------:|
     | price_cost_freq_ovt_0 |  0.000446639 | 0.00574829  |
@@ -387,8 +387,8 @@ encoder = dict(zip(item_names, range(num_items)))
 item_index = item_index.map(lambda x: encoder[x])
 item_index = torch.LongTensor(item_index)
 
-# category feature: no category feature, all features are item-level.
-category_dataset = ChoiceDataset(item_index=item_index.clone()).to(device)
+# nest feature: no nest feature, all features are item-level.
+nest_dataset = ChoiceDataset(item_index=item_index.clone()).to(device)
 
 # item feature.
 item_feat_cols = ['ich', 'och', 'icca', 'occa', 'inc.room', 'inc.cooling', 'int.cooling']
@@ -396,15 +396,15 @@ price_obs = utils.pivot3d(df, dim0='idx.id1', dim1='idx.id2', values=item_feat_c
 
 item_dataset = ChoiceDataset(item_index=item_index, price_obs=price_obs).to(device)
 
-dataset = JointDataset(category=category_dataset, item=item_dataset)
+dataset = JointDataset(nest=nest_dataset, item=item_dataset)
 
-category_to_item = {0: ['gcc', 'ecc', 'erc', 'hpc'],
-                    1: ['gc', 'ec', 'er']}
+nest_to_item = {0: ['gcc', 'ecc', 'erc', 'hpc'],
+                1: ['gc', 'ec', 'er']}
 
 # encode items to integers.
-for k, v in category_to_item.items():
+for k, v in nest_to_item.items():
     v = [encoder[item] for item in v]
-    category_to_item[k] = sorted(v)
+    nest_to_item[k] = sorted(v)
 ```
 
     No `session_index` is provided, assume each choice instance is in its own session.
@@ -414,9 +414,9 @@ for k, v in category_to_item.items():
 
 ```python
 def train_nested_logit_model(regularization, regularization_weight):
-    model = NestedLogitModel(category_to_item=category_to_item,
-                         category_coef_variation_dict={},
-                         category_num_param_dict={},
+    model = NestedLogitModel(nest_to_item=nest_to_item,
+                         nest_coef_variation_dict={},
+                         nest_num_param_dict={},
                          item_coef_variation_dict={'price_obs': 'constant'},
                          item_num_param_dict={'price_obs': 7},
                          regularization=regularization,
@@ -455,15 +455,15 @@ train_nested_logit_model(None, None)
     Epoch 10000: Log-likelihood=-178.15724182128906
     ==================== model results ====================
     Training Epochs: 10000
-
+    
     Learning Rate: 0.01
-
+    
     Batch Size: 250 out of 250 observations in total
-
+    
     Final Log-likelihood: -178.15724182128906
-
+    
     Coefficients:
-
+    
     | Coefficient      |   Estimation |   Std. Err. |
     |:-----------------|-------------:|------------:|
     | lambda_weight_0  |     0.569814 |   0.163447  |
@@ -506,15 +506,15 @@ train_nested_logit_model("L1", 10)
     Epoch 10000: Log-likelihood=-187.0865478515625
     ==================== model results ====================
     Training Epochs: 10000
-
+    
     Learning Rate: 0.01
-
+    
     Batch Size: 250 out of 250 observations in total
-
+    
     Final Log-likelihood: -187.0865478515625
-
+    
     Coefficients:
-
+    
     | Coefficient      |   Estimation |   Std. Err. |
     |:-----------------|-------------:|------------:|
     | lambda_weight_0  |  0.0530321   |   0.0531535 |
@@ -557,15 +557,15 @@ train_nested_logit_model("L2", 10)
     Epoch 10000: Log-likelihood=-183.5073699951172
     ==================== model results ====================
     Training Epochs: 10000
-
+    
     Learning Rate: 0.01
-
+    
     Batch Size: 250 out of 250 observations in total
-
+    
     Final Log-likelihood: -183.5073699951172
-
+    
     Coefficients:
-
+    
     | Coefficient      |   Estimation |   Std. Err. |
     |:-----------------|-------------:|------------:|
     | lambda_weight_0  |    0.181474  |   0.108225  |
